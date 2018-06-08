@@ -1,0 +1,44 @@
+<RCC>
+    <qresource prefix="/Keyboard">
+        <file>shift.png</file>
+        <file>shift_pressed.png</file>
+        <file>bs.png</file>
+        <file>bs_pressed.png</file>
+        <file>number keypad/0.png</file>
+        <file>number keypad/0_disabled.png</file>
+        <file>number keypad/0_pressed.png</file>
+        <file>number keypad/1.png</file>
+        <file>number keypad/1_disabled.png</file>
+        <file>number keypad/1_pressed.png</file>
+        <file>number keypad/2.png</file>
+        <file>number keypad/2_disabled.png</file>
+        <file>number keypad/2_pressed.png</file>
+        <file>number keypad/3.png</file>
+        <file>number keypad/3_disabled.png</file>
+        <file>number keypad/3_pressed.png</file>
+        <file>number keypad/4.png</file>
+        <file>number keypad/4_disabled.png</file>
+        <file>number keypad/4_pressed.png</file>
+        <file>number keypad/5.png</file>
+        <file>number keypad/5_disabled.png</file>
+        <file>number keypad/5_pressed.png</file>
+        <file>number keypad/6.png</file>
+        <file>number keypad/6_disabled.png</file>
+        <file>number keypad/6_pressed.png</file>
+        <file>number keypad/7.png</file>
+        <file>number keypad/7_disabled.png</file>
+        <file>number keypad/7_pressed.png</file>
+        <file>number keypad/8.png</file>
+        <file>number keypad/8_disabled.png</file>
+        <file>number keypad/8_pressed.png</file>
+        <file>number keypad/9.png</file>
+        <file>number keypad/9_disabled.png</file>
+        <file>number keypad/9_pressed.png</file>
+        <file>number keypad/bs.png</file>
+        <file>number keypad/bs_disabled.png</file>
+        <file>number keypad/bs_pressed.png</file>
+        <file>number keypad/enter.png</file>
+        <file>number keypad/enter_disabled.png</file>
+        <file>number keypad/enter_pressed.png</file>
+    </qresource>
+</RCC>

@@ -1,0 +1,12 @@
+#ifndef CNX_BASEUI_GLOBAL_H
+#define CNX_BASEUI_GLOBAL_H
+
+#include <QtCore/qglobal.h>
+
+#if defined(CNXBASEUI_LIBRARY)
+#  define CNXBASEUISHARED_EXPORT Q_DECL_EXPORT
+#else
+#  define CNXBASEUISHARED_EXPORT Q_DECL_IMPORT
+#endif
+
+#endif // CNX_BASEUI_GLOBAL_H

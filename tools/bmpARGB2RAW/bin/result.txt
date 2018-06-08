@@ -1,0 +1,4 @@
+[file name]	[width]	[height]	[bits]	[description]
+in/left.bmp	1024	600	32
+in/center.bmp	1024	600	32
+in/right.bmp	1024	600	32

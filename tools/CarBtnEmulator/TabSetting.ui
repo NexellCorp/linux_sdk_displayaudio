@@ -1,0 +1,170 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>TabSetting</class>
+ <widget class="QWidget" name="TabSetting">
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>800</width>
+    <height>600</height>
+   </rect>
+  </property>
+  <property name="windowTitle">
+   <string>Form</string>
+  </property>
+  <widget class="QComboBox" name="comboControlMethods">
+   <property name="geometry">
+    <rect>
+     <x>140</x>
+     <y>30</y>
+     <width>131</width>
+     <height>23</height>
+    </rect>
+   </property>
+  </widget>
+  <widget class="QLabel" name="labelControlMethods">
+   <property name="geometry">
+    <rect>
+     <x>30</x>
+     <y>30</y>
+     <width>101</width>
+     <height>21</height>
+    </rect>
+   </property>
+   <property name="text">
+    <string>Control Methods :</string>
+   </property>
+  </widget>
+  <widget class="QLabel" name="labelADBCommand">
+   <property name="geometry">
+    <rect>
+     <x>50</x>
+     <y>90</y>
+     <width>181</width>
+     <height>21</height>
+    </rect>
+   </property>
+   <property name="text">
+    <string>ADB Connection Command :</string>
+   </property>
+  </widget>
+  <widget class="QLineEdit" name="lineEdtAdbConCmd">
+   <property name="geometry">
+    <rect>
+     <x>70</x>
+     <y>120</y>
+     <width>611</width>
+     <height>21</height>
+    </rect>
+   </property>
+   <property name="text">
+    <string>adb shell key_input</string>
+   </property>
+  </widget>
+  <widget class="QLineEdit" name="lineEdtIPAddress">
+   <property name="geometry">
+    <rect>
+     <x>190</x>
+     <y>190</y>
+     <width>171</width>
+     <height>23</height>
+    </rect>
+   </property>
+   <property name="text">
+    <string>127.0.0.1</string>
+   </property>
+  </widget>
+  <widget class="QLabel" name="labelNetworkSetting">
+   <property name="geometry">
+    <rect>
+     <x>50</x>
+     <y>160</y>
+     <width>131</width>
+     <height>16</height>
+    </rect>
+   </property>
+   <property name="text">
+    <string>Network Settings :</string>
+   </property>
+  </widget>
+  <widget class="QLabel" name="labelIPAddress">
+   <property name="geometry">
+    <rect>
+     <x>80</x>
+     <y>190</y>
+     <width>81</width>
+     <height>16</height>
+    </rect>
+   </property>
+   <property name="text">
+    <string>IP Address :</string>
+   </property>
+  </widget>
+  <widget class="QLabel" name="labelPortNumber">
+   <property name="geometry">
+    <rect>
+     <x>80</x>
+     <y>230</y>
+     <width>91</width>
+     <height>21</height>
+    </rect>
+   </property>
+   <property name="text">
+    <string>Port Number : </string>
+   </property>
+  </widget>
+  <widget class="QLineEdit" name="lineEditPortNumber">
+   <property name="geometry">
+    <rect>
+     <x>190</x>
+     <y>230</y>
+     <width>171</width>
+     <height>23</height>
+    </rect>
+   </property>
+   <property name="text">
+    <string>5151</string>
+   </property>
+  </widget>
+  <widget class="QLabel" name="labelUartPort">
+   <property name="geometry">
+    <rect>
+     <x>50</x>
+     <y>270</y>
+     <width>131</width>
+     <height>16</height>
+    </rect>
+   </property>
+   <property name="text">
+    <string>UART Port Number :</string>
+   </property>
+  </widget>
+  <widget class="QLineEdit" name="lineEdtUartPort">
+   <property name="geometry">
+    <rect>
+     <x>70</x>
+     <y>300</y>
+     <width>291</width>
+     <height>21</height>
+    </rect>
+   </property>
+   <property name="text">
+    <string>/dev/ttyUSB0</string>
+   </property>
+  </widget>
+  <zorder>comboControlMethods</zorder>
+  <zorder>labelADBCommand</zorder>
+  <zorder>lineEdtAdbConCmd</zorder>
+  <zorder>labelControlMethods</zorder>
+  <zorder>lineEdtIPAddress</zorder>
+  <zorder>labelNetworkSetting</zorder>
+  <zorder>labelIPAddress</zorder>
+  <zorder>labelPortNumber</zorder>
+  <zorder>lineEditPortNumber</zorder>
+  <zorder>labelUartPort</zorder>
+  <zorder>lineEdtUartPort</zorder>
+ </widget>
+ <resources/>
+ <connections/>
+</ui>

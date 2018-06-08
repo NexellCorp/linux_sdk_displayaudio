@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>TabTest</class>
+ <widget class="QWidget" name="TabTest">
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>800</width>
+    <height>600</height>
+   </rect>
+  </property>
+  <property name="windowTitle">
+   <string>Form</string>
+  </property>
+  <widget class="QPushButton" name="btnAudioFocusTest">
+   <property name="geometry">
+    <rect>
+     <x>50</x>
+     <y>50</y>
+     <width>141</width>
+     <height>51</height>
+    </rect>
+   </property>
+   <property name="text">
+    <string>Audio Focus Test</string>
+   </property>
+  </widget>
+  <widget class="QPushButton" name="btnAVMStart">
+   <property name="geometry">
+    <rect>
+     <x>50</x>
+     <y>170</y>
+     <width>141</width>
+     <height>51</height>
+    </rect>
+   </property>
+   <property name="text">
+    <string>3D AVM Start</string>
+   </property>
+  </widget>
+  <widget class="QPushButton" name="btnAVMStop">
+   <property name="geometry">
+    <rect>
+     <x>220</x>
+     <y>170</y>
+     <width>141</width>
+     <height>51</height>
+    </rect>
+   </property>
+   <property name="text">
+    <string>3D AVM Stop</string>
+   </property>
+  </widget>
+  <widget class="QGroupBox" name="groupBox">
+   <property name="geometry">
+    <rect>
+     <x>40</x>
+     <y>139</y>
+     <width>331</width>
+     <height>91</height>
+    </rect>
+   </property>
+   <property name="title">
+    <string>      3D AVM Test(Dual Display)</string>
+   </property>
+  </widget>
+  <zorder>groupBox</zorder>
+  <zorder>btnAudioFocusTest</zorder>
+  <zorder>btnAVMStart</zorder>
+  <zorder>btnAVMStop</zorder>
+ </widget>
+ <resources/>
+ <connections/>
+</ui>

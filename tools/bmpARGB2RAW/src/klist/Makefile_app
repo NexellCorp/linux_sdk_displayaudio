@@ -1,0 +1,29 @@
+CC := gcc
+INCLUDE += -I./
+
+OPTS := -Wall -O2 -Wextra -Wcast-align -Wno-unused-parameter -Wshadow -Wwrite-strings -Wcast-qual -Wno-unused-result -fno-strict-aliasing -fstrict-overflow -fsigned-char -fno-omit-frame-pointer -fno-optimize-sibling-calls
+
+CFLAGS := -g $(INCLUDE) $(OPTS)
+
+COBJS := list_test.o ./klist.o
+
+APP := test_list
+
+all: $(APP)
+
+$(APP):	depend $(COBJS)
+	$(CC) $(CFLAGS) $(COBJS) -o $@ $(LIBRARY)
+
+clean:
+	rm -f *.o *.a *.so *.so.* .depend
+
+#############################################################################
+# Dependency
+ifeq (.depend,$(whildcard .depend))
+include .depend
+endif
+
+SRCS := $(COBJS:.o=.c) $(CPPOBJS:.o=.cpp)
+INCS := $(INCLUDE)
+depend dep:
+	$(CC) -M $(CFLAGS) $(INCS) $(SRCS) > .depend

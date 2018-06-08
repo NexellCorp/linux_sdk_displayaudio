@@ -1,0 +1,8 @@
+<RCC>
+    <qresource prefix="/">
+        <file>qml/NxLauncher.qml</file>
+        <file>qml/DropIcon.qml</file>
+        <file>qml/DragIcon.qml</file>
+        <file>image/bg_background.png</file>
+    </qresource>
+</RCC>

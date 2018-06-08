@@ -1,0 +1,28 @@
+<RCC>
+    <qresource prefix="/">
+        <file>qml/CNX_StatusBar.qml</file>
+        <file>qml/CNX_ImageButton.qml</file>
+        <file>image/bg_background.png</file>
+        <file>image/bg_back_hover.png</file>
+        <file>image/bg_back_normal.png</file>
+        <file>image/bg_back_pressed.png</file>
+        <file>image/bg_bt_connected.png</file>
+        <file>image/bg_bt_disconnected.png</file>
+        <file>image/bg_home_hover.png</file>
+        <file>image/bg_home_normal.png</file>
+        <file>image/bg_home_pressed.png</file>
+        <file>image/bg_phone_connected.png</file>
+        <file>image/bg_phone_disconnected.png</file>
+        <file>image/bg_vol.png</file>
+        <file>image/bg_vol_mute.png</file>
+        <file>qml/CNX_MediaController.qml</file>
+        <file>image/ic_media_ff.png</file>
+        <file>image/ic_media_next.png</file>
+        <file>image/ic_media_pause.png</file>
+        <file>image/ic_media_play.png</file>
+        <file>image/ic_media_previous.png</file>
+        <file>image/ic_media_rew.png</file>
+        <file>image/bg_back_disabled.png</file>
+        <file>image/bg_home_disabled.png</file>
+    </qresource>
+</RCC>

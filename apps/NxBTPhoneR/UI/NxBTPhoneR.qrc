@@ -1,0 +1,10 @@
+<RCC>
+    <qresource prefix="/">
+        <file>loading/loading.gif</file>
+        <file>loading/spinner_100x100.gif</file>
+        <file>loading/loading2_100x100.gif</file>
+        <file>loading/loading3_100x100.gif</file>
+        <file>bluetooth/bluetooth_off.png</file>
+        <file>bluetooth/bluetooth_on.png</file>
+    </qresource>
+</RCC>
