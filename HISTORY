@@ -1,4 +1,12 @@
-History
+[Revision History]
+
+Version : 1.0-r0
+Date	: 2018-06-11
+Author	: GeunJeong Lee(kjlee@nexell.co.kr)
+
+1. Update all feature revisions.
+
+2. Included as nexll yocto base.
 
 Version : 0.6.0
 Date    : 2017-11-24
