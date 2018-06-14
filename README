@@ -5,7 +5,7 @@ Step 1. Installation Display Audio Toolchain.
 	=> http://files.nexell.co.kr:8070/s5p4418/navi-ref/yocto/QT/SDKs/SDK--QT--s5p4418-daudio-ref.tar.gz
 
 	Extract downloaded file
-	$ tar xvfz SDK-QT--s5p4418-daudio-ref.tar.gz
+	$ tar xvfz SDK--QT--s5p4418-daudio-ref.tar.gz
 
 	Install SDK
 	$ ./poky-glibc-x86_64-s5p4418-daudio-ref-qt-cortexa9hf-neon-toolchain-2.1.3.sh
