@@ -48,7 +48,7 @@
 
 #define MAX_LOG_ROTATE		10
 
-const char* g_option = "hvctpfxl:s:";
+const char* g_option = "hvctpfxl:";
 int32_t g_log_level = NXLOG_VERBOSE;
 bool g_printTime = false;
 bool g_enableFilter = false;
@@ -78,9 +78,7 @@ static void print_usage(void) {
 	"  -t: print with time\n"
 	"  -p: print with PID\n"
 	"  -f: print only the current log\n"
-	"  -x: print without system log (kernel, systemd, etc...)\n\n"
-	"Settings options:\n"
-	"  -s <level>: save the log up to the specified level\n"
+	"  -x: print without system log (kernel, systemd, etc...)\n"
 	"  -l <level>: print the log up to the specified level\n\n"
 	"Level:\n"
 	"  0 : error\n"
@@ -123,9 +121,11 @@ static void logcat_clear_all(void) {
 	}
 }
 
+#if 0
 static int32_t logcat_setlogmask(int32_t mask_level) {
 	return setlogmask(LOG_UPTO(mask_level + 3));
 }
+#endif
 
 static void nxlogcat_parser(char *line) {
 	char tmp1[PRINT_LEN], tmp2[PRINT_LEN], tmp3[PRINT_LEN], nxlog[PRINT_LEN];
@@ -264,7 +264,7 @@ int32_t main(int32_t argc, char *argv[]) {
 	int32_t opt;
 	int32_t iNotify = -1;
 	int32_t iWatch = -1;
-	int32_t mask_level;
+//	int32_t mask_level;
 	int32_t rotate;
 	char readEvent[BUF_LEN];
 	char backupFile[30];
@@ -302,12 +302,14 @@ int32_t main(int32_t argc, char *argv[]) {
 			case 'x':
 				g_printSys = false;
 				break;
+#if 0
 			case 's':
 				mask_level = atoi(optarg);
 				if (mask_level < 0 || mask_level > NXLOG_VERBOSE)
 					mask_level = NXLOG_VERBOSE;
 				logcat_setlogmask(mask_level);
 				return 0;
+#endif
 			case 'l':
 				g_enableFilter = true;
 				g_log_level = atoi(optarg);
