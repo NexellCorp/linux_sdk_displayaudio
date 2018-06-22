@@ -32,10 +32,10 @@ int main(int argc, char** argv)
 		goto loop_finished;
 	}
 
-	if (NX_REPLY_FAIL == NX_RequestCommand(NX_REQUEST_PROCESS_HIDE, &g_process_info)) {
-		LOGT("NX_REQUEST_PROCESS_HIDE [FAILED]");
-		goto loop_finished;
-	}
+//	if (NX_REPLY_FAIL == NX_RequestCommand(NX_REQUEST_PROCESS_HIDE, &g_process_info)) {
+//		LOGT("NX_REQUEST_PROCESS_HIDE [FAILED]");
+//		goto loop_finished;
+//	}
 
 	service.start();
 	if (!service.initialize()) {

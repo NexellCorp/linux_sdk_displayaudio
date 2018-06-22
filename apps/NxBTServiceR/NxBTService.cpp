@@ -438,7 +438,7 @@ void NxBTService::sendAVKStreamingStopped_stub(void *pObj)
 	//! [1]
 
 	//! [2] try to close audio device
-	self->closeAudioAVK();
+//	self->closeAudioAVK();
 	//! [2]
 }
 
