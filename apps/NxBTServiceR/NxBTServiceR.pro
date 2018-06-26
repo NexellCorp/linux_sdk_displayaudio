@@ -43,7 +43,7 @@ linux-oe-g++ {
     # bt mobule
     NX_DAUDIO_BT_LIB_PATH = $${NX_DAUDIO_LIB_PATH}/lib/nxbt1xx
     INCLUDEPATH += $${NX_DAUDIO_BT_LIB_PATH}/include/
-    LIBS += -L$${NX_DAUDIO_BT_LIB_PATH}/lib -lnxbt -lappbt -lnrec_hf -lnxalsa
+    LIBS += -L$${NX_DAUDIO_BT_LIB_PATH}/lib -lnxbt
 
 } else {
     error("current toolchain is not supported!")
