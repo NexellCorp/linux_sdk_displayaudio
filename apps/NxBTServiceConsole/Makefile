@@ -10,7 +10,7 @@ BIN_DIR	:= ../../bin
 CFLAGS	+= -g
 INCLUDE	+= -I./ -I$(INC_DIR)
 
-LIBRARY	+= -L$(LIB_DIR) -lnxbt -lappbt -lnrec_hf -lnxalsa
+LIBRARY	+= -L$(LIB_DIR) -lnxbt -lappbt -lnxalsa -lnrec_hf
 LIBRARY	+= -lstdc++ -lpthread -lm
 
 CXXOBJS	+= main.o
