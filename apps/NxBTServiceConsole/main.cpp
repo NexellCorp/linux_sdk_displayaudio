@@ -29,56 +29,60 @@
 #define SYNC_MODE	true
 
 int app_get_string(const char *querystring, char *str, int len) {
-    int c, index;
+	int c, index;
 
-    if (querystring)
-	    printf("%s => ", querystring);
+	if (querystring) {
+		printf("%s => ", querystring);
+	}
 
-    index = 0;
-    do {
+	index = 0;
+
+	do {
 		c = getchar();
-        if (c == EOF)
-            return -1;
-        if ((c != '\n') && (index < (len - 1))) {
-            str[index] = (char)c;
-            index++;
-        }
-    } while (c != '\n');
+		if (c == EOF) {
+			return -1;
+		}
+		if ((c != '\n') && (index < (len - 1))) {
+			str[index] = (char)c;
+			index++;
+		}
+	} while (c != '\n');
 
-    str[index] = '\0';
-    return index;
+	str[index] = '\0';
+	return index;
 }
 
 int app_get_choice(const char *querystring) {
-    int neg, value, c, base;
-    int count = 0;
+	int neg, value, c, base;
+	int count = 0;
 
-    base = 10;
-    neg = 1;
-    printf("%s => ", querystring);
-    value = 0;
+	base = 10;
+	neg = 1;
+	printf("%s => ", querystring);
+	value = 0;
 
-    do
-    {
-        c = getchar();
+	do {
+		c = getchar();
 
-        if ((count == 0) && (c == '\n'))
-	        return -1;
-        count ++;
+		if ((count == 0) && (c == '\n')) {
+			return -1;
+		}
+		count ++;
 
-        if ((c >= '0') && (c <= '9'))
-            value = (value * base) + (c - '0');
-        else if ((c >= 'a') && (c <= 'f'))
-            value = (value * base) + (c - 'a' + 10);
-        else if ((c >= 'A') && (c <= 'F'))
-            value = (value * base) + (c - 'A' + 10);
-        else if (c == '-')
-            neg *= -1;
-        else if (c == 'x')
-            base = 16;
-    } while ((c != EOF) && (c != '\n'));
+		if ((c >= '0') && (c <= '9')) {
+			value = (value * base) + (c - '0');
+		} else if ((c >= 'a') && (c <= 'f')) {
+			value = (value * base) + (c - 'a' + 10);
+		} else if ((c >= 'A') && (c <= 'F')) {
+			value = (value * base) + (c - 'A' + 10);
+		} else if (c == '-') {
+			neg *= -1;
+		} else if (c == 'x') {
+			base = 16;
+		}
+	} while ((c != EOF) && (c != '\n'));
 
-    return value * neg;
+	return value * neg;
 }
 
 void app_display_main_menu(void) {
@@ -156,39 +160,39 @@ void app_display_main_menu(void) {
 #define CALLSTACK_SIZE 10
 
 static void backtrace_dump(void) {
-    int i, nptrs;
-    void *buf[CALLSTACK_SIZE + 1];
-    char **strings;
+	int i, nptrs;
+	void *buf[CALLSTACK_SIZE + 1];
+	char **strings;
 
-    nptrs = backtrace(buf, CALLSTACK_SIZE);
-    printf("%s: backtrace() returned %d addresses\n", __func__, nptrs);
+	nptrs = backtrace(buf, CALLSTACK_SIZE);
+	printf("%s: backtrace() returned %d addresses\n", __func__, nptrs);
 
-    strings = backtrace_symbols(buf, nptrs);
+	strings = backtrace_symbols(buf, nptrs);
 
-    if(strings == NULL) {
-        printf("%s: No backtrace captured\n", __func__);
-        return;
-    }
+	if (strings == NULL) {
+		printf("%s: No backtrace captured\n", __func__);
+		return;
+	}
 
-    for(i = 0; i < nptrs; i++)
-        printf("%s\n", strings[i]);
+	for (i = 0; i < nptrs; i++) {
+		printf("%s\n", strings[i]);
+	}
 
-    free(strings);
+	free(strings);
 }
 
-static void sigHandler(int signum)
-{
-    printf("\n%s: Signal %d\n", __func__, signum);
+static void sigHandler(int signum) {
+	printf("\n%s: Signal %d\n", __func__, signum);
 
-    switch(signum ) {
-        case SIGILL:
-        case SIGABRT:
-        case SIGSEGV:
-            backtrace_dump();
-            break;
-        default:
-            break;
-    }
+	switch(signum ) {
+		case SIGILL:
+		case SIGABRT:
+		case SIGSEGV:
+			backtrace_dump();
+			break;
+		default:
+			break;
+	}
 }
 #endif
 
@@ -297,7 +301,7 @@ static void sendPBCConnectionStatus_stub(void *pObj, bool is_connected) {
 	// To do : callback
 }
 
-static void sendNotifyGetPhonebook_stub(void *pObj, int32_t  type) {
+static void sendNotifyGetPhonebook_stub(void *pObj, int32_t type) {
 	// To do : callback
 }
 
@@ -375,8 +379,9 @@ int main (int argc, char *argv[])
 	pInstance->registerConnectionStatusCbMCE(m_pObjHandler, sendMCEConnectionStatus_stub);
 	pInstance->registerNotifyGetMessageCbMCE(m_pObjHandler, sendNotifyGetMessageMCE_stub);
 
-	if (pInstance->initDevManager() < 0)
+	if (pInstance->initDevManager() < 0) {
 		goto EXIT;
+	}
 
 //	pInstance->setRecoveryCommand("-p /etc/bluetooth/BCM20710A1_001.002.014.0103.0000.hcd -all=0 &");
 
@@ -386,8 +391,9 @@ int main (int argc, char *argv[])
 	pInstance->renameLocalDevice("NX-Link");
 	printf("Local BT name : %s\n", pInstance->getLocalDevName());
 	printf("Local BT address : ");
-	for (i = 0; i < 6; i++)
+	for (i = 0; i < 6; i++) {
 		printf("%02x", localAddress[i]);
+	}
 	printf("\n");
 
 	for (i = 0; i < pInstance->getPairedDevCount(); i++) {
@@ -407,23 +413,27 @@ int main (int argc, char *argv[])
 		choice = app_get_choice("Select menu");
 
 		switch (choice) {
-            case APP_MGT_MENU_GET_PAIRED_DEV_LIST:
-                for (i = 0; i < pInstance->getPairedDevCount(); i++) {
-                    pInstance->getPairedDevInfoByIndex(i, pairedDev.pairedDevInfo[i].name, pairedDev.pairedDevInfo[i].bd_addr);
-                    printf("Paired device name : %s, bd_addr : %02x:%02x:%02x:%02x:%02x:%02x\n", pairedDev.pairedDevInfo[i].name, pairedDev.pairedDevInfo[i].bd_addr[0], pairedDev.pairedDevInfo[i].bd_addr[1], pairedDev.pairedDevInfo[i].bd_addr[2], pairedDev.pairedDevInfo[i].bd_addr[3], pairedDev.pairedDevInfo[i].bd_addr[4], pairedDev.pairedDevInfo[i].bd_addr[5]);
-                }
-                break;
+			case APP_MGT_MENU_GET_PAIRED_DEV_LIST:
+				for (i = 0; i < pInstance->getPairedDevCount(); i++) {
+					pInstance->getPairedDevInfoByIndex(i, pairedDev.pairedDevInfo[i].name, pairedDev.pairedDevInfo[i].bd_addr);
+					printf("Paired device name : %s, bd_addr : %02x:%02x:%02x:%02x:%02x:%02x\n", pairedDev.pairedDevInfo[i].name, pairedDev.pairedDevInfo[i].bd_addr[0], pairedDev.pairedDevInfo[i].bd_addr[1], pairedDev.pairedDevInfo[i].bd_addr[2], pairedDev.pairedDevInfo[i].bd_addr[3], pairedDev.pairedDevInfo[i].bd_addr[4], pairedDev.pairedDevInfo[i].bd_addr[5]);
+				}
+				break;
 			case APP_MGT_MENU_ENABLE_AUTOCONN:
 				pInstance->enableAutoConnection(true);
+				sync();
 				break;
 			case APP_MGT_MENU_DISABLE_AUTOCONN:
 				pInstance->enableAutoConnection(false);
+				sync();
 				break;
 			case APP_MGT_MENU_ENABLE_AUTOPAIR:
 				pInstance->enableAutoPairing(true);
+				sync();
 				break;
 			case APP_MGT_MENU_DISABLE_AUTOPAIR:
 				pInstance->enableAutoPairing(false);
+				sync();
 				break;
 			case APP_MGT_MENU_PAIR_ACCEPT:
 				pInstance->acceptPairing();
@@ -463,8 +473,9 @@ int main (int argc, char *argv[])
 				for (i = 0; i < pInstance->getConnectionNumberAVK(); i++) {
 					pInstance->getConnectionDevAddrAVK(i, connectedDevAVK.connectedDevInfoAVK[i].bd_addr);
 					printf("%d : ", i);
-				    for (j = 0; j < 6; j++)
+				    for (j = 0; j < 6; j++) {
 				        printf("%02x", connectedDevAVK.connectedDevInfoAVK[i].bd_addr[j]);
+					}
 				    printf("\n");
 				}
 				break;
@@ -507,8 +518,9 @@ int main (int argc, char *argv[])
 			case APP_HS_MENU_GET_CONN_BD_ADDR:
 				memset(hs_connected_bd_addr, 0, sizeof(hs_connected_bd_addr));
 				if (pInstance->getConnectionDevAddrHS(hs_connected_bd_addr) >= 0) {
-					for (i = 0; i < 6; i++)
+					for (i = 0; i < 6; i++) {
 						printf("%02x", hs_connected_bd_addr[i]);
+					}
 					printf("\n");
 				}
 				break;
@@ -606,8 +618,9 @@ int main (int argc, char *argv[])
 	} while (choice != APP_MENU_QUIT);
 
 EXIT:
-	if (pInstance)
+	if (pInstance) {
 		delete pInstance;
+	}
 
 	return 0;
 }

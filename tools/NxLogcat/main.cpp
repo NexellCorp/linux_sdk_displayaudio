@@ -252,8 +252,9 @@ static void logcat(FILE *log_file) {
 	// Print the log
 	while (1) {
 		memset(line, 0, sizeof(line));
-		if (!fgets(line, sizeof(line) - 1, log_file))
+		if (!fgets(line, sizeof(line) - 1, log_file)) {
 			break;
+		}
 		nxlogcat_parser(line);
 	}
 }
@@ -450,12 +451,13 @@ int32_t main(int32_t argc, char *argv[]) {
 	}
 
 ERROR:
-	if (iWatch > 0)
+	if (iWatch > 0) {
 		inotify_rm_watch(iNotify, iWatch);
-	if (iNotify > 0)
+	} if (iNotify > 0) {
 		close(iNotify);
-	if (hFile)
+	} if (hFile) {
 		fclose(hFile);
+	}
 
 	return 0;
 }
