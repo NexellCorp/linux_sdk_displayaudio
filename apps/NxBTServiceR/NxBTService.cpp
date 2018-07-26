@@ -352,13 +352,13 @@ void NxBTService::updatePlayStatusAVK_stub(void *pObj, int32_t play_status)
 
 		//! [4] if CONFIG_A2DP_PROCESS_MANAGEMENT option is enabled, run following code.
 #ifdef CONFIG_A2DP_PROCESS_MANAGEMENT
-		std::vector<int32_t> pids;
-		char command[BUFFER_SIZE] = {0,};
+//		std::vector<int32_t> pids;
+//		char command[BUFFER_SIZE] = {0,};
 
-		if (!findPID("NxBTAudioR", pids)) {
-			sprintf(command, "%s -platform wayland &", "/nexell/daudio/NxBTAudioR/NxBTAudioR");
-			system(command);
-		}
+//		if (!findPID("NxBTAudioR", pids)) {
+//			sprintf(command, "%s -platform wayland &", "/nexell/daudio/NxBTAudioR/NxBTAudioR");
+//			system(command);
+//		}
 #endif
 		//! [4]
 	}
@@ -1683,7 +1683,7 @@ bool NxBTService::playStartAVK(std::string service/*= "AVK"*/, std::string comma
 	reply.push_back(service);
 	reply.push_back(command);
 
-	result = !(m_pModel->getConnectionDevAddrAVK(AVK_CONNECTED_INDEX, bd_addr) < 0 || m_pModel->playStartAVK(bd_addr) < 0 || m_pModel->requestGetElementAttr(bd_addr) < 0);
+	result = !(m_pModel->getConnectionDevAddrAVK(AVK_CONNECTED_INDEX, bd_addr) < 0 || m_pModel->playStartAVK(bd_addr) < 0);
 
 	if (result)
 		reply.push_back(bdAddrToString(bd_addr, DEVICE_ADDRESS_SIZE, ':'));
@@ -1701,7 +1701,7 @@ bool NxBTService::playStopAVK(std::string service/*= "AVK"*/, std::string comman
 	reply.push_back(service);
 	reply.push_back(command);
 
-	result = !(m_pModel->getConnectionDevAddrAVK(AVK_CONNECTED_INDEX, bd_addr) < 0 || m_pModel->playStopAVK(bd_addr) < 0 || m_pModel->requestGetElementAttr(bd_addr) < 0);
+	result = !(m_pModel->getConnectionDevAddrAVK(AVK_CONNECTED_INDEX, bd_addr) < 0 || m_pModel->playStopAVK(bd_addr) < 0);
 
 	if (result)
 		reply.push_back(bdAddrToString(bd_addr, DEVICE_ADDRESS_SIZE, ':'));
@@ -1719,7 +1719,7 @@ bool NxBTService::playPauseAVK(std::string service/*= "AVK"*/, std::string comma
 	reply.push_back(service);
 	reply.push_back(command);
 
-	result = !(m_pModel->getConnectionDevAddrAVK(AVK_CONNECTED_INDEX, bd_addr) < 0 || m_pModel->playPauseAVK(bd_addr) < 0 || m_pModel->requestGetElementAttr(bd_addr) < 0);
+	result = !(m_pModel->getConnectionDevAddrAVK(AVK_CONNECTED_INDEX, bd_addr) < 0 || m_pModel->playPauseAVK(bd_addr) < 0);
 
 	if (result)
 		reply.push_back(bdAddrToString(bd_addr, DEVICE_ADDRESS_SIZE, ':'));
@@ -1737,7 +1737,7 @@ bool NxBTService::playPrevAVK(std::string service/*= "AVK"*/, std::string comman
 	reply.push_back(service);
 	reply.push_back(command);
 
-	result = !(m_pModel->getConnectionDevAddrAVK(AVK_CONNECTED_INDEX, bd_addr) < 0 || m_pModel->playPrevAVK(bd_addr) < 0 || m_pModel->requestGetElementAttr(bd_addr) < 0);
+	result = !(m_pModel->getConnectionDevAddrAVK(AVK_CONNECTED_INDEX, bd_addr) < 0 || m_pModel->playPrevAVK(bd_addr) < 0);
 
 	if (result)
 		reply.push_back(bdAddrToString(bd_addr, DEVICE_ADDRESS_SIZE, ':'));
@@ -1755,7 +1755,7 @@ bool NxBTService::playNextAVK(std::string service/*= "AVK"*/, std::string comman
 	reply.push_back(service);
 	reply.push_back(command);
 
-	result = !(m_pModel->getConnectionDevAddrAVK(AVK_CONNECTED_INDEX, bd_addr) < 0 || m_pModel->playNextAVK(bd_addr) < 0 || m_pModel->requestGetElementAttr(bd_addr) < 0);
+	result = !(m_pModel->getConnectionDevAddrAVK(AVK_CONNECTED_INDEX, bd_addr) < 0 || m_pModel->playNextAVK(bd_addr) < 0);
 
 	if (result)
 		reply.push_back(bdAddrToString(bd_addr, DEVICE_ADDRESS_SIZE, ':'));

@@ -146,7 +146,6 @@ void app_display_main_menu(void) {
 	printf("[MCE]================================================\n");
 	printf(" %d		=> MCE connection\n", APP_MCE_NENU_OPEN);
 	printf(" %d		=> MCE disconnection\n", APP_MCE_NENU_CLOSE);
-	printf(" %d		=> MCE abort\n", APP_MCE_NENU_ABORT);
 	printf(" %d		=> Start MCE notification server\n", APP_MCE_MENU_START_MNS);
 	printf(" %d		=> Stop MCE notification server\n", APP_MCE_MENU_STOP_MNS);
 	printf(" %d		=> Get message\n", APP_MCE_MENU_GET_MESSAGE);
@@ -593,9 +592,6 @@ int main (int argc, char *argv[])
 			case APP_MCE_NENU_CLOSE:
 				pInstance->disconnectFromMCE();
 				break;
-			case APP_MCE_NENU_ABORT:
-				pInstance->abortMCE();
-				break;
 			case APP_MCE_MENU_START_MNS:
 				pInstance->startNotifyServerFromMCE();
 				break;
@@ -607,6 +603,9 @@ int main (int argc, char *argv[])
 				memset(phoneNumber, 0, sizeof(phoneNumber));
 				memset(msgBody, 0, sizeof(msgBody));
 				pInstance->getParserBmsg(fullName, phoneNumber, msgBody);
+				printf("FN  : %s\n", fullName);
+				printf("TEL : %s\n", phoneNumber);
+				printf("MSG : %s\n", msgBody);
 				break;
 			case APP_MENU_QUIT:
 				printf("Exit program!\n");
