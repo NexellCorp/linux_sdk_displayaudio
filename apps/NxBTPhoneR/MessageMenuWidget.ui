@@ -42,7 +42,7 @@
     <string>SYNC</string>
    </property>
   </widget>
-  <widget class="QListWidget" name="LISTWIDGET_SMS_MESSAGE">
+  <widget class="QPlainTextEdit" name="EDIT_SMS_MESSAGE">
    <property name="geometry">
     <rect>
      <x>0</x>
@@ -53,8 +53,11 @@
    </property>
    <property name="font">
     <font>
-     <pointsize>25</pointsize>
+     <pointsize>20</pointsize>
     </font>
+   </property>
+   <property name="readOnly">
+    <bool>true</bool>
    </property>
   </widget>
  </widget>

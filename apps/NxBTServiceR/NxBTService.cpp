@@ -736,18 +736,64 @@ void NxBTService::sendMCEConnectionStatus_stub(void *pObj, bool is_connected)
 
 void NxBTService::sendNotifyGetMessageMCE_stub(void *pObj)
 {
-    NxBTService* self = (NxBTService*)pObj;
-    char buffer[BUFFER_SIZE] = {0,};
+	NxBTService* self = (NxBTService*)pObj;
+	string buffer = "$OK#MCE#DOWNLOAD SMS MESSAGE#";
 
-    char name[20] = {0,};
-    char phonenumber[20] = {0,};
-    char message[256] = {0,};
+	char *pName = NULL, *pName2 = NULL;
+	char *pPhonenumber = NULL, *pPhonenumber2 = NULL;
+	char *pMessage = NULL, *pMessage2 = NULL;
 
-    if (0 > m_pModel->getParserBmsg(name, phonenumber, message)) {
-        sprintf(buffer, "$OK#%s#%s#%s#%s#%s\n", "MCE", "DOWNLOAD SMS MESSAGE", name, phonenumber, message);
+	if (RET_OK == m_pModel->getParserBmsg(pName, pPhonenumber, pMessage)) {
+		int32_t iSize = 0;
 
-        self->m_IPCServer.write_broadcast(buffer);
-    }
+		// append name
+		if (pName)
+		{
+			iSize = strlen(pName);
+			if (iSize)
+			{
+				pName2 = new char[iSize];
+				strcpy(pName2, pName);
+				buffer.append(pName2);
+			}
+		}
+		buffer.append("#");
+
+		// append phonenumber
+		if (pPhonenumber)
+		{
+			iSize = strlen(pPhonenumber);
+			if (iSize)
+			{
+				pPhonenumber2 = new char[iSize];
+				strcpy(pPhonenumber2, pPhonenumber);
+				buffer.append(pPhonenumber2);
+			}
+		}
+		buffer.append("#");
+
+		// append message
+		if (pMessage)
+		{
+			iSize = strlen(pMessage);
+			if (iSize)
+			{
+				pMessage2 = new char[iSize];
+				strcpy(pMessage2, pMessage);
+				buffer.append(pMessage);
+			}
+		}
+		buffer.append("\n");
+
+		self->m_IPCServer.write_broadcast(const_cast<char*>(buffer.c_str()));
+
+		if (pName2)
+			delete[] pName2;
+		if (pPhonenumber2)
+			delete[] pPhonenumber2;
+		if (pMessage2)
+			delete[] pMessage2;
+	}
 }
 
 NxBTService::NxBTService()

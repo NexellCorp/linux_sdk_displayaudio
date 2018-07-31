@@ -1,6 +1,8 @@
 #include "MessageMenuWidget.h"
 #include "ui_MessageMenuWidget.h"
 
+#define LOG_TAG "[NxBTPhoneR]"
+#include <NX_Log.h>
 
 MessageMenuWidget::MessageMenuWidget(QWidget *parent) :
     QWidget(parent, Qt::FramelessWindowHint),
@@ -102,7 +104,8 @@ bool MessageMenuWidget::updateForSMSMessage(QStringList &tokens)
         for (int i = 4; i < 6; i++)
             text += "\n" + tokens[i];
 
-        ui->LISTWIDGET_SMS_MESSAGE->addItem(text);
+		ui->EDIT_SMS_MESSAGE->clear();
+		ui->EDIT_SMS_MESSAGE->appendPlainText(text);
 
         return true;
     }
@@ -112,6 +115,5 @@ bool MessageMenuWidget::updateForSMSMessage(QStringList &tokens)
 
 void MessageMenuWidget::on_BUTTON_SYNC_clicked()
 {
-    ui->LISTWIDGET_SMS_MESSAGE->clear();
     emit signalCommandToServer("$MCE#DOWNLOAD SMS MESSAGE\n");
 }
