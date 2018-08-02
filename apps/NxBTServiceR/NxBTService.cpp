@@ -1,5 +1,8 @@
 #include "NxBTService.h"
 
+#define LOG_TAG "[NxBTServiceR]"
+#include <NX_Log.h>
+
 INX_BT* NxBTService::m_pModel = NULL;
 
 #define STR(X) #X
@@ -101,7 +104,7 @@ void NxBTService::sendPairingFailed_stub(void *pObj, int32_t fail_reason)
 
     // example) "$OK#AVK#PAIRING FAILED#5\n"
     sprintf(buffer, "$%s#%s#%s#%d\n", "OK", "AVK", "PAIRING FAILED", fail_reason);
-    LOG(buffer);
+    NXLOGD(buffer);
     self->m_IPCServer.write_broadcast(buffer);
 }
 
@@ -140,7 +143,7 @@ void NxBTService::updatePairedDevices_stub(void *pObj)
 	}
 
     sprintf(buffer+strlen(buffer), "\n");
-    LOG(buffer);
+    NXLOGD(buffer);
     self->m_IPCServer.write_broadcast(buffer);
 }
 
@@ -180,7 +183,7 @@ void NxBTService::updateUnpairedDevices_stub(void *pObj)
 
     sprintf(buffer+strlen(buffer), "\n");
 
-    LOG(buffer);
+    NXLOGD(buffer);
     self->m_IPCServer.write_broadcast(buffer);
 }
 
@@ -208,22 +211,24 @@ void NxBTService::sendPairingRequest_stub(void *pObj_, bool auto_mode_, char *na
 
 void NxBTService::callbackLinkDownEventManager(void* pObj, char* bd_addr, int32_t reason_code)
 {
-    LOG(__FUNCTION__);
+    NXLOGD(__FUNCTION__);
     (void)bd_addr;
 
     NxBTService* self = (NxBTService*)pObj;
     switch (reason_code) {
     case 0x08:
-        if (pthread_attr_init(&self->h_AutoConnectAttribution) == 0) {
-            if (pthread_attr_setdetachstate(&self->h_AutoConnectAttribution, PTHREAD_CREATE_DETACHED) != 0) {
-                LOGT("pthread_attr_setdetachstate() [FAILED]");
-            }
+		if (m_pModel->isAutoConnection()) {
+	        if (pthread_attr_init(&self->h_AutoConnectAttribution) == 0) {
+	            if (pthread_attr_setdetachstate(&self->h_AutoConnectAttribution, PTHREAD_CREATE_DETACHED) != 0) {
+	                NXLOGE("pthread_attr_setdetachstate() [FAILED]");
+	            }
 
-            pthread_create(&self->h_AutoConnectThread, &self->h_AutoConnectAttribution, NxBTService::autoConnectThread, self);
-            pthread_attr_destroy(&self->h_AutoConnectAttribution);
-        } else {
-            LOGT("pthread_attr_init() [FAILED]");
-        }
+	            pthread_create(&self->h_AutoConnectThread, &self->h_AutoConnectAttribution, NxBTService::autoConnectThread, self);
+	            pthread_attr_destroy(&self->h_AutoConnectAttribution);
+	        } else {
+	            NXLOGE("pthread_attr_init() [FAILED]");
+	        }
+		}
         break;
 
     case 0x13:
@@ -387,7 +392,7 @@ void NxBTService::updateMediaElementsAVK_stub(void *pObj, char *mediaTitle, char
 
 void NxBTService::updatePlayPositionAVK_stub(void *pObj, int32_t play_pos_msec)
 {
-    LOG("NxBTService::updatePlayPositionAVK_stub");
+    NXLOGD("NxBTService::updatePlayPositionAVK_stub");
     NxBTService* self = (NxBTService*)pObj;
     char buffer[BUFFER_SIZE] = {0,};
 
@@ -401,7 +406,7 @@ void NxBTService::updatePlayPositionAVK_stub(void *pObj, int32_t play_pos_msec)
 
 void NxBTService::sendAVKStreamingStarted_stub(void* pObj, bool is_opened)
 {
-    LOG(__FUNCTION__);
+    NXLOGD(__FUNCTION__);
     NxBTService* self = (NxBTService*)pObj;
     char buffer[BUFFER_SIZE] = {0,};
 
@@ -427,7 +432,7 @@ void NxBTService::sendAVKStreamingStarted_stub(void* pObj, bool is_opened)
 
 void NxBTService::sendAVKStreamingStopped_stub(void *pObj)
 {
-    LOG(__FUNCTION__);
+    NXLOGD(__FUNCTION__);
     NxBTService* self = (NxBTService*)pObj;
     char buffer[BUFFER_SIZE] = {0,};
 
@@ -739,61 +744,7 @@ void NxBTService::sendNotifyGetMessageMCE_stub(void *pObj)
 	NxBTService* self = (NxBTService*)pObj;
 	string buffer = "$OK#MCE#DOWNLOAD SMS MESSAGE#";
 
-	char *pName = NULL, *pName2 = NULL;
-	char *pPhonenumber = NULL, *pPhonenumber2 = NULL;
-	char *pMessage = NULL, *pMessage2 = NULL;
-
-	if (RET_OK == m_pModel->getParserBmsg(pName, pPhonenumber, pMessage)) {
-		int32_t iSize = 0;
-
-		// append name
-		if (pName)
-		{
-			iSize = strlen(pName);
-			if (iSize)
-			{
-				pName2 = new char[iSize];
-				strcpy(pName2, pName);
-				buffer.append(pName2);
-			}
-		}
-		buffer.append("#");
-
-		// append phonenumber
-		if (pPhonenumber)
-		{
-			iSize = strlen(pPhonenumber);
-			if (iSize)
-			{
-				pPhonenumber2 = new char[iSize];
-				strcpy(pPhonenumber2, pPhonenumber);
-				buffer.append(pPhonenumber2);
-			}
-		}
-		buffer.append("#");
-
-		// append message
-		if (pMessage)
-		{
-			iSize = strlen(pMessage);
-			if (iSize)
-			{
-				pMessage2 = new char[iSize];
-				strcpy(pMessage2, pMessage);
-				buffer.append(pMessage);
-			}
-		}
-		buffer.append("\n");
-
-		self->m_IPCServer.write_broadcast(const_cast<char*>(buffer.c_str()));
-
-		if (pName2)
-			delete[] pName2;
-		if (pPhonenumber2)
-			delete[] pPhonenumber2;
-		if (pMessage2)
-			delete[] pMessage2;
-	}
+	self->downloadSMSMessage("MCE", "DOWNLOAD SMS MESSAGE");
 }
 
 NxBTService::NxBTService()
@@ -915,18 +866,18 @@ void* NxBTService::autoConnectThread(void* args)
 {
     NxBTService* self = (NxBTService*)args;
 
-    LOG(">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>");
-    LOG(__FUNCTION__);
+    NXLOGD(">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>");
+    NXLOGD(__FUNCTION__);
     char buffer[1024];
     sprintf(buffer, "is autoconnection ? %s\nAVK is connected ? %s\nHS is connected ? %s\n", m_pModel->isAutoConnection() ? "ON" : "OFF", self->m_AVK.connection.on ? "ON" : "OFF", self->m_HS.hs.on ? "ON" : "OFF");
-    LOG(buffer);
+    NXLOGD(buffer);
     while (m_pModel->isAutoConnection() && !(self->m_AVK.connection.on || self->m_HS.hs.on)) {
-        LOG("try to auto connection!");
+        NXLOGD("try to auto connection!");
         m_pModel->autoConnection(true);
 //        pthread_yield();
         usleep(1000000);
     }
-    LOG("<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<");
+    NXLOGD("<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<");
 
     return NULL;
 }
@@ -935,8 +886,8 @@ void* NxBTService::autoConnectThread(void* args)
 //{
 //    NxBTService* self = (NxBTService*)args;
 
-//    LOG(">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>");
-//    LOG(__FUNCTION__);
+//    NXLOGD(">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>");
+//    NXLOGD(__FUNCTION__);
 //    clock_t start = clock();
 //    clock_t end = start;
 //    double elapsed = (double)(end- start) / CLOCKS_PER_SEC;
@@ -960,11 +911,11 @@ void* NxBTService::autoConnectThread(void* args)
 //        sprintf(buffer, "$%s#%s#%s\n", "NG", "AVK", "AUDIO CLOSED");
 //        char msg[1024];
 //        sprintf(msg, "\n\n[TIMEOUT]: close failed! elapsed time = %.1f sec.\n\n", elapsed);
-//        LOG(msg);
+//        NXLOGD(msg);
 //    }
 
 //    self->m_IPCServer.write_broadcast(buffer);
-//    LOG("<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<");
+//    NXLOGD("<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<");
 //    return NULL;
 //}
 
@@ -2118,21 +2069,47 @@ bool NxBTService::isConnectedToMCE(std::string service, std::string command)
 bool NxBTService::downloadSMSMessage(std::string service, std::string command)
 {
 	std::vector<std::string> reply;
-	char name[20] = {0,};
-	char phonenumber[20] = {0,};
-	char message[256] = {0,};
-	bool result = (m_pModel->getParserBmsg(name, phonenumber, message) == RET_OK);
+	Bmessage_info_t bmsg;
+	bmsg.fullName = NULL;
+	bmsg.phoneNumber = NULL;
+	bmsg.msgBody = NULL;
+
+	bool result = (m_pModel->getParserBmsg(&bmsg) == RET_OK);
 
 	reply.push_back(service);
 	reply.push_back(command);
 
 	if (result) {
-		reply.push_back(name);
-		reply.push_back(phonenumber);
-		reply.push_back(message);
+		if (bmsg.fullName) {
+			reply.push_back(bmsg.fullName);
+		} else {
+			reply.push_back("");
+		}
+
+		if (bmsg.phoneNumber) {
+			reply.push_back(bmsg.phoneNumber);
+		} else {
+			reply.push_back("");
+		}
+
+		if (bmsg.msgBody) {
+			reply.push_back(bmsg.msgBody);
+		} else {
+			reply.push_back("");
+		}
 	}
 
 	m_IPCServer.write_broadcast( (char*)( MakeReplyCommand(result, reply).c_str() ) );
+
+	if (bmsg.fullName) {
+		free(bmsg.fullName);
+	}
+	if (bmsg.phoneNumber) {
+		free(bmsg.phoneNumber);
+	}
+	if (bmsg.msgBody) {
+		free(bmsg.msgBody);
+	}
 
 	return result;
 }
@@ -2371,11 +2348,11 @@ void* NxBTService::testAudioFocusThread(void* args)
 	(void)args;
 
 	while (1) {
-		printf("----------------------------------------------------------------\n");
-		printf("g_calling_mode_on = %s\n", g_calling_mode_on ? "TRUE" : "FALSE");
-		printf("g_has_audio_focus = %s\n", g_has_audio_focus ? "TRUE" : "FALSE");
-		printf("g_has_audio_focus_transient = %s\n", g_has_audio_focus_transient ? "TRUE" : "FALSE");
-		printf("----------------------------------------------------------------\n");
+		NXLOGD("----------------------------------------------------------------\n");
+		NXLOGD("g_calling_mode_on = %s\n", g_calling_mode_on ? "TRUE" : "FALSE");
+		NXLOGD("g_has_audio_focus = %s\n", g_has_audio_focus ? "TRUE" : "FALSE");
+		NXLOGD("g_has_audio_focus_transient = %s\n", g_has_audio_focus_transient ? "TRUE" : "FALSE");
+		NXLOGD("----------------------------------------------------------------\n");
 
 		usleep(100000);
 	}

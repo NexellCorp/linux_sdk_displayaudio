@@ -43,6 +43,9 @@
    </property>
   </widget>
   <widget class="QPlainTextEdit" name="EDIT_SMS_MESSAGE">
+   <property name="enabled">
+    <bool>false</bool>
+   </property>
    <property name="geometry">
     <rect>
      <x>0</x>
@@ -56,8 +59,24 @@
      <pointsize>20</pointsize>
     </font>
    </property>
+   <property name="styleSheet">
+    <string notr="true">QPlainTextEdit:disabled {
+	background: white;
+	color: rgb(1,1,1);
+}
+
+QScrollBar::vertical {
+	width: 40px;
+}</string>
+   </property>
+   <property name="verticalScrollBarPolicy">
+    <enum>Qt::ScrollBarAsNeeded</enum>
+   </property>
    <property name="readOnly">
     <bool>true</bool>
+   </property>
+   <property name="plainText">
+    <string/>
    </property>
   </widget>
  </widget>

@@ -2,12 +2,12 @@
  **
  **  Name:        INX_BT.h
  **
- **  Description: Nexell Linux Bluetooth Interface Class APIs Header
+ **  Description: Nexell linux bluetooth interface class header.
  **
  **  Copyright (c) 2017, Nexell Corp., All Rights Reserved.
  **  Broadcom BT stack supports. Proprietary and confidential.
  **
- **  Author: Chris Lee.
+ **  Author: Chris Leean.
  **
  *****************************************************************************/
 
@@ -15,6 +15,12 @@
 #define __INX_BT_H__
 
 #define NXBT_VERSION	"1.1.0"
+
+typedef struct Bmessage_info {
+	char *fullName;
+	char *phoneNumber;
+	char *msgBody;
+} Bmessage_info_t;
 
 class INX_BT {
 
@@ -100,7 +106,7 @@ public:
 	virtual int32_t abortMCE(void) = 0;
 	virtual int32_t startNotifyServerFromMCE(void) = 0;
 	virtual int32_t stopNotifyServerFromMCE(void) = 0;
-	virtual int32_t getParserBmsg(char *fullName, char *phoneNumber, char *msgBody) = 0;
+	virtual int32_t getParserBmsg(Bmessage_info_t *bmsg) = 0;
 
 	/* NXBT UI callback functions */
 	virtual void registerMGTOpenSucceedCbManager(void *pObj, void (*cbFunc)(void *, int32_t)) = 0;
@@ -138,4 +144,4 @@ public:
 
 extern INX_BT* getInstance(void);
 
-#endif	//__INX_BT_H__
+#endif /* __INX_BT_H__ */

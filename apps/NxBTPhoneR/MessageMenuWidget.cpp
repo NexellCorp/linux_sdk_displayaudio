@@ -1,9 +1,6 @@
 #include "MessageMenuWidget.h"
 #include "ui_MessageMenuWidget.h"
 
-#define LOG_TAG "[NxBTPhoneR]"
-#include <NX_Log.h>
-
 MessageMenuWidget::MessageMenuWidget(QWidget *parent) :
     QWidget(parent, Qt::FramelessWindowHint),
     ui(new Ui::MessageMenuWidget)
@@ -19,7 +16,7 @@ MessageMenuWidget::~MessageMenuWidget()
 void MessageMenuWidget::slotCommandFromServer(QString command)
 {
     int stx = command.indexOf("$");
-    int etx = command.indexOf("\n");
+    int etx = command.lastIndexOf("\n");
 
     if (stx < 0 || etx < 0) {
         return;

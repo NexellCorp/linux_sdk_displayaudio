@@ -329,9 +329,7 @@ int main (int argc, char *argv[])
 	char hs_connected_bd_addr[6];
 	int dummy;
 	void *m_pObjHandler = &dummy;		// UI handler
-	char fullName[20];
-	char phoneNumber[20];
-	char msgBody[256];
+	Bmessage_info_t bmsg;				// BMessage
 
 #ifdef USE_BACKTRACE
     // Register signal handler for debugging
@@ -341,6 +339,10 @@ int main (int argc, char *argv[])
 #endif
 
 	memset(&pairedDev, 0, sizeof(nxbt_paired_dev_t));
+
+	bmsg.fullName = NULL;
+	bmsg.phoneNumber = NULL;
+	bmsg.msgBody = NULL;
 
 	// Register UI callbacks
 	pInstance->registerMGTOpenSucceedCbManager(m_pObjHandler, sendMGTOpenSucceed_stub);
@@ -382,7 +384,7 @@ int main (int argc, char *argv[])
 		goto EXIT;
 	}
 
-//	pInstance->setRecoveryCommand("-p /etc/bluetooth/BCM20710A1_001.002.014.0103.0000.hcd -all=0 &");
+//	pInstance->setRecoveryCommand("-p /etc/bluetooth/BCM20710A1_001.002.014.0103.0117.hcd -all=0 &");
 
 	localAddress = pInstance->getLocalAddress();
 
@@ -599,13 +601,32 @@ int main (int argc, char *argv[])
 				pInstance->stopNotifyServerFromMCE();
 				break;
 			case APP_MCE_MENU_GET_MESSAGE:
-				memset(fullName, 0, sizeof(fullName));
-				memset(phoneNumber, 0, sizeof(phoneNumber));
-				memset(msgBody, 0, sizeof(msgBody));
-				pInstance->getParserBmsg(fullName, phoneNumber, msgBody);
-				printf("FN  : %s\n", fullName);
-				printf("TEL : %s\n", phoneNumber);
-				printf("MSG : %s\n", msgBody);
+				pInstance->getParserBmsg(&bmsg);
+
+				if (bmsg.fullName) {
+					printf("FN  : %s\n", bmsg.fullName);
+				}
+
+				if (bmsg.phoneNumber) {
+					printf("TEL : %s\n", bmsg.phoneNumber);
+				}
+
+				if (bmsg.msgBody) {
+					printf("MSG : %s\n", bmsg.msgBody);
+				}
+
+				// Must be released
+				if (bmsg.fullName) {
+					free(bmsg.fullName);
+				}
+
+				if (bmsg.phoneNumber) {
+					free(bmsg.phoneNumber);
+				}
+
+				if (bmsg.msgBody) {
+					free(bmsg.msgBody);
+				}
 				break;
 			case APP_MENU_QUIT:
 				printf("Exit program!\n");
