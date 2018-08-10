@@ -133,121 +133,124 @@ static void nxlogcat_parser(char *line) {
 	bool is_not_pid = false;
 	bool is_not_loglevel = false;
 
-    memset(tmp1, 0, sizeof(tmp1));
-    memset(tmp2, 0, sizeof(tmp2));
-    memset(tmp3, 0, sizeof(tmp3));
-    memset(nxlog, 0, sizeof(nxlog));
-    memset(proc_p, 0, sizeof(proc_p));
+	memset(tmp1, 0, sizeof(tmp1));
+	memset(tmp2, 0, sizeof(tmp2));
+	memset(tmp3, 0, sizeof(tmp3));
+	memset(nxlog, 0, sizeof(nxlog));
+	memset(proc_p, 0, sizeof(proc_p));
 
-    strncpy(tmp1, line, sizeof(tmp1));
-    strncpy(tmp2, line, sizeof(tmp2));
-    strncpy(tmp3, line, sizeof(tmp3));
+	strncpy(tmp1, line, sizeof(tmp1));
+	strncpy(tmp2, line, sizeof(tmp2));
+	strncpy(tmp3, line, sizeof(tmp3));
 
-    date = strtok(tmp1, " ");
+	if ((date = strtok(tmp1, " ")) == NULL) return;
 
-    proc = strtok(tmp2, " ");
-    proc = strtok(NULL, " ");
-    proc = strtok(NULL, ":");
+	if ((proc = strtok(tmp2, " ")) == NULL) return;
+	if ((proc = strtok(NULL, " ")) == NULL) return;
+	if ((proc = strtok(NULL, ":")) == NULL) return;
 
-    if (proc[strlen(proc) - 1] == ']') {
-        for (int i = strlen(proc) - 2; i >= 0; i--) {
-            if (proc[i] == '[') {
-                strncpy(proc_p, proc, i);
-                break;
-            }
-        }
-		// Regex expression
-		regex_t t_regex;
-        regcomp(&t_regex, "/", REG_EXTENDED);
-        if (regexec(&t_regex, proc_p, 0, NULL, 0)) {
-            is_not_loglevel = true;
-        }
-        regfree(&t_regex);
-    } else {
-        is_not_pid = true;
-    }
-
-    msg = strtok(tmp3, " ");
-    msg = strtok(NULL, " ");
-    if (is_not_pid == false) {
-        if (is_not_loglevel != true) {
-            msg = strtok(NULL, " ");
-        }
-    }
-    msg = strtok(NULL, ":");
-    msg = strtok(NULL, "");
-
-    if (is_not_pid || g_printPID) {
-        if (g_printTime) {
-	            snprintf(nxlog, sizeof(nxlog), "%s %s:%s", date, proc, msg);
-        } else {
-	            snprintf(nxlog, sizeof(nxlog), "%s:%s", proc, msg);
-        }
-    } else {
-        if (g_printTime) {
-	            snprintf(nxlog, sizeof(nxlog), "%s %s:%s", date, proc_p, msg);
-        } else {
-	            snprintf(nxlog, sizeof(nxlog), "%s:%s", proc_p, msg);
-        }
-    }
-
-    if (g_enableFilter) {
-        // Regex expression
-        regex_t f_regex;
-        regcomp(&f_regex, "/", REG_EXTENDED);
-		if (is_not_pid || g_printPID) {
-	        if (regexec(&f_regex, proc, 0, NULL, 0)) {
-				if (g_printSys) {
-					printf("%s", nxlog);
-				}
-	        }
-	        regfree(&f_regex);
-		} else {
-	        if (regexec(&f_regex, proc_p, 0, NULL, 0)) {
-				if (g_printSys) {
-					printf("%s", nxlog);
-				}
-	        }
-	        regfree(&f_regex);
+	if (proc[strlen(proc) - 1] == ']') {
+		for (int i = strlen(proc) - 2; i >= 0; i--) {
+			if (proc[i] == '[') {
+				strncpy(proc_p, proc, i);
+				break;
+			}
 		}
 
-        for (int i = 0; i <= g_log_level; i++) {
-	        // Regex expression
-	        regex_t l_regex;
-            regcomp(&l_regex, g_log_level_pattern[i], REG_EXTENDED);
-            if (!regexec(&l_regex, nxlog, 0, NULL, 0)) {
-                printf("%s", nxlog);
-            }
-            regfree(&l_regex);
-        }
-    } else {
-        // Regex expression
-        regex_t s_regex;
-        regcomp(&s_regex, "/", REG_EXTENDED);
-        if (is_not_pid || g_printPID) {
-            if (regexec(&s_regex, proc, 0, NULL, 0)) {
-                if (g_printSys) {
-                    printf("%s", nxlog);
-                }
-            } else {
+		// Regex expression
+		regex_t t_regex;
+		regcomp(&t_regex, "/", REG_EXTENDED);
+		if (regexec(&t_regex, proc_p, 0, NULL, 0)) {
+			is_not_loglevel = true;
+		}
+		regfree(&t_regex);
+	} else {
+		is_not_pid = true;
+	}
+
+	if ((msg = strtok(tmp3, " ")) == NULL) return;
+	if ((msg = strtok(NULL, " ")) == NULL) return;
+	if (is_not_pid == false) {
+		if (is_not_loglevel != true) {
+			if ((msg = strtok(NULL, " ")) == NULL) return;
+		}
+	}
+
+	if ((msg = strtok(NULL, ":")) == NULL) return;
+	if ((msg = strtok(NULL, "")) == NULL) return;
+
+	if (is_not_pid || g_printPID) {
+		if (g_printTime) {
+			snprintf(nxlog, sizeof(nxlog), "%s %s:%s\n", date, proc, msg);
+		} else {
+			snprintf(nxlog, sizeof(nxlog), "%s:%s\n", proc, msg);
+		}
+	} else {
+		if (g_printTime) {
+			snprintf(nxlog, sizeof(nxlog), "%s %s:%s\n", date, proc_p, msg);
+		} else {
+			snprintf(nxlog, sizeof(nxlog), "%s:%s\n", proc_p, msg);
+		}
+	}
+
+	if (g_enableFilter) {
+		// Regex expression
+		regex_t f_regex;
+		regcomp(&f_regex, "/", REG_EXTENDED);
+		if (is_not_pid || g_printPID) {
+			if (regexec(&f_regex, proc, 0, NULL, 0)) {
+				if (g_printSys) {
+					printf("%s", nxlog);
+				}
+			}
+			regfree(&f_regex);
+		} else {
+			if (regexec(&f_regex, proc_p, 0, NULL, 0)) {
+				if (g_printSys) {
+					printf("%s", nxlog);
+				}
+			}
+			regfree(&f_regex);
+		}
+
+		for (int i = 0; i <= g_log_level; i++) {
+			// Regex expression
+			regex_t l_regex;
+			regcomp(&l_regex, g_log_level_pattern[i], REG_EXTENDED);
+			if (!regexec(&l_regex, nxlog, 0, NULL, 0)) {
 				printf("%s", nxlog);
 			}
-            regfree(&s_regex);
-        } else {
-            if (regexec(&s_regex, proc_p, 0, NULL, 0)) {
-                if (g_printSys) {
-                    printf("%s", nxlog);
-                }
-            } else {
+			regfree(&l_regex);
+		}
+	} else {
+		// Regex expression
+		regex_t s_regex;
+		regcomp(&s_regex, "/", REG_EXTENDED);
+		if (is_not_pid || g_printPID) {
+			if (regexec(&s_regex, proc, 0, NULL, 0)) {
+				if (g_printSys) {
+					printf("%s", nxlog);
+				}
+			} else {
 				printf("%s", nxlog);
 			}
-            regfree(&s_regex);
-        }
+			regfree(&s_regex);
+		} else {
+			if (regexec(&s_regex, proc_p, 0, NULL, 0)) {
+				if (g_printSys) {
+					printf("%s", nxlog);
+				}
+			} else {
+				printf("%s", nxlog);
+			}
+			regfree(&s_regex);
+		}
 	}
 }
 
 static void logcat(FILE *log_file) {
 	char line[PRINT_LEN];
+	char *line_end;
 
 	// Print the log
 	while (1) {
@@ -255,6 +258,11 @@ static void logcat(FILE *log_file) {
 		if (!fgets(line, sizeof(line) - 1, log_file)) {
 			break;
 		}
+
+		if ((line_end = strchr(line, '\n')) != NULL) {
+			*line_end = '\0';
+		}
+
 		nxlogcat_parser(line);
 	}
 }
@@ -314,8 +322,9 @@ int32_t main(int32_t argc, char *argv[]) {
 			case 'l':
 				g_enableFilter = true;
 				g_log_level = atoi(optarg);
-				if (g_log_level < 0 || g_log_level > NXLOG_VERBOSE)
+				if (g_log_level < 0 || g_log_level > NXLOG_VERBOSE) {
 					g_log_level = NXLOG_VERBOSE;
+				}
 
 				// Initialize the log level pattern
 				strncpy(g_log_level_pattern[NXLOG_VERBOSE], verbose_level, sizeof(verbose_level));
@@ -400,9 +409,9 @@ int32_t main(int32_t argc, char *argv[]) {
 	// Phase 7 : Polling
 	while (1) {
 		struct pollfd hPoll;
-		hPoll.fd		= iNotify;
-		hPoll.events	= POLLIN | POLLERR;
-		hPoll.revents	= 0;
+		hPoll.fd = iNotify;
+		hPoll.events = POLLIN | POLLERR;
+		hPoll.revents = 0;
 		int32_t ret = poll((struct pollfd *)&hPoll, 1, 1000);
 		if (ret < 0) {
 			printf("Fail, poll(). (%s)\n", strerror(errno));
