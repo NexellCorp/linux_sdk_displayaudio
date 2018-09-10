@@ -125,11 +125,13 @@ function package_common_libraries()
 	echo "<< Package Key Input Receiver >>"
 	cp -va ${TOP}/library/lib/libnxkeyreceiver.so ${RESULT_DIR}/${USR_LIB}/
 
-	echo "<< Package Nexell BT Libraries, server & HCD file >>"
-	cp -va ${TOP}/library/lib/nxbt1xx/lib/libappbt.so ${RESULT_DIR}/${USR_LIB}/
-	cp -va ${TOP}/library/lib/nxbt1xx/lib/libnxbt.so ${RESULT_DIR}/${USR_LIB}/
-	cp -va ${TOP}/library/lib/nxbt1xx/lib/libnxalsa.so ${RESULT_DIR}/${USR_LIB}/
-	cp -va ${TOP}/library/lib/nxbt1xx/lib/libnrec_hf.so ${RESULT_DIR}/${USR_LIB}/
+	if [ ${SDK_ENABLE_BT} == "y" ]; then
+		echo "<< Package Nexell BT Libraries, server & HCD file >>"
+		cp -va ${TOP}/library/lib/nxbt1xx/lib/libappbt.so ${RESULT_DIR}/${USR_LIB}/
+		cp -va ${TOP}/library/lib/nxbt1xx/lib/libnxbt.so ${RESULT_DIR}/${USR_LIB}/
+		cp -va ${TOP}/library/lib/nxbt1xx/lib/libnxalsa.so ${RESULT_DIR}/${USR_LIB}/
+		cp -va ${TOP}/library/lib/nxbt1xx/lib/libnrec_hf.so ${RESULT_DIR}/${USR_LIB}/
+	fi
 }
 
 function package_etc()
@@ -138,7 +140,11 @@ function package_etc()
 	echo "<< Package etc Applications >>"
 	mkdir -p ${RESULT_DIR}/${USR_BIN}
 	cp -aR ${TOP}/bin/* ${RESULT_DIR}/${USR_BIN}/
-	cp -va ${TOP}/apps/NxService/* ${RESULT_DIR}/${USR_BIN}/
+	if [ ${SDK_ENABLE_BT} == "y" ]; then
+		cp -va ${TOP}/apps/NxService/NxService_use_bt.sh ${RESULT_DIR}/${USR_BIN}/NxService.sh
+	else
+		cp -va ${TOP}/apps/NxService/NxService_nouse_bt.sh ${RESULT_DIR}/${USR_BIN}/NxService.sh
+	fi
 	mkdir -p ${RESULT_DIR}/${USR_SBIN}
 }
 
@@ -152,13 +158,17 @@ package_common_libraries
 package_luncher
 pakcage_daudiomanger
 package_audioplayer_application
+if [ ${SDK_ENABLE_CAM} == "y" ]; then
 package_quickrearcam_application
 package_avin_application
+fi
 package_application NxVideoPlayer
-package_btr_service
-package_btr_application NxBTAudioR
-package_btr_application NxBTPhoneR
-package_btr_application NxBTSettingsR
+if [ ${SDK_ENABLE_BT} == "y" ]; then
+	package_btr_service
+	package_btr_application NxBTAudioR
+	package_btr_application NxBTPhoneR
+	package_btr_application NxBTSettingsR
+fi
 package_etc
 if [ ${OECORE_SDK_VERSION} != "2.3.1" ]; then
 	package_podo_compositor
