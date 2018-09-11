@@ -1,0 +1,10 @@
+[Desktop Entry]
+Type=Application
+Version=1.1.0
+Name=NxBTSettings
+Name[ko]=NxBTSettings
+Comment=Nexell BT Settings for QT
+Comment[ko]=Nexell BT Settings for QT
+Icon=icon_btsettings.png
+TryExec=libnxbtsettings.so
+Exec=libnxbtsettings.so

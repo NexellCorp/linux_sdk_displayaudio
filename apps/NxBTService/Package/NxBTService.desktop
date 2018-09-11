@@ -1,0 +1,10 @@
+[Desktop Entry]
+Type=Service
+Version=1.1.0
+Name=NxBTService
+Name[ko]=NxBTService
+Comment=Nexell BT Service Daemon
+Comment[ko]=Nexell BT Service Daemon
+Icon=
+TryExec=NxBTService
+Exec=NxBTService
