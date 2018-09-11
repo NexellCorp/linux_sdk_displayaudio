@@ -24,42 +24,54 @@ DEFINES += QT_DEPRECATED_WARNINGS
 
 QT      += qml quickwidgets
 
-DEFINES -= CONFIG_USE_NO_QML
-
 equals(QT_VERSION, 5.7.0) {
 } else {
 
 }
 
 SOURCES += main.cpp\
-        nxlauncher.cpp \
+#        nxlauncher.cpp \
     nxappinfo.cpp \
     nxpackagemanager.cpp \
     nxprocessmanager.cpp \
-    page/PageFrame.cpp \
-    page/PageItemFrame.cpp \
-    page/PageStackFrame.cpp \
-    page/PageIndicatorFrame.cpp
+    NotificationFrame.cpp \
+#    MessageWidget.cpp \
+    NxLauncher.cpp \
+    MessageFrame.cpp \
+    ShadowEffect.cpp
 
-HEADERS  += nxlauncher.h \
+HEADERS  += \
     nxappinfo.h \
+#nxlauncher.h \
     nxpackagemanager.h \
     nxprocessmanager.h \
-    page/PageFrame.h \
-    page/PageItemFrame.h \
-    page/PageStackFrame.h \
-    page/PageIndicatorFrame.h
+    NxEvent.h \
+    NotificationFrame.h \
+#    MessageWidget.h \
+    NxLauncher.h \
+    MessageFrame.h \
+    ShadowEffect.h
 
-FORMS    += nxlauncher.ui \
-    page/PageFrame.ui \
-    page/PageItemFrame.ui \
-    page/PageStackFrame.ui
+FORMS    += \
+#nxlauncher.ui \
+    NotificationFrame.ui \
+#    MessageWidget.ui \
+    NxLauncher.ui \
+    MessageFrame.ui
 
 RESOURCES += \
     nxlauncher.qrc
 
 INCLUDEPATH += $$_PRO_FILE_PWD_/../../library/include
-LIBS += -L$$_PRO_FILE_PWD_/../../library/lib -lnxbaseui -lnxdaudioipc -lnxkeyreceiver -lnxdaudioutils -lnxpacpclient
+
+#LIBS += -L$$_PRO_FILE_PWD_/../../library/lib -lnxbaseui -lnxdaudioipc -lnxkeyreceiver -lnxdaudioutils -lnxpacpclient
+linux-oe-g++ {
+    LIBS += -L$$_PRO_FILE_PWD_/../../library/lib -lnxkeyreceiver -lnxbaseui -lnxdaudioutils
+} else {
+    LIBS += -L$$_PRO_FILE_PWD_/../../library/lib/x64 -lnxkeyreceiver -lnxbaseui -lnxdaudioutils
+}
+
+LIBS += -ldl
 
 unix {
     target.path = $$_PRO_FILE_PWD_/../../bin/$${TARGET}

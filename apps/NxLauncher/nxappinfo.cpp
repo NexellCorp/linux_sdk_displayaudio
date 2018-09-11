@@ -1,106 +1,147 @@
 #include "nxappinfo.h"
 
-NxAppInfo::NxAppInfo() : QObject()
+NxPluginInfo::NxPluginInfo() : QObject()
 {
+	m_pHandle = NULL;
 
+	// plugin function call interface
+	//
+	m_pInit = NULL;
+	m_pIsInit = NULL;
+	m_pdeInit = NULL;
+	m_pShow = NULL;
+	m_pHide = NULL;
+	m_pRaise = NULL;
+	m_pLower = NULL;
+	//
+	m_pRequestAudioFocus = NULL;
+	m_pRequestAudioFocusTransient = NULL;
+	//
+	m_pRequestVideoFocus = NULL;
+	m_pRequestVideoFocusTransient = NULL;
+	//
+	m_pSendMessage = NULL;
+
+	// register callback functions
+	//
+	m_pRegisterLauncherShow = NULL;
+	m_pRegisterShow = NULL;
+	m_pRegisterRequestTerminate = NULL;
+	//
+	m_pRegisterRequestAudioFocus = NULL;
+	m_pRegisterRequestAudioFocusTransient = NULL;
+	m_pRegisterRequestAudioFocusLoss = NULL;
+	//
+	m_pRegisterRequestVideoFocus = NULL;
+	m_pRegisterRequestVideoFocusTransient = NULL;
+	m_pRegisterRequestVideoFocusLoss = NULL;
+	//
+	m_pRegisterRequestPluginRun = NULL;
+	m_pRegisterRequestPluginTerminate = NULL;
+	//
+	m_pRegisterRequestMessage = NULL;
+	//
+	m_pRegisterRequestPopupMessage = NULL;
+	m_pRegisterRequestExpirePopupMessage = NULL;
+	m_pPopupMessageResponse = NULL;
 }
 
-QString NxAppInfo::getType() const
+QString NxPluginInfo::getType() const
 {
 	return m_szType;
 }
 
-void NxAppInfo::setType(const QString& szType)
+void NxPluginInfo::setType(const QString& szType)
 {
 	m_szType = szType;
 }
 
-QString NxAppInfo::getVersion() const
+QString NxPluginInfo::getVersion() const
 {
 	return m_szVersion;
 }
 
-void NxAppInfo::setVersion(const QString& szVersion)
+void NxPluginInfo::setVersion(const QString& szVersion)
 {
 	m_szVersion = szVersion;
 }
 
-QString NxAppInfo::getName() const
+QString NxPluginInfo::getName() const
 {
 	return m_szName;
 }
 
-void NxAppInfo::setName(const QString& szName)
+void NxPluginInfo::setName(const QString& szName)
 {
 	m_szName = szName;
 }
 
-QString NxAppInfo::getComment() const
+QString NxPluginInfo::getComment() const
 {
 	return m_szComment;
 }
 
-void NxAppInfo::setComment(const QString& szComment)
+void NxPluginInfo::setComment(const QString& szComment)
 {
 	m_szComment = szComment;
 }
 
-QString NxAppInfo::getIcon() const
+QString NxPluginInfo::getIcon() const
 {
 	return m_szIcon;
 }
 
-void NxAppInfo::setIcon(const QString& szIcon)
+void NxPluginInfo::setIcon(const QString& szIcon)
 {
 	m_szIcon = szIcon;
 }
 
-QString NxAppInfo::getDisabledIcon() const
+QString NxPluginInfo::getDisabledIcon() const
 {
 	return m_szIconForDisabled;
 }
 
-void NxAppInfo::setDisabledIcon(const QString& szIcon)
+void NxPluginInfo::setDisabledIcon(const QString& szIcon)
 {
 	m_szIconForDisabled = szIcon;
 }
 
-QString NxAppInfo::getTryExec() const
+QString NxPluginInfo::getTryExec() const
 {
 	return m_szTryExec;
 }
 
-void NxAppInfo::setTryExec(const QString szTryExec)
+void NxPluginInfo::setTryExec(const QString szTryExec)
 {
 	m_szTryExec = szTryExec;
 }
 
-QString NxAppInfo::getExec() const
+QString NxPluginInfo::getExec() const
 {
 	return m_szExec;
 }
 
-void NxAppInfo::setExec(const QString szExec)
+void NxPluginInfo::setExec(const QString szExec)
 {
 	m_szExec = szExec;
 }
 
-QString NxAppInfo::getPath() const
+QString NxPluginInfo::getPath() const
 {
 	return m_szPath;
 }
 
-void NxAppInfo::setPath(const QString szPath)
+void NxPluginInfo::setPath(const QString szPath)
 {
 	m_szPath = szPath;
 }
 
-bool NxAppInfo::getEnabled()
+bool NxPluginInfo::getEnabled()
 {
 	return m_bEnabled;
 }
 
-void NxAppInfo::setEnabled(bool enabled)
+void NxPluginInfo::setEnabled(bool enabled)
 {
 	m_bEnabled = enabled;
 }

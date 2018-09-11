@@ -1,7 +1,10 @@
 import QtQuick 2.0
-import QtQuick.Controls 2.0
+//import QtQuick.Controls 2.0
 
 import "qrc:/qml/"
+
+
+//property ListModel appListModel
 
 Item {
     id: pane
@@ -26,65 +29,52 @@ Item {
 
     ListModel {
         id: appListModel
-
-        function sort() {
-            for(var i = 0; i < count; i++)
-            {
-                for(var j = 0; j < i; j++)
-                {
-                    if( get(i).name < get(j).name )
-                    {
-                        move( i, j, 1 )
-                        break
-                    }
-                }
-            }
-        }
     }
 
-    SwipeView {
-        id: view
-        currentIndex: currentPage
+    NxSwipeView {
+        id: swipe
         anchors.fill: parent
-        anchors.leftMargin: parent.width % iconCellWidth / 2
-
-        Repeater {
-            id: totalPageRepeater
-            model: totalPage
-
-            GridView {
-                id: pageGridView
-                cellWidth:  iconCellWidth
-                cellHeight: iconCellHeight
-                interactive: false
-                clip: true
-                model: maxColumnsInPage * maxRowsInPage
-
-                delegate: DropIcon {
-                    width:  Math.floor(iconCellWidth * 8 / 10)
-                    height:  Math.floor(iconCellWidth * 8 / 10)
-                    dragKey: "icon"
-
-                    Component.onCompleted: {
-                    }
-                }
-            }
-        }
     }
 
-    PageIndicator {
-        count: view.count
-        currentIndex: view.currentIndex
+    Rectangle {
+        id: pageIndicator
         anchors.bottom: parent.bottom
         anchors.horizontalCenter: parent.horizontalCenter
+        color: "transparent"
+        width: parent.width
+        height: 30
+
+        Row {
+            spacing: 5
+            anchors.horizontalCenter: parent.horizontalCenter
+            anchors.verticalCenter: parent.verticalCenter
+            Repeater {
+                model: swipe.totalPage
+
+                Rectangle {
+                    width: 10
+                    height: 10
+                    radius: width/2
+                    color: {
+                        if (index === swipe.currentIndex)
+                            "#303032"
+                        else
+                            "#7D7D7E"
+                    }
+                }
+            }
+        }
     }
 
-    function updateAppList() {
+    function createAppList() {
         appListModel.clear()
 
-        var info = packageManager.getAppInfoVariantList()
+        var info = gui.getPluginInfoList()
         for(var idx =0 ; idx < info.length; idx++) {
             var i = idx % info.length
+
+            if (info[i].type !== "Application")
+                continue
 
             appListModel.append({
                 "name": info[i].name,
@@ -92,60 +82,16 @@ Item {
                 "icon": info[i].icon,
                 "exec": info[i].exec
             })
-
-//            console.log(tag + "updateAppList():",
-//                        "name: " + info[i].name + ",",
-//                        "path: " + info[i].path + ",",
-//                        "icon: " + info[i].icon + ",",
-//                        "exec: " + info[i].exec )
         }
-        appListModel.sort()
-
-        maxColumnsInPage = Math.floor(pane.width / iconCellWidth)
-        maxRowsInPage = Math.floor(pane.height / iconCellHeight)
-
-        dragIconList.iconListUpdate()
     }
 
-    Row {
-        id: dragIconList
-        anchors.left: parent.left
-        anchors.bottom: parent.top
+    function initialize() {
+        pane.createAppList()
 
-        Repeater {
-            id:iconRepeater
-            model: appListModel
-            delegate: DragIcon {
-                dragKey:  "icon"
-                width: iconCellWidth
-                height: iconCellHeight
-
-                Connections {
-                    target: mouseArea
-                    onClicked: {
-                        console.log( tag + "launch: " + path + "/" + exec )
-                        launchProgram( path + "/" + exec )
-                    }
-                }
-            }
-        }
-
-        function iconListUpdate()
-        {
-            for(var i =0 ; i < iconRepeater.count; i++) {
-                var page = currentPage + Math.floor(i / (maxColumnsInPage * maxRowsInPage))
-                var idx = i % (maxColumnsInPage * maxRowsInPage)
-                var item = totalPageRepeater.itemAt(page).contentItem.children[idx]
-
-                if( !item ) continue;
-
-                iconRepeater.itemAt(i).mouseArea.parent = item
-            }
-        }
+        swipe.updateAppList()
     }
 
     Component.onCompleted: {
-//        console.log( tag + "Component.onCompleted" )
         timer.start()
     }
 
@@ -154,6 +100,7 @@ Item {
         interval: 100
         running: false
         repeat: false
-        onTriggered: updateAppList()
+//        onTriggered: updateAppList()
+        onTriggered: initialize()
     }
 }

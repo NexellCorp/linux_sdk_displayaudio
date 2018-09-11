@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <ui version="4.0">
  <class>NxLauncher</class>
- <widget class="QMainWindow" name="NxLauncher">
+ <widget class="QDialog" name="NxLauncher">
   <property name="geometry">
    <rect>
     <x>0</x>
@@ -11,22 +11,43 @@
    </rect>
   </property>
   <property name="windowTitle">
-   <string>NxLauncher</string>
+   <string>Dialog</string>
   </property>
-  <widget class="QWidget" name="centralWidget">
-   <widget class="QQuickWidget" name="launcherWidget">
-    <property name="geometry">
-     <rect>
-      <x>0</x>
-      <y>60</y>
-      <width>1024</width>
-      <height>540</height>
-     </rect>
-    </property>
-    <property name="resizeMode">
-     <enum>QQuickWidget::SizeRootObjectToView</enum>
-    </property>
-   </widget>
+  <widget class="MessageFrame" name="messageFrame">
+   <property name="geometry">
+    <rect>
+     <x>0</x>
+     <y>0</y>
+     <width>1024</width>
+     <height>600</height>
+    </rect>
+   </property>
+  </widget>
+  <widget class="NotificationFrame" name="notificationBar">
+   <property name="geometry">
+    <rect>
+     <x>0</x>
+     <y>0</y>
+     <width>1024</width>
+     <height>60</height>
+    </rect>
+   </property>
+   <property name="frameShape">
+    <enum>QFrame::StyledPanel</enum>
+   </property>
+   <property name="frameShadow">
+    <enum>QFrame::Raised</enum>
+   </property>
+  </widget>
+  <widget class="QWidget" name="launcher" native="true">
+   <property name="geometry">
+    <rect>
+     <x>0</x>
+     <y>0</y>
+     <width>1024</width>
+     <height>600</height>
+    </rect>
+   </property>
    <widget class="CNX_StatusBar" name="statusBar">
     <property name="geometry">
      <rect>
@@ -43,39 +64,21 @@
      <enum>QFrame::Raised</enum>
     </property>
    </widget>
-   <widget class="NotificationFrame" name="notificationBar">
+   <widget class="QQuickWidget" name="launcherWidget">
     <property name="geometry">
      <rect>
       <x>0</x>
-      <y>0</y>
+      <y>60</y>
       <width>1024</width>
-      <height>60</height>
+      <height>540</height>
      </rect>
     </property>
-    <property name="frameShape">
-     <enum>QFrame::StyledPanel</enum>
-    </property>
-    <property name="frameShadow">
-     <enum>QFrame::Raised</enum>
+    <property name="resizeMode">
+     <enum>QQuickWidget::SizeRootObjectToView</enum>
     </property>
    </widget>
-   <widget class="MessageWidget" name="messageWidget" native="true">
-    <property name="geometry">
-     <rect>
-      <x>137</x>
-      <y>75</y>
-      <width>750</width>
-      <height>450</height>
-     </rect>
-    </property>
-   </widget>
-   <zorder>messageWidget</zorder>
-   <zorder>notificationBar</zorder>
-   <zorder>launcherWidget</zorder>
-   <zorder>statusBar</zorder>
   </widget>
  </widget>
- <layoutdefault spacing="6" margin="11"/>
  <customwidgets>
   <customwidget>
    <class>QQuickWidget</class>
@@ -95,9 +98,9 @@
    <container>1</container>
   </customwidget>
   <customwidget>
-   <class>MessageWidget</class>
-   <extends>QWidget</extends>
-   <header>MessageWidget.h</header>
+   <class>MessageFrame</class>
+   <extends>QFrame</extends>
+   <header>MessageFrame.h</header>
    <container>1</container>
   </customwidget>
  </customwidgets>

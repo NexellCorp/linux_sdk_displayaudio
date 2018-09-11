@@ -5,8 +5,6 @@
 #include <QTime>
 
 #include <NX_Type.h>
-#include <INX_IpcManager.h>
-#include <NX_IpcPacket.h>
 
 class NxProcessManager : public QObject
 {

@@ -27,6 +27,63 @@
 //
 #define NX_QT_CUSTOM_EVENT_TYPE		1000
 
+//
+// 
+//
+enum FocusType {
+    FocusType_Get,
+    FocusType_Set
+};
+
+enum FocusPriority {
+	FocusPriority_Highest,
+	FocusPriority_High,
+	FocusPriority_Normal
+};
+
+enum ButtonType {
+	ButtonType_Ok = 1,
+	ButtonType_Cancel,
+	ButtonType_Count
+};
+
+enum ButtonVisibility {
+	ButtonVisibility_Ok = ButtonType_Ok,
+	ButtonVisibility_Cencel = ButtonType_Cancel,
+	ButtonVisibility_Default = ButtonType_Ok|ButtonType_Cancel,
+	ButtonVisibility_Count = ButtonVisibility_Default
+};
+
+enum ButtonLocation {
+	ButtonLocation_Ok_Cancel,
+	ButtonLocation_Cancel_Ok
+};
+
+struct PopupMessage {
+	char *pMsgTitle;
+	char *pMsgBody;
+
+	ButtonVisibility eVisibility;
+	ButtonLocation eLocation;
+	const char *pStylesheet[ButtonType_Count];
+
+	unsigned int uiTimeout;
+
+	PopupMessage()
+	{
+		pMsgTitle = 0;
+		pMsgBody = 0;
+
+		eVisibility = ButtonVisibility_Default;
+
+		eLocation = ButtonLocation_Cancel_Ok;
+
+		pStylesheet[ButtonType_Ok] = 0;
+		pStylesheet[ButtonType_Cancel] = 0;
+
+		uiTimeout = 0;
+	}
+};
 
 //
 //	IPC Command

@@ -1,140 +1,61 @@
 #include "nxpackagemanager.h"
-
-#include <QDirIterator>
-#include <QDebug>
-#include <QFileInfo>
+#include <QDir>
 #include <QSettings>
+#include <QDebug>
 
-NxPackageManager::NxPackageManager(QObject *parent, QString szPath)
-	: QObject( parent )
-	, m_szPath( szPath )
+#define LOG_TAG "[NxLauncher]"
+#include <NX_Log.h>
+
+NxPackageScanner::NxPackageScanner(QString Path, QMap<QString, NxPluginInfo*> *pPlugins)
 {
-#ifdef CONFIG_USE_NO_QML
 	m_pWatcher = new QFileSystemWatcher(this);
 	connect(m_pWatcher, SIGNAL(fileChanged(QString)), this, SLOT(slotFileChanged(QString)));
-	m_pWatcher->addPath(m_szPath);
-#endif
-	load( m_szPath );
+
+	m_pPlugins = pPlugins;
+	Scan(Path);
 }
 
-NxPackageManager::~NxPackageManager()
+NxPackageScanner::~NxPackageScanner()
 {
-#ifdef CONFIG_USE_NO_QML
-	delete m_pWatcher;
-#endif
+
 }
 
-NxAppInfoList NxPackageManager::getAppInfoList()
+void NxPackageScanner::slotFileChanged(QString Path)
 {
-	return m_AppInfoList;
+	FillPluginInfo(QFileInfo(Path), true);
+
+	NXLOGI("[%s] %s", __FUNCTION__, Path.toStdString().c_str());
 }
 
-NxAppInfoMap NxPackageManager::getAppInfoMap()
+void NxPackageScanner::Scan(QString Path)
 {
-	return m_AppInfoMap;
-}
-
-QString NxPackageManager::getAppType(const QString& szName)
-{
-	NxAppInfo *pAppInfo = m_AppInfoMap.value( szName, 0 );
-	return pAppInfo ? pAppInfo->getType() : "";
-}
-
-QString NxPackageManager::getAppExec(const QString& szName)
-{
-	NxAppInfo *pAppInfo = m_AppInfoMap.value( szName, 0 );
-	return pAppInfo ? pAppInfo->getPath() + "/" + pAppInfo->getExec() : "";
-}
-
-void NxPackageManager::reload()
-{
-	clear();
-	load( m_szPath );
-}
-
-QVariantList NxPackageManager::getAppInfoVariantList()
-{
-	QVariantList infoVariantList;
-	foreach(NxAppInfo* pInfo, m_AppInfoList)
+	QDir dir(Path);
+	foreach (QFileInfo e, dir.entryInfoList(QDir::Dirs|QDir::NoDotAndDotDot, QDir::Name))
 	{
-		infoVariantList.append( qVariantFromValue((QObject*)pInfo) );
-	}
-
-	return infoVariantList;
-}
-
-QVariant NxPackageManager::getAppInfoVariant(const QString& szName)
-{
-	QVariant infoVariant;
-	if( m_AppInfoMap.contains(szName) )
-	{
-		infoVariant = qVariantFromValue( (QObject*)m_AppInfoMap.value(szName) );
-	}
-
-	return infoVariant;
-}
-
-void NxPackageManager::load( QString szPath )
-{
-	QStringList szInfoList;
-	QStringList szFilters;
-
-	szFilters += "*.desktop";
-	QDirIterator dirIterator(szPath, szFilters, QDir::Files | QDir::NoSymLinks, QDirIterator::Subdirectories);
-
-	while( dirIterator.hasNext() )
-	{
-		dirIterator.next();
-		szInfoList += dirIterator.filePath();
-	}
-
-	for( int i = 0; i < szInfoList.length(); i++ )
-	{
-		QString szInfo = szInfoList.at(i);
-		NxAppInfo *pAppInfo = loadAppInfo( szInfo );
-
-		m_AppInfoList.push_back( pAppInfo );
-		m_AppInfoMap[pAppInfo->getName()] = pAppInfo;
-
-#if 0
-		qDebug() << "------------------------------------------------------------";
-		qDebug() << "info:"      << szInfo;
-		qDebug() << "path: "     << pAppInfo->getPath();
-		qDebug() << "exec:"      << pAppInfo->getExec();
-		qDebug() << "name:"      << pAppInfo->getName();
-		qDebug() << "type:"      << pAppInfo->getType();
-		qDebug() << "version:"   << pAppInfo->getVersion();
-		qDebug() << "comment:"   << pAppInfo->getComment();
-		qDebug() << "icon:"      << pAppInfo->getIcon();
-		qDebug() << "tryexec:"   << pAppInfo->getTryExec();
-		qDebug() << "------------------------------------------------------------";
-#endif
+		QDir sub(e.filePath());
+		QFileInfoList entries = sub.entryInfoList(QStringList() << "*.desktop", QDir::Files);
+		if (entries.size())
+		{
+			FillPluginInfo(entries.at(0), false);
+		}
 	}
 }
 
-void NxPackageManager::clear()
-{
-	qDeleteAll( m_AppInfoList );
-	m_AppInfoList.clear();
-	m_AppInfoMap.clear();
-#ifdef CONFIG_USE_NO_QML
-	m_pWatcher->removePaths(m_pWatcher->files());
-#endif
-}
-
-void NxPackageManager::fillAppInfo(const QString &szInfo, NxAppInfo* pInfo)
+void NxPackageScanner::FillPluginInfo(const QFileInfo& szInfo, bool bInitialized)
 {
 	QString szLang = QLocale::system().bcp47Name();
 
-	QSettings settings( szInfo, QSettings::IniFormat );
+	QSettings settings(szInfo.filePath(), QSettings::IniFormat);
 	settings.setIniCodec("UTF-8");
 	settings.beginGroup("Desktop Entry");
 
 	QStringList keys = settings.allKeys();
+	NxPluginInfo *psInfo = m_pPlugins->value(szInfo.dir().dirName());
+	if (!psInfo)
+		psInfo = new NxPluginInfo();
 
-	QFileInfo fileInfo(szInfo);
-	pInfo->setPath( fileInfo.absolutePath() );
-	pInfo->setEnabled(true);
+	psInfo->setPath(szInfo.absolutePath());
+	psInfo->setEnabled(true);
 
 	for( int idx = 0; idx < keys.size(); idx++ )
 	{
@@ -143,83 +64,56 @@ void NxPackageManager::fillAppInfo(const QString &szInfo, NxAppInfo* pInfo)
 
 		if( lowerKey == "type" )
 		{
-			pInfo->setType( settings.value(key).toString() );
+			psInfo->setType(settings.value(key).toString());
 		}
 		else if( lowerKey == "version" )
 		{
-			pInfo->setVersion( settings.value(key).toString() );
+			psInfo->setVersion( settings.value(key).toString() );
 		}
 		else if( lowerKey == "tryexec" )
 		{
-			pInfo->setTryExec( settings.value(key).toString() );
+			psInfo->setTryExec( settings.value(key).toString() );
 		}
 		else if( lowerKey == "exec" )
 		{
-			pInfo->setExec( settings.value(key).toString() );
+			psInfo->setExec( settings.value(key).toString() );
 		}
 		else if( lowerKey == QString("name[%1]").arg(szLang) ||
 				 lowerKey == "name" )
 		{
-			pInfo->setName( settings.value(key).toString() );
+			psInfo->setName( settings.value(key).toString() );
 		}
 		else if( lowerKey == QString("comment[%1]").arg(szLang) ||
 				 lowerKey == "comment" )
 		{
-			pInfo->setComment( settings.value(key).toString() );
+			psInfo->setComment( settings.value(key).toString() );
 		}
 		else if( lowerKey == QString("icon[%1]").arg(szLang) ||
 				 lowerKey == "icon" )
 		{
-			pInfo->setIcon( settings.value(key).toString() );
+			psInfo->setIcon( settings.value(key).toString() );
 		}
-#ifdef CONFIG_USE_NO_QML
 		else if( lowerKey == "watch")
 		{
 			if (settings.value(key).toString().toLower() == "yes") {
-				if (!m_pWatcher->files().contains(fileInfo.absoluteFilePath()))
-					m_pWatcher->addPath(fileInfo.absoluteFilePath());
+				if (!m_pWatcher->files().contains(szInfo.absoluteFilePath()))
+					m_pWatcher->addPath(szInfo.absoluteFilePath());
 			} else {
-				if (m_pWatcher->files().contains(fileInfo.absoluteFilePath()))
-					m_pWatcher->removePath(fileInfo.absoluteFilePath());
+				if (m_pWatcher->files().contains(szInfo.absoluteFilePath()))
+					m_pWatcher->removePath(szInfo.absoluteFilePath());
 			}
 		}
-		else if( lowerKey == "state")
+		else if (bInitialized && lowerKey == "state")
 		{
-			pInfo->setEnabled(settings.value(key, "active").toString().toLower() == "active");
+			psInfo->setEnabled(settings.value(key, "active").toString().toLower() == "active");
 		}
-#endif
-		else
+		else if (!bInitialized && lowerKey == "default")
 		{
-			// qWarning() << "Unknown key. : " << key;
-			continue;
-		}
-
-	}
-}
-
-NxAppInfo *NxPackageManager::loadAppInfo( const QString &szInfo )
-{
-	NxAppInfo *pAppInfo = new NxAppInfo();
-	fillAppInfo(szInfo, pAppInfo);
-	return pAppInfo;
-}
-#ifdef CONFIG_USE_NO_QML
-void NxPackageManager::slotFileChanged(QString path)
-{
-	if (!QFile::exists(path)) {
-		m_pWatcher->removePath(path);
-		return;
-	}
-
-	for (int i = 0; i < m_AppInfoList.size(); ++i) {
-		if (path.indexOf(m_AppInfoList[i]->getPath()) == 0) {
-			bool enabled = m_AppInfoList[i]->getEnabled();
-			fillAppInfo(path, m_AppInfoList[i]);
-			m_AppInfoMap[m_AppInfoList[i]->getName()] = m_AppInfoList[i];
-			if (enabled != m_AppInfoList[i]->getEnabled())
-				emit signalStateChanged(m_AppInfoList[i]);
-			break;
+			psInfo->setEnabled(settings.value(key, "active").toString().toLower() == "active");
 		}
 	}
+
+	qDebug() << psInfo->getName() << psInfo->getEnabled();
+
+	m_pPlugins->insert(szInfo.dir().dirName(), psInfo);
 }
-#endif

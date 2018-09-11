@@ -4,5 +4,6 @@
         <file>qml/DropIcon.qml</file>
         <file>qml/DragIcon.qml</file>
         <file>image/bg_background.png</file>
+        <file>qml/NxSwipeView.qml</file>
     </qresource>
 </RCC>

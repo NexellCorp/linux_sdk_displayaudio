@@ -25,6 +25,7 @@ NxProcessManager::~NxProcessManager()
 
 void NxProcessManager::execute( QString exec, int32_t bDirect )
 {
+#if 0
     if( !bDirect )
     {
         int32_t iRet=0;
@@ -71,10 +72,12 @@ void NxProcessManager::execute( QString exec, int32_t bDirect )
 
     // Wait for Process Terminate.
     // pProcess->waitForFinished();
+#endif
 }
 
 bool NxProcessManager::check( QString exec )
 {
+#if 0
     int32_t iRet=0;
     NX_PROCESS_INFO info;
     memset( &info, 0x00, sizeof(info) );
@@ -89,10 +92,14 @@ bool NxProcessManager::check( QString exec )
     }
 
     return (iRet == NX_REPLY_FAIL) ? true : false;
+#endif
+
+	return false;
 }
 
 void NxProcessManager::show( QString exec )
 {
+#if 0
     int32_t iRet=0;
     NX_PROCESS_INFO info;
     memset( &info, 0x00, sizeof(info) );
@@ -118,10 +125,12 @@ void NxProcessManager::show( QString exec )
         printf("Show Process.\n");
         return;
     }
+#endif
 }
 
 void NxProcessManager::hide( QString exec )
 {
+#if 0
     int32_t iRet=0;
     NX_PROCESS_INFO info;
     memset( &info, 0x00, sizeof(info) );
@@ -147,4 +156,5 @@ void NxProcessManager::hide( QString exec )
         printf("Hide Process.\n");
         return;
     }
+#endif
 }

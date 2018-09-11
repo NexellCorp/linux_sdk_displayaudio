@@ -2,11 +2,13 @@
 #define NXAPPINFO_H
 
 #include <QObject>
+#include <NX_Type.h>
 
-class NxAppInfo : public QObject
+class NxPluginInfo : public QObject
 {
-public:
 	Q_OBJECT
+public:
+
 	Q_PROPERTY(QString type READ getType WRITE setType)
 	Q_PROPERTY(QString version READ getVersion WRITE setVersion)
 	Q_PROPERTY(QString name READ getName WRITE setName)
@@ -17,7 +19,65 @@ public:
 	Q_PROPERTY(QString path READ getPath WRITE setPath)
 
 public:
-	explicit NxAppInfo();
+	explicit NxPluginInfo();
+
+	void *m_pHandle;
+
+	// plugin function call interface
+	void (*m_pInit)(void *, const char *pArgs);
+
+	void (*m_pIsInit)(bool *);
+
+	void (*m_pdeInit)();
+
+	void (*m_pShow)();
+
+	void (*m_pHide)();
+
+	void (*m_pRaise)();
+
+	void (*m_pLower)();
+
+	// register callback function
+	void (*m_pRegisterLauncherShow)(void(*)(bool *));
+
+	void (*m_pRegisterShow)(void(*)());
+
+	void (*m_pRegisterRequestTerminate)(void(*cbFunc)());
+
+	void (*m_pRequestAudioFocus)(FocusType eType, FocusPriority ePriority, bool* pbOk);
+
+	void (*m_pRegisterRequestAudioFocus)(void (*cbFunc)(FocusPriority ePriority, bool *pbOk));
+
+	void (*m_pRequestAudioFocusTransient)(FocusPriority ePriority, bool* pbOk);
+
+	void (*m_pRegisterRequestAudioFocusTransient)(void (*cbFunc)(FocusPriority ePriority, bool *pbOk));
+
+	void (*m_pRegisterRequestAudioFocusLoss)(void (*cbFunc)());
+
+	void (*m_pRequestVideoFocus)(FocusType eType, FocusPriority ePriority, bool* pbOk);
+
+	void (*m_pRegisterRequestVideoFocus)(void (*cbFunc)(FocusPriority ePriority, bool *pbOk));
+
+	void (*m_pRequestVideoFocusTransient)(FocusPriority ePriority, bool* pbOk);
+
+	void (*m_pRegisterRequestVideoFocusTransient)(void (*cbFunc)(FocusPriority ePriority, bool *pbOk));
+
+	void (*m_pRegisterRequestVideoFocusLoss)(void (*cbFunc)());
+
+	void (*m_pRegisterRequestPluginRun)(void (*cbFunc)(const char *pPlugin, const char *pArgs));
+
+	void (*m_pRegisterRequestPluginTerminate)(void (*cbFunc)(const char *pPlugin));
+
+	void (*m_pRegisterRequestMessage)(void (*cbFunc)(const char* pDst, const char* pMsg, int32_t iMsgSize));
+
+	void (*m_pSendMessage)(const char* pMsg, int32_t iMsgSize);
+
+	void (*m_pRegisterRequestPopupMessage)(void (*cbFunc)(PopupMessage*, bool *bOk));
+
+	void (*m_pRegisterRequestExpirePopupMessage)(void (*cbFunc)());
+
+	void (*m_pPopupMessageResponse)(bool bOk);
 
 	QString getType() const;
 	void setType(const QString& szType );
@@ -62,8 +122,5 @@ private:
 	QString m_szPath;
 	bool m_bEnabled;
 };
-
-typedef QList<NxAppInfo*> NxAppInfoList;
-typedef QMap<QString, NxAppInfo*> NxAppInfoMap;
 
 #endif // NXAPPINFO_H
