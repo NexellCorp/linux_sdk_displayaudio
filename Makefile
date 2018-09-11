@@ -1,119 +1,106 @@
-ifndef JOBS
-JOBJS := 8
+ifndef	JOBS
+JOBJS	:= 8
 endif
 
 ifeq ($(OE_QMAKE_AR), )
-export OE_QMAKE_AR := $(NX_OE_QMAKE_AR)
+export OE_QMAKE_AR=$(NX_OE_QMAKE_AR)
 endif
 ifeq ($(OE_QMAKE_CC), )
-export OE_QMAKE_CC := $(NX_OE_QMAKE_CC)
+export OE_QMAKE_CC=$(NX_OE_QMAKE_CC)
 endif
 ifeq ($(OE_QMAKE_CFLAGS), )
-export OE_QMAKE_CFLAGS := $(NX_OE_QMAKE_CFLAGS)
+export OE_QMAKE_CFLAGS=$(NX_OE_QMAKE_CFLAGS)
 endif
 ifeq ($(OE_QMAKE_CXX), )
-export OE_QMAKE_CXX := $(NX_OE_QMAKE_CXX)
+export OE_QMAKE_CXX=$(NX_OE_QMAKE_CXX)
 endif
 ifeq ($(OE_QMAKE_CXXFLAGS), )
-export OE_QMAKE_CXXFLAGS := $(NX_OE_QMAKE_CXXFLAGS)
+export OE_QMAKE_CXXFLAGS=$(NX_OE_QMAKE_CXXFLAGS)
 endif
 ifeq ($(OE_QMAKE_INCDIR_QT), )
-export OE_QMAKE_INCDIR_QT := $(NX_OE_QMAKE_INCDIR_QT)
+export OE_QMAKE_INCDIR_QT=$(NX_OE_QMAKE_INCDIR_QT)
 endif
 ifeq ($(OE_QMAKE_LDFLAGS), )
-export OE_QMAKE_LDFLAGS := $(NX_OE_QMAKE_LDFLAGS)
+export OE_QMAKE_LDFLAGS=$(NX_OE_QMAKE_LDFLAGS)
 endif
 ifeq ($(OE_QMAKE_LIBDIR_QT), )
-export OE_QMAKE_LIBDIR_QT := $(NX_OE_QMAKE_LIBDIR_QT)
+export OE_QMAKE_LIBDIR_QT=$(NX_OE_QMAKE_LIBDIR_QT)
 endif
 ifeq ($(OE_QMAKE_LINK), )
-export OE_QMAKE_LINK := $(NX_OE_QMAKE_LINK)
+export OE_QMAKE_LINK=$(NX_OE_QMAKE_LINK)
 endif
 ifeq ($(OE_QMAKE_QDBUSCPP2XML), )
-export OE_QMAKE_QDBUSCPP2XML := $(NX_OE_QMAKE_QDBUSCPP2XML)
+export OE_QMAKE_QDBUSCPP2XML=$(NX_OE_QMAKE_QDBUSCPP2XML)
 endif
 ifeq ($(OE_QMAKE_QDBUSXML2CPP), )
-export OE_QMAKE_QDBUSXML2CPP := $(NX_OE_QMAKE_QDBUSXML2CPP)
+export OE_QMAKE_QDBUSXML2CPP=$(NX_OE_QMAKE_QDBUSXML2CPP)
 endif
 ifeq ($(OE_QMAKE_QT_CONFIG), )
-export OE_QMAKE_QT_CONFIG := $(NX_OE_QMAKE_QT_CONFIG)
+export OE_QMAKE_QT_CONFIG=$(NX_OE_QMAKE_QT_CONFIG)
 endif
 ifeq ($(OE_QMAKE_MOC), )
-export OE_QMAKE_MOC := $(NX_OE_QMAKE_MOC)
+export OE_QMAKE_MOC=$(NX_OE_QMAKE_MOC)
 endif
 ifeq ($(OE_QMAKE_RCC), )
-export OE_QMAKE_RCC := $(NX_OE_QMAKE_RCC)
+export OE_QMAKE_RCC=$(NX_OE_QMAKE_RCC)
 endif
 ifeq ($(OE_QMAKE_UIC), )
-export OE_QMAKE_UIC := $(NX_OE_QMAKE_UIC)
+export OE_QMAKE_UIC=$(NX_OE_QMAKE_UIC)
 endif
 ifeq ($(OE_QMAKE_PATH_HOST_BINS), )
-export OE_QMAKE_PATH_HOST_BINS := $(NX_OE_QMAKE_PATH_HOST_BINS)
+export OE_QMAKE_PATH_HOST_BINS=$(NX_OE_QMAKE_PATH_HOST_BINS)
 endif
 ifeq ($(QMAKESPEC), )
-export QMAKESPEC := $(NX_OE_XQMAKESPEC)
+export QMAKESPEC=$(NX_OE_XQMAKESPEC)
 endif
 ifeq ($(QT_CONF_PATH), )
-export QT_CONF_PATH := $(NX_QT_CONF_PATH)
+export QT_CONF_PATH=$(NX_QT_CONF_PATH)
 endif
 
-# Select whether to use some features
-ifeq ($(NX_DAUDIO_ENABLE_BT), )
-export SDK_ENABLE_BT := no
-else
-export SDK_ENABLE_BT := $(NX_DAUDIO_ENABLE_BT)
-endif
-ifeq ($(NX_DAUDIO_ENABLE_CAM), )
-export SDK_ENABLE_CAM := no
-else
-export SDK_ENABLE_CAM := $(NX_DAUDIO_ENABLE_CAM)
-endif
+QMAKE_PATH=$(OE_QMAKE_PATH_HOST_BINS)
 
-QMAKE_PATH := $(OE_QMAKE_PATH_HOST_BINS)
+TOP_DIR:=$(shell dirname $(realpath $(lastword $(MAKEFILE_LIST))))
 
-TOP_DIR := $(shell dirname $(realpath $(lastword $(MAKEFILE_LIST))))
-
-LIB_TOP	:= library/src
-APP_TOP	:= apps
-TOOL_TOP := tools
-PODO_TOP := $(APP_TOP)/podo
-BUILD_TOP := qt_build
-BIN_TOP := bin
-RESULT := result
+LIB_TOP		:= library/src
+APP_TOP		:= apps
+TOOL_TOP	:= tools
+PODO_TOP	:= $(APP_TOP)/podo
+BUILD_TOP	:= qt_build
+BIN_TOP		:= bin
+RESULT		:= result
 RESULT_LIB_TOP := library/lib
-QT_INC_TOP := library/include
+QT_INC_TOP	:= library/include
 
 LIBS :=
 LIBS += KeyReceiver
-LIBS += libnxdaudioipc
+#LIBS += libnxdaudioipc
 LIBS += libnxconfig
 LIBS += libnxdaudioutils
-ifneq ($(OECORE_SDK_VERSION), 2.3.1)
-# FIX ME. (QT5.4 SDK don't have NEXELL private library.)
+ifneq ($(OECORE_SDK_VERSION),2.3.1)
+# FIX ME. ( QT5.4 SDK don't have NEXELL private library. )
 LIBS += libavin
 LIBS += librearcam
 endif
 
 QT_LIBS :=
 QT_LIBS += libnxbaseui
-QT_LIBS += libnxpacpclient
+#QT_LIBS += libnxpacpclient
 
 APPS :=
 APPS += NxBTServiceConsole
 APPS += KeyInputSender
-APPS += NxDAudioManager
+#APPS += NxDAudioManager
 APPS += NxCommandSender
+APPS += NxBTService
 
 QT_APPS :=
 QT_APPS += NxBaseUiTest
 QT_APPS += NxLauncher
-QT_APPS += NxBTServiceR
-QT_APPS += NxBTAudioR
+QT_APPS += NxBTAudio
 QT_APPS += NxBTPhoneR
-QT_APPS += NxBTSettingsR
-
-ifneq ($(OECORE_SDK_VERSION), 2.3.1)
-# FIX ME. (QT5.4 SDK don't have NEXELL private library.)
+QT_APPS += NxBTSettings
+ifneq ($(OECORE_SDK_VERSION),2.3.1)
+# FIX ME. ( QT5.4 SDK don't have NEXELL private library. )
 QT_APPS += NxAudioPlayer
 QT_APPS += NxVideoPlayer
 QT_APPS += NxQuickRearCam
@@ -121,7 +108,7 @@ QT_APPS += NxAVIn
 endif
 
 QT_PODO	:=
-ifneq ($(OECORE_SDK_VERSION), 2.3.1)
+ifneq ($(OECORE_SDK_VERSION),2.3.1)
 QT_PODO	+= core
 QT_PODO	+= pdwindowcompositor
 endif
