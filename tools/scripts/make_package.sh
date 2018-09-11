@@ -42,6 +42,15 @@ function package_btr_service()
 	cp -va ${TOP}/${BUILD_TOP}/build-${app_name}/${app_name} ${RESULT_DIR}/${USR_BIN}/
 }
 
+function unpackage_btr_service()
+{
+	local app_name=NxBTServiceR
+	echo "<< Unpackage ${app_name} >>"
+	if [ -f ${RESULT_DIR}/${USR_BIN}/${app_name} ]; then
+		rm -rf ${RESULT_DIR}/${USR_BIN}/${app_name}
+	fi
+}
+
 function package_btr_application()
 {
 	local app_name=${1}
@@ -49,6 +58,15 @@ function package_btr_application()
 	mkdir -p ${RESULT_DIR}/${PACKAGE_ROOT}/${app_name};
 	cp -va ${TOP}/apps/${app_name}/${PACKAGE_DIR}/* ${RESULT_DIR}/${PACKAGE_ROOT}/${app_name}/;
 	cp -va ${TOP}/${BUILD_TOP}/build-${app_name}/${app_name} ${RESULT_DIR}/${PACKAGE_ROOT}/${app_name}/;
+}
+
+function unpackage_btr_application()
+{
+	local app_name=${1}
+	echo "<< Unpackage ${1} >>"
+	if [ -d ${RESULT_DIR}/${PACKAGE_ROOT}/${app_name} ]; then
+		rm -rf ${RESULT_DIR}/${PACKAGE_ROOT}/${app_name};
+	fi
 }
 
 function package_application()
@@ -91,6 +109,15 @@ function package_quickrearcam_application()
 	cp -va ${TOP}/library/lib/libnxrearcam*  ${RESULT_DIR}/${PACKAGE_ROOT}/${app_name}/lib/
 }
 
+function unpackage_quickrearcam_application()
+{
+	local app_name=NxQuickRearCam
+	echo "<< Unpackage ${app_name} >>"
+	if [ -d ${RESULT_DIR}/${PACKAGE_ROOT}/${app_name} ]; then
+		rm -rf ${RESULT_DIR}/${PACKAGE_ROOT}/${app_name};
+	fi
+}
+
 function package_avin_application()
 {
 	local app_name=NxAVIn
@@ -104,6 +131,15 @@ function package_avin_application()
 
 	echo "<< Copy Rear Camera Libraries >>"
 	cp -va ${TOP}/library/lib/libnxavin*  ${RESULT_DIR}/${PACKAGE_ROOT}/${app_name}/lib/
+}
+
+function unpackage_avin_application()
+{
+	local app_name=NxAVIn
+	echo "<< Unpackage ${app_name} >>"
+	if [ -d ${RESULT_DIR}/${PACKAGE_ROOT}/${app_name} ]; then
+		rm -rf ${RESULT_DIR}/${PACKAGE_ROOT}/${app_name};
+	fi
 }
 
 function package_common_libraries()
@@ -125,8 +161,29 @@ function package_common_libraries()
 	echo "<< Package Key Input Receiver >>"
 	cp -va ${TOP}/library/lib/libnxkeyreceiver.so ${RESULT_DIR}/${USR_LIB}/
 
-	if [ ${SDK_ENABLE_BT} == "y" ]; then
-		echo "<< Package Nexell BT Libraries, server & HCD file >>"
+	if [ ${SDK_ENABLE_BT} == "yes" ]; then
+		echo "<< Package Nexell BT Libraries >>"
+		cp -va ${TOP}/library/lib/nxbt1xx/lib/libappbt.so ${RESULT_DIR}/${USR_LIB}/
+		cp -va ${TOP}/library/lib/nxbt1xx/lib/libnxbt.so ${RESULT_DIR}/${USR_LIB}/
+		cp -va ${TOP}/library/lib/nxbt1xx/lib/libnxalsa.so ${RESULT_DIR}/${USR_LIB}/
+		cp -va ${TOP}/library/lib/nxbt1xx/lib/libnrec_hf.so ${RESULT_DIR}/${USR_LIB}/
+	elif [ ${SDK_ENABLE_BT} == "no" ]; then
+		echo "<< Unpackage Nexell BT Libraries >>"
+		if [ -f ${RESULT_DIR}/${USR_LIB}/libappbt.so ]; then
+			rm -rf ${RESULT_DIR}/${USR_LIB}/libappbt.so
+		fi
+		if [ -f ${RESULT_DIR}/${USR_LIB}/libnxbt.so ]; then
+			rm -rf ${RESULT_DIR}/${USR_LIB}/libnxbt.so
+		fi
+		if [ -f ${RESULT_DIR}/${USR_LIB}/libnxalsa.so ]; then
+			rm -rf ${RESULT_DIR}/${USR_LIB}/libnxalsa.so
+		fi
+		if [ -f ${RESULT_DIR}/${USR_LIB}/libnrec_hf.so ]; then
+			rm -rf ${RESULT_DIR}/${USR_LIB}/libnrec_hf.so
+		fi
+	else
+		echo "[NXBT-libs] Invalid bluetooth-related SDK argument, default is "yes""
+		echo "<< Package Nexell BT Libraries >>"
 		cp -va ${TOP}/library/lib/nxbt1xx/lib/libappbt.so ${RESULT_DIR}/${USR_LIB}/
 		cp -va ${TOP}/library/lib/nxbt1xx/lib/libnxbt.so ${RESULT_DIR}/${USR_LIB}/
 		cp -va ${TOP}/library/lib/nxbt1xx/lib/libnxalsa.so ${RESULT_DIR}/${USR_LIB}/
@@ -136,15 +193,22 @@ function package_common_libraries()
 
 function package_etc()
 {
-	local app_name=${1}
 	echo "<< Package etc Applications >>"
 	mkdir -p ${RESULT_DIR}/${USR_BIN}
 	cp -aR ${TOP}/bin/* ${RESULT_DIR}/${USR_BIN}/
-	if [ ${SDK_ENABLE_BT} == "y" ]; then
+
+	if [ ${SDK_ENABLE_BT} == "yes" ]; then
 		cp -va ${TOP}/apps/NxService/NxService_use_bt.sh ${RESULT_DIR}/${USR_BIN}/NxService.sh
-	else
+	elif [ ${SDK_ENABLE_BT} == "no" ]; then
 		cp -va ${TOP}/apps/NxService/NxService_nouse_bt.sh ${RESULT_DIR}/${USR_BIN}/NxService.sh
+		if [ -f ${RESULT_DIR}/${USR_BIN}/NxBTServiceConsole ]; then
+			rm -rf ${RESULT_DIR}/${USR_BIN}/NxBTServiceConsole
+		fi
+	else
+		echo "[NxService] Invalid bluetooth-related SDK argument, default is "yes""
+		cp -va ${TOP}/apps/NxService/NxService_use_bt.sh ${RESULT_DIR}/${USR_BIN}/NxService.sh
 	fi
+
 	mkdir -p ${RESULT_DIR}/${USR_SBIN}
 }
 
@@ -158,18 +222,41 @@ package_common_libraries
 package_luncher
 pakcage_daudiomanger
 package_audioplayer_application
-if [ ${SDK_ENABLE_CAM} == "y" ]; then
-package_quickrearcam_application
-package_avin_application
+
+if [ ${SDK_ENABLE_CAM} == "yes" ]; then
+	package_quickrearcam_application
+	package_avin_application
+elif [ ${SDK_ENABLE_CAM} == "no" ]; then
+	unpackage_quickrearcam_application
+	unpackage_avin_application
+else
+	echo "[NXCAM] Invalid nexell camera SDK argument, default is "yes""
+	package_quickrearcam_application
+	package_avin_application
 fi
+
 package_application NxVideoPlayer
-if [ ${SDK_ENABLE_BT} == "y" ]; then
+
+if [ ${SDK_ENABLE_BT} == "yes" ]; then
+	package_btr_service
+	package_btr_application NxBTAudioR
+	package_btr_application NxBTPhoneR
+	package_btr_application NxBTSettingsR
+elif [ ${SDK_ENABLE_BT} == "no" ]; then
+	unpackage_btr_service
+	unpackage_btr_application NxBTAudioR
+	unpackage_btr_application NxBTPhoneR
+	unpackage_btr_application NxBTSettingsR
+else
+	echo "[NXBT] Invalid nexell bluetooth SDK argument, default is "yes""
 	package_btr_service
 	package_btr_application NxBTAudioR
 	package_btr_application NxBTPhoneR
 	package_btr_application NxBTSettingsR
 fi
+
 package_etc
+
 if [ ${OECORE_SDK_VERSION} != "2.3.1" ]; then
 	package_podo_compositor
 fi

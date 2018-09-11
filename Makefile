@@ -59,12 +59,12 @@ endif
 
 # Select whether to use some features
 ifeq ($(NX_DAUDIO_ENABLE_BT), )
-export SDK_ENABLE_BT := y
+export SDK_ENABLE_BT := no
 else
 export SDK_ENABLE_BT := $(NX_DAUDIO_ENABLE_BT)
 endif
 ifeq ($(NX_DAUDIO_ENABLE_CAM), )
-export SDK_ENABLE_CAM := y
+export SDK_ENABLE_CAM := no
 else
 export SDK_ENABLE_CAM := $(NX_DAUDIO_ENABLE_CAM)
 endif
@@ -90,10 +90,8 @@ LIBS += libnxconfig
 LIBS += libnxdaudioutils
 ifneq ($(OECORE_SDK_VERSION), 2.3.1)
 # FIX ME. (QT5.4 SDK don't have NEXELL private library.)
-ifeq ($(SDK_ENABLE_CAM), y)
 LIBS += libavin
 LIBS += librearcam
-endif
 endif
 
 QT_LIBS :=
@@ -101,9 +99,7 @@ QT_LIBS += libnxbaseui
 QT_LIBS += libnxpacpclient
 
 APPS :=
-ifeq ($(SDK_ENABLE_BT), y)
 APPS += NxBTServiceConsole
-endif
 APPS += KeyInputSender
 APPS += NxDAudioManager
 APPS += NxCommandSender
@@ -111,21 +107,17 @@ APPS += NxCommandSender
 QT_APPS :=
 QT_APPS += NxBaseUiTest
 QT_APPS += NxLauncher
-ifeq ($(SDK_ENABLE_BT), y)
 QT_APPS += NxBTServiceR
 QT_APPS += NxBTAudioR
 QT_APPS += NxBTPhoneR
 QT_APPS += NxBTSettingsR
-endif
 
 ifneq ($(OECORE_SDK_VERSION), 2.3.1)
 # FIX ME. (QT5.4 SDK don't have NEXELL private library.)
 QT_APPS += NxAudioPlayer
 QT_APPS += NxVideoPlayer
-ifeq ($(SDK_ENABLE_CAM), y)
 QT_APPS += NxQuickRearCam
 QT_APPS += NxAVIn
-endif
 endif
 
 QT_PODO	:=
