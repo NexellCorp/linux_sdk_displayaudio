@@ -9,16 +9,13 @@
 void Init(void *pObj, const char *pArgs)
 {
 	(void)pArgs;
-	NXLOGI("[%s] 1", Q_FUNC_INFO);
 	MainFrame *p = MainFrame::GetInstance(pObj);
 	if (p)
 		p->Initialize();
-	NXLOGI("[%s] 2", Q_FUNC_INFO);
 }
 
 void IsInit(bool *bOk)
 {
-	NXLOGI("[%s] %d ", __FUNCTION__, MainFrame::GetInstance() ? 1 : 0);
 	*bOk = MainFrame::GetInstance() ? true : false;
 }
 
