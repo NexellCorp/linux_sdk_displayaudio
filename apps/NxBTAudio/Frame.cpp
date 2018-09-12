@@ -33,10 +33,10 @@ Frame::Frame(QWidget *parent) :
 	connect(m_pCommandProcessor, SIGNAL(signalCommandFromServer(QString)), this, SLOT(slotCommandFromServer(QString)));
 	connect(this, SIGNAL(signalCommandToServer(QString)), m_pCommandProcessor, SLOT(slotCommandToServer(QString)));
 
-	m_pCommandProcessor->start();
-
 	if (m_pRequestSendMessage)
 		m_pCommandProcessor->RegisterRequestSendMessage(m_pRequestSendMessage);
+
+	m_pCommandProcessor->start();
 }
 
 Frame::~Frame()
