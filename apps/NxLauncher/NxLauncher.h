@@ -46,7 +46,7 @@ public:
 	// call function from qml
 	Q_INVOKABLE QVariantList getPluginInfoList();
 
-	void LauncherShow(bool *bOk);
+	void LauncherShow(bool *bOk, bool bRequireRequestFocus);
 
 protected:
 	bool event(QEvent *event);

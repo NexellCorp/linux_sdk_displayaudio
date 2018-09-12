@@ -2,9 +2,6 @@
 #include <QProcess>
 
 #include <NX_Type.h>
-#include <INX_IpcManager.h>
-#include <NX_IpcPacket.h>
-#include <NX_IpcUtils.h>
 
 #include "nxprocessmanager.h"
 #include "nxlauncher.h"

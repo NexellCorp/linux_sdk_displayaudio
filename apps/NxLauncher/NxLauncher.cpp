@@ -103,7 +103,7 @@ NxLauncher::NxLauncher(QWidget *parent) :
 		// register callback for request video focus loss
 		psInfo->m_pRegisterRequestVideoFocusLoss = (void (*)(void (*)()))dlsym(psInfo->m_pHandle, "RegisterRequestVideoFocusLoss");
 		psInfo->m_pRegisterRequestPluginRun = (void (*)(void (*)(const char*, const char*)))dlsym(psInfo->m_pHandle, "RegisterRequestPlugInRun");
-		psInfo->m_pRegisterRequestPluginTerminate = (void (*)(void (*)(const char*)))dlsym(psInfo->m_pHandle, "RegisterRequestPlugInRun");
+		psInfo->m_pRegisterRequestPluginTerminate = (void (*)(void (*)(const char*)))dlsym(psInfo->m_pHandle, "RegisterRequestPlugInTerminate");
 		// send message
 		psInfo->m_pSendMessage = (void (*)(const char*, int32_t))dlsym(psInfo->m_pHandle, "SendMessage");
 		// register callback for request send message
@@ -220,7 +220,7 @@ void NxLauncher::RequestLauncherShow(bool *bOk)
 {
 	NXLOGI("[%s]", __FUNCTION__);
 	if (m_spInstance)
-		m_spInstance->LauncherShow(bOk);
+		m_spInstance->LauncherShow(bOk, true);
 }
 
 void NxLauncher::RequestShow()
@@ -291,20 +291,20 @@ void NxLauncher::RequestSendMessage(const char *pDst, const char *pMsg, int32_t 
 	QString key = QString::fromLatin1(pDst);
 
 
-	NXLOGI("[%s] %s -> %s %s", __FUNCTION__, from.toStdString().c_str(), pDst, pMsg);
+//	NXLOGI("[%s] %s -> %s %s", __FUNCTION__, from.toStdString().c_str(), pDst, pMsg);
 
 	if (m_spInstance->m_PlugIns.find(key) != m_spInstance->m_PlugIns.end())
 	{
-		NXLOGI("[%s] %s -> %s %d %d ", __FUNCTION__, from.toStdString().c_str(), pDst, !!m_spInstance->m_PlugIns[key]->m_pIsInit, !!m_spInstance->m_PlugIns[key]->m_pSendMessage);
+//		NXLOGI("[%s] %s -> %s %d %d ", __FUNCTION__, from.toStdString().c_str(), pDst, !!m_spInstance->m_PlugIns[key]->m_pIsInit, !!m_spInstance->m_PlugIns[key]->m_pSendMessage);
 		if (m_spInstance->m_PlugIns[key]->m_pIsInit && m_spInstance->m_PlugIns[key]->m_pSendMessage)
 		{
 			bool bOk = false;
 			m_spInstance->m_PlugIns[key]->m_pIsInit(&bOk);
-			NXLOGI("[%s] key = %s <%s>", __FUNCTION__, key.toStdString().c_str(), bOk ? "OK" : "NG");
+//			NXLOGI("[%s] key = %s <%s>", __FUNCTION__, key.toStdString().c_str(), bOk ? "OK" : "NG");
 			if (bOk)
 				m_spInstance->m_PlugIns[key]->m_pSendMessage(pMsg, iMsgSize);
 
-			NXLOGI("[%s] %s -> %s %s <%s>", __FUNCTION__, from.toStdString().c_str(), pDst, pMsg, bOk ? "OK" : "NG");
+//			NXLOGI("[%s] %s -> %s %s <%s>", __FUNCTION__, from.toStdString().c_str(), pDst, pMsg, bOk ? "OK" : "NG");
 		}
 	}
 }
@@ -368,11 +368,12 @@ void NxLauncher::RequestPlugInRun(const char *pPlugin, const char *pArgs)
  ************************************************************************************/
 void NxLauncher::RequestPlugInTerminate(const char *pPlugin)
 {
+	QString caller = FindCaller(2);
 	NxLauncher *p = m_spInstance;
 	QString key = QString::fromLatin1(pPlugin);
 	bool bOk = false;
 
-	NXLOGI("[%s] plugin(%s)", __FUNCTION__, pPlugin);
+	NXLOGI("[%s] plugin(%s) from %s", __FUNCTION__, pPlugin, caller.toStdString().c_str());
 
 	if (p->m_PlugIns.find(key) == p->m_PlugIns.end())
 	{
@@ -435,7 +436,7 @@ void NxLauncher::RequestAudioFocus(FocusPriority ePriority, bool *bOk)
 
 	NXLOGI("[%s] <TRY> owner(%s), caller(%s)", __FUNCTION__, owner.toStdString().c_str(), caller.toStdString().c_str());
 
-	if (!(m_spInstance->m_PlugIns[owner]->m_pIsInit) || !(m_spInstance->m_PlugIns[owner]->m_pRequestAudioFocus))
+	if (!owner.isEmpty() && (!(m_spInstance->m_PlugIns[owner]->m_pIsInit) || !(m_spInstance->m_PlugIns[owner]->m_pRequestAudioFocus)))
 	{
 		NXLOGE("[%s] The D-Audio Interface has a missing function.", __FUNCTION__);
 		NXLOGE("[%s] Make sure the IsInit and RequestAudioFocus functions are defined.", __FUNCTION__);
@@ -485,7 +486,7 @@ void NxLauncher::RequestAudioFocusTransient(FocusPriority ePriority, bool *bOk)
 
 	NXLOGI("[%s] <TRY> owner(%s), caller(%s)", __FUNCTION__, owner.toStdString().c_str(), caller.toStdString().c_str());
 
-	if (!(m_spInstance->m_PlugIns[owner]->m_pIsInit) || !(m_spInstance->m_PlugIns[owner]->m_pRequestAudioFocusTransient))
+	if (!owner.isEmpty() && (!(m_spInstance->m_PlugIns[owner]->m_pIsInit) || !(m_spInstance->m_PlugIns[owner]->m_pRequestAudioFocusTransient)))
 	{
 		NXLOGE("[%s] The D-Audio Interface has a missing function.", __FUNCTION__);
 		NXLOGE("[%s] Make sure the IsInit and RequestAudioFocusTransient functions are defined.", __FUNCTION__);
@@ -550,7 +551,8 @@ void NxLauncher::RequestAudioFocusLoss()
 		}
 	}
 
-	NXLOGI("[%s] <DONE> owner(%s)", __FUNCTION__, m_AudioFocusQueue.first().toStdString().c_str());
+	curr = m_AudioFocusQueue.size() ? m_AudioFocusQueue.first() : "";
+	NXLOGI("[%s] <DONE> owner(%s)", __FUNCTION__, curr.toStdString().c_str());
 }
 
 // Video Focus Management
@@ -610,8 +612,7 @@ void NxLauncher::RequestVideoFocusTransient(FocusPriority ePriority, bool *bOk)
 
 	NXLOGI("[%s] <TRY> owner(%s), caller(%s)", __FUNCTION__, owner.toStdString().c_str(), caller.toStdString().c_str());
 
-
-	if (!(m_spInstance->m_PlugIns[owner]->m_pIsInit) || !(m_spInstance->m_PlugIns[owner]->m_pRequestVideoFocusTransient))
+	if (owner != NX_LAUNCHER && (!(m_spInstance->m_PlugIns[owner]->m_pIsInit) || !(m_spInstance->m_PlugIns[owner]->m_pRequestVideoFocusTransient)))
 	{
 		NXLOGE("[%s] The D-Audio Interface has a missing function.", __FUNCTION__);
 		NXLOGE("[%s] Make sure the IsInit and RequestVideoFocusTransient functions are defined.", __FUNCTION__);
@@ -660,22 +661,28 @@ void NxLauncher::RequestVideoFocusLoss()
 	if (prev == caller)
 	{
 		// 1. remove from the queue.
-		m_VideoFocusQueue.pop_front();
+//		m_VideoFocusQueue.pop_front();
+		m_VideoFocusQueue.removeAll(prev);
+		m_VideoFocusQueue.push_back(prev);
 
 		// 2. check whether the next owner exists.
-		if (m_VideoFocusQueue.size())
+		curr = m_VideoFocusQueue.first();
+
+		if (NX_LAUNCHER == curr)
 		{
-			curr = m_VideoFocusQueue.first();
-			if (prev != curr)
-			{
-				// 2.1. pass the focus to the next owner.
-				bool bOk = false;
-				m_spInstance->m_PlugIns[curr]->m_pRequestVideoFocus(FocusType_Set, FocusPriority_Normal, &bOk);
-			}
+			bool bOk = false;
+			m_spInstance->LauncherShow(&bOk, false);
+		}
+		else
+		{
+			// 2.1. pass the focus to the next owner.
+			bool bOk = false;
+			m_spInstance->m_PlugIns[curr]->m_pRequestVideoFocus(FocusType_Set, FocusPriority_Normal, &bOk);
 		}
 	}
 
-	NXLOGI("[%s] <DONE> owner(%s)", __FUNCTION__, m_AudioFocusQueue.first().toStdString().c_str());
+	curr = m_VideoFocusQueue.size() ? m_VideoFocusQueue.first() : "";
+	NXLOGI("[%s] <DONE> owner(%s)", __FUNCTION__, curr.toStdString().c_str());
 }
 
 void NxLauncher::RequestPopupMessage(PopupMessage *psPopup, bool *bOk)
@@ -717,19 +724,20 @@ void NxLauncher::Terminate(QString requestor)
 	{
 		m_PlugIns[requestor]->m_pdeInit();
 
-		owner = m_VideoFocusQueue.size() ? m_VideoFocusQueue.first() : "NxLauncher";
-		m_VideoFocusQueue.removeAll(owner);
+		owner = m_VideoFocusQueue.first();
+		m_VideoFocusQueue.removeAll(requestor);
+
 		if (owner == requestor)
 		{
 			if (m_VideoFocusQueue.size())
 			{
 				owner = m_VideoFocusQueue.first();
-				if (owner != "NxLauncher")
+				if (owner != NX_LAUNCHER)
 					m_PlugIns[owner]->m_pRequestVideoFocus(FocusType_Get, FocusPriority_Normal, &bOk);
 			}
 		}
 
-		owner = m_AudioFocusQueue.size() ? m_AudioFocusQueue.first() : "NxLauncher";
+		owner = m_AudioFocusQueue.size() ? m_AudioFocusQueue.first() : NX_LAUNCHER;
 		m_AudioFocusQueue.removeAll(owner);
 		if (owner == requestor)
 		{
@@ -895,12 +903,15 @@ void NxLauncher::slotExecute(QString plugin)
  * Description
  *  - Try to set the launcher to the top level.
  ************************************************************************************/
-void NxLauncher::LauncherShow(bool *bOk)
-{
-	QString owner = m_VideoFocusQueue.first();
-
-	if (m_PlugIns[owner]->m_pRequestVideoFocus)
-		m_PlugIns[owner]->m_pRequestVideoFocus(FocusType_Get, FocusPriority_Normal, bOk);
+void NxLauncher::LauncherShow(bool *bOk, bool bRequireRequestFocus)
+{	
+	*bOk = !bRequireRequestFocus;
+	if (bRequireRequestFocus)
+	{
+		QString owner = m_VideoFocusQueue.first();
+		if (m_PlugIns[owner]->m_pRequestVideoFocus)
+			m_PlugIns[owner]->m_pRequestVideoFocus(FocusType_Get, FocusPriority_Normal, bOk);
+	}
 
 	if (!*bOk)
 	{
