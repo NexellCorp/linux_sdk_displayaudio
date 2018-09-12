@@ -36,9 +36,9 @@ enum FocusType {
 };
 
 enum FocusPriority {
-	FocusPriority_Highest,
+	FocusPriority_Normal,
 	FocusPriority_High,
-	FocusPriority_Normal
+	FocusPriority_Highest
 };
 
 enum ButtonType {
