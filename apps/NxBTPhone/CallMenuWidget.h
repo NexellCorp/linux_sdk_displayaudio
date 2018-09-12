@@ -12,10 +12,6 @@
 
 #include "defines.h"
 
-#include "BTCommandProcessor.h"
-
-#include "InCommingCallDialog.h"
-
 // for read/parse vCard (*.vcf file format)
 #include <io/vCard/VCardReader.h>
 
@@ -34,8 +30,6 @@ signals:
 
 private slots:
     void slotCommandFromServer(QString command);
-
-    void slotCommandFromServerForInitializing(QString command);
 
     void slotCommandResponseTimer();
 
@@ -57,6 +51,8 @@ public:
 public:
     explicit CallMenuWidget(QWidget *parent = 0);
     ~CallMenuWidget();
+
+	void Initialize();
 
 private slots:
     void on_BUTTON_PHONEBOOK_MENU_clicked();
@@ -108,7 +104,7 @@ private:
 
     void inputKey(int key);
 
-    bool updateForBluetoothEnable(QStringList& tokens);
+	bool updateForBluetoothEnable(QStringList& tokens);
 
     bool updateForPhoneBook(QStringList& tokens);
 
@@ -118,10 +114,6 @@ private:
 
 private:
     CurrentMenu m_CurrentMenu;
-
-    BTCommandProcessor* m_pCommandProcessor;
-
-    InCommingCallDialog m_InCommingCallDialog;
 
     std::vector<VCardReader::VCardProperty> m_PhoneBook;
 

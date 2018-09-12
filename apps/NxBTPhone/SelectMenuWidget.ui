@@ -13,6 +13,9 @@
   <property name="windowTitle">
    <string>Dialog</string>
   </property>
+  <property name="autoFillBackground">
+   <bool>true</bool>
+  </property>
   <widget class="QPushButton" name="BUTTON_ENTER_MESSAGE_MENU">
    <property name="geometry">
     <rect>

@@ -1,0 +1,121 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>MainFrame</class>
+ <widget class="QFrame" name="MainFrame">
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>1024</width>
+    <height>600</height>
+   </rect>
+  </property>
+  <property name="windowTitle">
+   <string>Frame</string>
+  </property>
+  <property name="autoFillBackground">
+   <bool>true</bool>
+  </property>
+  <property name="frameShape">
+   <enum>QFrame::StyledPanel</enum>
+  </property>
+  <property name="frameShadow">
+   <enum>QFrame::Raised</enum>
+  </property>
+  <widget class="CNX_StatusBar" name="statusBar">
+   <property name="geometry">
+    <rect>
+     <x>0</x>
+     <y>0</y>
+     <width>1024</width>
+     <height>60</height>
+    </rect>
+   </property>
+   <property name="frameShape">
+    <enum>QFrame::StyledPanel</enum>
+   </property>
+   <property name="frameShadow">
+    <enum>QFrame::Raised</enum>
+   </property>
+  </widget>
+  <widget class="SelectMenuWidget" name="selectMenu" native="true">
+   <property name="geometry">
+    <rect>
+     <x>0</x>
+     <y>60</y>
+     <width>1024</width>
+     <height>540</height>
+    </rect>
+   </property>
+  </widget>
+  <widget class="CallMenuWidget" name="callMenu" native="true">
+   <property name="geometry">
+    <rect>
+     <x>0</x>
+     <y>60</y>
+     <width>1024</width>
+     <height>540</height>
+    </rect>
+   </property>
+  </widget>
+  <widget class="MessageMenuWidget" name="messageMenu" native="true">
+   <property name="geometry">
+    <rect>
+     <x>0</x>
+     <y>60</y>
+     <width>1024</width>
+     <height>540</height>
+    </rect>
+   </property>
+  </widget>
+  <widget class="CallingMenuWidget" name="callingMenu" native="true">
+   <property name="geometry">
+    <rect>
+     <x>0</x>
+     <y>0</y>
+     <width>1024</width>
+     <height>600</height>
+    </rect>
+   </property>
+  </widget>
+  <zorder>callingMenu</zorder>
+  <zorder>statusBar</zorder>
+  <zorder>selectMenu</zorder>
+  <zorder>callMenu</zorder>
+  <zorder>messageMenu</zorder>
+ </widget>
+ <customwidgets>
+  <customwidget>
+   <class>CNX_StatusBar</class>
+   <extends>QFrame</extends>
+   <header location="global">CNX_StatusBar.h</header>
+   <container>1</container>
+  </customwidget>
+  <customwidget>
+   <class>SelectMenuWidget</class>
+   <extends>QWidget</extends>
+   <header>SelectMenuWidget.h</header>
+   <container>1</container>
+  </customwidget>
+  <customwidget>
+   <class>CallMenuWidget</class>
+   <extends>QWidget</extends>
+   <header>CallMenuWidget.h</header>
+   <container>1</container>
+  </customwidget>
+  <customwidget>
+   <class>MessageMenuWidget</class>
+   <extends>QWidget</extends>
+   <header>MessageMenuWidget.h</header>
+   <container>1</container>
+  </customwidget>
+  <customwidget>
+   <class>CallingMenuWidget</class>
+   <extends>QWidget</extends>
+   <header>CallingMenuWidget.h</header>
+   <container>1</container>
+  </customwidget>
+ </customwidgets>
+ <resources/>
+ <connections/>
+</ui>

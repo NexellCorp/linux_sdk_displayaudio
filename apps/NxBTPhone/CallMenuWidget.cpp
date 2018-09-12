@@ -5,37 +5,34 @@
 #include <gui/phonebook/PhoneBookItem.h>
 #include <gui/CallLog/CallLogItem.h>
 
+#include <QDebug>
+
 CallMenuWidget::CallMenuWidget(QWidget *parent) :
     QWidget(parent, Qt::FramelessWindowHint),
     ui(new Ui::CallMenuWidget)
 {
     ui->setupUi(this);
 
-    m_pCommandProcessor = BTCommandProcessor::instance();
-
-    // make signal and slot connections for CallMenuDialog(this).
-    connect(this, SIGNAL(signalCommandToServer(QString)), m_pCommandProcessor, SLOT(slotCommandToServer(QString)));
-    connect(m_pCommandProcessor, SIGNAL(signalCommandFromServer(QString)), this, SLOT(slotCommandFromServerForInitializing(QString)));
-
     // command response timer
     connect(&m_ResponseTimer, SIGNAL(timeout()), this, SLOT(slotCommandResponseTimer()));
 
     // gif
-    //ui->LABEL_LOADING->setp
     m_pAnimation = new QMovie("://loading/loading3_100x100.gif");
     ui->LABEL_LOADING->setMovie(m_pAnimation);
 
     setCurrentMenu(CurrentMenu_Keypad);
     setUIState(UIState_DownloadCompleted);
     setUIState(UIState_BluetoothDisabled);
-
-    m_bInitialized = false;
-    commandToServer("$HS#IS CONNECTED\n");
 }
 
 CallMenuWidget::~CallMenuWidget()
 {
     delete ui;
+}
+
+void CallMenuWidget::Initialize()
+{
+	commandToServer("$HS#IS CONNECTED\n");
 }
 
 void CallMenuWidget::setCurrentMenu(CurrentMenu menu)
@@ -185,73 +182,6 @@ void CallMenuWidget::on_BUTTON_RE_DIAL_clicked()
     commandToServer("$HS#REDIAL\n");
 }
 
-void CallMenuWidget::slotCommandFromServerForInitializing(QString command)
-{
-    int stx = command.indexOf("$");
-    int etx = command.indexOf("\n");
-
-    if (stx < 0 || etx < 0) {
-        return;
-    }
-
-    // body = remove STX and ETX from command
-    stx++;
-    QString body = command.mid(stx, etx-stx);
-
-    QStringList tokens = body.split("#");
-    QString temp; // output origin command from command(return)
-
-    // failure conditions
-    if (tokens.size() < 3) {
-        return;
-    } else if (!(tokens[1] == "HS" || tokens[1] == "PBC")) {
-        return;
-    }
-
-    temp = "$" + tokens[1] + "#" + tokens[2] + "\n";
-
-    for (int i = 0; i < m_CommandQueue.count(); i++) {
-        // 1. find send command
-        if (m_CommandQueue.at(i).first == temp) {
-            // 2. check return(receive) command
-            if (command.indexOf(m_CommandQueue.at(i).second) >= 0) {
-                m_CommandQueue.removeAt(i);
-                if (m_ResponseTimer.isActive())
-                    m_ResponseTimer.stop();
-                break;
-            }
-        }
-    }
-
-    // valid commands
-    if (tokens[1] == "HS") {
-        if (tokens[2] == "IS CONNECTED") {
-            if (updateForBluetoothEnable(tokens)) {
-                setUIState(UIState_Downloading);
-                commandToServer("$PBC#DOWNLOAD PHONEBOOK\n", "$OK#PBC#DOWNLOAD PHONEBOOK#FILE CREATED");
-            } else {
-                m_bInitialized = true;
-            }
-        }
-    } else { // PBC
-        // example) "$OK#PBC#DOWNLAOD PHONEBOOK#FILE CREATED#/etc/bluetooth/pb_data.vcf"
-        if (tokens[2] == "DOWNLOAD PHONEBOOK") {
-            if (updateForPhoneBook(tokens)) {
-                setUIState(UIState_Downloading);
-                commandToServer("$PBC#DOWNLOAD CALL LOG\n", "$OK#PBC#DOWNLOAD CALL LOG#FILE CREATED");
-            }
-        } else if (tokens[2] == "DOWNLOAD CALL LOG") {
-            if (updateForCallLog(tokens))
-                m_bInitialized = true;
-        }
-    }
-
-    if (m_bInitialized) {
-        disconnect(m_pCommandProcessor, SIGNAL(signalCommandFromServer(QString)), this, SLOT(slotCommandFromServerForInitializing(QString)));
-        connect(m_pCommandProcessor, SIGNAL(signalCommandFromServer(QString)), this, SLOT(slotCommandFromServer(QString)));
-    }
-}
-
 void CallMenuWidget::slotCommandFromServer(QString command)
 {
     int stx = command.indexOf("$");
@@ -263,7 +193,8 @@ void CallMenuWidget::slotCommandFromServer(QString command)
 
     // body = remove STX and ETX from command
     stx++;
-    QString body = command.mid(stx, etx-stx);
+	QString body = command.mid(stx, etx-stx);
+//	qDebug() << Q_FUNC_INFO << body;
 
     // example) command = "$OK#HS#CALL STATUS#INCOMMING CALL\n"
     // example) body    = "OK#HS#CALL STATUS#INCOMMING CALL"
@@ -297,9 +228,11 @@ void CallMenuWidget::slotCommandFromServer(QString command)
 
     // valid commands
     if (tokens[1] == "HS") {
-        if (tokens[2] == "CONNECTION STATUS") {
-            updateForBluetoothEnable(tokens);
-        }
+		if (tokens[2] == "CONNECTION STATUS") {
+			updateForBluetoothEnable(tokens);
+		} else if (tokens[2] == "IS CONNECTED") {
+			updateForBluetoothEnable(tokens);
+		}
     } else { // PBC
         // example) "$OK#PBC#DOWNLAOD PHONEBOOK#FILE CREATED#/etc/bluetooth/pb_data.vcf"
         if (tokens[2] == "DOWNLOAD PHONEBOOK") {
@@ -330,17 +263,17 @@ void CallMenuWidget::on_BUTTON_SYNC_clicked()
 
 bool CallMenuWidget::updateForBluetoothEnable(QStringList& tokens)
 {
-    if (tokens.size() >= 4) {
-        if (tokens[3] == "CONNECTED") {
-            setUIState(UIState_BluetoothEnabled);
-            return true;
-        } else {
-            setUIState(UIState_BluetoothDisabled);
-            return false;
-        }
-    }
+	if (tokens.size() >= 4) {
+		if (tokens[3] == "CONNECTED") {
+			setUIState(UIState_BluetoothEnabled);
+			return true;
+		} else {
+			setUIState(UIState_BluetoothDisabled);
+			return false;
+		}
+	}
 
-    return false;
+	return false;
 }
 
 bool CallMenuWidget::updateForPhoneBook(QStringList &tokens)
@@ -595,7 +528,8 @@ void CallMenuWidget::commandToServer(QString command, QString return_command)
     if (m_ResponseTimer.isActive())
         m_ResponseTimer.stop();
     m_ResponseTimer.start(MAX_RESPONSE_TIME);
-    m_pCommandProcessor->commandToServer(command);
+
+	emit signalCommandToServer(command);
 }
 
 void CallMenuWidget::slotCommandResponseTimer()

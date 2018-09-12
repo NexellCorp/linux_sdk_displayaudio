@@ -4,8 +4,6 @@
 #include <QDialog>
 #include "defines.h"
 
-using namespace Nexell::BTPhone;
-
 namespace Ui {
 class SelectMenuWidget;
 }

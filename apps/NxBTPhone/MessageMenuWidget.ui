@@ -13,6 +13,9 @@
   <property name="windowTitle">
    <string>Dialog</string>
   </property>
+  <property name="autoFillBackground">
+   <bool>true</bool>
+  </property>
   <widget class="QLabel" name="LABEL_LOADING">
    <property name="geometry">
     <rect>

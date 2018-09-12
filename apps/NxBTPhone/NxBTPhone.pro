@@ -9,18 +9,10 @@ QT       += quickwidgets # for status bar (NxBaseUi library)
 
 greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
 
-TARGET = NxBTPhoneR
-TEMPLATE = app
+TARGET = nxbtphone
+TEMPLATE = lib
 
-CONFIG += NxDAudioManager
-NxDAudioManager {
-    DEFINES += CONFIG_NX_DAUDIO_MANAGER
-    DEFINES += CONFIG_USE_AUDIO_FOCUS
-}
-
-DEFINES += CONFIG_TEST_FLAG
-
-DEFINES -= __dmesg__
+CONFIG += plugin
 
 # The following define makes your compiler emit warnings if you use
 # any feature of Qt which has been marked as deprecated (the exact warnings
@@ -37,21 +29,18 @@ DEFINES += QT_DEPRECATED_WARNINGS
 SOURCES += \
         main.cpp \
     BTCommandProcessor.cpp \
-    UDS_Client.cpp \
-    InCommingCallDialog.cpp \
     io/vCard/VCardReader.cpp \
     gui/phonebook/PhoneBookItem.cpp \
     gui/CallLog/CallLogItem.cpp \
     CallMenuWidget.cpp \
     MessageMenuWidget.cpp \
     SelectMenuWidget.cpp \
-    MainDialog.cpp
+    MainFrame.cpp \
+    DAudioIface_Impl.cpp \
+    CallingMenuWidget.cpp
 
 HEADERS += \
     BTCommandProcessor.h \
-    UDS_Client.h \
-    LogUtility.hpp \
-    InCommingCallDialog.h \
     io/vCard/VCardReader.h \
     gui/phonebook/PhoneBookItem.h \
     gui/CallLog/CallLogItem.h \
@@ -59,16 +48,17 @@ HEADERS += \
     CallMenuWidget.h \
     MessageMenuWidget.h \
     SelectMenuWidget.h \
-    MainDialog.h \
-    NxEvent.h
+    NxEvent.h \
+    MainFrame.h \
+    CallingMenuWidget.h
 
 FORMS += \
-    InCommingCallDialog.ui \
     gui/CallLog/CallLogItem.ui \
     CallMenuWidget.ui \
     SelectMenuWidget.ui \
     MessageMenuWidget.ui \
-    MainDialog.ui
+    MainFrame.ui \
+    CallingMenuWidget.ui
 
 RESOURCES += \
     UI/Keyboard.qrc \
@@ -90,10 +80,6 @@ linux-oe-g++ {
 
     INCLUDEPATH += $${NX_DAUDIO_LIB_PATH}/include/
     LIBS += -L$${NX_DAUDIO_LIB_PATH}/lib/
-
-    ###########################################################
-    # ipc module
-    LIBS += -lnxdaudioipc -lnxpacpclient
 
     ###########################################################
     # ui module (for status bar)

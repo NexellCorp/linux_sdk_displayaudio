@@ -13,6 +13,9 @@
   <property name="windowTitle">
    <string>Dialog</string>
   </property>
+  <property name="autoFillBackground">
+   <bool>true</bool>
+  </property>
   <property name="styleSheet">
    <string notr="true">QDialog {
 	background: rgb(70, 113, 136);
