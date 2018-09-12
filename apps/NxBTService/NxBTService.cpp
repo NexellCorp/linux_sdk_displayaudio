@@ -76,13 +76,11 @@ void NxBTService::DestroyInstance()
  */
 void NxBTService::sendMGTOpenSucceed_stub(void* pObj, int32_t result)
 {
-	NXLOGI("[%s] <1>", __FUNCTION__);
 	NxBTService* self = (NxBTService *)pObj;
 
 	if (self) {
 		self->setInitialized(result == 0);
 	}
-	NXLOGI("[%s] <2>", __FUNCTION__);
 }
 
 /* User client callback : MGT is disconnected */
@@ -105,14 +103,12 @@ void NxBTService::sendPairingFailed_stub(void *pObj, int32_t fail_reason)
     // sprintf(buffer, "$%s#%s#%s#%d\n", "OK", "AVK", "PAIRING FAILED", fail_reason);
 	// self->Broadcast(buffer);
 
-	NXLOGI("[%s] %d", __FUNCTION__, self->m_pRequestExpirePopupMessage);
 	if (self->m_pRequestExpirePopupMessage)
 		self->m_pRequestExpirePopupMessage();
 }
 
 void NxBTService::updatePairedDevices_stub(void *pObj)
 {
-	NXLOGI("[%s] <1>", __FUNCTION__);
     NxBTService* self = (NxBTService*)pObj;
     char buffer[BUFFER_SIZE];
     int count = m_pModel->getPairedDevCount();
@@ -151,13 +147,10 @@ void NxBTService::updatePairedDevices_stub(void *pObj)
 
 	if (self->m_pRequestExpirePopupMessage)
 		self->m_pRequestExpirePopupMessage();
-
-	NXLOGI("[%s] <2>", __FUNCTION__);
 }
 
 void NxBTService::updateUnpairedDevices_stub(void *pObj)
 {
-	NXLOGI("[%s] <1>", __FUNCTION__);
     NxBTService* self = (NxBTService*)pObj;
     char buffer[BUFFER_SIZE];
     int count = m_pModel->getPairedDevCount();
@@ -193,8 +186,6 @@ void NxBTService::updateUnpairedDevices_stub(void *pObj)
     sprintf(buffer+strlen(buffer), "\n");
 
     self->Broadcast(buffer);
-
-	NXLOGI("[%s] <2>", __FUNCTION__);
 }
 
 void NxBTService::sendPairingRequest_stub(void *pObj_, bool auto_mode_, char *name_, char *bd_addr_, int32_t pairing_code_)
@@ -217,10 +208,8 @@ void NxBTService::sendPairingRequest_stub(void *pObj_, bool auto_mode_, char *na
         // sprintf(buffer, "$OK#%s#%s#%s#%s#%s#%06d\n", "MGT", "PAIRING REQUEST", "AUTO OFF", name, s_bd_addr.c_str(), pairing_code_);
 
     // self->Broadcast(buffer);
-NXLOGI("[%s] <1>", __FUNCTION__);
 	if (self->m_pRequestPopupMessage)
 	{
-		NXLOGI("[%s] <2>", __FUNCTION__);
 		bool bOk = false;
 		PopupMessage sData;
 		sData.pMsgTitle = new char[1024];
@@ -273,7 +262,6 @@ void NxBTService::callbackLinkDownEventManager(void* pObj, char* bd_addr, int32_
 // AVK
 void NxBTService::sendAVKOpenFailed_stub(void *pObj)
 {
-	NXLOGI("[%s] <1>", __FUNCTION__);
     NxBTService* self = (NxBTService*)pObj;
     char buffer[BUFFER_SIZE] = {0,};
 
@@ -281,13 +269,10 @@ void NxBTService::sendAVKOpenFailed_stub(void *pObj)
 
     sprintf(buffer, "$OK#AVK#OPEN FAILED\n");
     self->Broadcast(buffer);
-
-	NXLOGI("[%s] <2>", __FUNCTION__);
 }
 
 void NxBTService::sendAVKConnectionStatus_stub(void *pObj, bool is_connected, char *name, char *bd_addr)
 {
-	NXLOGI("[%s] <1>", __FUNCTION__);
     NxBTService* self = (NxBTService*)pObj;
     char buffer[BUFFER_SIZE] = {0,};
     string s_bd_addr;
@@ -319,13 +304,10 @@ void NxBTService::sendAVKConnectionStatus_stub(void *pObj, bool is_connected, ch
 
 	// update bt connection
 	self->m_pDAudioStatus->SetBTConnection((int32_t)(self->m_AVK.connection.on || self->m_HS.hs.on));
-
-	NXLOGI("[%s] <2>", __FUNCTION__);
 }
 
 void NxBTService::sendAVKRCConnectionStatus_stub(void *pObj, bool is_connected)
 {
-	NXLOGI("[%s] <1>", __FUNCTION__);
     NxBTService* self = (NxBTService*)pObj;
     char buffer[BUFFER_SIZE] = {0,};
 	char bd_addr[DEVICE_ADDRESS_SIZE] = {0,};
@@ -353,13 +335,10 @@ void NxBTService::sendAVKRCConnectionStatus_stub(void *pObj, bool is_connected)
 
 	// update bt connection
 	self->m_pDAudioStatus->SetBTConnection((int32_t)(self->m_AVK.connection.on || self->m_HS.hs.on));
-
-	NXLOGI("[%s] <2>", __FUNCTION__);
 }
 
 void NxBTService::updatePlayStatusAVK_stub(void *pObj, int32_t play_status)
 {
-	NXLOGI("[%s] <1>", __FUNCTION__);
     NxBTService* self = (NxBTService*)pObj;
     char buffer[BUFFER_SIZE] = {0,};
 
@@ -414,13 +393,11 @@ void NxBTService::updatePlayStatusAVK_stub(void *pObj, int32_t play_status)
 #endif
 		//! [4]
 	}
-
 	NXLOGI("[%s] <2>", __FUNCTION__);
 }
 
 void NxBTService::updateMediaElementsAVK_stub(void *pObj, char *mediaTitle, char *mediaArtist, char *mediaAlbum, char *mediaGenre, int32_t duration_msec)
 {
-	NXLOGI("[%s] <1>", __FUNCTION__);
     NxBTService* self = (NxBTService*)pObj;
     char buffer[BUFFER_SIZE] = {0,};
 
@@ -438,8 +415,6 @@ void NxBTService::updateMediaElementsAVK_stub(void *pObj, char *mediaTitle, char
     sprintf(buffer, "$OK#%s#%s#%s#%s#%s#%s#%d\n", "AVK", "UPDATE MEDIA ELEMENT", self->m_AVK.info.title, self->m_AVK.info.artist, self->m_AVK.info.album, self->m_AVK.info.genre, self->m_AVK.info.duration);
 
     self->Broadcast(buffer);
-
-	NXLOGI("[%s] <2>", __FUNCTION__);
 }
 
 void NxBTService::updatePlayPositionAVK_stub(void *pObj, int32_t play_pos_msec)
@@ -454,13 +429,10 @@ void NxBTService::updatePlayPositionAVK_stub(void *pObj, int32_t play_pos_msec)
     sprintf(buffer, "$OK#%s#%s#%d\n", "AVK", "UPDATE PLAY POSITION", self->m_AVK.info.position);
 
     self->Broadcast(buffer);
-
-	NXLOGI("[%s] <2>", __FUNCTION__);
 }
 
 void NxBTService::sendAVKStreamingStarted_stub(void* pObj, bool is_opened)
 {
-    NXLOGD(__FUNCTION__);
     NxBTService* self = (NxBTService*)pObj;
     char buffer[BUFFER_SIZE] = {0,};
 
@@ -521,7 +493,6 @@ void NxBTService::sendHSOpenFailed_stub(void *pObj)
 
 void NxBTService::sendHSConnectionStatus_stub(void *pObj, bool is_connected, char *name, char *bd_addr)
 {
-	NXLOGI("[%s] <1>", __FUNCTION__);
     NxBTService* self = (NxBTService*)pObj;
     char buffer[BUFFER_SIZE] = {0,};
     string s_bd_addr;
@@ -561,13 +532,10 @@ void NxBTService::sendHSConnectionStatus_stub(void *pObj, bool is_connected, cha
 
 	// update bt connection
 	self->m_pDAudioStatus->SetBTConnection((int32_t)(self->m_AVK.connection.on || self->m_HS.hs.on));
-
-	NXLOGI("[%s] <2>", __FUNCTION__);
 }
 
 void NxBTService::sendHSCallStatus_stub(void *pObj, int32_t call_status)
 {
-	NXLOGI("[%s] <1>", __FUNCTION__);
     NxBTService* self = (NxBTService*)pObj;
     char buffer[BUFFER_SIZE] = {0,};
     char status[100] = {0,};
@@ -644,7 +612,7 @@ void NxBTService::sendHSCallStatus_stub(void *pObj, int32_t call_status)
 #ifdef CONFIG_HSP_PROCESS_MANAGEMENT
 		if (self->m_pRequestPlugInRun)
 		{
-			self->m_pRequestPlugInRun("libnxbtphone", "--menu calling");
+			self->m_pRequestPlugInRun("NxBTPhone", "--menu calling");
 		}
 #endif
 		break;
@@ -654,34 +622,28 @@ void NxBTService::sendHSCallStatus_stub(void *pObj, int32_t call_status)
 
 	}
 	//! [2]
-	NXLOGI("[%s] <2>", __FUNCTION__);
 }
 
 void NxBTService::sendHSBatteryStatus_stub(void *pObj, int32_t batt_status)
 {
-	NXLOGI("[%s] <1>", __FUNCTION__);
     NxBTService* self = (NxBTService*)pObj;
     char buffer[BUFFER_SIZE] = {0,};
 
     sprintf(buffer, "$OK#%s#%s#%d\n", "HS", "BATTERY STATUS", batt_status);
     self->Broadcast(buffer);
-	NXLOGI("[%s] <2>", __FUNCTION__);
 }
 
 void NxBTService::sendHSCallOperName_stub(void *pObj, char *name)
 {
-	NXLOGI("[%s] <1>", __FUNCTION__);
     NxBTService* self = (NxBTService*)pObj;
     char buffer[BUFFER_SIZE] = {0,};
 
     sprintf(buffer, "$OK#%s#%s#%s\n", "HS", "CALL OPER NAME", name);
     self->Broadcast(buffer);
-	NXLOGI("[%s] <2>", __FUNCTION__);
 }
 
 void NxBTService::sendHSAudioMuteStatus_stub(void *pObj, bool is_muted, bool is_opened)
 {
-	NXLOGI("[%s] <1>", __FUNCTION__);
     NxBTService* self = (NxBTService*)pObj;
     char buffer[BUFFER_SIZE] = {0,};
     char audio[BUFFER_SIZE] = {0,};
@@ -709,12 +671,10 @@ void NxBTService::sendHSAudioMuteStatus_stub(void *pObj, bool is_muted, bool is_
 		}
 	}
 	//! [2]
-	NXLOGI("[%s] <2>", __FUNCTION__);
 }
 
 void NxBTService::sendHSIncommingCallNumber_stub(void *pObj, char *number)
 {
-	NXLOGI("[%s] <1>", __FUNCTION__);
     NxBTService* self = (NxBTService*)pObj;
     char buffer[BUFFER_SIZE] = {0,};
 
@@ -725,13 +685,11 @@ void NxBTService::sendHSIncommingCallNumber_stub(void *pObj, char *number)
 
     sprintf(buffer, "$OK#%s#%s#%s\n", "HS", "INCOMMING CALL NUMBER", number);
     self->Broadcast(buffer);
-	NXLOGI("[%s] <2>", __FUNCTION__);
 }
 
 // phone : PBC (phone book)
 void NxBTService::sendPBCOpenFailed_stub(void *pObj)
 {
-	NXLOGI("[%s] <1>", __FUNCTION__);
     NxBTService* self = (NxBTService*)pObj;
     char buffer[BUFFER_SIZE] = {0,};
 
@@ -739,12 +697,10 @@ void NxBTService::sendPBCOpenFailed_stub(void *pObj)
 
     sprintf(buffer, "$OK#PBC#OPEN FAILED\n");
     self->Broadcast(buffer);
-	NXLOGI("[%s] <2>", __FUNCTION__);
 }
 
 void NxBTService::sendPBCConnectionStatus_stub(void *pObj, bool is_connected)
 {
-	NXLOGI("[%s] <1>", __FUNCTION__);
     NxBTService* self = (NxBTService*)pObj;
     char buffer[BUFFER_SIZE] = {0,};
 
@@ -755,12 +711,10 @@ void NxBTService::sendPBCConnectionStatus_stub(void *pObj, bool is_connected)
     sprintf(buffer, "$OK#%s#%s#%s\n", "PBC", "CONNECTION STATUS", is_connected ? "CONNECTED" : "DISCONNECTED");
 
     self->Broadcast(buffer);
-	NXLOGI("[%s] <2>", __FUNCTION__);
 }
 
 void NxBTService::sendNotifyGetPhonebook_stub(void *pObj, int32_t  type)
 {
-	NXLOGI("[%s] <1>", __FUNCTION__);
     NxBTService* self = (NxBTService*)pObj;
     char buffer[BUFFER_SIZE] = {0,};
     char command[100] = {0,};
@@ -793,13 +747,11 @@ void NxBTService::sendNotifyGetPhonebook_stub(void *pObj, int32_t  type)
     }
 
     self->Broadcast(buffer);
-	NXLOGI("[%s] <2>", __FUNCTION__);
 }
 
 // phone : MCE (message)
 void NxBTService::sendMCEOpenFailed_stub(void *pObj)
 {
-	NXLOGI("[%s] <1>", __FUNCTION__);
     NxBTService* self = (NxBTService*)pObj;
     char buffer[BUFFER_SIZE] = {0,};
 
@@ -807,12 +759,10 @@ void NxBTService::sendMCEOpenFailed_stub(void *pObj)
 
     sprintf(buffer, "$OK#MCE#OPEN FAILED\n");
     self->Broadcast(buffer);
-	NXLOGI("[%s] <2>", __FUNCTION__);
 }
 
 void NxBTService::sendMCEConnectionStatus_stub(void *pObj, bool is_connected)
 {
-	NXLOGI("[%s] <1>", __FUNCTION__);
     NxBTService* self = (NxBTService*)pObj;
     char buffer[BUFFER_SIZE] = {0,};
     char bd_addr[DEVICE_ADDRESS_SIZE] = {0,};
@@ -827,17 +777,14 @@ void NxBTService::sendMCEConnectionStatus_stub(void *pObj, bool is_connected)
     sprintf(buffer, "$OK#%s#%s#%s\n", "MCE", "CONNECTION STATUS", is_connected ? "CONNECTED" : "DISCONNECTED");
 
     self->Broadcast(buffer);
-	NXLOGI("[%s] <2>", __FUNCTION__);
 }
 
 void NxBTService::sendNotifyGetMessageMCE_stub(void *pObj)
 {
-	NXLOGI("[%s] <1>", __FUNCTION__);
 	NxBTService* self = (NxBTService*)pObj;
 	string buffer = "$OK#MCE#DOWNLOAD SMS MESSAGE#";
 
 	self->downloadSMSMessage("MCE", "DOWNLOAD SMS MESSAGE");
-	NXLOGI("[%s] <2>", __FUNCTION__);
 }
 // #include <signal.h>
 // static void signal_handler(int32_t signal)
@@ -1705,7 +1652,6 @@ bool NxBTService::addressOfConnectedDeviceToAVK(std::string service, std::string
 
 bool NxBTService::playStartAVK(std::string service/*= "AVK"*/, std::string command/*= "PLAY START"*/)
 {
-	NXLOGI("[%s] <1>", __FUNCTION__);
 	std::vector<std::string> reply;
 	char bd_addr[6];
 	bool result = true;
@@ -1719,7 +1665,7 @@ bool NxBTService::playStartAVK(std::string service/*= "AVK"*/, std::string comma
 		reply.push_back(bdAddrToString(bd_addr, DEVICE_ADDRESS_SIZE, ':'));
 
 	Broadcast(MakeReplyCommand(result, reply).c_str());
-	NXLOGI("[%s] <2>", __FUNCTION__);
+
 	return result;
 }
 
@@ -2338,7 +2284,6 @@ bool NxBTService::isInitialized()
 
 void NxBTService::setInitialized(bool state)
 {
-	NXLOGI("[%s] <1> ", __FUNCTION__);
 	if (m_bInitialized) {
 		return;
 	}
@@ -2354,7 +2299,6 @@ void NxBTService::setInitialized(bool state)
 		ping("MGT", "PING");
 	}
 
-	NXLOGI("[%s] <2> ", __FUNCTION__);
 }
 
 
@@ -2363,7 +2307,6 @@ void NxBTService::setInitialized(bool state)
 
 void NxBTService::RequestAudioFocus(FocusType eType, FocusPriority ePriority, bool *bOk)
 {
-	NXLOGI("[%s] <1>", __FUNCTION__);
 	NxBTService *p = NxBTService::GetInstance();
 
 	if (eType == FocusType_Get)
@@ -2384,7 +2327,7 @@ void NxBTService::RequestAudioFocus(FocusType eType, FocusPriority ePriority, bo
 
 #ifdef CONFIG_A2DP_PROCESS_MANAGEMENT
 			if (p->m_pRequestPlugInTerminate)
-				p->m_pRequestPlugInTerminate("libnxbtaudio");
+				p->m_pRequestPlugInTerminate("NxBTAudio");
 #endif
 		}
 	}
@@ -2394,8 +2337,6 @@ void NxBTService::RequestAudioFocus(FocusType eType, FocusPriority ePriority, bo
 
 		p->playStartAVK();
 	}
-
-	NXLOGI("[%s] <2>", __FUNCTION__);
 }
 
 void NxBTService::RequestAudioFocusTransient(FocusPriority ePriority, bool *bOk)
@@ -2417,7 +2358,7 @@ void NxBTService::RequestAudioFocusTransient(FocusPriority ePriority, bool *bOk)
 
 #ifdef CONFIG_A2DP_PROCESS_MANAGEMENT
 		if (p->m_pRequestPlugInTerminate)
-			p->m_pRequestPlugInTerminate("libnxbtaudio");
+			p->m_pRequestPlugInTerminate("NxBTAudio");
 #endif
 	}
 }
@@ -2461,26 +2402,20 @@ void NxBTService::PopupMessageResponse(bool bOk)
 
 void NxBTService::RegisterRequestAudioFocus(void (*cbFunc)(FocusPriority ePriority, bool *bOk))
 {
-	NXLOGI("[%s] <1>", __FUNCTION__);
 	if (cbFunc)
 		m_pRequestAudioFocus = cbFunc;
-	NXLOGI("[%s] <2>", __FUNCTION__);
 }
 
 void NxBTService::RegisterRequestAudioFocusTransient(void (*cbFunc)(FocusPriority ePriority, bool *bOk))
 {
-	NXLOGI("[%s] <1>", __FUNCTION__);
 	if (cbFunc)
 		m_pRequestAudioFocusTransient = cbFunc;
-	NXLOGI("[%s] <2>", __FUNCTION__);
 }
 
 void NxBTService::RegisterRequestAudioFocusLoss(void (*cbFunc)(void))
 {
-	NXLOGI("[%s] <1>", __FUNCTION__);
 	if (cbFunc)
 		m_pRequestAudoFocusLoss = cbFunc;
-	NXLOGI("[%s] <2>", __FUNCTION__);
 }
 
 void NxBTService::RegisterRequestPlugInRun(void (*cbFunc)(const char *pPlugin, const char *pArgs))
@@ -2497,7 +2432,6 @@ void NxBTService::RegisterRequestPlugInTerminate(void (*cbFunc)(const char *pPlu
 
 void NxBTService::Broadcast(const char *pMsg)
 {
-	NXLOGI("[%s] %s m_pRequestSendMessage = %d", __FUNCTION__, pMsg, m_pRequestSendMessage ? 1 : 0);
 	if (m_pRequestSendMessage)
 	{
 		m_pRequestSendMessage("NxBTAudio", pMsg, strlen(pMsg));
