@@ -22,7 +22,7 @@ extern "C" {
 	void RegisterRequestLauncherShow(void (*cbFunc)(bool *bOk));
 
 	// Message
-	void SendMessage(const char *pMsg, int32_t iMsgSize);
+	void SendMessage(const char *pSrc, const char *pMsg, int32_t iMsgSize);
 
 	void RegisterRequestSendMessage(void (*cbFunc)(const char *pDst, const char *pMsg, int32_t iMsgSize));
 

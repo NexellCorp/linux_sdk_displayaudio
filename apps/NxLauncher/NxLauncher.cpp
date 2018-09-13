@@ -105,7 +105,7 @@ NxLauncher::NxLauncher(QWidget *parent) :
 		psInfo->m_pRegisterRequestPluginRun = (void (*)(void (*)(const char*, const char*)))dlsym(psInfo->m_pHandle, "RegisterRequestPlugInRun");
 		psInfo->m_pRegisterRequestPluginTerminate = (void (*)(void (*)(const char*)))dlsym(psInfo->m_pHandle, "RegisterRequestPlugInTerminate");
 		// send message
-		psInfo->m_pSendMessage = (void (*)(const char*, int32_t))dlsym(psInfo->m_pHandle, "SendMessage");
+		psInfo->m_pSendMessage = (void (*)(const char *, const char*, int32_t))dlsym(psInfo->m_pHandle, "SendMessage");
 		// register callback for request send message
 		psInfo->m_pRegisterRequestMessage = (void (*)(void (*)(const char*, const char*, int32_t)))dlsym(psInfo->m_pHandle, "RegisterRequestSendMessage");
 		// popup message
@@ -290,21 +290,15 @@ void NxLauncher::RequestSendMessage(const char *pDst, const char *pMsg, int32_t 
 	QString from = FindCaller(2);
 	QString key = QString::fromLatin1(pDst);
 
-
-//	NXLOGI("[%s] %s -> %s %s", __FUNCTION__, from.toStdString().c_str(), pDst, pMsg);
-
 	if (m_spInstance->m_PlugIns.find(key) != m_spInstance->m_PlugIns.end())
 	{
-//		NXLOGI("[%s] %s -> %s %d %d ", __FUNCTION__, from.toStdString().c_str(), pDst, !!m_spInstance->m_PlugIns[key]->m_pIsInit, !!m_spInstance->m_PlugIns[key]->m_pSendMessage);
 		if (m_spInstance->m_PlugIns[key]->m_pIsInit && m_spInstance->m_PlugIns[key]->m_pSendMessage)
 		{
 			bool bOk = false;
 			m_spInstance->m_PlugIns[key]->m_pIsInit(&bOk);
-//			NXLOGI("[%s] key = %s <%s>", __FUNCTION__, key.toStdString().c_str(), bOk ? "OK" : "NG");
-			if (bOk)
-				m_spInstance->m_PlugIns[key]->m_pSendMessage(pMsg, iMsgSize);
 
-//			NXLOGI("[%s] %s -> %s %s <%s>", __FUNCTION__, from.toStdString().c_str(), pDst, pMsg, bOk ? "OK" : "NG");
+			if (bOk)
+				m_spInstance->m_PlugIns[key]->m_pSendMessage(from.toStdString().c_str(), pMsg, iMsgSize);
 		}
 	}
 }

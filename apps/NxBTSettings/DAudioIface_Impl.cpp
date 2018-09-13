@@ -71,13 +71,15 @@ void RegisterRequestLauncherShow(void (*cbFunc)(bool *bOk))
 }
 
 // Message
-void SendMessage(const char *pMsg, int32_t iMsgSize)
+void SendMessage(const char *pSrc, const char *pMsg, int32_t iMsgSize)
 {
+	qDebug() << Q_FUNC_INFO << pSrc;
 	MainFrame *p = MainFrame::GetInstance();
 	if (p)
 		p->SendMessage(pMsg);
 
 	(void)iMsgSize;
+	(void)pSrc;
 }
 
 void RegisterRequestSendMessage(void (*cbFunc)(const char *pDst, const char *pMsg, int32_t iMsgSize))

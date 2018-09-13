@@ -71,7 +71,7 @@ public:
 
 	void (*m_pRegisterRequestMessage)(void (*cbFunc)(const char* pDst, const char* pMsg, int32_t iMsgSize));
 
-	void (*m_pSendMessage)(const char* pMsg, int32_t iMsgSize);
+	void (*m_pSendMessage)(const char* pSrc, const char* pMsg, int32_t iMsgSize);
 
 	void (*m_pRegisterRequestPopupMessage)(void (*cbFunc)(PopupMessage*, bool *bOk));
 

@@ -45,7 +45,7 @@ void deInit()
  * Description
  *  - Receive message from Launcher
  ************************************************************************************/
-void SendMessage(const char *pMsg, int32_t iMsgSize)
+void SendMessage(const char *pSrc, const char *pMsg, int32_t iMsgSize)
 {
 	NxBTService *p = NxBTService::GetInstance();
     if (p)
