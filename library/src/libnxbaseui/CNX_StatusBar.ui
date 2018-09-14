@@ -157,7 +157,7 @@ QPushButton::disabled {
       </spacer>
      </item>
      <item>
-      <widget class="QLabel" name="LABEL_VOLUME_ICON">
+      <widget class="QPushButton" name="BUTTON_VOLUME">
        <property name="sizePolicy">
         <sizepolicy hsizetype="Minimum" vsizetype="Minimum">
          <horstretch>0</horstretch>
@@ -177,7 +177,7 @@ QPushButton::disabled {
         </size>
        </property>
        <property name="styleSheet">
-        <string notr="true">QLabel {
+        <string notr="true">QPushButton {
 	border-image: url(:/image/bg_vol.png);
 }</string>
        </property>

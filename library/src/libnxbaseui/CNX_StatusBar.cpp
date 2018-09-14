@@ -44,6 +44,11 @@ void CNX_StatusBar::RegOnClickedBack(void (*cbFunc)(void *))
 	m_pCbBackButtonClicked = cbFunc;
 }
 
+void CNX_StatusBar::RegOnClickedVolume(void (*cbFunc)(void *))
+{
+	m_pCbVolumeButtonClicked = cbFunc;
+}
+
 void CNX_StatusBar::SetButtonEnabled(ButtonType type, bool enabled)
 {
 	switch (type) {
@@ -119,4 +124,10 @@ void CNX_StatusBar::slotUpdateDAudioStatus()
 	{
 		ui->BUTTON_BT_CONNECTION_ICON->setChecked(connection);
 	}
+}
+
+void CNX_StatusBar::on_BUTTON_VOLUME_clicked()
+{
+	if (m_pCbVolumeButtonClicked)
+		m_pCbVolumeButtonClicked(m_pParent);
 }

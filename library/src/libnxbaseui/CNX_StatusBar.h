@@ -39,6 +39,8 @@ public:
 
 	void RegOnClickedBack(void (*cbFunc)(void *));
 
+	void RegOnClickedVolume(void (*cbFunc)(void *));
+
 	void SetButtonEnabled(ButtonType type, bool enabled);
 
 	void SetTitleName(QString text);
@@ -54,10 +56,14 @@ private slots:
 
 	void on_BUTTON_BT_CONNECTION_ICON_toggled(bool checked);
 
+	void on_BUTTON_VOLUME_clicked();
+
 private:
 	void (*m_pCbHomeButtonClicked)(void *);
 
 	void (*m_pCbBackButtonClicked)(void *);
+
+	void (*m_pCbVolumeButtonClicked)(void *);
 
 	QWidget* m_pParent;
 
