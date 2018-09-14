@@ -78,6 +78,26 @@
     </property>
    </widget>
   </widget>
+  <widget class="CNX_VolumeBar" name="volumeBar">
+   <property name="geometry">
+    <rect>
+     <x>112</x>
+     <y>500</y>
+     <width>800</width>
+     <height>80</height>
+    </rect>
+   </property>
+   <property name="frameShape">
+    <enum>QFrame::NoFrame</enum>
+   </property>
+   <property name="frameShadow">
+    <enum>QFrame::Plain</enum>
+   </property>
+  </widget>
+  <zorder>volumeBar</zorder>
+  <zorder>messageFrame</zorder>
+  <zorder>notificationBar</zorder>
+  <zorder>launcher</zorder>
  </widget>
  <customwidgets>
   <customwidget>
@@ -101,6 +121,12 @@
    <class>MessageFrame</class>
    <extends>QFrame</extends>
    <header>MessageFrame.h</header>
+   <container>1</container>
+  </customwidget>
+  <customwidget>
+   <class>CNX_VolumeBar</class>
+   <extends>QFrame</extends>
+   <header>CNX_VolumeBar.h</header>
    <container>1</container>
   </customwidget>
  </customwidgets>

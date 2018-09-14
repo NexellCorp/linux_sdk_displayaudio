@@ -197,6 +197,7 @@ NxLauncher::NxLauncher(QWidget *parent) :
 
 	// set application name
 	ui->statusBar->SetTitleName("Home");
+	ui->statusBar->RegOnClickedVolume(cbStatusVolume);
 
 	// binding between qml and widget
 	ui->launcherWidget->setSource(QUrl("qrc:/qml/NxLauncher.qml"));
@@ -222,6 +223,12 @@ NxLauncher::~NxLauncher()
 	delete ui;
 }
 
+void NxLauncher::cbStatusVolume(void *pObj)
+{
+	NxLauncher *p = (NxLauncher *)pObj;
+	QApplication::postEvent(p, new NxVolumeControlEvent());
+}
+
 void NxLauncher::RequestLauncherShow(bool *bOk)
 {
 	NXLOGI("[%s]", __FUNCTION__);
@@ -233,8 +240,6 @@ void NxLauncher::RequestShow()
 {
 
 }
-
-
 
 QString NxLauncher::FindCaller(uint32_t uiLevel)
 {
@@ -803,6 +808,13 @@ bool NxLauncher::event(QEvent *event)
 		return true;
 	}
 
+	case E_NX_EVENT_VOLUME_CONTROL:
+	{
+		NxVolumeControlEvent *e = static_cast<NxVolumeControlEvent *>(event);
+		VolumeControlEvent(e);
+		return true;
+	}
+
 	default:
 		break;
 	}
@@ -882,6 +894,11 @@ void NxLauncher::PopupMessageEvent(NxPopupMessageEvent *e)
 		ui->messageFrame->SetMessageBody(e->m_MsgBody);
 		ui->messageFrame->raise();
 	}
+}
+
+void NxLauncher::VolumeControlEvent(NxVolumeControlEvent *)
+{
+	ui->volumeBar->raise();
 }
 
 void NxLauncher::Execute(QString plugin)

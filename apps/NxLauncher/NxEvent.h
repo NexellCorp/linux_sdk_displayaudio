@@ -9,7 +9,8 @@
 
 enum NxEventTypes {
 	E_NX_EVENT_KEY,
-	E_NX_EVENT_POPUP_MESSAGE
+	E_NX_EVENT_POPUP_MESSAGE,
+	E_NX_EVENT_VOLUME_CONTROL
 };
 
 class NxKeyEvent : public QEvent
@@ -58,5 +59,15 @@ public:
 		m_uiTimeout = psPopupMessage->uiTimeout;
 	}
 };
+
+class NxVolumeControlEvent : public QEvent
+{
+public:
+	NxVolumeControlEvent() : QEvent((QEvent::Type)E_NX_EVENT_VOLUME_CONTROL)
+	{
+
+	}
+};
+
 
 #endif // NXEVENT_H

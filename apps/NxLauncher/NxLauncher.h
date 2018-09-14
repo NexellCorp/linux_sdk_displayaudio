@@ -97,7 +97,11 @@ private:
 
 	void PopupMessageEvent(NxPopupMessageEvent *e);
 
+	void VolumeControlEvent(NxVolumeControlEvent *e);
+
 	static QString FindCaller(uint32_t uiLevel);
+
+	static void cbStatusVolume(void *pObj);
 
 	void NextVideoFocus();
 

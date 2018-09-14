@@ -38,7 +38,8 @@ SOURCES += main.cpp\
 #    MessageWidget.cpp \
     NxLauncher.cpp \
     MessageFrame.cpp \
-    ShadowEffect.cpp
+    ShadowEffect.cpp \
+    CNX_VolumeBar.cpp
 
 HEADERS  += \
     nxappinfo.h \
@@ -50,14 +51,16 @@ HEADERS  += \
 #    MessageWidget.h \
     NxLauncher.h \
     MessageFrame.h \
-    ShadowEffect.h
+    ShadowEffect.h \
+    CNX_VolumeBar.h
 
 FORMS    += \
 #nxlauncher.ui \
     NotificationFrame.ui \
 #    MessageWidget.ui \
     NxLauncher.ui \
-    MessageFrame.ui
+    MessageFrame.ui \
+    CNX_VolumeBar.ui
 
 RESOURCES += \
     nxlauncher.qrc
