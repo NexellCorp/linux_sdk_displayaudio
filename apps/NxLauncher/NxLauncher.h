@@ -20,6 +20,7 @@
 #include "nxappinfo.h"
 
 #include <QTimer>
+#include <QFileSystemWatcher>
 
 namespace Ui {
 class NxLauncher;
@@ -32,11 +33,13 @@ class NxLauncher : public QDialog
 private slots:
 	void slotExecute(QString);
 
-	void slotTimer();
-
 	void slotAccept();
 
 	void slotReject();
+
+	void slotTimer();
+
+	void slotDetectCommand();
 
 public:
 	explicit NxLauncher(QWidget *parent = 0);
@@ -96,11 +99,11 @@ private:
 
 	static QString FindCaller(uint32_t uiLevel);
 
-	bool CollectVideoFocus();
-
 	void NextVideoFocus();
 
 	void Terminate(QString requestor);
+
+	void Execute(QString plugin);
 
 private:
 	static NxLauncher *m_spInstance;
@@ -114,6 +117,10 @@ private:
 	static QQueue<QString> m_VideoFocusQueue;
 
 	QTimer m_Timer;
+
+	int m_iPosition;
+
+	QFileSystemWatcher *m_pWatcher;
 
 private:
 	Ui::NxLauncher *ui;
