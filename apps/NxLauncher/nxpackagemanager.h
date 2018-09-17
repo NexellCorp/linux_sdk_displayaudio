@@ -12,6 +12,9 @@ class NxPackageScanner : public QObject
 {
 	Q_OBJECT
 
+signals:
+	void signalPlugInUpdated(QString plugin);
+
 private slots:
 	void slotFileChanged(QString Path);
 

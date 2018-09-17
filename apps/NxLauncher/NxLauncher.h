@@ -41,6 +41,8 @@ private slots:
 
 	void slotDetectCommand();
 
+	void slotPlugInUpdated(QString plugin);
+
 public:
 	explicit NxLauncher(QWidget *parent = 0);
 	~NxLauncher();

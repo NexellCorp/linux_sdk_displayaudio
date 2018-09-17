@@ -49,6 +49,8 @@ NxLauncher::NxLauncher(QWidget *parent) :
 
 	// scan applications
 	m_pPackageManager = new NxPackageScanner(NX_APP_PATH, &m_PlugIns);
+	connect(m_pPackageManager, SIGNAL(signalPlugInUpdated(QString)), this, SLOT(slotPlugInUpdated(QString)));
+
 	m_pProcessManager = new NxProcessManager( this );
 
 	// step2. scan applications - extract function pointer
@@ -147,7 +149,6 @@ NxLauncher::NxLauncher(QWidget *parent) :
 #endif
 	}
 
-	NXLOGI("[%s] step3", __FUNCTION__);
 	// step3. register callback to applications.
 	foreach (NxPluginInfo *psInfo, m_PlugIns)
 	{
@@ -465,8 +466,6 @@ void NxLauncher::RequestAudioFocus(FocusPriority ePriority, bool *bOk)
 		// 1. check if the instance exists.
 		m_spInstance->m_PlugIns[owner]->m_pIsInit(bOk);
 
-		NXLOGI("[%s] isInit ? <%s>", __FUNCTION__, bOk ? "OK" : "NG");
-
 		// 2. if the instance exists, request the command for VideoFocus.
 		if (*bOk)
 		{
@@ -591,8 +590,6 @@ void NxLauncher::RequestVideoFocus(FocusPriority ePriority, bool *bOk)
 
 		// 1. check if the instance exists.
 		m_spInstance->m_PlugIns[owner]->m_pIsInit(bOk);
-
-		NXLOGI("[%s] isInit ? <%s>", __FUNCTION__, bOk ? "OK" : "NG");
 
 		// 2. if the instance exists, request the command for VideoFocus.
 		if (*bOk)
@@ -727,10 +724,8 @@ void NxLauncher::RequestExpirePopupMessage()
 
 void NxLauncher::ExpirePopupMessage()
 {
-	NXLOGI("%s <1>", __FUNCTION__);
 	ui->messageFrame->lower();
 	NextVideoFocus();
-	NXLOGI("%s <2>", __FUNCTION__);
 }
 
 void NxLauncher::RequestTerminate()
@@ -738,9 +733,7 @@ void NxLauncher::RequestTerminate()
 	QString requestor = FindCaller(2);
 	if (m_spInstance)
 	{
-		NXLOGI("[%s] <1>", __FUNCTION__);
 		m_spInstance->Terminate(requestor);
-		NXLOGI("[%s] <2>", __FUNCTION__);
 	}
 }
 
@@ -903,7 +896,6 @@ void NxLauncher::VolumeControlEvent(NxVolumeControlEvent *)
 
 void NxLauncher::Execute(QString plugin)
 {
-	NXLOGI("[%s] <1>", __FUNCTION__);
 	bool bOk = false;
 	if (m_PlugIns.find(plugin) == m_PlugIns.end())
 	{
@@ -943,8 +935,6 @@ void NxLauncher::Execute(QString plugin)
 #endif
 		}
 	}
-
-	NXLOGI("[%s] <2>", __FUNCTION__);
 }
 
 void NxLauncher::slotExecute(QString plugin)
@@ -956,6 +946,34 @@ void NxLauncher::slotExecute(QString plugin)
 	{
 		QString key = plugin.mid(stx+1, etx-stx-1);
 		Execute(key);
+	}
+}
+
+void NxLauncher::slotPlugInUpdated(QString path)
+{
+	NXLOGI("[%s] path = %s", __FUNCTION__, path.toStdString().c_str());
+	int etx = path.lastIndexOf("/");
+	int stx = path.lastIndexOf("/", etx-1);
+
+	if (stx > -1 && etx > -1)
+	{
+		QString key = path.mid(stx+1, etx-stx-1);
+
+		if (m_PlugIns.find(key) == m_PlugIns.end())
+			return;
+
+		if (m_PlugIns[key]->getType().toLower() == "service" && m_PlugIns[key]->getEnabled())
+		{
+			bool bOk = false;
+
+			if (!(m_PlugIns[key]->m_pInit) || !(m_PlugIns[key]->m_pIsInit))
+				return;
+
+			m_PlugIns[key]->m_pIsInit(&bOk);
+
+			if (!bOk)
+				m_PlugIns[key]->m_pInit(this, "");
+		}
 	}
 }
 
@@ -985,7 +1003,6 @@ void NxLauncher::LauncherShow(bool *bOk, bool bRequireRequestFocus)
 	m_VideoFocusQueue.push_front(NX_LAUNCHER);
 #else
 	int i = m_VideoFocusQueue.lastIndexOf(NX_LAUNCHER);
-	NXLOGI("[%s] LAUNCHER = %d", __FUNCTION__, i);
 	for ( ; i > 0; --i)
 	{
 		m_VideoFocusQueue.swap(i, i-1);
@@ -1110,7 +1127,6 @@ void NxLauncher::slotReject()
 
 void NxLauncher::slotDetectCommand()
 {
-	NXLOGI("[%s] <1>", __FUNCTION__);
 	QFile file(TEST_COMMAND_PATH);
 	if (file.open(QFile::ReadWrite))
 	{
@@ -1142,6 +1158,4 @@ void NxLauncher::slotDetectCommand()
 	m_pWatcher->removePath(TEST_COMMAND_PATH);
 	file.resize(0);
 	m_pWatcher->addPath(TEST_COMMAND_PATH);
-
-	NXLOGI("[%s] <2>", __FUNCTION__);
 }

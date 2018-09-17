@@ -20,11 +20,12 @@ NxPackageScanner::~NxPackageScanner()
 
 }
 
-void NxPackageScanner::slotFileChanged(QString Path)
+void NxPackageScanner::slotFileChanged(QString path)
 {
-	FillPluginInfo(QFileInfo(Path), true);
+	FillPluginInfo(QFileInfo(path), true);
 
-	NXLOGI("[%s] %s", __FUNCTION__, Path.toStdString().c_str());
+	NXLOGI("[%s] path = %s", __FUNCTION__, path.toStdString().c_str());
+	emit signalPlugInUpdated(path);
 }
 
 void NxPackageScanner::Scan(QString Path)
