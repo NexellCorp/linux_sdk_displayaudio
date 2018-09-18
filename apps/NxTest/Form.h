@@ -61,6 +61,9 @@ public:
 
 	static void RegisterRequestTerminate(void (*cbFunc)(void));
 
+	// Media Event
+	void MediaEventChanged(NxMediaEvent eEvent);
+
 protected:
 	bool event(QEvent *e);
 
@@ -126,11 +129,7 @@ private slots:
 
 	void on_BUTTON_SEND_MESSAGE_clicked();
 
-	void on_BUTTON_HIDE_clicked();
-
 	void on_BUTTON_POPUP_MESSAGE_clicked();
-
-	void on_BUTTON_TERMINATE_clicked();
 
 private:
 	Ui::Form *ui;

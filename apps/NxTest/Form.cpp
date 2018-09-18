@@ -430,11 +430,6 @@ void Form::on_BUTTON_SEND_MESSAGE_clicked()
 	}
 }
 
-void Form::on_BUTTON_HIDE_clicked()
-{
-	hide();
-}
-
 void Form::on_BUTTON_POPUP_MESSAGE_clicked()
 {
 	PopupMessage sData;
@@ -463,8 +458,31 @@ void Form::on_BUTTON_POPUP_MESSAGE_clicked()
 	delete[] sData.pMsgBody;
 }
 
-void Form::on_BUTTON_TERMINATE_clicked()
+void Form::MediaEventChanged(NxMediaEvent eEvent)
 {
-	if (m_pRequestTerminate)
-		m_pRequestTerminate();
+	switch (eEvent) {
+	case NX_EVENT_MEDIA_SDCARD_INSERT:
+		NXLOGI("[%s] NX_EVENT_MEDIA_SDCARD_INSERT", __FUNCTION__);
+		break;
+
+	case NX_EVENT_MEDIA_SDCARD_REMOVE:
+		NXLOGI("[%s] NX_EVENT_MEDIA_SDCARD_REMOVE", __FUNCTION__);
+		break;
+
+	case NX_EVENT_MEDIA_USB_INSERT:
+		NXLOGI("[%s] NX_EVENT_MEDIA_USB_INSERT", __FUNCTION__);
+		break;
+
+	case NX_EVENT_MEDIA_USB_REMOVE:
+		NXLOGI("[%s] NX_EVENT_MEDIA_USB_REMOVE", __FUNCTION__);
+		break;
+
+	case NX_EVENT_MEDIA_SCAN_DONE:
+		NXLOGI("[%s] NX_EVENT_MEDIA_SCAN_DONE", __FUNCTION__);
+		break;
+
+	default:
+		NXLOGI("[%s] NX_EVENT_MEDIA_UNKNOWN", __FUNCTION__);
+		break;
+	}
 }
