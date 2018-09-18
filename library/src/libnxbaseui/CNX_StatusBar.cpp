@@ -7,6 +7,7 @@ CNX_StatusBar::CNX_StatusBar(QWidget *parent) :
 	QFrame(parent),	
 	m_pCbHomeButtonClicked(NULL),
 	m_pCbBackButtonClicked(NULL),
+	m_pCbVolumeButtonClicked(NULL),
 	ui(new Ui::CNX_StatusBar)
 {
 	ui->setupUi(this);
