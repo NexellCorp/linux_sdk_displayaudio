@@ -46,6 +46,8 @@ NxPluginInfo::NxPluginInfo() : QObject()
 	m_pPopupMessageResponse = NULL;
 	// Volume
 	m_pRegisterRequestVolume = NULL;
+	// Media Event
+	m_pMediaEventChanged = NULL;
 }
 
 QString NxPluginInfo::getType() const

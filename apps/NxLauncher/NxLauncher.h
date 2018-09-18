@@ -14,6 +14,8 @@
 #include "nxpackagemanager.h"
 #include "nxprocessmanager.h"
 
+#include <media/MediaScanner.h>
+
 #include <NxEvent.h>
 
 #include <QQueue>
@@ -44,6 +46,8 @@ private slots:
 	void slotPlugInUpdated(QString plugin);
 
 	void slotSetVolume(int value);
+
+	void slotMediaEvent(NxEventTypes eType);
 
 public:
 	explicit NxLauncher(QWidget *parent = 0);
@@ -132,6 +136,8 @@ private:
 	int m_iPosition;
 
 	QFileSystemWatcher *m_pWatcher;
+
+	MediaScanner *m_pMediaScanner;
 
 private:
 	Ui::NxLauncher *ui;

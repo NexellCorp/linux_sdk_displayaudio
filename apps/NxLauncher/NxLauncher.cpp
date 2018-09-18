@@ -120,6 +120,8 @@ NxLauncher::NxLauncher(QWidget *parent) :
 		psInfo->m_pRegisterRequestTerminate = (void (*)(void (*)(void)))dlsym(psInfo->m_pHandle, "RegisterRequestTerminate");
 		// volume
 		psInfo->m_pRegisterRequestVolume = (void (*)(void (*)(void)))dlsym(psInfo->m_pHandle, "RegisterRequestVolume");
+		// media event
+		psInfo->m_pMediaEventChanged = (void (*)(NxMediaEvent))dlsym(psInfo->m_pHandle, "MediaEventChanged");
 
 #if 0
 		qDebug() << plugins[0].filePath();
@@ -217,6 +219,9 @@ NxLauncher::NxLauncher(QWidget *parent) :
 	connect(ui->messageFrame, SIGNAL(signalOk()), this, SLOT(slotAccept()));
 	connect(ui->messageFrame, SIGNAL(signalCancel()), this, SLOT(slotReject()));
 
+	m_pMediaScanner = new MediaScanner();
+	connect(m_pMediaScanner, SIGNAL(signalMediaEvent(NxEventTypes)), this, SLOT(slotMediaEvent(NxEventTypes)));
+
 	m_pWatcher = new QFileSystemWatcher(this);
 	m_pWatcher->addPath(TEST_COMMAND_PATH);
 	connect(m_pWatcher, SIGNAL(fileChanged(QString)), this, SLOT(slotDetectCommand()));
@@ -228,6 +233,47 @@ NxLauncher::NxLauncher(QWidget *parent) :
 NxLauncher::~NxLauncher()
 {
 	delete ui;
+}
+
+void NxLauncher::slotMediaEvent(NxEventTypes eType)
+{
+	NxMediaEvent eEvent = NX_EVENT_MEDIA_UNKNOWN;
+
+	switch (eType) {
+	case E_NX_EVENT_SDCARD_INSERT:
+		eEvent = NX_EVENT_MEDIA_SDCARD_INSERT;
+		NXLOGI("[%s] NX_EVENT_MEDIA_SDCARD_INSERT", __FUNCTION__);
+		break;
+
+	case E_NX_EVENT_SDCARD_REMOVE:
+		eEvent = NX_EVENT_MEDIA_SDCARD_REMOVE;
+		NXLOGI("[%s] NX_EVENT_MEDIA_SDCARD_REMOVE", __FUNCTION__);
+		break;
+
+	case E_NX_EVENT_USB_INSERT:
+		eEvent = NX_EVENT_MEDIA_USB_INSERT;
+		NXLOGI("[%s] NX_EVENT_MEDIA_USB_INSERT", __FUNCTION__);
+		break;
+
+	case E_NX_EVENT_USB_REMOVE:
+		eEvent = NX_EVENT_MEDIA_USB_REMOVE;
+		NXLOGI("[%s] NX_EVENT_MEDIA_USB_REMOVE", __FUNCTION__);
+		break;
+
+	case E_NX_EVENT_MEDIA_SCAN_DONE:
+		eEvent = NX_EVENT_MEDIA_SCAN_DONE;
+		NXLOGI("[%s] NX_EVENT_MEDIA_SCAN_DONE", __FUNCTION__);
+		break;
+
+	default:
+		eEvent = NX_EVENT_MEDIA_UNKNOWN;
+		break;
+	}
+
+	foreach (NxPluginInfo *plugin, m_PlugIns) {
+		if (plugin->m_pMediaEventChanged)
+			plugin->m_pMediaEventChanged(eEvent);
+	}
 }
 
 void NxLauncher::cbStatusVolume(void *pObj)

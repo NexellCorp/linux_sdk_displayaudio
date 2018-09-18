@@ -81,6 +81,8 @@ public:
 
 	void (*m_pPopupMessageResponse)(bool bOk);
 
+	void (*m_pMediaEventChanged)(NxMediaEvent eEvent);
+
 	QString getType() const;
 	void setType(const QString& szType );
 

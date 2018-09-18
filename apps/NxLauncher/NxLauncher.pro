@@ -39,7 +39,14 @@ SOURCES += main.cpp\
     NxLauncher.cpp \
     MessageFrame.cpp \
     ShadowEffect.cpp \
-    CNX_VolumeBar.cpp
+    CNX_VolumeBar.cpp \
+    media/CNX_UeventManager.cpp \
+    media/CNX_MediaScanner.cpp \
+    media/CNX_MediaDatabase.cpp \
+    media/uevent.c \
+    media/CNX_File.cpp \
+    media/MediaScanner.cpp \
+    media/CNX_VolumeManager.cpp
 
 HEADERS  += \
     nxappinfo.h \
@@ -52,7 +59,16 @@ HEADERS  += \
     NxLauncher.h \
     MessageFrame.h \
     ShadowEffect.h \
-    CNX_VolumeBar.h
+    CNX_VolumeBar.h \
+    media/CNX_UeventManager.h \
+    media/CNX_MediaScanner.h \
+    media/CNX_MediaDatabase.h \
+    media/uevent.h \
+    media/CNX_Base.h \
+    media/CNX_File.h \
+    media/MediaScanner.h \
+    media/CNX_VolumeManager.h \
+    media/MediaConf.h
 
 FORMS    += \
 #nxlauncher.ui \
@@ -69,7 +85,7 @@ INCLUDEPATH += $$_PRO_FILE_PWD_/../../library/include
 
 #LIBS += -L$$_PRO_FILE_PWD_/../../library/lib -lnxbaseui -lnxdaudioipc -lnxkeyreceiver -lnxdaudioutils -lnxpacpclient
 linux-oe-g++ {
-    LIBS += -L$$_PRO_FILE_PWD_/../../library/lib -lnxkeyreceiver -lnxbaseui -lnxdaudioutils
+    LIBS += -L$$_PRO_FILE_PWD_/../../library/lib -lnxkeyreceiver -lnxbaseui -lnxdaudioutils -lsqlite3 -lcrypto
 } else {
     LIBS += -L$$_PRO_FILE_PWD_/../../library/lib/x64 -lnxkeyreceiver -lnxbaseui -lnxdaudioutils
 }
