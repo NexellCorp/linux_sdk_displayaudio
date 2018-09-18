@@ -63,6 +63,9 @@ extern "C" {
 
 	// Application Terminate
 	void RegisterRequestTerminate(void (*cbFunc)());
+
+	// Volume
+	void RegisterRequestVolume(void (*cbFunc)());
 }
 
 #endif // DAUDIOIFACE_H
