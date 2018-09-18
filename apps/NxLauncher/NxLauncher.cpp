@@ -811,18 +811,19 @@ void NxLauncher::Terminate(QString requestor)
 			{
 				owner = m_VideoFocusQueue.first();
 				if (owner != NX_LAUNCHER)
-					m_PlugIns[owner]->m_pRequestVideoFocus(FocusType_Get, FocusPriority_Normal, &bOk);
+					m_PlugIns[owner]->m_pRequestVideoFocus(FocusType_Set, FocusPriority_Normal, &bOk);
 			}
 		}
 
-		owner = m_AudioFocusQueue.size() ? m_AudioFocusQueue.first() : NX_LAUNCHER;
-		m_AudioFocusQueue.removeAll(owner);
+		owner = m_AudioFocusQueue.size() ? m_AudioFocusQueue.first() : "";
+		if (m_AudioFocusQueue.size())
+			m_AudioFocusQueue.removeAll(requestor);
 		if (owner == requestor)
 		{
 			if (m_AudioFocusQueue.size())
 			{
 				owner = m_AudioFocusQueue.first();
-				m_PlugIns[owner]->m_pRequestAudioFocus(FocusType_Get, FocusPriority_Normal, &bOk);
+				m_PlugIns[owner]->m_pRequestAudioFocus(FocusType_Set, FocusPriority_Normal, &bOk);
 			}
 		}
 	}
