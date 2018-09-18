@@ -1,6 +1,8 @@
 #include "CNX_VolumeBar.h"
 #include "ui_CNX_VolumeBar.h"
 
+#include "ShadowEffect.h"
+
 #define LOG_TAG "[CNX_Volume]"
 #include <NX_Log.h>
 
@@ -11,6 +13,13 @@ CNX_VolumeBar::CNX_VolumeBar(QWidget *parent) :
 	ui(new Ui::CNX_VolumeBar)
 {
 	ui->setupUi(this);
+
+	ShadowEffect *bodyShadow = new ShadowEffect(this);
+	bodyShadow->setBlurRadius(55.0);
+	bodyShadow->setDistance(10);
+	bodyShadow->setColor(QColor(180, 180, 180, 200));
+
+	ui->slider->setGraphicsEffect(bodyShadow);
 
 	ui->slider->installEventFilter(this);
 
@@ -35,9 +44,9 @@ void CNX_VolumeBar::on_slider_sliderPressed()
 
 void CNX_VolumeBar::on_slider_sliderReleased()
 {
-	NXLOGI("[%s] val = %d", __FUNCTION__, ui->slider->value());
-
 	lower();
+
+	emit signalSetVolume(ui->slider->value());
 }
 
 void CNX_VolumeBar::raise()

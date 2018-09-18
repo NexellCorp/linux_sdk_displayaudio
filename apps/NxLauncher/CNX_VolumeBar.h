@@ -13,6 +13,9 @@ class CNX_VolumeBar : public QFrame
 {
 	Q_OBJECT
 
+signals:
+	void signalSetVolume(int value);
+
 private slots:
 	void slotTimer();
 

@@ -118,6 +118,8 @@ NxLauncher::NxLauncher(QWidget *parent) :
 		psInfo->m_pPopupMessageResponse = (void (*)(bool))dlsym(psInfo->m_pHandle, "PopupMessageResponse");
 		// terminate
 		psInfo->m_pRegisterRequestTerminate = (void (*)(void (*)(void)))dlsym(psInfo->m_pHandle, "RegisterRequestTerminate");
+		// volume
+		psInfo->m_pRegisterRequestVolume = (void (*)(void (*)(void)))dlsym(psInfo->m_pHandle, "RegisterRequestVolume");
 
 #if 0
 		qDebug() << plugins[0].filePath();
@@ -184,6 +186,8 @@ NxLauncher::NxLauncher(QWidget *parent) :
 			psInfo->m_pRegisterRequestPluginTerminate(RequestPlugInTerminate);
 		if (psInfo->m_pRegisterRequestTerminate)
 			psInfo->m_pRegisterRequestTerminate(RequestTerminate);
+		if (psInfo->m_pRegisterRequestVolume)
+			psInfo->m_pRegisterRequestVolume(RequestVolume);
 	}
 
 	foreach (NxPluginInfo *psInfo, m_PlugIns) {
@@ -199,6 +203,8 @@ NxLauncher::NxLauncher(QWidget *parent) :
 	// set application name
 	ui->statusBar->SetTitleName("Home");
 	ui->statusBar->RegOnClickedVolume(cbStatusVolume);
+
+	connect(ui->volumeBar, SIGNAL(signalSetVolume(int)), this, SLOT(slotSetVolume(int)));
 
 	// binding between qml and widget
 	ui->launcherWidget->setSource(QUrl("qrc:/qml/NxLauncher.qml"));
@@ -226,8 +232,7 @@ NxLauncher::~NxLauncher()
 
 void NxLauncher::cbStatusVolume(void *pObj)
 {
-	NxLauncher *p = (NxLauncher *)pObj;
-	QApplication::postEvent(p, new NxVolumeControlEvent());
+	QApplication::postEvent(m_spInstance, new NxVolumeControlEvent());
 }
 
 void NxLauncher::RequestLauncherShow(bool *bOk)
@@ -737,6 +742,11 @@ void NxLauncher::RequestTerminate()
 	}
 }
 
+void NxLauncher::RequestVolume()
+{
+	QApplication::postEvent(m_spInstance, new NxVolumeControlEvent());
+}
+
 void NxLauncher::Terminate(QString requestor)
 {
 	QString owner;
@@ -975,6 +985,11 @@ void NxLauncher::slotPlugInUpdated(QString path)
 				m_PlugIns[key]->m_pInit(this, "");
 		}
 	}
+}
+
+void NxLauncher::slotSetVolume(int value)
+{
+	ui->statusBar->SetVolume(value);
 }
 
 /************************************************************************************\

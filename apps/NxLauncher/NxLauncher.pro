@@ -74,6 +74,7 @@ linux-oe-g++ {
     LIBS += -L$$_PRO_FILE_PWD_/../../library/lib/x64 -lnxkeyreceiver -lnxbaseui -lnxdaudioutils
 }
 
+# dynamic library
 LIBS += -ldl
 
 unix {

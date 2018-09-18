@@ -44,6 +44,8 @@ NxPluginInfo::NxPluginInfo() : QObject()
 	m_pRegisterRequestPopupMessage = NULL;
 	m_pRegisterRequestExpirePopupMessage = NULL;
 	m_pPopupMessageResponse = NULL;
+	// Volume
+	m_pRegisterRequestVolume = NULL;
 }
 
 QString NxPluginInfo::getType() const

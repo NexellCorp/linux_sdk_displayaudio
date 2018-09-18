@@ -43,6 +43,8 @@ private slots:
 
 	void slotPlugInUpdated(QString plugin);
 
+	void slotSetVolume(int value);
+
 public:
 	explicit NxLauncher(QWidget *parent = 0);
 	~NxLauncher();
@@ -94,6 +96,9 @@ private:
 
 	//
 	static void RequestTerminate();
+
+	// Volume
+	static void RequestVolume();
 
 	void KeyEvent(NxKeyEvent* e);
 
