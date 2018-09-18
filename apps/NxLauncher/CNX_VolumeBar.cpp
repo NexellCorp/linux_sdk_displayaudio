@@ -73,3 +73,8 @@ void CNX_VolumeBar::ResetCountDown()
 	m_Timer.stop();
 	m_Timer.start(1000);
 }
+
+void CNX_VolumeBar::SetValue(int value)
+{
+	ui->slider->setValue(value);
+}

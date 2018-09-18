@@ -25,6 +25,8 @@ public:
 
 	void raise();
 
+	void SetValue(int value);
+
 private slots:
 	void on_slider_sliderReleased();
 

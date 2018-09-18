@@ -947,6 +947,7 @@ void NxLauncher::PopupMessageEvent(NxPopupMessageEvent *e)
 
 void NxLauncher::VolumeControlEvent(NxVolumeControlEvent *)
 {
+	ui->volumeBar->SetValue(ui->statusBar->GetVolume());
 	ui->volumeBar->raise();
 }
 
