@@ -13,6 +13,7 @@ void (*Frame::m_pRequestVideoFocus)(FocusPriority ePriority, bool *bOk) = NULL;
 void (*Frame::m_pRequestVideoFocusTransient)(FocusPriority ePriority, bool *bOk) = NULL;
 void (*Frame::m_pRequestVideoFocusLoss)(void) = NULL;
 void (*Frame::m_pRequestTerminate)(void) = NULL;
+void (*Frame::m_pRequestVolume)(void) = NULL;
 
 #include <QDebug>
 Frame::Frame(QWidget *parent) :
@@ -26,6 +27,7 @@ Frame::Frame(QWidget *parent) :
 	ui->statusBar->SetTitleName("Nexell BT Audio Player");
 	ui->statusBar->RegOnClickedHome(cbStatusHome);
 	ui->statusBar->RegOnClickedBack(cbStatusBack);
+	ui->statusBar->RegOnClickedVolume(cbStatusVolume);
 
 	setUIState(UIState_Stopped);
 
@@ -97,6 +99,13 @@ bool Frame::event(QEvent *event)
 		return true;
 	}
 
+	case E_NX_EVENT_STATUS_VOLUME:
+	{
+		NxStatusVolumeEvent *e = static_cast<NxStatusVolumeEvent *>(event);
+		StatusVolumeEvent(e);
+		return true;
+	}
+
 	default: break;
 	}
 
@@ -117,6 +126,12 @@ void Frame::StatusBackEvent(NxStatusBackEvent *)
 {
 	if (m_pRequestTerminate)
 		m_pRequestTerminate();
+}
+
+void Frame::StatusVolumeEvent(NxStatusVolumeEvent *e)
+{
+	if (m_pRequestVolume)
+		m_pRequestVolume();
 }
 
 Frame* Frame::GetInstance(void *pObj)
@@ -151,6 +166,12 @@ void Frame::cbStatusBack(void *pObj)
 {
 	Frame *p = (Frame *)pObj;
 	QApplication::postEvent(p, new NxStatusBackEvent());
+}
+
+void Frame::cbStatusVolume(void *pObj)
+{
+	Frame *p = (Frame *)pObj;
+	QApplication::postEvent(p, new NxStatusVolumeEvent());
 }
 
 void Frame::setUIState(UIState state)
@@ -542,3 +563,10 @@ void Frame::RegisterRequestTerminate(void (*cbFunc)(void))
 	if (cbFunc)
 		m_pRequestTerminate = cbFunc;
 }
+
+void Frame::RegisterRequestVolume(void (*cbFunc)(void))
+{
+	if (cbFunc)
+		m_pRequestVolume = cbFunc;
+}
+

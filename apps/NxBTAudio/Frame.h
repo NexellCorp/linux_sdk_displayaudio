@@ -56,6 +56,8 @@ protected:
 
 	void StatusBackEvent(NxStatusBackEvent *e);
 
+	void StatusVolumeEvent(NxStatusVolumeEvent *e);
+
 public:
 	void Init(void *pObj);
 
@@ -89,10 +91,14 @@ public:
 
 	static void RegisterRequestTerminate(void (*cbFunc)(void));
 
+	static void RegisterRequestVolume(void (*cbFunc)(void));
+
 private:
 	static void cbStatusHome(void *pObj);
 
 	static void cbStatusBack(void *pObj);
+
+	static void cbStatusVolume(void *pObj);
 
 	void setUIState(UIState state);
 
@@ -124,6 +130,9 @@ private:
 
 	// Terminate
 	static void (*m_pRequestTerminate)(void);
+
+	// Volume
+	static void (*m_pRequestVolume)(void);
 
 	// Focus
 	bool m_bHasVideoFocus;

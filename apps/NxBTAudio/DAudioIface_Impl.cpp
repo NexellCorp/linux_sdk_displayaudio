@@ -124,3 +124,8 @@ void RegisterRequestTerminate(void (*cbFunc)())
 {
 	Frame::RegisterRequestTerminate(cbFunc);
 }
+
+void RegisterRequestVolume(void (*cbFunc)())
+{
+	Frame::RegisterRequestVolume(cbFunc);
+}
