@@ -23,7 +23,7 @@
 
 
 QLabel, QLabel::disabled {
-	color: rgb(0, 0, 0);
+	color: rgb(1, 1, 1);
 }</string>
   </property>
   <property name="frameShape">
