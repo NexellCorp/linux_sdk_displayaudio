@@ -45,9 +45,15 @@ public:
 
 	void SetTitleName(QString text);
 
+	QString GetTitleName();
+
 	void SetVolume(int value);
 
+	int GetVolume();
+
 	void SetBTConnection(int value);
+
+	int GetBTConnection();
 
 private slots:
 	void on_BUTTON_HOME_clicked();

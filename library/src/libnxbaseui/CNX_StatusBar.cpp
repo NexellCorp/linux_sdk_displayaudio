@@ -81,12 +81,27 @@ void CNX_StatusBar::SetVolume(int value)
 	}
 }
 
+int CNX_StatusBar::GetVolume()
+{
+	return ui->LABEL_VOLUME_VALUE->text().toInt();
+}
+
+QString CNX_StatusBar::GetTitleName()
+{
+	return ui->LABEL_TITLE->text();
+}
+
 void CNX_StatusBar::SetBTConnection(int value)
 {
 	if (m_pDAudioStatus->SetBTConnection(value))
 	{
 		ui->BUTTON_BT_CONNECTION_ICON->setChecked(value);
 	}
+}
+
+int CNX_StatusBar::GetBTConnection()
+{
+	return ui->BUTTON_BT_CONNECTION_ICON->isChecked() ? 1 : 0;
 }
 
 void CNX_StatusBar::on_BUTTON_HOME_clicked()
