@@ -1,7 +1,11 @@
 #ifndef CNX_DAUDIOSTATUS_H
 #define CNX_DAUDIOSTATUS_H
 
+// sqlite3
 #include <sqlite3.h>
+// alsa
+#include <alsa/asoundlib.h>
+
 #include <stdint.h>
 #include <stdio.h>
 #include <stdlib.h>
@@ -43,6 +47,8 @@ private:
         int32_t RowCount();
 
         int32_t IsExistByID(int32_t id);
+
+        int32_t SetSystemVolume(int32_t percentage);
 
 private:
 	sqlite3* m_pHandle;

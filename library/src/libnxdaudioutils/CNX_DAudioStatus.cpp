@@ -186,14 +186,56 @@ int32_t CNX_DAudioStatus::SetVolume(int32_t value)
 	char query[1024] = {0,};
 	int32_t ret = 0;
 
-        if (!IsOpenedDataBase())
+    if (!IsOpenedDataBase())
 		return 0;
 
 	sprintf(query, "UPDATE %s set _VOLUME = %d where _ID = %d;", DEFAULT_DAUDIO_STATUS_DATABASE_TABLE, value, 0);
 
 	ret = (int32_t)(SQLITE_OK == sqlite3_exec(m_pHandle, query, cbSqlite3Exec, NULL, NULL));
 
+	if (ret)
+		SetSystemVolume(value);
+
 	return ret;
+}
+
+int32_t CNX_DAudioStatus::SetSystemVolume(int32_t percentage)
+{
+	long min, max;
+	snd_mixer_t *pHandle;
+	snd_mixer_elem_t *pElem;
+	snd_mixer_selem_id_t *pSid;
+	const char *pCard = "default";
+	const char *pSelem_name = "DAC1";
+
+	if (percentage < 0)
+		percentage = 0;
+	if (percentage > 100)
+		percentage = 100;
+
+	if (0 != snd_mixer_open(&pHandle, 0))
+		return -1;
+
+	if (0 != snd_mixer_attach(pHandle, pCard))
+		return -1;
+
+	if (0 != snd_mixer_selem_register(pHandle, NULL, NULL))
+		return -1;
+
+	if (0 != snd_mixer_load(pHandle))
+		return -1;
+
+	snd_mixer_selem_id_alloca(&pSid);
+	snd_mixer_selem_id_set_index(pSid, 0);
+	snd_mixer_selem_id_set_name(pSid, pSelem_name);
+	pElem = snd_mixer_find_selem(pHandle, pSid);
+
+	snd_mixer_selem_get_playback_volume_range(pElem, &min, &max);
+	snd_mixer_selem_set_playback_volume_all(pElem, max * percentage / 100);
+
+	snd_mixer_close(pHandle);
+
+	return 0;
 }
 
 int32_t CNX_DAudioStatus::GetVolume()
