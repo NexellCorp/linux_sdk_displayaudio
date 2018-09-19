@@ -2320,6 +2320,8 @@ void NxBTService::RequestAudioFocus(FocusType eType, FocusPriority ePriority, bo
 
 		if (*bOk)
 		{
+			g_has_audio_focus = false;
+
 			p->closeAudioAVK();
 
 			if (p->m_AVK.status == PlayStatus_Playing)
@@ -2351,6 +2353,8 @@ void NxBTService::RequestAudioFocusTransient(FocusPriority ePriority, bool *bOk)
 
 	if (*bOk)
 	{
+		g_has_audio_focus = false;
+
 		p->closeAudioAVK();
 
 		if (p->m_AVK.status == PlayStatus_Playing)
@@ -2462,7 +2466,7 @@ void NxBTService::CommandThreadProc()
 			{
 				bool bOk = false;
 				p->m_pRequestAudioFocus(FocusPriority_Normal, &bOk);
-				g_has_audio_focus;
+				g_has_audio_focus = bOk;
 			}
 
 			remove("/home/root/cmd.audiofocus");
