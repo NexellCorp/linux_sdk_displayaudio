@@ -61,6 +61,8 @@ public:
 
 	static void RegisterRequestTerminate(void (*cbFunc)(void));
 
+	static void RegisterRequestVolume(void (*cbFunc)(void));
+
 	// Media Event
 	void MediaEventChanged(NxMediaEvent eEvent);
 
@@ -72,9 +74,15 @@ private:
 
 	static void cbStatusBack(void *pObj);
 
+	static void cbStatusVolume(void *pObj);
+
 	void StatusHomeEvent(NxStatusHomeEvent *e);
 
 	void StatusBackEvent(NxStatusBackEvent *e);
+
+	void StatusVolumeEvent(NxStatusVolumeEvent *e);
+
+	void TerminateEvent(NxTerminateEvent *e);
 
 private:
 	explicit Form(QWidget *parent = 0);
@@ -105,6 +113,9 @@ private:
 
 	// Terminate
 	static void (*m_pRequestTerminate)(void);
+
+	// Volume
+	static void (*m_pRequestVolume)(void);
 
 	// Focus
 	bool m_bHasAudioFocus;

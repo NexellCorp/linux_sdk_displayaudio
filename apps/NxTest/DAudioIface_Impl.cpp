@@ -187,6 +187,10 @@ void RegisterRequestTerminate(void (*cbFunc)())
 	Form::RegisterRequestTerminate(cbFunc);
 }
 
+void RegisterRequestVolume(void (*cbFunc)())
+{
+	Form::RegisterRequestVolume(cbFunc);
+}
 void MediaEventChanged(NxMediaEvent eEvent)
 {
 	Form *p = Form::GetInstance();

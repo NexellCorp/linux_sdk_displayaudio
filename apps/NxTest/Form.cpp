@@ -31,7 +31,10 @@ void (*Form::m_pRequestVideoFocusTransient)(FocusPriority ePriority, bool *bOk) 
 void (*Form::m_pRequestVideoFocusLoss)(void) = NULL;
 
 // Terminate
-void (*Form::m_pRequestTerminate)(void);
+void (*Form::m_pRequestTerminate)(void) = NULL;
+
+// Volume
+void (*Form::m_pRequestVolume)(void) = NULL;
 
 Form::Form(QWidget *parent) :
 	QFrame(parent),
@@ -53,6 +56,7 @@ Form::Form(QWidget *parent) :
 #endif
 	ui->statusBar->RegOnClickedHome(cbStatusHome);
 	ui->statusBar->RegOnClickedBack(cbStatusBack);
+	ui->statusBar->RegOnClickedVolume(cbStatusVolume);
 }
 
 Form::~Form()
@@ -105,6 +109,32 @@ bool Form::event(QEvent *event)
 		return true;
 	}
 
+	case E_NX_EVENT_STATUS_VOLUME:
+	{
+		NxStatusVolumeEvent *e = static_cast<NxStatusVolumeEvent *>(event);
+		StatusVolumeEvent(e);
+		return true;
+	}
+
+	case E_NX_EVENT_TERMINATE:
+	{
+		NxTerminateEvent *e = static_cast<NxTerminateEvent *>(event);
+		TerminateEvent(e);
+		return true;
+	}
+
+	case QEvent::WindowActivate:
+	{
+		NXLOGI("[%s] WindowActivate", __FUNCTION__);
+		break;
+	}
+
+	case QEvent::WindowDeactivate:
+	{
+		NXLOGI("[%s] WindowDeactivate", __FUNCTION__);
+		break;
+	}
+
 	default: break;
 	}
 
@@ -122,6 +152,18 @@ void Form::StatusHomeEvent(NxStatusHomeEvent *)
 }
 
 void Form::StatusBackEvent(NxStatusBackEvent *)
+{
+	if (m_pRequestTerminate)
+		m_pRequestTerminate();
+}
+
+void Form::StatusVolumeEvent(NxStatusVolumeEvent *)
+{
+	if (m_pRequestVolume)
+		m_pRequestVolume();
+}
+
+void Form::TerminateEvent(NxTerminateEvent *)
 {
 	if (m_pRequestTerminate)
 		m_pRequestTerminate();
@@ -161,6 +203,12 @@ void Form::cbStatusBack(void *pObj)
 	QApplication::postEvent(p, new NxStatusBackEvent());
 }
 
+void Form::cbStatusVolume(void *pObj)
+{
+	Form *p = (Form *)pObj;
+	QApplication::postEvent(p, new NxStatusVolumeEvent());
+}
+
 void Form::RegisterRequestLauncherShow(void (*cbFunc)(bool *bOk))
 {
 	if (cbFunc)
@@ -196,6 +244,11 @@ void Form::RequestAudioFocus(FocusType eType, FocusPriority ePriority, bool *bOk
 			*bOk = true;
 
 		m_bHasAudioFocus = *bOk ? false : true;
+
+		if (ui->RADIO_TERMINATE->isChecked())
+		{
+			QApplication::postEvent(this, new NxTerminateEvent());
+		}
 	}
 	else
 	{
@@ -310,6 +363,12 @@ void Form::RegisterRequestTerminate(void (*cbFunc)(void))
 {
 	if (cbFunc)
 		m_pRequestTerminate = cbFunc;
+}
+
+void Form::RegisterRequestVolume(void (*cbFunc)(void))
+{
+	if (cbFunc)
+		m_pRequestVolume = cbFunc;
 }
 
 void Form::RegisterRequestPopupMessage(void (*cbFunc)(PopupMessage *, bool *))
