@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>211</width>
-    <height>56</height>
+    <width>838</width>
+    <height>112</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -56,13 +56,13 @@
      <property name="minimumSize">
       <size>
        <width>0</width>
-       <height>30</height>
+       <height>80</height>
       </size>
      </property>
      <property name="maximumSize">
       <size>
        <width>16777215</width>
-       <height>30</height>
+       <height>80</height>
       </size>
      </property>
      <property name="focusPolicy">
@@ -71,7 +71,7 @@
      <property name="styleSheet">
       <string notr="true">QSlider::groove:horizontal {
     border: none;
-    height: 10px;
+    height: 20px;
 	border-radius: 5;
 }
 
@@ -79,16 +79,16 @@ QSlider::handle:horizontal {
 	background: transparent;
 	background-color: rgb(225,255,225);
 	border: none;
-	width: 30px;
-	height: 30px;
-    border-radius: 15px;
+	width: 60px;
+	height: 60px;
+    border-radius: 30px;
 
-	margin-top: -10px;
-	margin-bottom: -10px;
+	margin-top: -20px;
+	margin-bottom: -20px;
 }
 
 QSlider::add-page:horizontal {
-	background: rgb(0,122,255);
+	background: rgb(122,122,122);
 	border-radius: 5px;
 }
 

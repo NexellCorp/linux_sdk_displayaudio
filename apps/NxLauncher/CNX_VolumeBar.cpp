@@ -24,11 +24,28 @@ CNX_VolumeBar::CNX_VolumeBar(QWidget *parent) :
 	ui->slider->installEventFilter(this);
 
 	connect(&m_Timer, SIGNAL(timeout()), this, SLOT(slotTimer()));
+
+	ui->slider->installEventFilter(this);
 }
 
 CNX_VolumeBar::~CNX_VolumeBar()
 {
 	delete ui;
+}
+#include <QDebug>
+bool CNX_VolumeBar::eventFilter(QObject *watched, QEvent *event)
+{
+	if (watched == ui->slider)
+	{
+		if (event->type() == QEvent::MouseButtonPress)
+		{
+			QMouseEvent *e = static_cast<QMouseEvent *>(event);
+			ui->slider->setValue(ui->slider->maximum() * e->pos().x() / ui->slider->width());
+			ResetCountDown();
+		}
+	}
+
+	return QFrame::eventFilter(watched, event);
 }
 
 void CNX_VolumeBar::on_slider_sliderMoved(int position)
@@ -61,6 +78,7 @@ void CNX_VolumeBar::slotTimer()
 	{
 		m_Timer.stop();
 		lower();
+		emit signalSetVolume(ui->slider->value());
 		return;
 	}
 

@@ -27,6 +27,9 @@ public:
 
 	void SetValue(int value);
 
+protected:
+	bool eventFilter(QObject *watched, QEvent *event);
+
 private slots:
 	void on_slider_sliderReleased();
 
