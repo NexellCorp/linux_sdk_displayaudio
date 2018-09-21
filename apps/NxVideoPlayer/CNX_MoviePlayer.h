@@ -45,7 +45,7 @@
 #include <QDebug>
 #include "CNX_Util.h"
 #include <NX_MoviePlay.h>
-#include "CNX_SubtitleParser.h"
+
 // Drm CtrlId, PlaneId
 #define LCD_CTRLID      26
 #define LCD_PLANEID     27
@@ -60,23 +60,22 @@
 #define DSP_HDMI_WIDTH     1920
 #define DSP_HDMI_HEIGHT    1080
 
-
 typedef enum
 {
-	StoppedState	= 0,
-	PlayingState	= 1,
-	PausedState		= 2,
-	ReadyState		= 3,
+    StoppedState	= 0,
+    PlayingState	= 1,
+    PausedState		= 2,
+    ReadyState		= 3,
 }NX_MediaStatus;
 
 enum
 {
-	DSP_MODE_DEFAULT = 0,
-	DSP_MODE_LCD,
-	DSP_MODE_HDMI,
-	DSP_MODE_TVOUT,
-	DSP_MODE_LCD_HDMI,
-	DSP_MODE_LCD_TVOUT,
+    DSP_MODE_DEFAULT = 0,
+    DSP_MODE_LCD,
+    DSP_MODE_HDMI,
+    DSP_MODE_TVOUT,
+    DSP_MODE_LCD_HDMI,
+    DSP_MODE_LCD_TVOUT,
 };
 
 #define MAX_DISPLAY_CHANNEL     8
@@ -87,110 +86,84 @@ class CNX_MoviePlayer
 {
 
 public:
-	CNX_MoviePlayer();
-	~CNX_MoviePlayer();
+    CNX_MoviePlayer();
+    ~CNX_MoviePlayer();
 
 public:
-	//
-	//MediaPlayer commomn Initialize , close
-	//mediaType is MP_TRACK_VIDEO or MP_TRACK_AUDIO
-	int InitMediaPlayer(	void (*pCbEventCallback)( void *privateDesc, unsigned int EventType, unsigned int /*EventData*/, unsigned int /*param*/ ),
-							void *pCbPrivate,
-							const char *pUri,
-							int mediaType,
-							void (*pCbQtUpdateImg)(void *pImg)
-						);
+    //
+    //MediaPlayer commomn Initialize , close
+    //mediaType is MP_TRACK_VIDEO or MP_TRACK_AUDIO
+    int InitMediaPlayer(	void (*pCbEventCallback)( void *privateDesc, unsigned int EventType, unsigned int /*EventData*/, unsigned int /*param*/ ),
+                            void *pCbPrivate,
+                            const char *pUri,
+                            int mediaType,
+                            void (*pCbQtUpdateImg)(void *pImg)
+                            );
 
-	int CloseHandle();
+    int CloseHandle();
 
-	//
-	//MediaPlayer common Control
-	int SetVolume(int volume);
-	int Play();
-	int Seek(qint64 position);
-	int Pause();
-	int Stop();
+    //
+    //MediaPlayer common Control
+    int SetVolume(int volume);
+    int Play();
+    int Seek(qint64 position);
+    int Pause();
+    int Stop();
 
-	//
-	//MediaPlayer common information
-	void PrintMediaInfo( const char* pUri );
-	qint64 GetMediaPosition();
-	qint64 GetMediaDuration();
-	NX_MediaStatus GetState();
+    //
+    //MediaPlayer common information
+    void PrintMediaInfo( const char* pUri );
+    qint64 GetMediaPosition();
+    qint64 GetMediaDuration();
+    NX_MediaStatus GetState();
 
-	//
-	//MediaPlayer video information
-	int GetVideoWidth( int track );
-	int GetVideoHeight( int track );
-	int SetDspPosition( int track, int x, int y, int width, int height );
-	int SetDisplayMode( int track, MP_DSP_RECT srcRect, MP_DSP_RECT dstRect, int dspMode );
+    //
+    //MediaPlayer video information
+    int GetVideoWidth( int track );
+    int GetVideoHeight( int track );
+    int SetDspPosition( int track, int x, int y, int width, int height );
+    int SetDisplayMode( int track, MP_DSP_RECT srcRect, MP_DSP_RECT dstRect, int dspMode );
 
-	void DrmVideoMute(int bOnOff);
+    void DrmVideoMute(int bOnOff);
 
 
 private:
-	//
-	//MediaPlayer InitMediaPlayer
-	int OpenHandle( void (*pCbEventCallback)( void *privateDesc, unsigned int EventType, unsigned int /*EventData*/, unsigned int /*param*/ ),
-					void *cbPrivate );
+    //
+    //MediaPlayer InitMediaPlayer
+    int OpenHandle( void (*pCbEventCallback)( void *privateDesc, unsigned int EventType, unsigned int /*EventData*/, unsigned int /*param*/ ),
+                    void *cbPrivate );
 
-	int SetUri(const char *pUri);
-	int GetMediaInfo();
-	int AddTrack(int mediaType);
-	int SetRenderCallBack(void (*pCbQtUpdateImg)(void *pImg));
+    int SetUri(const char *pUri);
+    int GetMediaInfo();
+    int AddTrack(int mediaType);
+    int SetRenderCallBack(void (*pCbQtUpdateImg)(void *pImg));
 
-	int AddTrackForVideo();
-	int AddTrackForAudio();
-	int AddVideoConfig( int track, int planeId, int ctrlId, MP_DSP_RECT srcRect, MP_DSP_RECT dstRect );
-	int AddVideoTrack( int track );
-	int AddAudioTrack( int track );
-	int GetTrackIndex( int trackType, int track );
+    int AddTrackForVideo();
+    int AddTrackForAudio();
+    int AddVideoConfig( int track, int planeId, int ctrlId, MP_DSP_RECT srcRect, MP_DSP_RECT dstRect );
+    int AddVideoTrack( int track );
+    int AddAudioTrack( int track );
+    int GetTrackIndex( int trackType, int track );
 
-	//
-	//vars
-	pthread_mutex_t	m_hLock;
-	MP_HANDLE		m_hPlayer;
+    //
+    //vars
+    pthread_mutex_t	m_hLock;
+    MP_HANDLE		m_hPlayer;
 
-	MP_MEDIA_INFO	m_MediaInfo;
-	MP_DSP_CONFIG	*m_pDspConfig[MAX_DISPLAY_CHANNEL];
-	MP_DSP_CONFIG	m_SubInfo;
+    MP_MEDIA_INFO	m_MediaInfo;
+    MP_DSP_CONFIG	*m_pDspConfig[MAX_DISPLAY_CHANNEL];
+    MP_DSP_CONFIG	m_SubInfo;
 
-	NX_MediaStatus	m_iStatus;
-	int				m_iDspMode;
-	int				m_iSubDspWidth;
-	int				m_iSubDspHeight;
-	int				m_iMediaType;
-	int                  		m_bVideoMute;
-	int 				m_bIsCbQtUpdateImg;
-
+    NX_MediaStatus	m_iStatus;
+    int				m_iDspMode;
+    int				m_iSubDspWidth;
+    int				m_iSubDspHeight;
+    int				m_iMediaType;
+    int             m_bVideoMute;
+    int 			m_bIsCbQtUpdateImg;
 
 public:
-	//
-	// Subtitle
-	CNX_SubtitleParser* m_pSubtitleParser;
-	pthread_mutex_t m_SubtitleLock;
-	pthread_t m_subtitleThread;
-	int m_iSeekTime;
-
-	void	CloseSubtitle();
-	int		OpenSubtitle(char * subtitlePath);
-	int		GetSubtitleStartTime();
-	void	SetSubtitleIndex(int idx);
-	int		GetSubtitleIndex();
-	int		GetSubtitleMaxIndex();
-	void	IncreaseSubtitleIndex();
-	void	SeekSubtitle(int milliseconds);
-	char*	GetSubtitleText();
-	bool	IsSubtitleAvailable();
-	const char*	GetBestSubtitleEncode();
-	const char* GetBestStringEncode(const char* str);
-	int IsCbQtUpdateImg();
-
-private:
-	//
-	// Subtitle
-	static void* ThreadWrapForSubtitleSeek(void *Obj);
-	void SeekSubtitleThread(void);
+    int IsCbQtUpdateImg();
 };
 
 #endif // CNX_MoviePlayer_H
