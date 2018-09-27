@@ -15,55 +15,44 @@ QT       += network     \
 greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
 
 TARGET = NxVideoPlayer
-TEMPLATE = app
+TEMPLATE = lib
+CONFIG += plugin
 
-# Add Graphic Tool Library
-LIBS += -lMali -lnx_drm_allocator -lnx_video_api
-LIBS += -L$$PWD/../../library/lib/ -lnxmpmanager -lnxfilterhelper -lnxfilter
+    # Add Graphic Tool Library
+    LIBS += -lnx_drm_allocator -lnx_video_api
+    LIBS += -L$$PWD/../../library/lib/ -lnxmpmanager -lnxfilterhelper -lnxfilter
 
-equals(QT_VERSION, 5.7.0) {
-      LIBS += -lnxsubtitleparser
-}
-else {
-      LIBS += -lnxsubtitleparser_icui18n56
-}
+    # Add SQL library
+    LIBS += -L$$PWD/../../library/lib/ -lnxdaudioutils
 
-# Add SQL library
-LIBS += -L$$PWD/../../library/lib/ -lnxdaudioutils
+    # Add xml config library
+    LIBS += -L$$PWD/../../library/lib/ -lnxconfig -lxml2
 
-# Add IPC library
-LIBS += -L$$PWD/../../library/lib/ -lnxdaudioipc -lnxpacpclient
+    # Add Common UI Module
+    LIBS += -L$$PWD/../../library/lib -lnxbaseui
 
-# Add xml config library
-LIBS += -L$$PWD/../../library/lib/ -lnxconfig -lxml2
+    INCLUDEPATH += $$PWD/../../library/include
 
-# Add Common UI Module
-LIBS += -L$$PWD/../../library/lib -lnxbaseui
 
-INCLUDEPATH += $$PWD/../../library/include
+SOURCES += \
+    CNX_MoviePlayer.cpp \
+    CNX_FileList.cpp \
+    MainFrame.cpp \
+    DAudioIface_Impl.cpp \
+    PlayerVideoFrame.cpp \
+    PlayListVideoFrame.cpp
 
-INCLUDEPATH += \
-    $$PWD/./vr_tools/include
+HEADERS  += \
+    CNX_Util.h \
+    CNX_Util.h \
+    CNX_MoviePlayer.h \
+    CNX_FileList.h \
+    MainFrame.h \
+    NxEvent.h \
+    PlayListVideoFrame.h \
+    PlayerVideoFrame.h
 
-SOURCES += main.cpp\
-        mainwindow.cpp \
-        qtglvideowindow.cpp \
-        geometryengine.cpp \
-        playlistwindow.cpp \
-        CNX_MoviePlayer.cpp \
-        CNX_FileList.cpp
-
-HEADERS  += mainwindow.h \
-        qtglvideowindow.h \
-        geometryengine.h \
-        CNX_Util.h \
-        playlistwindow.h \
-        CNX_Util.h \
-        CNX_MoviePlayer.h \
-        CNX_FileList.h
-
-FORMS    += mainwindow.ui \
-            playlistwindow.ui
-
-RESOURCES += \
-    shader.qrc
+FORMS    += \
+    MainFrame.ui \
+    PlayerVideoFrame.ui \
+    PlayListVideoFrame.ui
