@@ -47,7 +47,7 @@ function package_application()
     echo "<< Package ${1} >>"
     mkdir -p ${RESULT_DIR}/${PACKAGE_ROOT}/${app_name};
     cp -va ${TOP}/apps/${app_name}/${PACKAGE_DIR}/* ${RESULT_DIR}/${PACKAGE_ROOT}/${app_name}/;
-    cp -va ${TOP}/${BUILD_TOP}/build-${app_name}/${app_name} ${RESULT_DIR}/${PACKAGE_ROOT}/${app_name}/;
+    cp -va ${TOP}/${BUILD_TOP}/build-${app_name}/*.so* ${RESULT_DIR}/${PACKAGE_ROOT}/${app_name}/;
 }
 
 function package_audioplayer_application()
@@ -59,7 +59,7 @@ function package_audioplayer_application()
 
 	echo "<< Copy ${app_name} Binary & Package Informations >>"
     cp -va ${TOP}/apps/${app_name}/${PACKAGE_DIR}/* ${RESULT_DIR}/${PACKAGE_ROOT}/${app_name}/;
-    cp -va ${TOP}/${BUILD_TOP}/build-${app_name}/${app_name} ${RESULT_DIR}/${PACKAGE_ROOT}/${app_name}/;
+    cp -va ${TOP}/${BUILD_TOP}/build-${app_name}/*.so* ${RESULT_DIR}/${PACKAGE_ROOT}/${app_name}/;
 
 	echo "<< Package ID3 Libraries >>"
 	cp -aR ${TOP}/library/lib/id3-3.8/lib/libid3.so* ${RESULT_DIR}/${PACKAGE_ROOT}/${app_name}/lib/;
@@ -143,7 +143,7 @@ package_avin_application
 package_application NxVideoPlayer
 package_bt_service
 package_bt_application NxBTAudio
-package_bt_application NxBTPhoneR
+package_bt_application NxBTPhone
 package_bt_application NxBTSettings
 package_etc
 if [ ${OECORE_SDK_VERSION} != "2.3.1" ]; then

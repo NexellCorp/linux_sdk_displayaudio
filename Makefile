@@ -101,8 +101,8 @@ QT_APPS += NxBTPhone
 QT_APPS += NxBTSettings
 ifneq ($(OECORE_SDK_VERSION),2.3.1)
 # FIX ME. ( QT5.4 SDK don't have NEXELL private library. )
-#QT_APPS += NxAudioPlayer
-#QT_APPS += NxVideoPlayer
+QT_APPS += NxAudioPlayer
+QT_APPS += NxVideoPlayer
 #QT_APPS += NxQuickRearCam
 #QT_APPS += NxAVIn
 endif
