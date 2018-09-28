@@ -35,37 +35,78 @@ Item {
             Drag.active: mouseArea.drag.active
             Drag.hotSpot.x: mouseArea.mouseX
             Drag.hotSpot.y: mouseArea.mouseY
-                Image {
-                    id: iconImage
-                    anchors.top: parent.top
-                    anchors.left: parent.left
-                    anchors.right: parent.right
-                    anchors.margins: 5
+            Image {
+                id: iconImage
+                anchors.top: parent.top
+                anchors.left: parent.left
+                anchors.right: parent.right
+                anchors.margins: 5
 
-                    height: parent.height - iconText.height - iconText.anchors.topMargin*2
-                    fillMode: Image.PreserveAspectFit
-                    smooth: true
+                height: parent.height - iconText.height - iconText.anchors.topMargin*2
+                fillMode: Image.PreserveAspectFit
+                smooth: true
+                source: {
+                    if (!enabled)
+                        return ""
+
+                    if (path.length === 0 || iconRect.length === 0) {
+                        return "qrc:/PodonamuUI/images/noicon.png"
+                    }
+
+                    var iconPath = "file:/" + path + "/" + icon
+                    //                        console.log( tag + "iconPath: ", iconPath)
+                    return iconPath
+                }
+            }
+            Text {
+                id: iconText
+                text: name
+                anchors.bottom: parent.bottom
+                anchors.left: parent.left
+                anchors.right: parent.right
+                anchors.margins: 5
+                horizontalAlignment :  Text.AlignHCenter
+
+
+            }
+        }
+
+        states: [
+            State {
+                when: mouseArea.drag.active
+            }, State {
+                when: mouseArea.enabled
+
+                PropertyChanges {
+                    target: iconImage
                     source: {
                         if (path.length === 0 || iconRect.length === 0) {
                             return "qrc:/PodonamuUI/images/noicon.png"
                         }
+
                         var iconPath = "file:/" + path + "/" + icon
-//                        console.log( tag + "iconPath: ", iconPath)
                         return iconPath
                     }
                 }
-                Text {
-                    id: iconText
-                    text: name
-                    anchors.bottom: parent.bottom
-                    anchors.left: parent.left
-                    anchors.right: parent.right
-                    anchors.margins: 5
-                    horizontalAlignment :  Text.AlignHCenter
+                PropertyChanges {
+                    target: iconText
+                    opacity: 1.0
                 }
-            states: State {
-                when: mouseArea.drag.active
+
+            }, State {
+                when: !mouseArea.enabled
+
+                PropertyChanges {
+                    target: iconImage
+                    source: {
+                        return ""
+                    }
+                }
+                PropertyChanges {
+                    target: iconText
+                    opacity: 0.3
+                }
             }
-        }
+        ]
     }
 }

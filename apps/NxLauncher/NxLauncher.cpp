@@ -1032,6 +1032,10 @@ void NxLauncher::slotPlugInUpdated(QString path)
 			if (!bOk)
 				m_PlugIns[key]->m_pInit(this, "");
 		}
+		else
+		{
+			QMetaObject::invokeMethod(ui->launcherWidget->rootObject(), "activeChanged");
+		}
 	}
 }
 

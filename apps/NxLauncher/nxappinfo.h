@@ -17,6 +17,7 @@ public:
 	Q_PROPERTY(QString tryExec READ getTryExec WRITE setTryExec)
 	Q_PROPERTY(QString exec READ getExec WRITE setExec)
 	Q_PROPERTY(QString path READ getPath WRITE setPath)
+	Q_PROPERTY(bool active READ getEnabled WRITE setEnabled)
 
 public:
 	explicit NxPluginInfo();

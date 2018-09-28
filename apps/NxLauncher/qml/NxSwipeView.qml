@@ -118,6 +118,12 @@ Rectangle {
         }
     }
 
+    function updateActiveChanged() {
+        for (var k = 0; k < appListModel.count; ++k) {
+            iconRepeater.itemAt(k).mouseArea.enabled = appListModel.get(k).active
+        }
+    }
+
     function updateAppList() {
         var tag = "updateAppList: "
         var i, k, p, item
@@ -150,6 +156,7 @@ Rectangle {
             iconRepeater.itemAt(k).x = item.x
             iconRepeater.itemAt(k).y = item.y
             iconRepeater.itemAt(k).mouseArea.parent = item
+            iconRepeater.itemAt(k).mouseArea.enabled = appListModel.get(k).active
         }
     }
 

@@ -80,7 +80,8 @@ Item {
                 "name": info[i].name,
                 "path": info[i].path,
                 "icon": info[i].icon,
-                "exec": info[i].exec
+                "exec": info[i].exec,
+                "active": info[i].active
             })
         }
     }
@@ -89,6 +90,22 @@ Item {
         pane.createAppList()
 
         swipe.updateAppList()
+    }
+
+    function activeChanged() {
+        var i, k;
+        var info = gui.getPluginInfoList()
+
+        for(i = 0, k = 0; i < info.length; ++i) {
+
+            if (info[i].type !== "Application")
+                continue
+
+            appListModel.setProperty(k, "active", info[i].active)
+            ++k
+        }
+
+        swipe.updateActiveChanged();
     }
 
     Component.onCompleted: {
