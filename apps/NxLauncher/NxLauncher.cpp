@@ -12,6 +12,7 @@
 #include <QQuickWidget>
 
 #include <execinfo.h>
+#include <signal.h>
 
 #include <DAudioKeyDef.h>
 #include "NX_DAudioUtils.h"
@@ -38,6 +39,23 @@ NxLauncher* NxLauncher::m_spInstance = NULL;
 QQueue<QString> NxLauncher::m_AudioFocusQueue = QQueue<QString>();
 QQueue<QString> NxLauncher::m_VideoFocusQueue = QQueue<QString>();
 
+static void signal_handler(int)
+{
+	void *array[10];
+	size_t i, size;
+	char **strings;
+
+	size = backtrace(array, 10);
+	strings = backtrace_symbols(array, size);
+
+	for (i = 0; i < size; ++i)
+	{
+		NXLOGE("[%s] %s", __FUNCTION__, strings[i]);
+	}
+
+	exit(EXIT_FAILURE);
+}
+
 NxLauncher::NxLauncher(QWidget *parent) :
 	QDialog(parent, Qt::FramelessWindowHint),
 	ui(new Ui::NxLauncher)
@@ -46,6 +64,9 @@ NxLauncher::NxLauncher(QWidget *parent) :
 
 	m_spInstance = this;
 	installEventFilter( this );
+
+	signal(SIGABRT, signal_handler);
+	signal(SIGSEGV, signal_handler);
 
 	// scan applications
 	m_pPackageManager = new NxPackageScanner(NX_APP_PATH, &m_PlugIns);
@@ -1056,6 +1077,12 @@ void NxLauncher::LauncherShow(bool *bOk, bool bRequireRequestFocus)
 	if (bRequireRequestFocus)
 	{
 		QString owner = m_VideoFocusQueue.first();
+		if (m_PlugIns.find(owner) == m_PlugIns.end())
+		{
+			if (owner != NX_LAUNCHER)
+				NXLOGE("[%s] The plug-in '%s' does not exist.", __FUNCTION__, owner.toStdString().c_str());
+			return;
+		}
 		if (m_PlugIns[owner]->m_pRequestVideoFocus)
 			m_PlugIns[owner]->m_pRequestVideoFocus(FocusType_Get, FocusPriority_Normal, bOk);
 	}
