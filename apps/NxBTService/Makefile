@@ -6,7 +6,7 @@ INCLUDE += -I./
 INCLUDE += -I../../library/include/
 INCLUDE += -I../../library/lib/nxbt1xx/include
 
-LIBRARY += -L../../library/lib/
+LIBRARY += -L../../library/lib/ -lnxdaudioutils
 LIBRARY += -L../../library/lib/nxbt1xx/lib
 LIBRARY += -lnxbt -lappbt -lnrec_hf -lnxalsa
 LIBRARY += -lpthread
