@@ -30,6 +30,7 @@ function package_bt_service()
 	echo "<< Package ${app_name} >>"
 	mkdir -p ${RESULT_DIR}/${PACKAGE_ROOT}/${app_name}
 	cp -va ${TOP}/apps/${app_name}/*.so ${RESULT_DIR}/${PACKAGE_ROOT}/${app_name}/
+	cp -va ${TOP}/apps/${app_name}/${PACKAGE_DIR}/* ${RESULT_DIR}/${PACKAGE_ROOT}/${app_name}/
 }
 
 function package_bt_application()
@@ -125,7 +126,7 @@ function package_etc()
 	echo "<< Package etc Applications >>"
 	mkdir -p ${RESULT_DIR}/${USR_BIN}
 	cp -aR ${TOP}/bin/* ${RESULT_DIR}/${USR_BIN}/
-	cp -va ${TOP}/apps/NxService/* ${RESULT_DIR}/${USR_BIN}/
+#	cp -va ${TOP}/apps/NxService/* ${RESULT_DIR}/${USR_BIN}/
 	mkdir -p ${RESULT_DIR}/${USR_SBIN}
 }
 
