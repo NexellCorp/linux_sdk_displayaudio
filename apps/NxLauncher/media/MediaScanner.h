@@ -6,6 +6,7 @@
 #include "CNX_UeventManager.h"
 #include "CNX_VolumeManager.h"
 #include "CNX_MediaScanner.h"
+#include "CNX_DiskManager.h"
 #include "../NxEvent.h"
 
 class MediaScanner : public QThread
@@ -16,7 +17,7 @@ signals:
 	void signalMediaEvent(NxEventTypes eType);
 
 private slots:
-	void slotDetectUevent(uint8_t *pDesc, uint32_t uiDescSize);
+	void slotDetectUevent(uint32_t iEventType, uint8_t *pDevice);
 
 	void slotStartTimer();
 
@@ -39,6 +40,7 @@ private:
 	CNX_UeventManager *m_pUeventManager;
 	CNX_VolumeManager *m_pVolumeManager;
 	CNX_MediaScanner *m_pMediaScanner;
+	CNX_DiskManager *m_pDiskManager;
 
 	QTimer m_StartTimer;
 };

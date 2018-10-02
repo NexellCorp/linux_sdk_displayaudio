@@ -46,7 +46,8 @@ SOURCES += main.cpp\
     media/uevent.c \
     media/CNX_File.cpp \
     media/MediaScanner.cpp \
-    media/CNX_VolumeManager.cpp
+    media/CNX_VolumeManager.cpp \
+    media/CNX_DiskManager.cpp
 
 HEADERS  += \
     nxappinfo.h \
@@ -68,7 +69,8 @@ HEADERS  += \
     media/CNX_File.h \
     media/MediaScanner.h \
     media/CNX_VolumeManager.h \
-    media/MediaConf.h
+    media/MediaConf.h \
+    media/CNX_DiskManager.h
 
 FORMS    += \
 #nxlauncher.ui \

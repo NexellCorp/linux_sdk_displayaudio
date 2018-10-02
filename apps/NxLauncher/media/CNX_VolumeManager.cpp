@@ -24,9 +24,12 @@
 #include <fcntl.h>
 #include <poll.h>
 
+#include <QDir>
+
 #include "CNX_VolumeManager.h"
 
-#define NX_DTAG	"[CNX_VolumeManager]"
+#define LOG_TAG	"[CNX_VolumeManager]"
+#include <NX_Log.h>
 
 //------------------------------------------------------------------------------
 const char *pstDefaultDeviceReserved[] = {
@@ -39,7 +42,8 @@ const char *pstDefaultMountPosition[] = {
 
 //------------------------------------------------------------------------------
 CNX_VolumeManager::CNX_VolumeManager()
-	: m_ppDeviceReserved( NULL )
+	: m_bThreadRun(false)
+	, m_ppDeviceReserved( NULL )
 	, m_ppMountPosition( NULL )
 	, m_iNumDeviceReserved( 0 )
 	, m_iNumMountPosition( 0 )
@@ -54,6 +58,7 @@ CNX_VolumeManager::CNX_VolumeManager()
 //------------------------------------------------------------------------------
 CNX_VolumeManager::~CNX_VolumeManager()
 {
+	Stop();
 }
 
 //------------------------------------------------------------------------------
@@ -139,6 +144,122 @@ int32_t CNX_VolumeManager::IsMounted( char *pDevice )
 
 	fclose( pFile );
 	return false;
+}
+
+//------------------------------------------------------------------------------
+void CNX_VolumeManager::Start()
+{
+	start();
+}
+
+//------------------------------------------------------------------------------
+void CNX_VolumeManager::Stop()
+{
+	if (isRunning())
+	{
+		m_bThreadRun = false;
+
+		wait();
+		quit();
+	}
+}
+
+//------------------------------------------------------------------------------
+void CNX_VolumeManager::run()
+{
+	m_bThreadRun = true;
+	{
+		NX_VOLUME_INFO *pVolumeInfo = NULL;
+		int32_t iVolumeNum = 0;
+
+		GetMount( &pVolumeInfo, &iVolumeNum );
+
+		//	Insert External Storage
+		for( int32_t i = 0; i < iVolumeNum; i++ )
+		{
+			int32_t iEventType = strstr("mmcblk", pVolumeInfo[i].szDev) ? E_NX_EVENT_SDCARD_MOUNT : E_NX_EVENT_USB_MOUNT;
+			emit signalDetectUevent(iEventType, (uint8_t*)pVolumeInfo[i].szDev);
+		}
+
+		memcpy( m_CurVolume, m_Volume, sizeof(NX_VOLUME_INFO) * iVolumeNum );
+		m_iCurVolumeNum = iVolumeNum;
+	}
+
+	int32_t hMount = open( "/proc/mounts", O_RDONLY );
+	if( 0 > hMount )
+		return;
+
+	while( m_bThreadRun )
+	{
+		struct pollfd hPoll;
+		hPoll.fd      = hMount;
+		hPoll.events  = POLLPRI;
+		hPoll.revents = 0;
+
+		int32_t iErr = poll( &hPoll, 1, 1000 );
+		if( 0 < iErr )
+		{
+			if( hPoll.revents & POLLPRI )
+			{
+				NX_VOLUME_INFO *pVolumeInfo = NULL;
+				int32_t iVolumeNum = 0;
+
+				GetMount( &pVolumeInfo, &iVolumeNum );
+
+				if( m_iCurVolumeNum < iVolumeNum )		// INSERT
+				{
+					for( int32_t i = 0; i < iVolumeNum; i++ )
+					{
+						int32_t bChanged = true;
+						for( int32_t j = 0; j < m_iCurVolumeNum; j++ )
+						{
+							if( !strcmp(pVolumeInfo[i].szDev, m_CurVolume[j].szDev) &&
+									!strcmp(pVolumeInfo[i].szVolume, m_CurVolume[j].szVolume) &&
+									(pVolumeInfo[i].iType == m_CurVolume[j].iType) )
+							{
+								bChanged = false;
+								break;
+							}
+						}
+
+						if( bChanged )
+						{
+							int32_t iEventType = strstr( pVolumeInfo[i].szDev, "mmcblk" ) ? E_NX_EVENT_SDCARD_MOUNT : E_NX_EVENT_USB_MOUNT;
+							emit signalDetectUevent(iEventType, (uint8_t*)pVolumeInfo[i].szDev);
+						}
+					}
+				}
+				else if( m_iCurVolumeNum > iVolumeNum )	// REMOVE
+				{
+					for( int32_t i = 0; i < m_iCurVolumeNum; i++ )
+					{
+						int32_t bChanged = true;
+						for( int32_t j = 0; j < iVolumeNum; j++ )
+						{
+							if( !strcmp(m_CurVolume[i].szDev, pVolumeInfo[j].szDev) &&
+									!strcmp(m_CurVolume[i].szVolume, pVolumeInfo[j].szVolume) &&
+									(m_CurVolume[i].iType == pVolumeInfo[j].iType) )
+							{
+								bChanged = false;
+								break;
+							}
+						}
+
+						if( bChanged )
+						{
+							int32_t iEventType = strstr( m_CurVolume[i].szDev, "mmcblk" ) ? E_NX_EVENT_SDCARD_UMOUNT : E_NX_EVENT_USB_UMOUNT;
+							emit signalDetectUevent(iEventType, (uint8_t*)m_CurVolume[i].szDev);
+						}
+					}
+				}
+
+				memcpy( m_CurVolume, m_Volume, sizeof(NX_VOLUME_INFO) * iVolumeNum );
+				m_iCurVolumeNum = iVolumeNum;
+			}
+		}
+	}
+
+	if( 0 < hMount ) close( hMount );
 }
 
 //------------------------------------------------------------------------------

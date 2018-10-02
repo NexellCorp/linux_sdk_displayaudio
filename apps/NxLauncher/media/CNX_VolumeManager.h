@@ -20,13 +20,17 @@
 #ifndef __CNX_VOLUMEMANAGER_H__
 #define __CNX_VOLUMEMANAGER_H__
 
-#include <NX_Type.h>
-#include "CNX_Base.h"
+#include <QThread>
+#include <QMap>
+#include "NxEvent.h"
 
-#define NX_ENABLE_VOLUME_MANAGER	0
-
-class CNX_VolumeManager
+class CNX_VolumeManager : public QThread
 {
+	Q_OBJECT
+
+signals:
+	void signalDetectUevent(uint32_t iEventType, uint8_t *pDevice);
+
 public:
 	CNX_VolumeManager();
 	~CNX_VolumeManager();
@@ -37,6 +41,12 @@ public:
 
 	int32_t	GetMount( NX_VOLUME_INFO **ppVolume, int32_t *iVolumeNum );
 	int32_t IsMounted( char *pDevice );
+
+	void Start();
+	void Stop();
+
+protected:
+	virtual void run();
 
 private:
 	int32_t IsDeviceReserved( char *pDevice );
@@ -49,14 +59,15 @@ private:
 	NX_VOLUME_INFO	m_CurVolume[MAX_VOLUME_NUM];
 	int32_t			m_iCurVolumeNum;
 
-	void			(*m_EventCallbackFunc)( uint32_t iEventType, uint8_t *pDevice, uint8_t *pMountPos, void *pObj );
-	void*			m_pObj;
-
 	const char**	m_ppDeviceReserved;
 	const char**	m_ppMountPosition;
 
 	int32_t			m_iNumDeviceReserved;
 	int32_t			m_iNumMountPosition;
+
+	bool m_bThreadRun;
+
+	QMap<QString, QString> m_DeviceMap;
 
 private:
 	CNX_VolumeManager (const CNX_VolumeManager &Ref);

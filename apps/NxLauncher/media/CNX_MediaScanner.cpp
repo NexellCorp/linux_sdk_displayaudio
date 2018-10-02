@@ -147,7 +147,7 @@ void CNX_MediaScanner::Scan( char *pDirectory[], int32_t iDirectoryNum)
 
 	for( int32_t i = 0; i < iDirectoryNum; i++ )
 	{
-		m_pDirectory[i] = realpath( pDirectory[i], NULL );
+		m_pDirectory[i] = realpath( pDirectory[i], NULL );		
 	}
 
 	m_iDirectoryNum    = iDirectoryNum;
@@ -238,6 +238,7 @@ static int32_t cbCompare( void *pObj, int32_t iColumnNum, char **ppColumnValue, 
 void CNX_MediaScanner::run()
 {
 	char szPath[MAX_PATH_SIZE];
+	m_bThreadRun = true;
 	MakeDirectory(NX_MEDIA_DATABASE_PATH);
 	sprintf(szPath, "%s/%s", NX_MEDIA_DATABASE_PATH, NX_MEDIA_DATABASE_NAME);
 

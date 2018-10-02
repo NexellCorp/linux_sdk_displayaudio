@@ -14,13 +14,15 @@ const char *pstMountPosition[] = {
 
 MediaScanner::MediaScanner()
 {
-	m_pUeventManager = new CNX_UeventManager();
-	connect(m_pUeventManager, SIGNAL(signalDetectUevent(uint8_t*,uint32_t)), this, SLOT(slotDetectUevent(uint8_t*,uint32_t)));
-	m_pUeventManager->Start();
+	m_pDiskManager = new CNX_DiskManager();
+	connect(m_pDiskManager, SIGNAL(signalDetectUevent(uint32_t,uint8_t*)), this, SLOT(slotDetectUevent(uint32_t,uint8_t*)));
+	m_pDiskManager->Start();
 
 	m_pVolumeManager = new CNX_VolumeManager();
+	connect(m_pVolumeManager, SIGNAL(signalDetectUevent(uint32_t,uint8_t*)), this, SLOT(slotDetectUevent(uint32_t,uint8_t*)));
 	m_pVolumeManager->SetDeviceReserved(pstDeviceReserved, sizeof(pstDeviceReserved) / sizeof(pstDeviceReserved[0]));
 	m_pVolumeManager->SetMountPosition(pstMountPosition, sizeof(pstMountPosition) / sizeof(pstMountPosition[0]));
+	m_pVolumeManager->Start();
 
 	m_pMediaScanner = new CNX_MediaScanner();
 	connect(m_pMediaScanner, SIGNAL(signalScanDone()), this, SLOT(slotScanDone()));
@@ -36,47 +38,36 @@ MediaScanner::~MediaScanner()
 		delete m_pUeventManager;
 	if (m_pMediaScanner)
 		delete m_pMediaScanner;
+	if (m_pDiskManager)
+		delete m_pDiskManager;
 }
 
-void MediaScanner::slotDetectUevent(uint8_t *pDesc, uint32_t uiDescSize)
+void MediaScanner::slotDetectUevent(uint32_t iEventType, uint8_t *pDevice)
 {
-	(void)uiDescSize;
-	NxEventTypes eType = (NxEventTypes)0;
-	NXLOGI("[%s] %s", __FUNCTION__, pDesc);
-
-	for (uint32_t i = 0; i < sizeof(pstDeviceReserved) / sizeof(pstDeviceReserved[0]); i++)
-	{
-		if (strstr((char*)pDesc, pstDeviceReserved[i]))
-			return;
-	}
-
-	if (!strncmp((char*)pDesc, NX_UEVENT_STORAGE_ADD, strlen(NX_UEVENT_STORAGE_ADD)) && strstr((char*)pDesc, "mmcblk"))
-	{
-		eType = E_NX_EVENT_SDCARD_INSERT;
-		NXLOGI("[%s] SDCARD_INSERT", __FUNCTION__);
-	}
-	else if (!strncmp((char*)pDesc, NX_UEVENT_STORAGE_REMOVE, strlen(NX_UEVENT_STORAGE_REMOVE)) && strstr((char*)pDesc, "mmcblk"))
-	{
-		eType = E_NX_EVENT_SDCARD_REMOVE;
-		NXLOGI("[%s] SDCARD_REMOVE", __FUNCTION__);
-	}
-	else if (!strncmp((char*)pDesc, NX_UEVENT_STORAGE_ADD, strlen(NX_UEVENT_STORAGE_ADD)) && strstr((char*)pDesc, "scsi_disk"))
-	{
-		eType = E_NX_EVENT_USB_INSERT;
-		NXLOGI("[%s] USB_INSERT", __FUNCTION__);
-	}
-	else if (!strncmp((char*)pDesc, NX_UEVENT_STORAGE_REMOVE, strlen(NX_UEVENT_STORAGE_REMOVE)) && strstr((char*)pDesc, "scsi_disk"))
-	{
-		eType = E_NX_EVENT_USB_REMOVE;
-		NXLOGI("[%s] USB_REMOVE", __FUNCTION__);
-	}
-	else
-		return;
-
-	// notify uevent
+	NxEventTypes eType = (NxEventTypes)iEventType;
 	emit signalMediaEvent(eType);
 
-	//
+	NXLOGI("[%s] %s", __FUNCTION__, pDevice);
+
+	switch (eType) {
+	case E_NX_EVENT_SDCARD_REMOVE:
+	case E_NX_EVENT_USB_REMOVE:
+	{
+		char command[1024];
+		sprintf(command, "umount -f %s", pDevice);
+		system(command);
+		return;
+	}
+
+	case E_NX_EVENT_SDCARD_INSERT:
+	case E_NX_EVENT_USB_INSERT:
+		return;
+
+
+	default:
+		break;
+	}
+
 	Start(3000);
 }
 
@@ -100,7 +91,6 @@ void MediaScanner::slotStartTimer()
 
 void MediaScanner::run()
 {
-	NXLOGI("[%s] <1>", __PRETTY_FUNCTION__);
 	NX_VOLUME_INFO *pVolumeInfo = NULL;
 	int32_t iVolumeNum = 0;
 
@@ -119,5 +109,4 @@ void MediaScanner::run()
 	{
 		free( pDirectory[i] );
 	}
-	NXLOGI("[%s] <2>", __PRETTY_FUNCTION__);
 }
