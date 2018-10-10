@@ -6,22 +6,23 @@
 
 /************************************************************************************\
  * D-AUDIO INTERFACE - Init
- * 
+ *
  * Description
- *  - 
+ *  -
  ************************************************************************************/
 void Init(void *pObj, const char *pArgs)
 {
-    NxBTService *p = NxBTService::GetInstance(pObj);
-	if (!p->Initialize())
-		NXLOGE("[%s] Initialize <OK>", __FUNCTION__);
+	NxBTService *p = NxBTService::GetInstance(pObj);
+	if (p) {
+		p->Initialize();
+	}
 }
 
 /************************************************************************************\
  * D-AUDIO INTERFACE - IsInit
- * 
+ *
  * Description
- *  - 
+ *  -
  ************************************************************************************/
 void IsInit(bool *bOk)
 {
@@ -30,7 +31,7 @@ void IsInit(bool *bOk)
 
 /************************************************************************************\
  * D-AUDIO INTERFACE - deInit
- * 
+ *
  * Description
  *  -
  ************************************************************************************/
@@ -41,24 +42,25 @@ void deInit()
 
 /************************************************************************************\
  * D-AUDIO INTERFACE - SendMessage
- * 
+ *
  * Description
  *  - Receive message from Launcher
  ************************************************************************************/
 void SendMessage(const char *pSrc, const char *pMsg, int32_t iMsgSize)
 {
 	NxBTService *p = NxBTService::GetInstance();
-    if (p)
-        p->runCommand(pMsg);
+	if (p) {
+		p->runCommand(pMsg);
+	}
 }
 
 /************************************************************************************\
  * D-AUDIO INTERFACE - RegisterRequestSendMessage
- * 
+ *
  * Description
  *  - Register callback function for 'RequestSendMessage'
  *  - RequestSendMessage sends the message to the destination via the launcher.
- * 
+ *
  * Arguments
  *  - cbFunc : function pointer of callback
  *  - pDst   : destination
@@ -71,7 +73,7 @@ void RegisterRequestSendMessage(void (*cbFunc)(const char *pDst, const char *pMs
 
 /************************************************************************************\
  * D-AUDIO INTERFACE - RegisterRequestPopupMessage
- * 
+ *
  * Description
  *  -
  ************************************************************************************/
@@ -82,42 +84,44 @@ void RegisterRequestPopupMessage(void (*cbFunc)(PopupMessage *, bool *))
 
 void RegisterRequestExpirePopupMessage(void (*cbFunc)())
 {
-    NxBTService::RegisterRequestExpirePopupMessage(cbFunc);
+	NxBTService::RegisterRequestExpirePopupMessage(cbFunc);
 }
 
 /************************************************************************************\
  * D-AUDIO INTERFACE - PopupMessageResponse
- * 
+ *
  * Description
  *  -
  ************************************************************************************/
 void PopupMessageResponse(bool bOk)
 {
 	NxBTService *p = NxBTService::GetInstance();
-	if (p)
+	if (p) {
 		p->PopupMessageResponse(bOk);
+	}
 }
 
 /************************************************************************************\
  * D-AUDIO INTERFACE - RequestAudioFocus
- * 
+ *
  * Description
  *  - When this function is called, it should return audio focus if possible.
  *  - However, it does not return audio focus when calling on a BT phone.
- * 
+ *
  * Argument
  *  - bOk : This is the reseult of release audio focus.
  ************************************************************************************/
 void RequestAudioFocus(FocusType eType, FocusPriority ePriority, bool *bOk)
 {
 	NxBTService *p = NxBTService::GetInstance();
-    if (p)
-        p->RequestAudioFocus(eType, ePriority, bOk);
+	if (p) {
+		p->RequestAudioFocus(eType, ePriority, bOk);
+	}
 }
 
 /************************************************************************************\
  * D-AUDIO INTERFACE - RegisterRequestAudioFocus
- * 
+ *
  * Description
  *  - Register callback function for 'RequestAudioFocus'
  *  - It is a command to get audio focus.
@@ -128,32 +132,33 @@ void RegisterRequestAudioFocus(void (*cbFunc)(FocusPriority ePriority, bool *bOk
 }
 
 /************************************************************************************\
- * D-AUDIO INTERFACE - 
- * 
+ * D-AUDIO INTERFACE -
+ *
  * Description
  *  -
  ************************************************************************************/
 void RequestAudioFocusTransient(FocusPriority ePriority, bool *bOk)
 {
-    NxBTService *p = NxBTService::GetInstance();
-    if (p)
-        p->RequestAudioFocusTransient(ePriority, bOk);
+	NxBTService *p = NxBTService::GetInstance();
+	if (p) {
+		p->RequestAudioFocusTransient(ePriority, bOk);
+	}
 }
 
 /************************************************************************************\
- * D-AUDIO INTERFACE - 
- * 
+ * D-AUDIO INTERFACE -
+ *
  * Description
  *  -
  ************************************************************************************/
 void RegisterRequestAudioFocusTransient(void (*cbFunc)(FocusPriority ePriority, bool *bOk))
 {
-    NxBTService::RegisterRequestAudioFocusTransient(cbFunc);
+	NxBTService::RegisterRequestAudioFocusTransient(cbFunc);
 }
 
 /************************************************************************************\
- * D-AUDIO INTERFACE - 
- * 
+ * D-AUDIO INTERFACE -
+ *
  * Description
  *  -
  ************************************************************************************/
@@ -163,23 +168,23 @@ void RegisterRequestAudioFocusLoss(void (*cbFunc)(void))
 }
 
 /************************************************************************************\
- * D-AUDIO INTERFACE - 
- * 
+ * D-AUDIO INTERFACE -
+ *
  * Description
  *  -
  ************************************************************************************/
 void RegisterRequestPlugInRun(void (*cbFunc)(const char *pPlugin, const char *pArgs))
 {
-    NxBTService::RegisterRequestPlugInRun(cbFunc);
+	NxBTService::RegisterRequestPlugInRun(cbFunc);
 }
 
 /************************************************************************************\
- * D-AUDIO INTERFACE - 
- * 
+ * D-AUDIO INTERFACE -
+ *
  * Description
  *  -
  ************************************************************************************/
 void RegisterRequestPlugInTerminate(void (*cbFunc)(const char *pPlugin))
 {
-    NxBTService::RegisterRequestPlugInTerminate(cbFunc);
+	NxBTService::RegisterRequestPlugInTerminate(cbFunc);
 }

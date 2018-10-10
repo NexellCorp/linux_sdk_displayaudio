@@ -1,10 +1,7 @@
 #ifndef NXBTSERVICE_H
 #define NXBTSERVICE_H
 
-// for pthread
 #include <pthread.h>
-
-// for usleep
 #include <unistd.h>
 
 // for std
@@ -47,50 +44,48 @@ using namespace std;
 class NxBTService
 {
 public:
-    enum CommandErrorType
-    {
-        CommandParseErrorType_None = 0,
-        CommandParseErrorType_UnknownService = -1,
-        CommandParseErrorType_UnknownCommand = -2,
-        CommandParseErrorType_UnknownCommandArgument = -3,
-        CommandParseErrorType_InvalidCommandFormat = -4,
-        CommandParseErrorType_FailedFromInterface = -5
-    };
+	enum CommandErrorType {
+		CommandParseErrorType_None = 0,
+		CommandParseErrorType_UnknownService = -1,
+		CommandParseErrorType_UnknownCommand = -2,
+		CommandParseErrorType_UnknownCommandArgument = -3,
+		CommandParseErrorType_InvalidCommandFormat = -4,
+		CommandParseErrorType_FailedFromInterface = -5
+};
 
-    enum CommandType
-    {
-        CommandType_Service,
-        CommandType_Command,
-        CommandType_Parameter
-    };
+	enum CommandType {
+		CommandType_Service,
+		CommandType_Command,
+		CommandType_Parameter
+	};
 
-    enum CallStatus {
-        UNKNOWN_CALL = 0,
-        HANG_UP_CALL,
-        INCOMMING_CALL,
-        READY_OUTGOING_CALL,
-        OUTGOING_CALL,
-        PICK_UP_CALL,
-        DISCONNECTED_CALL
-    };
+	enum CallStatus {
+		UNKNOWN_CALL = 0,
+		HANG_UP_CALL,
+		INCOMMING_CALL,
+		READY_OUTGOING_CALL,
+		OUTGOING_CALL,
+		PICK_UP_CALL,
+		DISCONNECTED_CALL
+	};
 
-    enum GetPBStatus {
-        PARAM_PROGRESS = 2,
-        PARAM_PHONEBOOK,
-        PARAM_FILE_TRANSFER_STATUS
-    };
+	enum GetPBStatus {
+		PARAM_PROGRESS = 2,
+		PARAM_PHONEBOOK,
+		PARAM_FILE_TRANSFER_STATUS
+	};
 
-    enum PlayStatus {
-        PlayStatus_Stopped = 0,
-        PlayStatus_Playing,
-        PlayStatus_Paused
-    };
+	enum PlayStatus {
+		PlayStatus_Stopped = 0,
+		PlayStatus_Playing,
+		PlayStatus_Paused
+	};
 
-    enum DownloadType {
-        DownloadType_None,
-        DownloadType_PhoneBook,
+	enum DownloadType {
+		DownloadType_None,
+		DownloadType_PhoneBook,
 		DownloadType_CallHistory
-    };
+	};
 
 	enum PopupMessgaeType {
 		PopupMessageType_PairingRequest_AutoOff,
@@ -98,25 +93,23 @@ public:
 		PopupMessageType_PairingRequest_Unknown
 	};
 
-    struct PlayInfo {
-        char title[102];
-        char artist[102];
-        char album[102];
-        char genre[102];
-        int duration; // unit : milisecond
-        int position; // unit : milisecond
-    };
+	struct PlayInfo {
+		char title[102];
+		char artist[102];
+		char album[102];
+		char genre[102];
+		int duration; // unit : milisecond
+		int position; // unit : milisecond
+	};
 
-	struct connect_state_t
-	{
+	struct connect_state_t {
 		bool on;
 		int index; // connected index
 		char bd_addr[DEVICE_ADDRESS_SIZE];
 		char name[DEVICE_NAME_SIZE];
 	};
 
-	struct AVKService
-	{
+	struct AVKService {
 		connect_state_t connection;
 		PlayStatus status;
 		PlayInfo info;
@@ -127,8 +120,7 @@ public:
 		DownloadType download;
 	};
 
-	struct HSService
-	{
+	struct HSService {
 		connect_state_t hs;
 		connect_state_t mce;
 		PBCService pbc;
@@ -136,17 +128,16 @@ public:
 
 private:
 	NxBTService();
-
 	~NxBTService();
 
 public:
-    static NxBTService* GetInstance(void *pObj);
+	static NxBTService* GetInstance(void *pObj);
 
 	static NxBTService* GetInstance();
 
 	static void DestroyInstance();
 
-	bool Initialize();
+	void Initialize();
 
 	bool isInitialized();
 
@@ -165,7 +156,7 @@ public:
 	void RequestAudioFocus(FocusType eType, FocusPriority ePriority, bool *bOk);
 
 	static void RegisterRequestAudioFocus(void (*cbFunc)(FocusPriority ePriority, bool *bOk));
-	
+
 	void RequestAudioFocusTransient(FocusPriority ePriority, bool *bOk);
 
 	static void RegisterRequestAudioFocusTransient(void (*cbFunc)(FocusPriority ePriority, bool *bOk));
@@ -176,78 +167,73 @@ public:
 
 	static void RegisterRequestPlugInTerminate(void (*cbFunc)(const char *pPlugin));
 
-private:
-	
-public:	
-    void registerCallbackFunctions();
+	void registerCallbackFunctions();
 
-    static void* autoConnectThread(void* args);
+	static void* autoConnectThread(void* args);
 
-    void findClientType();
+	void findClientType();
 
-	
+	std::vector<std::string> createTokensFromCommand(const char* command);
 
-    std::vector<std::string> createTokensFromCommand(const char* command);
+	std::string bdAddrToString(char* bd_addr, int len, char seperator);
 
-    std::string bdAddrToString(char* bd_addr, int len, char seperator);
-
-	// callback functions
+	// Callback functions
 	static void sendMGTOpenSucceed_stub(void* pObj, int32_t result);
 
-    static void sendMGTDisconnected_stub(void *pObj);
+	static void sendMGTDisconnected_stub(void *pObj);
 
-    static void sendPairingFailed_stub(void *pObj, int32_t fail_reason);
+	static void sendPairingFailed_stub(void *pObj, int32_t fail_reason);
 
-    static void updatePairedDevices_stub(void *pObj);
+	static void updatePairedDevices_stub(void *pObj);
 
-    static void updateUnpairedDevices_stub(void *pObj);
+	static void updateUnpairedDevices_stub(void *pObj);
 
-    static void sendPairingRequest_stub(void *pObj, bool auto_mode, char *name, char *bd_addr, int32_t pairing_code);
+	static void sendPairingRequest_stub(void *pObj, bool auto_mode, char *name, char *bd_addr, int32_t pairing_code);
 
-    static void callbackLinkDownEventManager(void* pObj, char* bd_addr, int32_t reason_code);
+	static void callbackLinkDownEventManager(void* pObj, char* bd_addr, int32_t reason_code);
 
-    static void sendAVKOpenFailed_stub(void *pObj);
+	static void sendAVKOpenFailed_stub(void *pObj);
 
-    static void sendAVKConnectionStatus_stub(void *pObj, bool is_connected, char *name, char *bd_addr);
+	static void sendAVKConnectionStatus_stub(void *pObj, bool is_connected, char *name, char *bd_addr);
 
-    static void sendAVKRCConnectionStatus_stub(void *pObj, bool is_connected);
+	static void sendAVKRCConnectionStatus_stub(void *pObj, bool is_connected);
 
-    static void updatePlayStatusAVK_stub(void *pObj, int32_t play_status);
+	static void updatePlayStatusAVK_stub(void *pObj, int32_t play_status);
 
-    static void updateMediaElementsAVK_stub(void *pObj, char *mediaTitle, char *mediaArtist, char *mediaAlbum, char *mediaGenre, int32_t playTime_msec);
+	static void updateMediaElementsAVK_stub(void *pObj, char *mediaTitle, char *mediaArtist, char *mediaAlbum, char *mediaGenre, int32_t playTime_msec);
 
-    static void updatePlayPositionAVK_stub(void *pObj, int32_t play_pos_msec);
+	static void updatePlayPositionAVK_stub(void *pObj, int32_t play_pos_msec);
 
-    static void sendAVKStreamingStarted_stub(void* pObj, bool is_opened);
+	static void sendAVKStreamingStarted_stub(void* pObj, bool is_opened);
 
-    static void sendAVKStreamingStopped_stub(void *pObj);
+	static void sendAVKStreamingStopped_stub(void *pObj);
 
-    // HS
-    static void sendHSOpenFailed_stub(void *pObj);
+	// HS
+	static void sendHSOpenFailed_stub(void *pObj);
 
-    static void sendHSConnectionStatus_stub(void *pObj_, bool is_connected_, char *name_, char *bd_addr_);
+	static void sendHSConnectionStatus_stub(void *pObj_, bool is_connected_, char *name_, char *bd_addr_);
 
-    static void sendHSCallStatus_stub(void *pObj, int32_t call_status);
+	static void sendHSCallStatus_stub(void *pObj, int32_t call_status);
 
-    static void sendHSBatteryStatus_stub(void *pObj, int32_t batt_status);
+	static void sendHSBatteryStatus_stub(void *pObj, int32_t batt_status);
 
-    static void sendHSCallOperName_stub(void *pObj, char *name);
+	static void sendHSCallOperName_stub(void *pObj, char *name);
 
-    static void sendHSAudioMuteStatus_stub(void *pObj, bool is_muted, bool is_opened);
+	static void sendHSAudioMuteStatus_stub(void *pObj, bool is_muted, bool is_opened);
 
-    static void sendHSIncommingCallNumber_stub(void *pObj, char *number);
+	static void sendHSIncommingCallNumber_stub(void *pObj, char *number);
 
-    // HS - PBC
-    static void sendPBCOpenFailed_stub(void *pObj);
+	// HS - PBC
+	static void sendPBCOpenFailed_stub(void *pObj);
 
-    static void sendPBCConnectionStatus_stub(void *pObj, bool is_connected);
+	static void sendPBCConnectionStatus_stub(void *pObj, bool is_connected);
 
-    static void sendNotifyGetPhonebook_stub(void *pObj, int32_t type);
+	static void sendNotifyGetPhonebook_stub(void *pObj, int32_t type);
 
-    // HS - MCE
-    static void sendMCEOpenFailed_stub(void *pObj);
+	// HS - MCE
+	static void sendMCEOpenFailed_stub(void *pObj);
 
-    static void sendMCEConnectionStatus_stub(void *pObj, bool is_connected);
+	static void sendMCEConnectionStatus_stub(void *pObj, bool is_connected);
 
 	static void sendNotifyGetMessageMCE_stub(void *pObj);
 
@@ -286,6 +272,7 @@ public:
 	bool nameOfPairedDeviceByIndex(std::string service, std::string command);
 
 	bool addressOfPairedDeviceByIndex(std::string service, std::string command);
+
 	//-----------------------------------------------------------------------
 	// AVK functions
 	bool connectToAVK(std::string service, std::string command);
@@ -315,6 +302,7 @@ public:
 	bool openAudioAVK(std::string service = "AVK", std::string command = "OPEN AUDIO");
 
 	bool closeAudioAVK(std::string service = "AVK", std::string command = "CLOSE AUDIO");
+
 	//-----------------------------------------------------------------------
 	// HS functions
 	bool connectToHS(std::string service, std::string command);
@@ -338,6 +326,7 @@ public:
 	bool openAudioHS(std::string service, std::string command);
 
 	bool closeAudioHS(std::string service, std::string command);
+
 	//-----------------------------------------------------------------------
 	// MCE functions
 	bool connectToMCE(std::string service, std::string command);
@@ -373,28 +362,31 @@ public:
 	static std::vector<std::string> createTokens(std::string text, char seperator, char stx = 0, char etx = 0);
 
 private:
-    static INX_BT *m_pModel;
+	static INX_BT *m_pModel;
 
-    pthread_t h_pthread;
+	pthread_t h_pthread;
 
-    pthread_t h_AutoConnectThread;
-    pthread_cond_t h_AutoConnectCondition;
-    pthread_mutex_t h_AutoConnectMutex;
-    pthread_attr_t h_AutoConnectAttribution;
-    bool m_bAutoConnect;
+	pthread_t h_AutoConnectThread;
+	pthread_cond_t h_AutoConnectCondition;
+	pthread_mutex_t h_AutoConnectMutex;
+	pthread_attr_t h_AutoConnectAttribution;
+	bool m_bAutoConnect;
 
-    pthread_t h_CheckALSADeviceIsClosedThread;
-    pthread_attr_t h_CheckALSADeviceIsClosedThreadAttr;
+	pthread_t h_CheckALSADeviceIsClosedThread;
+	pthread_attr_t h_CheckALSADeviceIsClosedThreadAttr;
 
 	void updateAVKConnectionState(struct connect_state_t target);
 
 	pthread_t m_hCommandThread;
+	pthread_t m_hStartThread;
 
 	static void* CommandThreadStub(void *pObj);
+	static void* StartThreadStub(void *pObj);
 
 	void CommandThreadProc();
+	void StartThreadProc();
 
-    AVKService m_AVK;
+	AVKService m_AVK;
 
 	HSService m_HS;
 
@@ -417,8 +409,9 @@ private:
 
 	// Send Message
 	static void (*m_pRequestSendMessage)(const char *pDst, const char *pMsg, int32_t iMsgSize);
+
 	// Popup Message
-	static void (*m_pRequestPopupMessage)(PopupMessage *, bool *);	
+	static void (*m_pRequestPopupMessage)(PopupMessage *, bool *);
 
 	static void (*m_pRequestExpirePopupMessage)();
 

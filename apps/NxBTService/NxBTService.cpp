@@ -3,7 +3,6 @@
 #define LOG_TAG "[NxBTService]"
 #include <NX_Log.h>
 
-
 INX_BT* NxBTService::m_pModel = NULL;
 
 #define STR(X) #X
@@ -22,8 +21,8 @@ INX_BT* NxBTService::m_pModel = NULL;
 #define NX_ALSA_BT_DEV_NAME_P	"plughw:0,2"
 #define NX_ALSA_BT_DEV_NAME_C	"plughw:0,2"
 
-#define RET_OK		0
-#define RET_FAIL	-1
+#define RET_OK 0
+#define RET_FAIL -1
 
 NxBTService *NxBTService::m_spInstance = NULL;
 
@@ -48,9 +47,10 @@ NxBTService* NxBTService::GetInstance(void *pObj)
 {
 	(void)pObj;
 
-	if (!m_spInstance)
+	if (!m_spInstance) {
 		m_spInstance = new NxBTService();
-	
+	}
+
 	return m_spInstance;
 }
 
@@ -61,11 +61,7 @@ NxBTService* NxBTService::GetInstance()
 
 void NxBTService::DestroyInstance()
 {
-	if (m_spInstance)
-	{
-		// thread terminate
-
-		// release instance
+	if (m_spInstance) {
 		delete m_spInstance;
 		m_spInstance = NULL;
 	}
@@ -78,47 +74,48 @@ void NxBTService::sendMGTOpenSucceed_stub(void* pObj, int32_t result)
 {
 	NxBTService* self = (NxBTService *)pObj;
 
-	if (self) {
-		self->setInitialized(result == 0);
+	if (result < 0) {
+		DestroyInstance();
+	} else {
+		if (self) {
+			self->setInitialized(result == 0);
+		}
 	}
 }
 
 /* User client callback : MGT is disconnected */
 // Stub
 void NxBTService::sendMGTDisconnected_stub(void *pObj) {
-    NxBTService* self = (NxBTService *)pObj;
-    char buffer[BUFFER_SIZE];
+	NxBTService* self = (NxBTService *)pObj;
+	char buffer[BUFFER_SIZE];
 
-    sprintf(buffer, "$OK#MGT#BSA SERVER KILLED\n");
-    (void)self;
+	sprintf(buffer, "$OK#MGT#BSA SERVER KILLED\n");
+	(void)self;
 }
 
 /* User client callback : Pairing is failed */
 // Stub
 void NxBTService::sendPairingFailed_stub(void *pObj, int32_t fail_reason)
 {
-    NxBTService* self = (NxBTService*)pObj;
-    // char buffer[BUFFER_SIZE];
-    // example) "$OK#AVK#PAIRING FAILED#5\n"
-    // sprintf(buffer, "$%s#%s#%s#%d\n", "OK", "AVK", "PAIRING FAILED", fail_reason);
-	// self->Broadcast(buffer);
+	NxBTService* self = (NxBTService*)pObj;
 
-	if (self->m_pRequestExpirePopupMessage)
+	if (self->m_pRequestExpirePopupMessage) {
 		self->m_pRequestExpirePopupMessage();
+	}
 }
 
 void NxBTService::updatePairedDevices_stub(void *pObj)
 {
-    NxBTService* self = (NxBTService*)pObj;
-    char buffer[BUFFER_SIZE];
-    int count = m_pModel->getPairedDevCount();
-    char name[249] = {0,};
-    char bd_addr[6] = {0,};
+	NxBTService* self = (NxBTService*)pObj;
+	char buffer[BUFFER_SIZE];
+	int count = m_pModel->getPairedDevCount();
+	char name[249] = {0,};
+	char bd_addr[6] = {0,};
 	char avk_connection[100] = {0,};
 	char hs_connection[100] = {0,};
-    std::string s_bd_addr;
+	std::string s_bd_addr;
 
-    sprintf(buffer, "$OK#%s#%s", "MGT", "PAIRED DEVICE INFO ALL LIST");
+	sprintf(buffer, "$OK#%s#%s", "MGT", "PAIRED DEVICE INFO ALL LIST");
 
 	for (int i = 0; i < count; i++) {
 		if (0 > m_pModel->getPairedDevInfoByIndex(i, name, bd_addr))
@@ -145,26 +142,28 @@ void NxBTService::updatePairedDevices_stub(void *pObj)
     NXLOGD(buffer);
     self->Broadcast(buffer);
 
-	if (self->m_pRequestExpirePopupMessage)
+	if (self->m_pRequestExpirePopupMessage) {
 		self->m_pRequestExpirePopupMessage();
+	}
 }
 
 void NxBTService::updateUnpairedDevices_stub(void *pObj)
 {
-    NxBTService* self = (NxBTService*)pObj;
-    char buffer[BUFFER_SIZE];
-    int count = m_pModel->getPairedDevCount();
-    char name[249] = {0,};
-    char bd_addr[6] = {0,};
+	NxBTService* self = (NxBTService*)pObj;
+	char buffer[BUFFER_SIZE];
+	int count = m_pModel->getPairedDevCount();
+	char name[249] = {0,};
+	char bd_addr[6] = {0,};
 	char avk_connection[100] = {0,};
 	char hs_connection[100] = {0,};
-    std::string s_bd_addr;
+	std::string s_bd_addr;
 
-    sprintf(buffer, "$OK#%s#%s", "MGT", "PAIRED DEVICE INFO ALL LIST");
+	sprintf(buffer, "$OK#%s#%s", "MGT", "PAIRED DEVICE INFO ALL LIST");
 
-    for (int i = 0; i < count; i++) {
-        if (0 > m_pModel->getPairedDevInfoByIndex(i, name, bd_addr))
-            continue;
+	for (int i = 0; i < count; i++) {
+		if (0 > m_pModel->getPairedDevInfoByIndex(i, name, bd_addr)) {
+			continue;
+		}
 
 		if (strcmp(self->m_AVK.connection.bd_addr, bd_addr) == 0 && self->m_AVK.connection.on) {
 			strcpy(avk_connection, "CONNECTED");
@@ -174,42 +173,33 @@ void NxBTService::updateUnpairedDevices_stub(void *pObj)
 
 		if (strcmp(self->m_HS.hs.bd_addr, bd_addr) == 0 && self->m_HS.hs.on) {
 			strcpy(hs_connection, "CONNECTED");
-        } else {
+		} else {
 			strcpy(hs_connection, "DISCONNECTED");
-        }
+		}
 
-        s_bd_addr = self->bdAddrToString(bd_addr, DEVICE_ADDRESS_SIZE, ':');
+		s_bd_addr = self->bdAddrToString(bd_addr, DEVICE_ADDRESS_SIZE, ':');
 
 		sprintf(buffer+strlen(buffer), "#<%s,%s,%s,%s>", name, s_bd_addr.c_str(), avk_connection, hs_connection);
-    }
+	}
 
-    sprintf(buffer+strlen(buffer), "\n");
-
-    self->Broadcast(buffer);
+	sprintf(buffer+strlen(buffer), "\n");
+	self->Broadcast(buffer);
 }
 
 void NxBTService::sendPairingRequest_stub(void *pObj_, bool auto_mode_, char *name_, char *bd_addr_, int32_t pairing_code_)
 {
-    // example 1) AUTO ON   > $OK#MGT#PAIRING REQUEST#AUTO ON#iPhone6-xxx#18:6D:99:20:09:CB#915112\n
-    // example 2) AUTO OFF  > $OK#MGT#PAIRING REQUEST#AUTO OFF#iPhone6-xxx#18:6D:99:20:09:CB#915112\n
-    NxBTService* self = (NxBTService*)pObj_;
-    // char buffer[BUFFER_SIZE] = {0,};
-    char name[DEVICE_NAME_SIZE] = {0,};
-    char bd_addr[DEVICE_ADDRESS_SIZE] = {0,};
+	// example 1) AUTO ON   > $OK#MGT#PAIRING REQUEST#AUTO ON#iPhone6-xxx#18:6D:99:20:09:CB#915112\n
+	// example 2) AUTO OFF  > $OK#MGT#PAIRING REQUEST#AUTO OFF#iPhone6-xxx#18:6D:99:20:09:CB#915112\n
+	NxBTService* self = (NxBTService*)pObj_;
+	char name[DEVICE_NAME_SIZE] = {0,};
+	char bd_addr[DEVICE_ADDRESS_SIZE] = {0,};
 
-    strcpy(name, name_);
-    strcpy(bd_addr, bd_addr_);
+	strcpy(name, name_);
+	strcpy(bd_addr, bd_addr_);
 
-    std::string s_bd_addr = self->bdAddrToString(bd_addr, DEVICE_ADDRESS_SIZE, ':');
+	std::string s_bd_addr = self->bdAddrToString(bd_addr, DEVICE_ADDRESS_SIZE, ':');
 
-    // if (auto_mode_)
-        // sprintf(buffer, "$OK#%s#%s#%s#%s#%s#%06d\n", "MGT", "PAIRING REQUEST", "AUTO ON", name, s_bd_addr.c_str(), pairing_code_);
-    // else
-        // sprintf(buffer, "$OK#%s#%s#%s#%s#%s#%06d\n", "MGT", "PAIRING REQUEST", "AUTO OFF", name, s_bd_addr.c_str(), pairing_code_);
-
-    // self->Broadcast(buffer);
-	if (self->m_pRequestPopupMessage)
-	{
+	if (self->m_pRequestPopupMessage) {
 		bool bOk = false;
 		PopupMessage sData;
 		sData.pMsgTitle = new char[1024];
@@ -230,60 +220,58 @@ void NxBTService::sendPairingRequest_stub(void *pObj_, bool auto_mode_, char *na
 
 void NxBTService::callbackLinkDownEventManager(void* pObj, char* bd_addr, int32_t reason_code)
 {
-    NXLOGD(__FUNCTION__);
-    (void)bd_addr;
+	NXLOGD(__FUNCTION__);
+	(void)bd_addr;
 
-    NxBTService* self = (NxBTService*)pObj;
-    switch (reason_code) {
-    case 0x08:
-		if (m_pModel->isAutoConnection()) {
-	        if (pthread_attr_init(&self->h_AutoConnectAttribution) == 0) {
-	            if (pthread_attr_setdetachstate(&self->h_AutoConnectAttribution, PTHREAD_CREATE_DETACHED) != 0) {
-	                NXLOGE("pthread_attr_setdetachstate() [FAILED]");
-	            }
+	NxBTService* self = (NxBTService*)pObj;
+	switch (reason_code) {
+		case 0x08:
+			if (m_pModel->isAutoConnection()) {
+				if (pthread_attr_init(&self->h_AutoConnectAttribution) == 0) {
+					if (pthread_attr_setdetachstate(&self->h_AutoConnectAttribution, PTHREAD_CREATE_DETACHED) != 0) {
+						NXLOGE("pthread_attr_setdetachstate() [FAILED]");
+					}
 
-	            pthread_create(&self->h_AutoConnectThread, &self->h_AutoConnectAttribution, NxBTService::autoConnectThread, self);
-	            pthread_attr_destroy(&self->h_AutoConnectAttribution);
-	        } else {
-	            NXLOGE("pthread_attr_init() [FAILED]");
-	        }
-		}
-        break;
-
-    case 0x13:
-    case 0x16:
-        break;
-
-    default:
-        break;
-    }
+					pthread_create(&self->h_AutoConnectThread, &self->h_AutoConnectAttribution, NxBTService::autoConnectThread, self);
+					pthread_attr_destroy(&self->h_AutoConnectAttribution);
+				} else {
+					NXLOGE("pthread_attr_init() [FAILED]");
+				}
+			}
+			break;
+		case 0x13:
+		case 0x16:
+		default:
+			break;
+	}
 }
 
 // AVK
 void NxBTService::sendAVKOpenFailed_stub(void *pObj)
 {
-    NxBTService* self = (NxBTService*)pObj;
-    char buffer[BUFFER_SIZE] = {0,};
+	NxBTService* self = (NxBTService*)pObj;
+	char buffer[BUFFER_SIZE] = {0,};
 
-    // example) "$OK#AVK#OPEN FAILED\n"
+	// example) "$OK#AVK#OPEN FAILED\n"
+	sprintf(buffer, "$OK#AVK#OPEN FAILED\n");
 
-    sprintf(buffer, "$OK#AVK#OPEN FAILED\n");
-    self->Broadcast(buffer);
+	self->Broadcast(buffer);
 }
 
 void NxBTService::sendAVKConnectionStatus_stub(void *pObj, bool is_connected, char *name, char *bd_addr)
 {
-    NxBTService* self = (NxBTService*)pObj;
-    char buffer[BUFFER_SIZE] = {0,};
-    string s_bd_addr;
+	NxBTService* self = (NxBTService*)pObj;
+	char buffer[BUFFER_SIZE] = {0,};
+	string s_bd_addr;
 
-    strcpy(self->m_AVK.connection.bd_addr, bd_addr);
-    strcpy(self->m_AVK.connection.name, name);
+	strcpy(self->m_AVK.connection.bd_addr, bd_addr);
+	strcpy(self->m_AVK.connection.name, name);
 
-	// update connection status and connected index
+	// Update connection status and connected index
 	self->m_AVK.connection.on = is_connected;
-	self->m_AVK.connection.index = ( is_connected ? m_pModel->getPairedDevIndexByAddr(bd_addr) : -1 );
-	// update connected device name and address
+	self->m_AVK.connection.index = (is_connected ? m_pModel->getPairedDevIndexByAddr(bd_addr) : -1);
+
+	// Update connected device name and address
 	if (is_connected) {
 		m_pModel->getPairedDevInfoByIndex(self->m_AVK.connection.index, self->m_AVK.connection.name, self->m_AVK.connection.bd_addr);
 	} else {
@@ -291,16 +279,16 @@ void NxBTService::sendAVKConnectionStatus_stub(void *pObj, bool is_connected, ch
 		memset(self->m_AVK.connection.bd_addr, 0, DEVICE_ADDRESS_SIZE);
 	}
 
-    // reset play information
-    memset(&self->m_AVK.info, 0, sizeof(self->m_AVK.info));
+	// Reset play information
+	memset(&self->m_AVK.info, 0, sizeof(self->m_AVK.info));
 
-    s_bd_addr = self->bdAddrToString(self->m_AVK.connection.bd_addr, DEVICE_ADDRESS_SIZE, ':');
+	s_bd_addr = self->bdAddrToString(self->m_AVK.connection.bd_addr, DEVICE_ADDRESS_SIZE, ':');
 
-    // example1) CONNECTED    = "$OK#AVK#CONNECTION STATUS#CONNECTED#iphone#18:6D99:20:09:CB\n"
-    // example2) DISCONNECTED = "$OK#AVK#CONNECTION STATUS#DISCONNECTED#iphone#18:6D99:20:09:CB\n"
-    sprintf(buffer, "$OK#%s#%s#%s#%s#%s\n", "AVK", "CONNECTION STATUS", is_connected ? "CONNECTED" : "DISCONNECTED", self->m_AVK.connection.name, s_bd_addr.c_str());
+	// example1) CONNECTED    = "$OK#AVK#CONNECTION STATUS#CONNECTED#iphone#18:6D99:20:09:CB\n"
+	// example2) DISCONNECTED = "$OK#AVK#CONNECTION STATUS#DISCONNECTED#iphone#18:6D99:20:09:CB\n"
+	sprintf(buffer, "$OK#%s#%s#%s#%s#%s\n", "AVK", "CONNECTION STATUS", is_connected ? "CONNECTED" : "DISCONNECTED", self->m_AVK.connection.name, s_bd_addr.c_str());
 
-    self->Broadcast(buffer);
+	self->Broadcast(buffer);
 
 	// update bt connection
 	self->m_pDAudioStatus->SetBTConnection((int32_t)(self->m_AVK.connection.on || self->m_HS.hs.on));
@@ -308,22 +296,22 @@ void NxBTService::sendAVKConnectionStatus_stub(void *pObj, bool is_connected, ch
 
 void NxBTService::sendAVKRCConnectionStatus_stub(void *pObj, bool is_connected)
 {
-    NxBTService* self = (NxBTService*)pObj;
-    char buffer[BUFFER_SIZE] = {0,};
+	NxBTService* self = (NxBTService*)pObj;
+	char buffer[BUFFER_SIZE] = {0,};
 	char bd_addr[DEVICE_ADDRESS_SIZE] = {0,};
 
-    sprintf(buffer, "$OK#%s#%s#%s\n", "AVK", "RC CONNECTION STATUS", is_connected ? "CONNECTED" : "DISCONNECTED");
+	sprintf(buffer, "$OK#%s#%s#%s\n", "AVK", "RC CONNECTION STATUS", is_connected ? "CONNECTED" : "DISCONNECTED");
 
-	// update connection status and connected index
+	// Update connection status and connected index
 	self->m_AVK.connection.on = is_connected;
 
 	if (is_connected && RET_OK == m_pModel->getConnectionDevAddrAVK(AVK_CONNECTED_INDEX, bd_addr)) {
-		self->m_AVK.connection.index = ( is_connected ? m_pModel->getPairedDevIndexByAddr(bd_addr) : -1 );
+		self->m_AVK.connection.index = (is_connected ? m_pModel->getPairedDevIndexByAddr(bd_addr) : -1);
 	} else {
 		self->m_AVK.connection.index = -1;
 	}
 
-	// update connected device name and address
+	// Update connected device name and address
 	if (is_connected) {
 		m_pModel->getPairedDevInfoByIndex(self->m_AVK.connection.index, self->m_AVK.connection.name, self->m_AVK.connection.bd_addr);
 	} else {
@@ -331,90 +319,67 @@ void NxBTService::sendAVKRCConnectionStatus_stub(void *pObj, bool is_connected)
 		memset(self->m_AVK.connection.bd_addr, 0, DEVICE_ADDRESS_SIZE);
 	}
 
-    self->Broadcast(buffer);
+	self->Broadcast(buffer);
 
-	// update bt connection
+	// Update bt connection
 	self->m_pDAudioStatus->SetBTConnection((int32_t)(self->m_AVK.connection.on || self->m_HS.hs.on));
 }
 
 void NxBTService::updatePlayStatusAVK_stub(void *pObj, int32_t play_status)
 {
-    NxBTService* self = (NxBTService*)pObj;
-    char buffer[BUFFER_SIZE] = {0,};
+	NxBTService* self = (NxBTService*)pObj;
+	char buffer[BUFFER_SIZE] = {0,};
 
 	PlayStatus temp = self->m_AVK.status;
 	self->m_AVK.status = (PlayStatus)play_status;
 
-	//! [1] send play status to clients.
-    switch (self->m_AVK.status) {
-    case PlayStatus_Stopped: // 0x00
-        sprintf(buffer, "$OK#%s#%s#%s\n", "AVK", "UPDATE PLAY STATUS", "STOPPED");
-        break;
+	// Send play status to clients.
+	switch (self->m_AVK.status) {
+		case PlayStatus_Stopped: // 0x00
+		sprintf(buffer, "$OK#%s#%s#%s\n", "AVK", "UPDATE PLAY STATUS", "STOPPED");
+		break;
+	case PlayStatus_Playing: // 0x01
+		sprintf(buffer, "$OK#%s#%s#%s\n", "AVK", "UPDATE PLAY STATUS", "PLAYING");
+		break;
+	case PlayStatus_Paused: // 0x02
+		sprintf(buffer, "$OK#%s#%s#%s\n", "AVK", "UPDATE PLAY STATUS", "PAUSED");
+		break;
+	}
 
-    case PlayStatus_Playing: // 0x01
-        sprintf(buffer, "$OK#%s#%s#%s\n", "AVK", "UPDATE PLAY STATUS", "PLAYING");
-        break;
-
-    case PlayStatus_Paused: // 0x02
-        sprintf(buffer, "$OK#%s#%s#%s\n", "AVK", "UPDATE PLAY STATUS", "PAUSED");
-        break;
-    }
-
-    self->Broadcast(buffer);
-	//! [1]
+	self->Broadcast(buffer);
 
 	if (temp != self->m_AVK.status && self->m_AVK.status == PlayStatus_Playing) {
-		//! [2] try to switching audio focus
+		// Try to switch audio focus
 		if (!g_has_audio_focus) {
-			if (self->m_pRequestAudioFocus)
-			{
+			if (self->m_pRequestAudioFocus) {
 				bool bOk = false;
 				self->m_pRequestAudioFocus(FocusPriority_Normal, &bOk);
 				g_has_audio_focus = bOk;
 			}
-				
-			
 		}
-		//! [2]
 
-		//! [3] try to open audio device
 		self->openAudioAVK();
-		//! [3]
-
-		//! [4] if CONFIG_A2DP_PROCESS_MANAGEMENT option is enabled, run following code.
-#ifdef CONFIG_A2DP_PROCESS_MANAGEMENT
-//		std::vector<int32_t> pids;
-//		char command[BUFFER_SIZE] = {0,};
-
-//		if (!findPID("NxBTAudioR", pids)) {
-//			sprintf(command, "%s -platform wayland &", "/nexell/daudio/NxBTAudioR/NxBTAudioR");
-//			system(command);
-//		}
-#endif
-		//! [4]
 	}
+
 	NXLOGI("[%s] <2>", __FUNCTION__);
 }
 
 void NxBTService::updateMediaElementsAVK_stub(void *pObj, char *mediaTitle, char *mediaArtist, char *mediaAlbum, char *mediaGenre, int32_t duration_msec)
 {
-    NxBTService* self = (NxBTService*)pObj;
-    char buffer[BUFFER_SIZE] = {0,};
+	NxBTService* self = (NxBTService*)pObj;
+	char buffer[BUFFER_SIZE] = {0,};
 
-    memcpy(self->m_AVK.info.title, mediaTitle, sizeof(self->m_AVK.info.title));
-    memcpy(self->m_AVK.info.artist, mediaArtist, sizeof(self->m_AVK.info.artist));
-    memcpy(self->m_AVK.info.album, mediaAlbum, sizeof(self->m_AVK.info.album));
-    memcpy(self->m_AVK.info.genre, mediaGenre, sizeof(self->m_AVK.info.genre));
-    self->m_AVK.info.duration = duration_msec;
-    // iphone6: play position and duration time unknown.
-    //  - test os : ios10, ios11
-    //  - test play app : default music,
-    self->m_AVK.info.position = 0;
+	memcpy(self->m_AVK.info.title, mediaTitle, sizeof(self->m_AVK.info.title));
+	memcpy(self->m_AVK.info.artist, mediaArtist, sizeof(self->m_AVK.info.artist));
+	memcpy(self->m_AVK.info.album, mediaAlbum, sizeof(self->m_AVK.info.album));
+	memcpy(self->m_AVK.info.genre, mediaGenre, sizeof(self->m_AVK.info.genre));
+	self->m_AVK.info.duration = duration_msec;
+	self->m_AVK.info.position = 0;
 
-    // example) "$OK#AVK#UPDATE MEDIA ELEMENT#[TITLE]#[ARTIST]#[ALBUM]#[GENRE]#[DURATION]\n"
-    sprintf(buffer, "$OK#%s#%s#%s#%s#%s#%s#%d\n", "AVK", "UPDATE MEDIA ELEMENT", self->m_AVK.info.title, self->m_AVK.info.artist, self->m_AVK.info.album, self->m_AVK.info.genre, self->m_AVK.info.duration);
+	// example) "$OK#AVK#UPDATE MEDIA ELEMENT#[TITLE]#[ARTIST]#[ALBUM]#[GENRE]#[DURATION]\n"
+	sprintf(buffer, "$OK#%s#%s#%s#%s#%s#%s#%d\n", "AVK", "UPDATE MEDIA ELEMENT", self->m_AVK.info.title, self->m_AVK.info.artist, self->m_AVK.info.album, self->m_AVK.info.genre, self->m_AVK.info.duration);
 
-    self->Broadcast(buffer);
+	self->Broadcast(buffer);
 }
 
 void NxBTService::updatePlayPositionAVK_stub(void *pObj, int32_t play_pos_msec)
@@ -433,394 +398,385 @@ void NxBTService::updatePlayPositionAVK_stub(void *pObj, int32_t play_pos_msec)
 
 void NxBTService::sendAVKStreamingStarted_stub(void* pObj, bool is_opened)
 {
-    NxBTService* self = (NxBTService*)pObj;
-    char buffer[BUFFER_SIZE] = {0,};
+	NxBTService* self = (NxBTService*)pObj;
+	char buffer[BUFFER_SIZE] = {0,};
 
-	//! [1] send streaming start status to clients.
-    if (is_opened)
-        sprintf(buffer, "$OK#%s#%s#%s\n", "AVK", "STREAMING STARTED", "ALSA DEVICE OPENED");
-    else
-        sprintf(buffer, "$OK#%s#%s#%s\n", "AVK", "STREAMING STARTED", "ALSA DEVICE OPEN FAILED");
+	// Send streaming start status to clients.
+	if (is_opened) {
+		sprintf(buffer, "$OK#%s#%s#%s\n", "AVK", "STREAMING STARTED", "ALSA DEVICE OPENED");
+	} else {
+		sprintf(buffer, "$OK#%s#%s#%s\n", "AVK", "STREAMING STARTED", "ALSA DEVICE OPEN FAILED");
+	}
 
 	self->Broadcast(buffer);
-	//! [1]
 
-	//! [2] switching audio focus
+	// Switching audio focus
 	if (!g_has_audio_focus) {
-		if (self->m_pRequestAudioFocus)
-		{
+		if (self->m_pRequestAudioFocus) {
 			bool bOk = false;
 			self->m_pRequestAudioFocus(FocusPriority_Normal, &bOk);
 			g_has_audio_focus = bOk;
 		}
-		
 	}
-	//! [2]
 
-	//! [3] try to open audio device
+	// Try to open audio device
 	self->openAudioAVK();
-	//! [3]
 }
 
 void NxBTService::sendAVKStreamingStopped_stub(void *pObj)
 {
-    NXLOGD(__FUNCTION__);
-    NxBTService* self = (NxBTService*)pObj;
-    char buffer[BUFFER_SIZE] = {0,};
+	NXLOGD(__FUNCTION__);
+	NxBTService* self = (NxBTService*)pObj;
+	char buffer[BUFFER_SIZE] = {0,};
 
-	//! [1] send streaming stop status to clients.
-    sprintf(buffer, "$OK#%s#%s\n", "AVK", "STREAMING STOPPED");
+	// Send streaming stop status to clients.
+	sprintf(buffer, "$OK#%s#%s\n", "AVK", "STREAMING STOPPED");
 
-    self->Broadcast(buffer);
-	//! [1]
+	self->Broadcast(buffer);
 
-	//! [2] try to close audio device
+	// Try to close audio device
 //	self->closeAudioAVK();
-	//! [2]
 }
 
-// phone : HS
+// Phone : HS
 void NxBTService::sendHSOpenFailed_stub(void *pObj)
 {
     NxBTService* self = (NxBTService*)pObj;
     char buffer[BUFFER_SIZE] = {0,};
 
     // example) "$OK#HS#OPEN FAILED\n"
-
     sprintf(buffer, "$OK#HS#OPEN FAILED\n");
+
     self->Broadcast(buffer);
 }
 
 void NxBTService::sendHSConnectionStatus_stub(void *pObj, bool is_connected, char *name, char *bd_addr)
 {
-    NxBTService* self = (NxBTService*)pObj;
-    char buffer[BUFFER_SIZE] = {0,};
-    string s_bd_addr;
+	NxBTService* self = (NxBTService*)pObj;
+	char buffer[BUFFER_SIZE] = {0,};
+	string s_bd_addr;
 
-    // update device address
-	if (bd_addr)
+	// Update device address
+	if (bd_addr) {
 		strcpy(self->m_HS.hs.bd_addr, bd_addr);
-	else
+	} else {
 		memset(self->m_HS.hs.bd_addr, 0, DEVICE_ADDRESS_SIZE);
+	}
 
-    // update device name
-	if (name)
+	// Update device name
+	if (name) {
 		strcpy(self->m_HS.hs.name, name);
-	else
+	} else {
 		self->m_HS.hs.name[0] = '\0';
-	// update connection status and connected index
-	self->m_HS.hs.on = is_connected;
-	self->m_HS.hs.index = ( is_connected ? m_pModel->getPairedDevIndexByAddr(bd_addr) : -1 );
+	}
 
-    s_bd_addr = self->bdAddrToString(self->m_HS.hs.bd_addr, DEVICE_ADDRESS_SIZE, ':');
+	// Update connection status and connected index
+	self->m_HS.hs.on = is_connected;
+	self->m_HS.hs.index = (is_connected ? m_pModel->getPairedDevIndexByAddr(bd_addr) : -1);
+
+	s_bd_addr = self->bdAddrToString(self->m_HS.hs.bd_addr, DEVICE_ADDRESS_SIZE, ':');
 
 #if 1 // if hs service is connected, sub-profile(service) try to open.
-    if (is_connected) {
-        self->m_HS.pbc.connection.on = (0 <= m_pModel->connectToPBC(self->m_HS.hs.index));
-        self->m_HS.mce.on = (0 <= m_pModel->connectToMCE(self->m_HS.hs.index));
-    } else {
-        self->m_HS.pbc.connection.on = !(0 <= m_pModel->disconnectFromPBC());
-        self->m_HS.mce.on = !(0 <= m_pModel->disconnectFromMCE());
-    }
+	if (is_connected) {
+		self->m_HS.pbc.connection.on = (0 <= m_pModel->connectToPBC(self->m_HS.hs.index));
+		self->m_HS.mce.on = (0 <= m_pModel->connectToMCE(self->m_HS.hs.index));
+	} else {
+		self->m_HS.pbc.connection.on = !(0 <= m_pModel->disconnectFromPBC());
+		self->m_HS.mce.on = !(0 <= m_pModel->disconnectFromMCE());
+	}
 #endif
 
-    // example1) CONNECTED    = "$OK#HS#CONNECTION STATUS#CONNECTED#iphone#18:6D99:20:09:CB\n"
-    // example2) DISCONNECTED = "$OK#HS#CONNECTION STATUS#DISCONNECTED#iphone#18:6D99:20:09:CB\n"
-    sprintf(buffer, "$OK#%s#%s#%s#%s#%s\n", "HS", "CONNECTION STATUS", is_connected ? "CONNECTED" : "DISCONNECTED", self->m_HS.hs.name, s_bd_addr.c_str());
+	// example1) CONNECTED    = "$OK#HS#CONNECTION STATUS#CONNECTED#iphone#18:6D99:20:09:CB\n"
+	// example2) DISCONNECTED = "$OK#HS#CONNECTION STATUS#DISCONNECTED#iphone#18:6D99:20:09:CB\n"
+	sprintf(buffer, "$OK#%s#%s#%s#%s#%s\n", "HS", "CONNECTION STATUS", is_connected ? "CONNECTED" : "DISCONNECTED", self->m_HS.hs.name, s_bd_addr.c_str());
 
-    self->Broadcast(buffer);
+	self->Broadcast(buffer);
 
-	// update bt connection
+	// Update bt connection
 	self->m_pDAudioStatus->SetBTConnection((int32_t)(self->m_AVK.connection.on || self->m_HS.hs.on));
 }
 
 void NxBTService::sendHSCallStatus_stub(void *pObj, int32_t call_status)
 {
-    NxBTService* self = (NxBTService*)pObj;
-    char buffer[BUFFER_SIZE] = {0,};
-    char status[100] = {0,};
+	NxBTService* self = (NxBTService*)pObj;
+	char buffer[BUFFER_SIZE] = {0,};
+	char status[100] = {0,};
 
-	//! [1] send 'CALL STATUS' command to client
-    // example) $OK#HS#CALL STATUS#[STATUS]\n
-    switch (call_status) {
-    case HANG_UP_CALL:
-        strcpy(status, "HANG UP CALL");
-        break;
-
-    case INCOMMING_CALL:
-        strcpy(status, "INCOMMING CALL");
-        break;
-
-    case READY_OUTGOING_CALL:
-        strcpy(status, "READY OUTGOING CALL");
-        break;
-
-    case OUTGOING_CALL:
-        strcpy(status, "OUTGOING CALL");
-        break;
-
-    case PICK_UP_CALL:
-        strcpy(status, "PICK UP CALL");
-        break;
-
-    case DISCONNECTED_CALL:
-        strcpy(status, "DISCONNECTED CALL");
-        break;
-
-    default: /* UNKNOWN_CALL */
-        strcpy(status, "UNKNOWN CALL");
-        break;
-    }
+	// Send 'CALL STATUS' command to client
+	// example) $OK#HS#CALL STATUS#[STATUS]\n
+	switch (call_status) {
+		case HANG_UP_CALL:
+			strcpy(status, "HANG UP CALL");
+			break;
+		case INCOMMING_CALL:
+			strcpy(status, "INCOMMING CALL");
+			break;
+		case READY_OUTGOING_CALL:
+			strcpy(status, "READY OUTGOING CALL");
+			break;
+		case OUTGOING_CALL:
+			strcpy(status, "OUTGOING CALL");
+			break;
+		case PICK_UP_CALL:
+			strcpy(status, "PICK UP CALL");
+			break;
+		case DISCONNECTED_CALL:
+			strcpy(status, "DISCONNECTED CALL");
+			break;
+		default: /* UNKNOWN_CALL */
+			strcpy(status, "UNKNOWN CALL");
+			break;
+	}
 
 	sprintf(buffer, "$OK#%s#%s#%s\n", "HS", "CALL STATUS", status);
 
 	self->Broadcast(buffer);
-	//! [1]
 
-	//! [2] switching audio focus
+	// Switching audio focus
 	switch (call_status) {
-	case HANG_UP_CALL:
-	case DISCONNECTED_CALL:
-		// switching calling mode
-		g_calling_mode_on = false;
+		case HANG_UP_CALL:
+		case DISCONNECTED_CALL:
+			// Switching calling mode
+			g_calling_mode_on = false;
 
-		if ( !m_pModel->isOpenedAudioHS() && g_has_audio_focus_transient ) {
-			// release audio focus
-			if (self->m_pRequestAudoFocusLoss)
-			{
-				self->m_pRequestAudoFocusLoss();
-				g_has_audio_focus_transient = false;
+			if (!m_pModel->isOpenedAudioHS() && g_has_audio_focus_transient) {
+				// release audio focus
+				if (self->m_pRequestAudoFocusLoss) {
+					self->m_pRequestAudoFocusLoss();
+					g_has_audio_focus_transient = false;
+				}
 			}
-		}
-		break;
+			break;
+		case INCOMMING_CALL:
+		case READY_OUTGOING_CALL:
+		{
+			// Switching calling mode
+			g_calling_mode_on = true;
 
-	case INCOMMING_CALL:
-	case READY_OUTGOING_CALL:
-	{
-		// switching calling mode
-		g_calling_mode_on = true;
-
-		// switching audio focus (get)
-		if ( !g_has_audio_focus ) {
-			bool bOk = false;
-			if (self->m_pRequestAudioFocusTransient)
-				self->m_pRequestAudioFocusTransient(FocusPriority_High, &bOk);
-
-			g_has_audio_focus_transient = bOk;
-		}
+			// Switching audio focus (get)
+			if (!g_has_audio_focus) {
+				bool bOk = false;
+				if (self->m_pRequestAudioFocusTransient) {
+					self->m_pRequestAudioFocusTransient(FocusPriority_High, &bOk);
+				}
+				g_has_audio_focus_transient = bOk;
+			}
 
 #ifdef CONFIG_HSP_PROCESS_MANAGEMENT
-		if (self->m_pRequestPlugInRun)
-		{
-			self->m_pRequestPlugInRun("NxBTPhone", "--menu calling");
-		}
+			if (self->m_pRequestPlugInRun) {
+				self->m_pRequestPlugInRun("NxBTPhone", "--menu calling");
+			}
 #endif
-		break;
+			break;
+		}
+		default:
+			break;
 	}
-	default:
-		break;
-
-	}
-	//! [2]
 }
 
 void NxBTService::sendHSBatteryStatus_stub(void *pObj, int32_t batt_status)
 {
-    NxBTService* self = (NxBTService*)pObj;
-    char buffer[BUFFER_SIZE] = {0,};
+	NxBTService* self = (NxBTService*)pObj;
+	char buffer[BUFFER_SIZE] = {0,};
 
-    sprintf(buffer, "$OK#%s#%s#%d\n", "HS", "BATTERY STATUS", batt_status);
-    self->Broadcast(buffer);
+	sprintf(buffer, "$OK#%s#%s#%d\n", "HS", "BATTERY STATUS", batt_status);
+
+	self->Broadcast(buffer);
 }
 
 void NxBTService::sendHSCallOperName_stub(void *pObj, char *name)
 {
-    NxBTService* self = (NxBTService*)pObj;
-    char buffer[BUFFER_SIZE] = {0,};
+	NxBTService* self = (NxBTService*)pObj;
+	char buffer[BUFFER_SIZE] = {0,};
 
-    sprintf(buffer, "$OK#%s#%s#%s\n", "HS", "CALL OPER NAME", name);
-    self->Broadcast(buffer);
+	sprintf(buffer, "$OK#%s#%s#%s\n", "HS", "CALL OPER NAME", name);
+
+	self->Broadcast(buffer);
 }
 
 void NxBTService::sendHSAudioMuteStatus_stub(void *pObj, bool is_muted, bool is_opened)
 {
-    NxBTService* self = (NxBTService*)pObj;
-    char buffer[BUFFER_SIZE] = {0,};
-    char audio[BUFFER_SIZE] = {0,};
-    char microphone[BUFFER_SIZE] = {0,};
+	NxBTService* self = (NxBTService*)pObj;
+	char buffer[BUFFER_SIZE] = {0,};
+	char audio[BUFFER_SIZE] = {0,};
+	char microphone[BUFFER_SIZE] = {0,};
 
-	//! [1] send Audio open/close and Microphone mute status to clients
-    strcpy(audio, is_opened ? "AUDIO OPENED" : "AUDIO CLOSED");
+	// Send Audio open/close and Microphone mute status to clients
+	strcpy(audio, is_opened ? "AUDIO OPENED" : "AUDIO CLOSED");
 	strcpy(microphone, is_muted ? "MICROPHONE MUTE ON" : "MICROPHONE MUTE OFF");
 
-    sprintf(buffer, "$OK#HS#AUDIO MUTE STATUS#%s#%s\n", audio, microphone);
+	sprintf(buffer, "$OK#HS#AUDIO MUTE STATUS#%s#%s\n", audio, microphone);
+	self->Broadcast(buffer);
 
-    self->Broadcast(buffer);
-	//! [1]
-
-	//! [2] If all of the following conditions are met, the audio focus is returned.
-	//!     condition 1 : audio focus transient flag	'ON'
-	//!		condition 2 : calling mode flag				'OFF'
-	//!		condition 3 : audio open / close status		'CLOSE'
-	if ( g_has_audio_focus_transient && !g_calling_mode_on && !is_opened ) {
-		// release audio focus
-		if (self->m_pRequestAudoFocusLoss)
-		{
+	// If all of the following conditions are met, the audio focus is returned.
+	// condition 1 : audio focus transient flag 'ON'
+	// condition 2 : calling mode flag 'OFF'
+	// condition 3 : audio open / close status 'CLOSE'
+	if (g_has_audio_focus_transient && !g_calling_mode_on && !is_opened) {
+		// Release audio focus
+		if (self->m_pRequestAudoFocusLoss) {
 			self->m_pRequestAudoFocusLoss();
 			g_has_audio_focus_transient = false;
 		}
 	}
-	//! [2]
 }
 
 void NxBTService::sendHSIncommingCallNumber_stub(void *pObj, char *number)
 {
-    NxBTService* self = (NxBTService*)pObj;
-    char buffer[BUFFER_SIZE] = {0,};
+	NxBTService* self = (NxBTService*)pObj;
+	char buffer[BUFFER_SIZE] = {0,};
 
-    /* [TODO]: what is 129? unknown...
-     * NXBT HS Event : Send incomming call number to UI =>  "0316987429",129,,,"      "
-     * [sendHSIncommingCallNumber_stub] number =  "0316987429",129,,,"      "
-     */
+	/*
+	 * NXBT HS Event : Send incomming call number to UI =>  "0316987429",129,,,"      "
+	 * [sendHSIncommingCallNumber_stub] number =  "0316987429",129,,,"      "
+	 */
+	sprintf(buffer, "$OK#%s#%s#%s\n", "HS", "INCOMMING CALL NUMBER", number);
 
-    sprintf(buffer, "$OK#%s#%s#%s\n", "HS", "INCOMMING CALL NUMBER", number);
-    self->Broadcast(buffer);
+	self->Broadcast(buffer);
 }
 
-// phone : PBC (phone book)
+// Phone : PBC (phone book)
 void NxBTService::sendPBCOpenFailed_stub(void *pObj)
 {
-    NxBTService* self = (NxBTService*)pObj;
-    char buffer[BUFFER_SIZE] = {0,};
+	NxBTService* self = (NxBTService*)pObj;
+	char buffer[BUFFER_SIZE] = {0,};
 
-    // example) "$OK#PBC#OPEN FAILED\n"
+	// example) "$OK#PBC#OPEN FAILED\n"
+	sprintf(buffer, "$OK#PBC#OPEN FAILED\n");
 
-    sprintf(buffer, "$OK#PBC#OPEN FAILED\n");
-    self->Broadcast(buffer);
+	self->Broadcast(buffer);
 }
 
 void NxBTService::sendPBCConnectionStatus_stub(void *pObj, bool is_connected)
 {
-    NxBTService* self = (NxBTService*)pObj;
-    char buffer[BUFFER_SIZE] = {0,};
+	NxBTService* self = (NxBTService*)pObj;
+	char buffer[BUFFER_SIZE] = {0,};
 
-    // example1) CONNECTED    = "$OK#PBC#CONNECTION STATUS#CONNECTED\n"
-    // example2) DISCONNECTED = "$OK#PBC#CONNECTION STATUS#DISCONNECTED\n"
-    self->m_HS.pbc.connection.on = is_connected;
+	// example1) CONNECTED    = "$OK#PBC#CONNECTION STATUS#CONNECTED\n"
+	// example2) DISCONNECTED = "$OK#PBC#CONNECTION STATUS#DISCONNECTED\n"
+	self->m_HS.pbc.connection.on = is_connected;
 
-    sprintf(buffer, "$OK#%s#%s#%s\n", "PBC", "CONNECTION STATUS", is_connected ? "CONNECTED" : "DISCONNECTED");
+	sprintf(buffer, "$OK#%s#%s#%s\n", "PBC", "CONNECTION STATUS", is_connected ? "CONNECTED" : "DISCONNECTED");
 
-    self->Broadcast(buffer);
+	self->Broadcast(buffer);
 }
 
-void NxBTService::sendNotifyGetPhonebook_stub(void *pObj, int32_t  type)
+void NxBTService::sendNotifyGetPhonebook_stub(void *pObj, int32_t type)
 {
-    NxBTService* self = (NxBTService*)pObj;
-    char buffer[BUFFER_SIZE] = {0,};
-    char command[100] = {0,};
+	NxBTService* self = (NxBTService*)pObj;
+	char buffer[BUFFER_SIZE] = {0,};
+	char command[100] = {0,};
+	bool download_ok = true;
 
-    switch (self->m_HS.pbc.download) {
-    case DownloadType_PhoneBook:
-        strcpy(command, "DOWNLOAD PHONEBOOK");
-        break;
-
-	case DownloadType_CallHistory:
-        strcpy(command, "DOWNLOAD CALL LOG");
-        break;
-
-    default:
-        return;
+	switch (self->m_HS.pbc.download) {
+		case DownloadType_PhoneBook:
+			strcpy(command, "DOWNLOAD PHONEBOOK");
+			break;
+		case DownloadType_CallHistory:
+			strcpy(command, "DOWNLOAD CALL LOG");
+			break;
+		default:
+			NXLOGE("Not supported download type!\n");
+			break;
     }
 
-    switch (type) {
-    case PARAM_PROGRESS:
-        sprintf(buffer, "$OK#PBC#%s#PROGRESSING\n", command);
-        break;
+	if ((self->m_HS.pbc.download == DownloadType_PhoneBook) || (self->m_HS.pbc.download == DownloadType_CallHistory)) {
+		switch (type) {
+			case PARAM_PROGRESS:
+				sprintf(buffer, "$OK#PBC#%s#PROGRESSING\n", command);
+				break;
+			case PARAM_PHONEBOOK:
+				sprintf(buffer, "$OK#PBC#%s#DATA TRANSFER COMPLETED\n", command);
+				break;
+			case PARAM_FILE_TRANSFER_STATUS:
+				sprintf(buffer, "$OK#PBC#%s#FILE CREATED#%s\n", command, PB_DATA_PATH);
+				break;
+			default:
+				NXLOGE("Invalid download process!\n");
+				download_ok = false;
+				break;
+		}
 
-    case PARAM_PHONEBOOK:
-        sprintf(buffer, "$OK#PBC#%s#DATA TRANSFER COMPLETED\n", command);
-        break;
-
-    case PARAM_FILE_TRANSFER_STATUS:
-        sprintf(buffer, "$OK#PBC#%s#FILE CREATED#%s\n", command, PB_DATA_PATH);
-        break;
-    }
-
-    self->Broadcast(buffer);
+		if (download_ok) {
+			self->Broadcast(buffer);
+		}
+	}
 }
 
-// phone : MCE (message)
+// Phone : MCE (message)
 void NxBTService::sendMCEOpenFailed_stub(void *pObj)
 {
-    NxBTService* self = (NxBTService*)pObj;
-    char buffer[BUFFER_SIZE] = {0,};
+	NxBTService* self = (NxBTService*)pObj;
+	char buffer[BUFFER_SIZE] = {0,};
 
-    // example) "$OK#MCE#OPEN FAILED\n"
+	// example) "$OK#MCE#OPEN FAILED\n"
+	sprintf(buffer, "$OK#MCE#OPEN FAILED\n");
 
-    sprintf(buffer, "$OK#MCE#OPEN FAILED\n");
-    self->Broadcast(buffer);
+	self->Broadcast(buffer);
 }
 
 void NxBTService::sendMCEConnectionStatus_stub(void *pObj, bool is_connected)
 {
-    NxBTService* self = (NxBTService*)pObj;
-    char buffer[BUFFER_SIZE] = {0,};
-    char bd_addr[DEVICE_ADDRESS_SIZE] = {0,};
+	NxBTService* self = (NxBTService*)pObj;
+	char buffer[BUFFER_SIZE] = {0,};
+	char bd_addr[DEVICE_ADDRESS_SIZE] = {0,};
 
-    self->m_HS.mce.on = is_connected;
-    if (0 > self->m_pModel->getConnectionDevAddrHS(bd_addr)) {
-        std::string a = self->bdAddrToString(bd_addr, DEVICE_ADDRESS_SIZE, ':');
-    }
+	self->m_HS.mce.on = is_connected;
+	if (0 > self->m_pModel->getConnectionDevAddrHS(bd_addr)) {
+		std::string a = self->bdAddrToString(bd_addr, DEVICE_ADDRESS_SIZE, ':');
+	}
 
-    // example1) CONNECTED    = "$OK#MCE#CONNECTION STATUS#CONNECTED\n"
-    // example2) DISCONNECTED = "$OK#MCE#CONNECTION STATUS#DISCONNECTED\n"
-    sprintf(buffer, "$OK#%s#%s#%s\n", "MCE", "CONNECTION STATUS", is_connected ? "CONNECTED" : "DISCONNECTED");
+	// example1) CONNECTED    = "$OK#MCE#CONNECTION STATUS#CONNECTED\n"
+	// example2) DISCONNECTED = "$OK#MCE#CONNECTION STATUS#DISCONNECTED\n"
+	sprintf(buffer, "$OK#%s#%s#%s\n", "MCE", "CONNECTION STATUS", is_connected ? "CONNECTED" : "DISCONNECTED");
 
-    self->Broadcast(buffer);
+	self->Broadcast(buffer);
 }
 
 void NxBTService::sendNotifyGetMessageMCE_stub(void *pObj)
 {
 	NxBTService* self = (NxBTService*)pObj;
-	string buffer = "$OK#MCE#DOWNLOAD SMS MESSAGE#";
-
 	self->downloadSMSMessage("MCE", "DOWNLOAD SMS MESSAGE");
 }
-// #include <signal.h>
-// static void signal_handler(int32_t signal)
-// {
-// 	void *array[10];
-// 	size_t size, count = 0;
-// 	char **strings;
-// 	char modules[256] = {0,};
 
-// 	size = backtrace(array, 10);
-// 	strings = backtrace_symbols(array, size);
+#if 0
+#include <signal.h>
 
-// 	for (size_t i = 0; i < size; ++i)
-// 	{
-// 		NXLOGE("[%s] %s", __FUNCTION__, strings[i]);
-// 	}
+static void signal_handler(int32_t signal)
+{
+	void *array[10];
+	size_t size, count = 0;
+	char **strings;
+	char modules[256] = {0,};
 
-// 	free(strings);
-// }
+	size = backtrace(array, 10);
+	strings = backtrace_symbols(array, size);
+
+	for (size_t i = 0; i < size; ++i) {
+		NXLOGE("[%s] %s", __FUNCTION__, strings[i]);
+	}
+
+	free(strings);
+}
+#endif
 
 NxBTService::NxBTService()
 {
-	// signal(SIGINT, signal_handler);
-	// signal(SIGABRT, signal_handler);
-	//! [1] init DB for bluetooth status
+#if 0
+	signal(SIGINT, signal_handler);
+	signal(SIGABRT, signal_handler);
+#endif
+
+	// Init DB for bluetooth status
 	m_pDAudioStatus = new CNX_DAudioStatus(DAUDIO_STATUS_DATABASE_PATH);
 	m_pDAudioStatus->SetBTConnection(0);
-	//! [1]
 
-	//! [2] variable reset to 0
+	// Variable reset to 0
 	memset(&m_AVK, 0, sizeof(m_AVK));
 	memset(&m_HS, 0, sizeof(m_HS));
 	m_bInitialized = false;
 	m_pModel = NULL;
-	//! [2]
-	
+
 	pthread_create(&m_hCommandThread, NULL, NxBTService::CommandThreadStub, (void *)this);
 }
 
@@ -829,382 +785,260 @@ NxBTService::~NxBTService()
 	NXLOGI("[%s]", __FUNCTION__);
 }
 
-bool NxBTService::Initialize()
+void NxBTService::Initialize()
 {
-	//! [1] settings for Nx BT module
+	// Settings for Nx BT module
 	NXLOGI("[%s]", __FUNCTION__);
 	m_pModel = getInstance();
-	if (!m_pModel) {
-		return false;
+
+	if (m_pModel) {
+		registerCallbackFunctions();
+		pthread_create(&m_hStartThread, NULL, NxBTService::StartThreadStub, (void *)this);
 	}
-	//! [1]
-
-	//! [2]
-	registerCallbackFunctions();
-	//! [2]
-
-	//! [3]
-	return (0 == m_pModel->initDevManager());
-	//! [3]
 }
 
 void NxBTService::registerCallbackFunctions()
 {
 	NXLOGI("[%s] %p %p", __FUNCTION__, m_spInstance, this);
-    // normal : MGT
+
+	// Manager : MGT
 	m_pModel->registerMGTOpenSucceedCbManager(this, sendMGTOpenSucceed_stub);
-    m_pModel->registerMGTDisconnectedCbManager(this, sendMGTDisconnected_stub);
-    m_pModel->registerPairingFailedCbManager(this, sendPairingFailed_stub);
-    m_pModel->registerPairedDevicesCbManager(this, updatePairedDevices_stub);
-    m_pModel->registerUnpairedDevicesCbManager(this, updateUnpairedDevices_stub);
-    m_pModel->registerPairingRequestCbManager(this, sendPairingRequest_stub);
-    m_pModel->registerLinkDownEventCbManager(this, callbackLinkDownEventManager);
-    // audio : AVK
-    m_pModel->registerOpenFailedCbAVK(this, sendAVKOpenFailed_stub);
-    m_pModel->registerConnectionStatusCbAVK(this, sendAVKConnectionStatus_stub);
-    m_pModel->registerConnectionStatusCbAVKRC(this, sendAVKRCConnectionStatus_stub);
-    m_pModel->registerPlayStatusCbAVK(this, updatePlayStatusAVK_stub);
-    m_pModel->registerMediaElementCbAVK(this, updateMediaElementsAVK_stub);
-    m_pModel->registerPlayPositionCbAVK(this, updatePlayPositionAVK_stub);
-    m_pModel->registerStreamingStartedCbAVK(this, sendAVKStreamingStarted_stub);
-    m_pModel->registerStreamingStoppedCbAVK(this, sendAVKStreamingStopped_stub);
-    // phone : HS
-    m_pModel->registerOpenFailedCbHS(this, sendHSOpenFailed_stub);
-    m_pModel->registerConnectionStatusCbHS(this, sendHSConnectionStatus_stub);
-    m_pModel->registerCallStatusCbHS(this, sendHSCallStatus_stub);
-    m_pModel->registerBatteryStatusCbHS(this, sendHSBatteryStatus_stub);
-    m_pModel->registerCallOperNameCbHS(this, sendHSCallOperName_stub);
-    m_pModel->registerAudioMuteStatusCbHS(this, sendHSAudioMuteStatus_stub);
-    m_pModel->registerIncommingCallNumberCbHS(this,sendHSIncommingCallNumber_stub);
-    // phone : PBC (phone book)
-    m_pModel->registerOpenFailedCbPBC(this, sendPBCOpenFailed_stub);
-    m_pModel->registerConnectionStatusCbPBC(this, sendPBCConnectionStatus_stub);
-    m_pModel->registerNotifyGetPhonebookCbPBC(this, sendNotifyGetPhonebook_stub);
-    // phone : MCE (message)
-    m_pModel->registerOpenFailedCbMCE(this, sendMCEOpenFailed_stub);
-    m_pModel->registerConnectionStatusCbMCE(this, sendMCEConnectionStatus_stub);
-    m_pModel->registerNotifyGetMessageCbMCE(this, sendNotifyGetMessageMCE_stub);
+	m_pModel->registerMGTDisconnectedCbManager(this, sendMGTDisconnected_stub);
+	m_pModel->registerPairingFailedCbManager(this, sendPairingFailed_stub);
+	m_pModel->registerPairedDevicesCbManager(this, updatePairedDevices_stub);
+	m_pModel->registerUnpairedDevicesCbManager(this, updateUnpairedDevices_stub);
+	m_pModel->registerPairingRequestCbManager(this, sendPairingRequest_stub);
+	m_pModel->registerLinkDownEventCbManager(this, callbackLinkDownEventManager);
+	// Audio : AVK
+	m_pModel->registerOpenFailedCbAVK(this, sendAVKOpenFailed_stub);
+	m_pModel->registerConnectionStatusCbAVK(this, sendAVKConnectionStatus_stub);
+	m_pModel->registerConnectionStatusCbAVKRC(this, sendAVKRCConnectionStatus_stub);
+	m_pModel->registerPlayStatusCbAVK(this, updatePlayStatusAVK_stub);
+	m_pModel->registerMediaElementCbAVK(this, updateMediaElementsAVK_stub);
+	m_pModel->registerPlayPositionCbAVK(this, updatePlayPositionAVK_stub);
+	m_pModel->registerStreamingStartedCbAVK(this, sendAVKStreamingStarted_stub);
+	m_pModel->registerStreamingStoppedCbAVK(this, sendAVKStreamingStopped_stub);
+	// Phone : HS
+	m_pModel->registerOpenFailedCbHS(this, sendHSOpenFailed_stub);
+	m_pModel->registerConnectionStatusCbHS(this, sendHSConnectionStatus_stub);
+	m_pModel->registerCallStatusCbHS(this, sendHSCallStatus_stub);
+	m_pModel->registerBatteryStatusCbHS(this, sendHSBatteryStatus_stub);
+	m_pModel->registerCallOperNameCbHS(this, sendHSCallOperName_stub);
+	m_pModel->registerAudioMuteStatusCbHS(this, sendHSAudioMuteStatus_stub);
+	m_pModel->registerIncommingCallNumberCbHS(this,sendHSIncommingCallNumber_stub);
+	// Phone : PBC (phone book)
+	m_pModel->registerOpenFailedCbPBC(this, sendPBCOpenFailed_stub);
+	m_pModel->registerConnectionStatusCbPBC(this, sendPBCConnectionStatus_stub);
+	m_pModel->registerNotifyGetPhonebookCbPBC(this, sendNotifyGetPhonebook_stub);
+	// Phone : MCE (message)
+	m_pModel->registerOpenFailedCbMCE(this, sendMCEOpenFailed_stub);
+	m_pModel->registerConnectionStatusCbMCE(this, sendMCEConnectionStatus_stub);
+	m_pModel->registerNotifyGetMessageCbMCE(this, sendNotifyGetMessageMCE_stub);
 }
 
 void* NxBTService::autoConnectThread(void* args)
 {
-	NXLOGI("#######################################");
-    NxBTService* self = (NxBTService*)args;
+	NxBTService* self = (NxBTService*)args;
 
-    NXLOGD(">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>");
-    NXLOGD(__FUNCTION__);
-    char buffer[1024];
-    sprintf(buffer, "is autoconnection ? %s\nAVK is connected ? %s\nHS is connected ? %s\n", m_pModel->isAutoConnection() ? "ON" : "OFF", self->m_AVK.connection.on ? "ON" : "OFF", self->m_HS.hs.on ? "ON" : "OFF");
-    NXLOGD(buffer);
-    while (m_pModel->isAutoConnection() && !(self->m_AVK.connection.on || self->m_HS.hs.on)) {
-        NXLOGD("try to auto connection!");
-        m_pModel->autoConnection(true);
-//        pthread_yield();
-        usleep(1000000);
-    }
-    NXLOGD("<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<");
+	NXLOGD(">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>");
+	NXLOGD(__FUNCTION__);
+	char buffer[1024];
+	sprintf(buffer, "is autoconnection ? %s\nAVK is connected ? %s\nHS is connected ? %s\n", m_pModel->isAutoConnection() ? "ON" : "OFF", self->m_AVK.connection.on ? "ON" : "OFF", self->m_HS.hs.on ? "ON" : "OFF");
+	NXLOGD(buffer);
+	while (m_pModel->isAutoConnection() && !(self->m_AVK.connection.on || self->m_HS.hs.on)) {
+		NXLOGD("Try to auto connection!");
+		m_pModel->autoConnection(true);
+//		pthread_yield();
+		usleep(1000000);
+	}
+	NXLOGD("<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<");
 
-    return NULL;
+	return (void *)0;
 }
 
 bool NxBTService::runCommand(const char *command)
-{	
-    std::vector<std::string> tokens = createTokensFromCommand(command);
+{
+	std::vector<std::string> tokens = createTokensFromCommand(command);
 	NXLOGI("[%s] CMD = %s", __FUNCTION__, command);
-    size_t count = tokens.size();
+	size_t count = tokens.size();
 
 	if (count != 2 || !m_bInitialized) {
 		goto loop_finish;
-    }
+	}
 
-    if (tokens[CommandType_Service] == "MGT") {
+	if (tokens[CommandType_Service] == "MGT") {
 		if (tokens[CommandType_Command].find("PING") == 0) {
-
 			return ping(tokens[CommandType_Service], tokens[CommandType_Command]);
-
 		} else if (tokens[CommandType_Command].find("ENABLE AUTO CONNECTION") == 0) {
-
 			return setEnableAutoConnection(tokens[CommandType_Service], tokens[CommandType_Command]);
-
-        } else if (tokens[CommandType_Command].find("AUTO CONNECTION") == 0) {
-
+		} else if (tokens[CommandType_Command].find("AUTO CONNECTION") == 0) {
 			return isEnabledAutoConnection(tokens[CommandType_Service], tokens[CommandType_Command]);
-
-        } else if (tokens[CommandType_Command].find("ACCEPT PAIRING") == 0) {
-
+		} else if (tokens[CommandType_Command].find("ACCEPT PAIRING") == 0) {
 			return acceptPairing(tokens[CommandType_Service], tokens[CommandType_Command]);
-
-        } else if (tokens[CommandType_Command].find("REJECT PAIRING") == 0) {
-
+		} else if (tokens[CommandType_Command].find("REJECT PAIRING") == 0) {
 			return rejectPairing(tokens[CommandType_Service], tokens[CommandType_Command]);
-
-        } else if (tokens[CommandType_Command].find("UNPAIR DEVICE ALL") == 0) {
-
+		} else if (tokens[CommandType_Command].find("UNPAIR DEVICE ALL") == 0) {
 			return unpairAll(tokens[CommandType_Service], tokens[CommandType_Command]);
-
-        } else if (tokens[CommandType_Command].find("UNPAIR DEVICE") == 0) {
-
+		} else if (tokens[CommandType_Command].find("UNPAIR DEVICE") == 0) {
 			return unpair(tokens[CommandType_Service], tokens[CommandType_Command]);
-
-        } else if (tokens[CommandType_Command].find("ENABLE AUTO PAIRING") == 0) {
-
+		} else if (tokens[CommandType_Command].find("ENABLE AUTO PAIRING") == 0) {
 			return setEnableAutoPairing(tokens[CommandType_Service], tokens[CommandType_Command]);
-
-        } else if (tokens[CommandType_Command].find("AUTO PAIRING") == 0) {
-
+		} else if (tokens[CommandType_Command].find("AUTO PAIRING") == 0) {
 			return isEnabledAutoPairing(tokens[CommandType_Service], tokens[CommandType_Command]);
-
-        } else if (tokens[CommandType_Command].find("LOCAL DEVICE NAME") == 0) {
-
+		} else if (tokens[CommandType_Command].find("LOCAL DEVICE NAME") == 0) {
 			return localDeviceName(tokens[CommandType_Service], tokens[CommandType_Command]);
-
-        } else if (tokens[CommandType_Command].find("LOCAL DEVICE ADDRESS") == 0) {
-
+		} else if (tokens[CommandType_Command].find("LOCAL DEVICE ADDRESS") == 0) {
 			return localDeviceAddress(tokens[CommandType_Service], tokens[CommandType_Command]);
-
-        } else if (tokens[CommandType_Command].find("RENAME LOCAL DEVICE") == 0) {
-
+		} else if (tokens[CommandType_Command].find("RENAME LOCAL DEVICE") == 0) {
 			return renameLocalDevice(tokens[CommandType_Service], tokens[CommandType_Command]);
-
-        } else if (tokens[CommandType_Command].find("PAIRED DEVICE COUNT") == 0) {
-
+		} else if (tokens[CommandType_Command].find("PAIRED DEVICE COUNT") == 0) {
 			return countOfPairedDevice(tokens[CommandType_Service], tokens[CommandType_Command]);
-
-        } else if (tokens[CommandType_Command].find("PAIRED DEVICE INFO ALL LIST") == 0) {
-
+		} else if (tokens[CommandType_Command].find("PAIRED DEVICE INFO ALL LIST") == 0) {
 			return infoListOfPairedDeviceAll(tokens[CommandType_Service], tokens[CommandType_Command]);
-
-        } else if (tokens[CommandType_Command].find("PAIRED DEVICE INFO BY INDEX") == 0) {
-
+		} else if (tokens[CommandType_Command].find("PAIRED DEVICE INFO BY INDEX") == 0) {
 			return infoOfPairedDeviceByIndex(tokens[CommandType_Service], tokens[CommandType_Command]);
-
-        } else if (tokens[CommandType_Command].find("PAIRED DEVICE NAME BY INDEX") == 0) {
-
+		} else if (tokens[CommandType_Command].find("PAIRED DEVICE NAME BY INDEX") == 0) {
 			return nameOfPairedDeviceByIndex(tokens[CommandType_Service], tokens[CommandType_Command]);
-
-        } else if (tokens[CommandType_Command].find("PAIRED DEVICE ADDRESS BY INDEX") == 0) {
-
+		} else if (tokens[CommandType_Command].find("PAIRED DEVICE ADDRESS BY INDEX") == 0) {
 			return addressOfPairedDeviceByIndex(tokens[CommandType_Service], tokens[CommandType_Command]);
-
 		}
-
-    } else if (tokens[0] == "AVK") {
-
-        if (tokens[CommandType_Command].find("IS CONNECTED") == 0) {
-
+	} else if (tokens[0] == "AVK") {
+		if (tokens[CommandType_Command].find("IS CONNECTED") == 0) {
 			return isConnectedToAVK(tokens[CommandType_Service], tokens[CommandType_Command]);
-
 		} else if (tokens[CommandType_Command].find("CONNECTED DEVICE INDEX") == 0) {
-
 			return indexOfConnectedDeviceToAVK(tokens[CommandType_Service], tokens[CommandType_Command]);
-
 		} else if (tokens[CommandType_Command].find("CONNECT") == 0) {
-
 			return connectToAVK(tokens[CommandType_Service], tokens[CommandType_Command]);
-
-        } else if (tokens[CommandType_Command].find("DISCONNECT") == 0) {
-
+		} else if (tokens[CommandType_Command].find("DISCONNECT") == 0) {
 			return disconnectToAVK(tokens[CommandType_Service], tokens[CommandType_Command]);
-
 		} else if (tokens[CommandType_Command].find("ADDRESS CONNECTED DEVICE BY INDEX") == 0) {
-
 			return addressOfConnectedDeviceToAVK(tokens[CommandType_Service], tokens[CommandType_Command]);
-
-        } else if (tokens[CommandType_Command].find("PLAY START") == 0) {
-
+		} else if (tokens[CommandType_Command].find("PLAY START") == 0) {
 			return playStartAVK(tokens[CommandType_Service], tokens[CommandType_Command]);
-
-        } else if (tokens[CommandType_Command].find("PLAY STOP") == 0) {
-
+		} else if (tokens[CommandType_Command].find("PLAY STOP") == 0) {
 			return playStopAVK(tokens[CommandType_Service], tokens[CommandType_Command]);
-
-        } else if (tokens[CommandType_Command].find("PLAY PAUSE") == 0) {
-
+		} else if (tokens[CommandType_Command].find("PLAY PAUSE") == 0) {
 			return playPauseAVK(tokens[CommandType_Service], tokens[CommandType_Command]);
-
-        } else if (tokens[CommandType_Command].find("PLAY NEXT") == 0) {
-
+		} else if (tokens[CommandType_Command].find("PLAY NEXT") == 0) {
 			return playNextAVK(tokens[CommandType_Service], tokens[CommandType_Command]);
-
-        } else if (tokens[CommandType_Command].find("PLAY PREV") == 0) {
-
+		} else if (tokens[CommandType_Command].find("PLAY PREV") == 0) {
 			return playPrevAVK(tokens[CommandType_Service], tokens[CommandType_Command]);
-
-        } else if (tokens[CommandType_Command].find("PLAY STATUS") == 0) {
-
+		} else if (tokens[CommandType_Command].find("PLAY STATUS") == 0) {
 			return playStatusAVK(tokens[CommandType_Service], tokens[CommandType_Command]);
-
-        } else if (tokens[CommandType_Command].find("PLAY INFO") == 0) {
-
+		} else if (tokens[CommandType_Command].find("PLAY INFO") == 0) {
 			return playInfoAVK(tokens[CommandType_Service], tokens[CommandType_Command]);
-
-        } else if (tokens[CommandType_Command].find("CLOSE AUDIO") == 0) {
-
+		} else if (tokens[CommandType_Command].find("CLOSE AUDIO") == 0) {
 			return closeAudioAVK(tokens[CommandType_Service], tokens[CommandType_Command]);
-
-        } else if (tokens[CommandType_Command].find("OPEN AUDIO") == 0) {
-
+		} else if (tokens[CommandType_Command].find("OPEN AUDIO") == 0) {
 			return openAudioAVK(tokens[CommandType_Service], tokens[CommandType_Command]);
-
-        }
-
-    } else if (tokens[CommandType_Service] == "HS") {
-
-		//----------------------------------------------------------------------
-		// CONNECTION commands
-		if (tokens[CommandType_Command].find("CONNECTED DEVICE INDEX") == 0)
-		{
+		}
+	} else if (tokens[CommandType_Service] == "HS") {
+		if (tokens[CommandType_Command].find("CONNECTED DEVICE INDEX") == 0) {
 			return indexOfConnectedDeviceToHS(tokens[CommandType_Service], tokens[CommandType_Command]);
-		}
-		if (tokens[CommandType_Command].find("CONNECT") == 0)
-		{
+		} else if (tokens[CommandType_Command].find("CONNECT") == 0) {
 			return connectToHS(tokens[CommandType_Service], tokens[CommandType_Command]);
-		}
-		else if (tokens[CommandType_Command].find("DISCONNECT") == 0)
-		{
+		} else if (tokens[CommandType_Command].find("DISCONNECT") == 0) {
 			return disconnectFromHS(tokens[CommandType_Service], tokens[CommandType_Command]);
-		}
-		else if (tokens[CommandType_Command].find("IS CONNECTED") == 0)
-		{
+		} else if (tokens[CommandType_Command].find("IS CONNECTED") == 0) {
 			return isConnectedToHS(tokens[CommandType_Service], tokens[CommandType_Command]);
-		}
-		//----------------------------------------------------------------------
-		// CALL commands
-		else if (tokens[CommandType_Command].find("DIAL") == 0)
-		{
+		} else if (tokens[CommandType_Command].find("DIAL") == 0) {
 			return dialPhoneNumber(tokens[CommandType_Service], tokens[CommandType_Command]);
-		}
-		else if (tokens[CommandType_Command].find("REDIAL") == 0)
-		{
+		} else if (tokens[CommandType_Command].find("REDIAL") == 0) {
 			return reDialPhoneNumber(tokens[CommandType_Service], tokens[CommandType_Command]);
-		}
-		else if (tokens[CommandType_Command].find("PICK UP CALL") == 0)
-		{
+		} else if (tokens[CommandType_Command].find("PICK UP CALL") == 0) {
 			return pickUpCall(tokens[CommandType_Service], tokens[CommandType_Command]);
-		}
-		else if (tokens[CommandType_Command].find("HANG UP CALL") == 0)
-		{
+		} else if (tokens[CommandType_Command].find("HANG UP CALL") == 0) {
 			return hangUpCall(tokens[CommandType_Service], tokens[CommandType_Command]);
-		}
-		//----------------------------------------------------------------------
-		// AUDIO/MICROPHONE commands
-		else if (tokens[CommandType_Command].find("MICROPHONE MUTE") == 0)
-		{
+		} else if (tokens[CommandType_Command].find("MICROPHONE MUTE") == 0) {
 			return muteMicrophoneHS(tokens[CommandType_Service], tokens[CommandType_Command]);
-		}
-		else if (tokens[CommandType_Command].find("AUDIO OPEN") == 0)
-		{
+		} else if (tokens[CommandType_Command].find("AUDIO OPEN") == 0) {
 			return openAudioHS(tokens[CommandType_Service], tokens[CommandType_Command]);
-		}
-		else if (tokens[CommandType_Command].find("AUDIO CLOSE") == 0)
-		{
+		} else if (tokens[CommandType_Command].find("AUDIO CLOSE") == 0) {
 			return closeAudioHS(tokens[CommandType_Service], tokens[CommandType_Command]);
 		}
-
-    } else if (tokens[CommandType_Service] == "MCE") {
-
-        if (tokens[CommandType_Command].find("IS CONNECTED") == 0) {
-
+	} else if (tokens[CommandType_Service] == "MCE") {
+		if (tokens[CommandType_Command].find("IS CONNECTED") == 0) {
 			return isConnectedToMCE(tokens[CommandType_Service], tokens[CommandType_Command]);
-
-        } else if (tokens[CommandType_Command].find("CONNECT") == 0) {
-
+		} else if (tokens[CommandType_Command].find("CONNECT") == 0) {
 			return connectToMCE(tokens[CommandType_Service], tokens[CommandType_Command]);
-
-        } else if (tokens[CommandType_Command].find("DISCONNECT") == 0) {
-
+		} else if (tokens[CommandType_Command].find("DISCONNECT") == 0) {
 			return disconnectFromMCE(tokens[CommandType_Service], tokens[CommandType_Command]);
-
-        } else if (tokens[CommandType_Command].find("DOWNLOAD SMS MESSAGE") == 0) {
-
+		} else if (tokens[CommandType_Command].find("DOWNLOAD SMS MESSAGE") == 0) {
 			return downloadSMSMessage(tokens[CommandType_Service], tokens[CommandType_Command]);
-
-        }
-
-    } else if (tokens[CommandType_Service] == "PBC") {
-
-        if (tokens[CommandType_Command].find("IS CONNECTED") == 0) {
-
+		}
+	} else if (tokens[CommandType_Service] == "PBC") {
+		if (tokens[CommandType_Command].find("IS CONNECTED") == 0) {
 			return isConnectedToPBC(tokens[CommandType_Service], tokens[CommandType_Command]);
-
-        } else if (tokens[CommandType_Command].find("CONNECT") == 0) {
-
+		} else if (tokens[CommandType_Command].find("CONNECT") == 0) {
 			return connectToPBC(tokens[CommandType_Service], tokens[CommandType_Command]);
-
-        } else if (tokens[CommandType_Command].find("DISCONNECT") == 0) {
-
+		} else if (tokens[CommandType_Command].find("DISCONNECT") == 0) {
 			return disconnectFromPBC(tokens[CommandType_Service], tokens[CommandType_Command]);
-
-        } else if (tokens[CommandType_Command].find("DOWNLOAD PHONEBOOK") == 0) {
-
+		} else if (tokens[CommandType_Command].find("DOWNLOAD PHONEBOOK") == 0) {
 			return downloadPhoneBook(tokens[CommandType_Service], tokens[CommandType_Command]);
-
-        } else if (tokens[CommandType_Command].find("DOWNLOAD CALL LOG") == 0) {
-
+		} else if (tokens[CommandType_Command].find("DOWNLOAD CALL LOG") == 0) {
 			return  downloadCallHistory(tokens[CommandType_Service], tokens[CommandType_Command]);
-
-        }
+		}
 	}
 
 loop_finish:
 	// if command is mismatch, run "NG" reply command.
 	Broadcast(MakeReplyCommand(false, tokens).c_str());
+
 	return false;
 }
 
 std::vector<std::string> NxBTService::createTokensFromCommand(const char* command)
 {
-    std::string target = (std::string)command;
-    std::vector<std::string> tokens;
-    std::string token;
-    int stx, etx;
+	std::string target = (std::string)command;
+	std::vector<std::string> tokens;
+	std::string token;
+	int stx, etx;
 
-    stx = target.find("$");
-    if (stx < 0) {
+	stx = target.find("$");
+	if (stx < 0) {
 #if __dmesg__
-        fprintf(stderr, "[ERROR]: STX no detect!\n");
+		fprintf(stderr, "[ERROR]: STX no detect!\n");
 #endif
-        goto error_occur;
-    }
+		goto error_occur;
+	}
 
-    etx = target.find("\n", stx);
-    if (etx < 0) {
+	etx = target.find("\n", stx);
+	if (etx < 0) {
 #if __dmesg__
-        fprintf(stderr, "[ERROR]: ETX no detect!\n");
+		fprintf(stderr, "[ERROR]: ETX no detect!\n");
 #endif
-        goto error_occur;
-    }
+		goto error_occur;
+	}
 
-    for (int i = stx+1; i < etx; i++) {
-        if (target[i] == '#') {
-            tokens.push_back(token);
-            token.clear();
-            continue;
-        }
+	for (int i = stx+1; i < etx; i++) {
+		if (target[i] == '#') {
+			tokens.push_back(token);
+			token.clear();
+			continue;
+		}
 
-        token += target[i];
-    }
+		token += target[i];
+	}
 
-    if (token.length()) {
-        tokens.push_back(token);
-    }
+	if (token.length()) {
+		tokens.push_back(token);
+	}
 
 error_occur:
-    return tokens;
+	return tokens;
 }
-
-
 
 std::string NxBTService::bdAddrToString(char* bd_addr, int len, char seperator)
 {
-    char buffer[BUFFER_SIZE] = {0,};
+	char buffer[BUFFER_SIZE] = {0,};
 
-    if (len < DEVICE_ADDRESS_SIZE)
-        return std::string();
+	if (len < DEVICE_ADDRESS_SIZE) {
+		return std::string();
+	}
 
-    sprintf(buffer, "%02x%c%02x%c%02x%c%02x%c%02x%c%02x", bd_addr[0] & 0xFF, seperator, bd_addr[1] & 0xFF, seperator, bd_addr[2] & 0xFF, seperator, bd_addr[3] & 0xFF, seperator, bd_addr[4] & 0xFF, seperator, bd_addr[5] & 0xFF);
+	sprintf(buffer, "%02x%c%02x%c%02x%c%02x%c%02x%c%02x", bd_addr[0] & 0xFF, seperator, bd_addr[1] & 0xFF, seperator, bd_addr[2] & 0xFF, seperator, bd_addr[3] & 0xFF, seperator, bd_addr[4] & 0xFF, seperator, bd_addr[5] & 0xFF);
 
-    return (std::string)buffer;
+	return (std::string)buffer;
 }
 
 //-----------------------------------------------------------------------
@@ -1229,10 +1063,11 @@ bool NxBTService::setEnableAutoConnection(std::string service, std::string comma
 	std::string argument = findArgument(&command);
 	bool result = false;
 
-	if (argument == "ON")
+	if (argument == "ON") {
 		result = (m_pModel->enableAutoConnection(true) == RET_OK);
-	else if (argument == "OFF")
+	} else if (argument == "OFF") {
 		result = (m_pModel->enableAutoConnection(false) == RET_OK);
+	}
 
 	reply.push_back(service);
 	reply.push_back(command);
@@ -1272,7 +1107,7 @@ bool NxBTService::setEnableAutoPairing(std::string service, std::string command)
 		result = (m_pModel->enableAutoPairing(true) == RET_OK);
 
 	} else if (argument == "OFF") {
-				fprintf(stderr, "\n\n\n %s = %d \n\n\n", command.c_str(), m_pModel->enableAutoPairing(false));
+		fprintf(stderr, "\n\n\n %s = %d \n\n\n", command.c_str(), m_pModel->enableAutoPairing(false));
 		result = (m_pModel->enableAutoPairing(false) == RET_OK);
 	}
 
@@ -1339,8 +1174,9 @@ bool NxBTService::unpairAll(std::string service, std::string command)
 	bool result = true;
 
 	for (int32_t i = m_pModel->getPairedDevCount()-1; i >= 0; --i) {
-		if (0 == m_pModel->unpairDevice(i))
+		if (0 == m_pModel->unpairDevice(i)) {
 			result = false;
+		}
 	}
 
 	reply.push_back(service);
@@ -1357,7 +1193,7 @@ bool NxBTService::unpair(std::string service, std::string command)
 
 	std::vector<std::string> reply;
 	std::string argument = findArgument(&command);
-	bool result = isDigit(argument) && ( m_pModel->unpairDevice( atoi(argument.c_str()) ) == RET_OK );
+	bool result = isDigit(argument) && (m_pModel->unpairDevice(atoi(argument.c_str())) == RET_OK);
 
 	reply.push_back(service);
 	reply.push_back(command);
@@ -1402,7 +1238,7 @@ bool NxBTService::renameLocalDevice(std::string service, std::string command)
 	std::vector<std::string> reply;
 	std::string argument = findArgument(&command);
 
-	bool result = ( !argument.empty() && m_pModel->renameLocalDevice(argument.c_str()) == 0 );
+	bool result = (!argument.empty() && m_pModel->renameLocalDevice(argument.c_str()) == 0);
 
 	reply.push_back(service);
 	reply.push_back(command);
@@ -1441,17 +1277,18 @@ bool NxBTService::infoListOfPairedDeviceAll(std::string service, std::string com
 	reply.push_back(command);
 
 	for (int32_t i = 0; i < count; i++) {
-		if (0 > m_pModel->getPairedDevInfoByIndex(i, name, bd_addr))
+		if (0 > m_pModel->getPairedDevInfoByIndex(i, name, bd_addr)) {
 			continue;
+		}
 
 		temp = bdAddrToString(bd_addr, DEVICE_ADDRESS_SIZE, ':');
 
 		NXLOGI("[%s] %s", __FUNCTION__, temp.c_str());
 
-		avk_connected = ( temp == bdAddrToString(m_AVK.connection.bd_addr, DEVICE_ADDRESS_SIZE, ':') && m_AVK.connection.on );
-		hs_connected = ( temp == bdAddrToString(m_HS.hs.bd_addr, DEVICE_ADDRESS_SIZE, ':') && m_HS.hs.on );
+		avk_connected = (temp == bdAddrToString(m_AVK.connection.bd_addr, DEVICE_ADDRESS_SIZE, ':') && m_AVK.connection.on);
+		hs_connected = (temp == bdAddrToString(m_HS.hs.bd_addr, DEVICE_ADDRESS_SIZE, ':') && m_HS.hs.on);
 
-		temp = "<" + (std::string)name + "," + bdAddrToString(bd_addr, DEVICE_ADDRESS_SIZE, ':') + "," + (avk_connected ? "CONNECTED" : "DISCONNECTED") + "," + (hs_connected ? "CONNECTED" : "DISCONNECTED") +">";
+		temp = "<" + (std::string)name + "," + bdAddrToString(bd_addr, DEVICE_ADDRESS_SIZE, ':') + "," + (avk_connected ? "CONNECTED" : "DISCONNECTED") + "," + (hs_connected ? "CONNECTED" : "DISCONNECTED") + ">";
 		reply.push_back(temp);
 	}
 
@@ -1467,7 +1304,7 @@ bool NxBTService::infoOfPairedDeviceByIndex(std::string service, std::string com
 	std::string temp;
 	char name[DEVICE_NAME_SIZE] = {0,};
 	char bd_addr[DEVICE_ADDRESS_SIZE] = {0,};
-	bool result = ( isDigit(argument) && m_pModel->getPairedDevInfoByIndex( atoi(argument.c_str()), name, bd_addr ) == RET_OK);
+	bool result = (isDigit(argument) && m_pModel->getPairedDevInfoByIndex(atoi(argument.c_str()), name, bd_addr) == RET_OK);
 
 	if (result) {
 		temp = "<" + (std::string)name + "," + bdAddrToString(bd_addr, DEVICE_ADDRESS_SIZE, ':') + ">";
@@ -1487,7 +1324,7 @@ bool NxBTService::nameOfPairedDeviceByIndex(std::string service, std::string com
 	std::vector<std::string> reply;
 	std::string argument = findArgument(&command);
 	char name[DEVICE_NAME_SIZE] = {0,};
-	bool result = ( isDigit(argument) && m_pModel->getPairedDevNameByIndex( atoi(argument.c_str()), name ) == RET_OK );
+	bool result = (isDigit(argument) && m_pModel->getPairedDevNameByIndex( atoi(argument.c_str()), name) == RET_OK);
 
 	reply.push_back(service);
 	reply.push_back(command);
@@ -1506,7 +1343,7 @@ bool NxBTService::addressOfPairedDeviceByIndex(std::string service, std::string 
 	std::vector<std::string> reply;
 	std::string argument = findArgument(&command);
 	char bd_addr[DEVICE_ADDRESS_SIZE] = {0,};
-	bool result = ( isDigit(argument) && m_pModel->getPairedDevAddrByIndex( atoi(argument.c_str()), bd_addr ) == RET_OK );
+	bool result = (isDigit(argument) && m_pModel->getPairedDevAddrByIndex(atoi(argument.c_str()), bd_addr) == RET_OK);
 
 	reply.push_back(service);
 	reply.push_back(command);
@@ -1526,7 +1363,7 @@ bool NxBTService::connectToAVK(std::string service, std::string command)
 	std::vector<std::string> reply;
 	std::string argument = findArgument(&command);
 	int32_t index = atoi(argument.c_str());
-	bool result = ( m_pModel->isConnectedAVK() || ( isDigit(argument) && m_pModel->connectToAVK(index) == RET_OK ) );
+	bool result = (m_pModel->isConnectedAVK() || (isDigit(argument) && m_pModel->connectToAVK(index) == RET_OK));
 
 	if (result) {
 		m_AVK.connection.on = true;
@@ -1549,8 +1386,7 @@ bool NxBTService::disconnectToAVK(std::string service, std::string command)
 	bool already_disconnected = !m_pModel->isConnectedAVK();
 	bool result = true;
 
-	if ( ! already_disconnected )
-	{
+	if (!already_disconnected) {
 		m_pModel->getConnectionDevAddrAVK(AVK_CONNECTED_INDEX, bd_addr);
 		result = (m_pModel->disconnectFromAVK(bd_addr) == RET_OK);
 	}
@@ -1558,8 +1394,7 @@ bool NxBTService::disconnectToAVK(std::string service, std::string command)
 	reply.push_back(service);
 	reply.push_back(command);
 
-	if (result)
-	{
+	if (result) {
 		struct connect_state_t t;
 		t.on = false;
 		t.index = -1;
@@ -1568,8 +1403,7 @@ bool NxBTService::disconnectToAVK(std::string service, std::string command)
 
 		updateAVKConnectionState(t);
 
-		if ( ! already_disconnected )
-		{
+		if (!already_disconnected) {
 			reply.push_back(bdAddrToString(bd_addr, DEVICE_ADDRESS_SIZE, ':'));
 		}
 	}
@@ -1661,8 +1495,9 @@ bool NxBTService::playStartAVK(std::string service/*= "AVK"*/, std::string comma
 
 	result = !(m_pModel->getConnectionDevAddrAVK(AVK_CONNECTED_INDEX, bd_addr) < 0 || m_pModel->playStartAVK(bd_addr) < 0);
 
-	if (result)
+	if (result) {
 		reply.push_back(bdAddrToString(bd_addr, DEVICE_ADDRESS_SIZE, ':'));
+	}
 
 	Broadcast(MakeReplyCommand(result, reply).c_str());
 
@@ -1680,10 +1515,12 @@ bool NxBTService::playStopAVK(std::string service/*= "AVK"*/, std::string comman
 
 	result = !(m_pModel->getConnectionDevAddrAVK(AVK_CONNECTED_INDEX, bd_addr) < 0 || m_pModel->playStopAVK(bd_addr) < 0);
 
-	if (result)
+	if (result) {
 		reply.push_back(bdAddrToString(bd_addr, DEVICE_ADDRESS_SIZE, ':'));
+	}
 
 	Broadcast(MakeReplyCommand(result, reply).c_str());
+
 	return result;
 }
 
@@ -1698,10 +1535,12 @@ bool NxBTService::playPauseAVK(std::string service/*= "AVK"*/, std::string comma
 
 	result = !(m_pModel->getConnectionDevAddrAVK(AVK_CONNECTED_INDEX, bd_addr) < 0 || m_pModel->playPauseAVK(bd_addr) < 0);
 
-	if (result)
+	if (result) {
 		reply.push_back(bdAddrToString(bd_addr, DEVICE_ADDRESS_SIZE, ':'));
+	}
 
 	Broadcast(MakeReplyCommand(result, reply).c_str());
+
 	return result;
 }
 
@@ -1716,10 +1555,12 @@ bool NxBTService::playPrevAVK(std::string service/*= "AVK"*/, std::string comman
 
 	result = !(m_pModel->getConnectionDevAddrAVK(AVK_CONNECTED_INDEX, bd_addr) < 0 || m_pModel->playPrevAVK(bd_addr) < 0);
 
-	if (result)
+	if (result) {
 		reply.push_back(bdAddrToString(bd_addr, DEVICE_ADDRESS_SIZE, ':'));
+	}
 
 	Broadcast(MakeReplyCommand(result, reply).c_str());
+
 	return result;
 }
 
@@ -1734,10 +1575,12 @@ bool NxBTService::playNextAVK(std::string service/*= "AVK"*/, std::string comman
 
 	result = !(m_pModel->getConnectionDevAddrAVK(AVK_CONNECTED_INDEX, bd_addr) < 0 || m_pModel->playNextAVK(bd_addr) < 0);
 
-	if (result)
+	if (result) {
 		reply.push_back(bdAddrToString(bd_addr, DEVICE_ADDRESS_SIZE, ':'));
+	}
 
 	Broadcast(MakeReplyCommand(result, reply).c_str());
+
 	return result;
 }
 
@@ -1750,20 +1593,19 @@ bool NxBTService::playStatusAVK(std::string service/*= "AVK"*/, std::string comm
 	reply.push_back(command);
 
 	switch (m_AVK.status) {
-	case PlayStatus_Stopped: // 0x00
-		reply.push_back("STOPPED");
-		break;
-
-	case PlayStatus_Playing: // 0x01
-		reply.push_back("PLAYING");
-		break;
-
-	case PlayStatus_Paused: // 0x02
-		reply.push_back("PAUSED");
-		break;
+		case PlayStatus_Stopped: // 0x00
+			reply.push_back("STOPPED");
+			break;
+		case PlayStatus_Playing: // 0x01
+			reply.push_back("PLAYING");
+			break;
+		case PlayStatus_Paused: // 0x02
+			reply.push_back("PAUSED");
+			break;
 	}
 
 	Broadcast(MakeReplyCommand(result, reply).c_str());
+
 	return result;
 }
 
@@ -1783,6 +1625,7 @@ bool NxBTService::playInfoAVK(std::string service/*= "AVK"*/, std::string comman
 	reply.push_back(std::to_string(m_AVK.info.position));
 
 	Broadcast(MakeReplyCommand(result, reply).c_str());
+
 	return result;
 }
 
@@ -1797,6 +1640,7 @@ bool NxBTService::openAudioAVK(std::string service/*= "AVK"*/, std::string comma
 	result = (m_pModel->isAudioStatusAVK() || m_pModel->openAudioAVK() == RET_OK);
 
 	Broadcast(MakeReplyCommand(result, reply).c_str());
+
 	return result;
 }
 
@@ -1808,10 +1652,12 @@ bool NxBTService::closeAudioAVK(std::string service/*= "AVK"*/, std::string comm
 	reply.push_back(service);
 	reply.push_back(command);
 
-	if (m_pModel->isAudioStatusAVK())
+	if (m_pModel->isAudioStatusAVK()) {
 		m_pModel->closeAudioAVK();
+	}
 
 	Broadcast(MakeReplyCommand(result, reply).c_str());
+
 	return result;
 }
 
@@ -1948,12 +1794,13 @@ bool NxBTService::muteMicrophoneHS(std::string service, std::string command)
 	std::string argument = findArgument(&command);
 	bool result = true;
 
-	if (argument == "ON")
+	if (argument == "ON") {
 		m_pModel->muteMicrophoneHS(true);
-	else if (argument == "OFF")
+	} else if (argument == "OFF") {
 		m_pModel->muteMicrophoneHS(false);
-	else
+	} else {
 		result = false;
+	}
 
 	reply.push_back(service);
 	reply.push_back(command);
@@ -1966,7 +1813,7 @@ bool NxBTService::muteMicrophoneHS(std::string service, std::string command)
 bool NxBTService::openAudioHS(std::string service, std::string command)
 {
 	std::vector<std::string> reply;
-	bool result = ( m_pModel->isOpenedAudioHS() || (m_pModel->openAudioHS() == RET_OK) );
+	bool result = (m_pModel->isOpenedAudioHS() || (m_pModel->openAudioHS() == RET_OK));
 
 	reply.push_back(service);
 	reply.push_back(command);
@@ -1979,7 +1826,7 @@ bool NxBTService::openAudioHS(std::string service, std::string command)
 bool NxBTService::closeAudioHS(std::string service, std::string command)
 {
 	std::vector<std::string> reply;
-	bool result = ( !m_pModel->isOpenedAudioHS() || m_pModel->closeAudioHS() == RET_OK);
+	bool result = (!m_pModel->isOpenedAudioHS() || m_pModel->closeAudioHS() == RET_OK);
 
 	reply.push_back(service);
 	reply.push_back(command);
@@ -2148,7 +1995,6 @@ bool NxBTService::isConnectedToPBC(std::string service, std::string command)
 
 	Broadcast(MakeReplyCommand(result, reply).c_str());
 
-
 	return result;
 }
 
@@ -2188,12 +2034,14 @@ bool NxBTService::downloadCallHistory(string service, string command)
 // Utility functions
 bool NxBTService::isDigit(std::string text)
 {
-	if (text.empty())
+	if (text.empty()) {
 		return false;
+	}
 
 	for (size_t i = 0; i < text.length(); i++) {
-		if (text[i] < '0' || '9' < text[i])
+		if (text[i] < '0' || '9' < text[i]) {
 			return false;
+		}
 	}
 
 	return true;
@@ -2218,9 +2066,9 @@ std::string NxBTService::MakeReplyCommand(bool ok, std::vector<std::string> repl
 std::string NxBTService::findArgument(std::string* command)
 {
 	size_t pos = command->rfind(" ");
-	if (pos == std::string::npos)
+	if (pos == std::string::npos) {
 		return std::string();
-
+	}
 	++pos;
 
 	return command->substr(pos, command->length()-pos);
@@ -2284,173 +2132,190 @@ bool NxBTService::isInitialized()
 
 void NxBTService::setInitialized(bool state)
 {
-	if (m_bInitialized) {
-		return;
+	if (!m_bInitialized) {
+		m_bInitialized = state;
+		if (m_bInitialized) {
+			// Set ALSA device names
+			m_pModel->setALSADevName(NX_ALSA_DEV_NAME_P, NX_ALSA_DEV_NAME_C, NX_ALSA_BT_DEV_NAME_P, NX_ALSA_BT_DEV_NAME_C, true);
+
+			// Auto connection
+			m_pModel->autoConnection(m_pModel->isAutoConnection());
+
+			ping("MGT", "PING");
+		}
 	}
-
-	m_bInitialized = state;
-	if (m_bInitialized) {
-		// Set ALSA device names
-		m_pModel->setALSADevName(NX_ALSA_DEV_NAME_P, NX_ALSA_DEV_NAME_C, NX_ALSA_BT_DEV_NAME_P, NX_ALSA_BT_DEV_NAME_C, true);
-
-		// Auto connection
-		m_pModel->autoConnection(m_pModel->isAutoConnection());
-
-		ping("MGT", "PING");
-	}
-
 }
-
-
-
-////
 
 void NxBTService::RequestAudioFocus(FocusType eType, FocusPriority ePriority, bool *bOk)
 {
 	NxBTService *p = NxBTService::GetInstance();
 
-	if (eType == FocusType_Get)
-	{
+	if (eType == FocusType_Get) {
 		FocusPriority eCurrPriority = g_calling_mode_on ? FocusPriority_High : FocusPriority_Normal;
 
-		if (eCurrPriority > ePriority)
+		if (eCurrPriority > ePriority) {
 			*bOk = false;
-		else
+		} else {
 			*bOk = true;
+		}
 
-		if (*bOk)
-		{
+		if (*bOk) {
 			g_has_audio_focus = false;
 
 			p->closeAudioAVK();
 
-			if (p->m_AVK.status == PlayStatus_Playing)
+			if (p->m_AVK.status == PlayStatus_Playing) {
 				p->playPauseAVK();
+			}
 
 #ifdef CONFIG_A2DP_PROCESS_MANAGEMENT
-			if (p->m_pRequestPlugInTerminate)
+			if (p->m_pRequestPlugInTerminate) {
 				p->m_pRequestPlugInTerminate("NxBTAudio");
+			}
 #endif
 		}
-	}
-	else
-	{
+	} else {
 		*bOk = true;
-
 		p->playStartAVK();
 	}
 }
 
 void NxBTService::RequestAudioFocusTransient(FocusPriority ePriority, bool *bOk)
 {
-	NxBTService *p = NxBTService::GetInstance();	
+	NxBTService *p = NxBTService::GetInstance();
 	FocusPriority eCurrPriority = g_calling_mode_on ? FocusPriority_High : FocusPriority_Normal;
 
-	if (eCurrPriority > ePriority)
+	if (eCurrPriority > ePriority) {
 		*bOk = false;
-	else
+	} else {
 		*bOk = true;
+	}
 
-	if (*bOk)
-	{
+	if (*bOk) {
 		g_has_audio_focus = false;
 
 		p->closeAudioAVK();
 
-		if (p->m_AVK.status == PlayStatus_Playing)
+		if (p->m_AVK.status == PlayStatus_Playing) {
 			p->playPauseAVK();
+		}
 
 #ifdef CONFIG_A2DP_PROCESS_MANAGEMENT
-		if (p->m_pRequestPlugInTerminate)
+		if (p->m_pRequestPlugInTerminate) {
 			p->m_pRequestPlugInTerminate("NxBTAudio");
+		}
 #endif
 	}
 }
 
 void NxBTService::RegisterRequestSendMessage(void (*cbFunc)(const char *pDst, const char *pMsg, int32_t iMsgSize))
 {
-	if (cbFunc)
+	if (cbFunc) {
 		m_pRequestSendMessage = cbFunc;
+	}
 }
 
 void NxBTService::RegisterRequestPopupMessage(void (*cbFunc)(PopupMessage *, bool *))
 {
-	if (cbFunc)
+	if (cbFunc) {
 		m_pRequestPopupMessage = cbFunc;
+	}
 }
 
 void NxBTService::RegisterRequestExpirePopupMessage(void (*cbFunc)())
 {
-	if (cbFunc)
+	if (cbFunc) {
 		m_pRequestExpirePopupMessage = cbFunc;
+	}
 }
 
 void NxBTService::PopupMessageResponse(bool bOk)
 {
 	switch (m_PopupMessageType) {
-	case PopupMessageType_PairingRequest_AutoOff:
-	{
-		if (bOk)
-			acceptPairing();
-		else
-			rejectPairing();	
-		break;
-	}
-
-	case PopupMessageType_PairingRequest_AutoOn:
-		break;
-
-	default: break;
+		case PopupMessageType_PairingRequest_AutoOff:
+		{
+			if (bOk) {
+				acceptPairing();
+			} else {
+				rejectPairing();
+			}
+			break;
+		}
+		case PopupMessageType_PairingRequest_AutoOn:
+			break;
+		default:
+			break;
 	}
 }
 
 void NxBTService::RegisterRequestAudioFocus(void (*cbFunc)(FocusPriority ePriority, bool *bOk))
 {
-	if (cbFunc)
+	if (cbFunc) {
 		m_pRequestAudioFocus = cbFunc;
+	}
 }
 
 void NxBTService::RegisterRequestAudioFocusTransient(void (*cbFunc)(FocusPriority ePriority, bool *bOk))
 {
-	if (cbFunc)
+	if (cbFunc) {
 		m_pRequestAudioFocusTransient = cbFunc;
+	}
 }
 
 void NxBTService::RegisterRequestAudioFocusLoss(void (*cbFunc)(void))
 {
-	if (cbFunc)
+	if (cbFunc) {
 		m_pRequestAudoFocusLoss = cbFunc;
+	}
 }
 
 void NxBTService::RegisterRequestPlugInRun(void (*cbFunc)(const char *pPlugin, const char *pArgs))
 {
-	if (cbFunc)
+	if (cbFunc) {
 		m_pRequestPlugInRun = cbFunc;
+	}
 }
 
 void NxBTService::RegisterRequestPlugInTerminate(void (*cbFunc)(const char *pPlugin))
 {
-	if (cbFunc)
+	if (cbFunc) {
 		m_pRequestPlugInTerminate = cbFunc;
+	}
 }
 
 void NxBTService::Broadcast(const char *pMsg)
 {
-	if (m_pRequestSendMessage)
-	{
+	if (m_pRequestSendMessage) {
 		m_pRequestSendMessage("NxBTAudio", pMsg, strlen(pMsg));
 		m_pRequestSendMessage("NxBTPhone", pMsg, strlen(pMsg));
 		m_pRequestSendMessage("NxBTSettings", pMsg, strlen(pMsg));
 	}
 }
-////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+void* NxBTService::StartThreadStub(void *pObj)
+{
+    if (pObj) {
+        ((NxBTService*)pObj)->StartThreadProc();
+		pthread_join(((NxBTService*)pObj)->m_hStartThread, NULL);
+    }
+
+    pthread_exit((void *)0);
+}
+
+void NxBTService::StartThreadProc()
+{
+	m_pModel->initDevManager();
+	pthread_exit((void *)0);
+}
+
 void* NxBTService::CommandThreadStub(void *pObj)
 {
-	if (pObj)
-	{
+	if (pObj) {
 		((NxBTService*)pObj)->CommandThreadProc();
 		pthread_join(((NxBTService*)pObj)->m_hCommandThread, NULL);
 	}
+
+	pthread_exit((void *)0);
 }
 
 void NxBTService::CommandThreadProc()
@@ -2458,12 +2323,10 @@ void NxBTService::CommandThreadProc()
 	NxBTService *p = m_spInstance;
 
 	while (1) {
-		if (-1 != access("/home/root/cmd.audiofocus", F_OK))
-		{
+		if (-1 != access("/home/root/cmd.audiofocus", F_OK)) {
 			NXLOGI("[%s] DETECT COMMAND : AudioFocus", __FUNCTION__);
 
-			if (p->m_pRequestAudioFocus)
-			{
+			if (p->m_pRequestAudioFocus) {
 				bool bOk = false;
 				p->m_pRequestAudioFocus(FocusPriority_Normal, &bOk);
 				g_has_audio_focus = bOk;

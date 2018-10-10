@@ -44,7 +44,6 @@ clean:
 	rm -f $(TARGET) *.o .depend
 
 distclean: clean
-	
 
 #########################################################################
 # Dependency
