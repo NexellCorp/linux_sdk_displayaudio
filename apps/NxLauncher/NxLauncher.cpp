@@ -239,10 +239,10 @@ NxLauncher::NxLauncher(QWidget *parent) :
 
 	connect(ui->messageFrame, SIGNAL(signalOk()), this, SLOT(slotAccept()));
 	connect(ui->messageFrame, SIGNAL(signalCancel()), this, SLOT(slotReject()));
-
+#ifdef CONFIG_MEDIA_SCANNER
 	m_pMediaScanner = new MediaScanner();
 	connect(m_pMediaScanner, SIGNAL(signalMediaEvent(NxEventTypes)), this, SLOT(slotMediaEvent(NxEventTypes)));
-
+#endif
 	m_pWatcher = new QFileSystemWatcher(this);
 	m_pWatcher->addPath(TEST_COMMAND_PATH);
 	connect(m_pWatcher, SIGNAL(fileChanged(QString)), this, SLOT(slotDetectCommand()));
@@ -895,36 +895,52 @@ bool NxLauncher::event(QEvent *event)
 void NxLauncher::KeyEvent(NxKeyEvent* e)
 {
 	static uint32_t bluetoothMode = 0;	//	0 : Phone, 1 : Audio, 2 : Setting
+	QString key;
 
 	switch (e->m_iKey) {
 	case DAUD_KEY_MODE_AUDIO:
-		m_pProcessManager->execute("/nexell/daudio/NxAudioPlayer/NxAudioPlayer");
+		key = "NxAudioPlayer";
 		break;
+
 	case DAUD_KEY_MODE_VIDEO:
-		m_pProcessManager->execute("/nexell/daudio/NxVideoPlayer/NxVideoPlayer");
+		key = "NxVideoPlayer";
 		break;
+
 	case DAUD_KEY_MODE_BLUETOOTH:
 		switch (bluetoothMode)
 		{
 		case 0:	//	Phone
-			m_pProcessManager->execute("/nexell/daudio/NxBTPhoneR/NxBTPhoneR");
+			key = "NxBTPhone";
 			break;
+
 		case 1:	//	Audio
-			m_pProcessManager->execute("/nexell/daudio/NxBTAudioR/NxBTAudioR");
+			key = "NxBTAudio";
 			break;
+
 		case 2:	//	Settings
-			m_pProcessManager->execute("/nexell/daudio/NxBTSettingsR/NxBTSettingsR");
+			key = "NxBTSettings";
 			break;
 		}
 		bluetoothMode = (bluetoothMode+1) % 3;
 		break;
+
 	case DAUD_KEY_MODE_AVIN:
 	case DAUD_KEY_MODE_3DAVM:
 	case DAUD_KEY_MODE_3DAVM_CLOSE:
 		break;
 
-	default: break;
+	default:
+		NXLOGI("[%s] %d", Q_FUNC_INFO, e->m_iKey);
+		break;
 	}
+
+	if (key.isEmpty())
+	{
+		NXLOGW("[%s] Unsupported key(%d)", __FUNCTION__, e->m_iKey);
+		return;
+	}
+
+	Execute(key);
 }
 
 void NxLauncher::PopupMessageEvent(NxPopupMessageEvent *e)

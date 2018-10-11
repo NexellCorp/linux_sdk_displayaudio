@@ -24,9 +24,10 @@ DEFINES += QT_DEPRECATED_WARNINGS
 
 QT      += qml quickwidgets
 
-equals(QT_VERSION, 5.7.0) {
+greaterThan(QT_MINOR_VERSION, 6) {
+    CONFIG += CONFIG_MEDIA_SCANNER
 } else {
-
+    CONFIG -= CONFIG_MEDIA_SCANNER
 }
 
 SOURCES += main.cpp\
@@ -39,15 +40,7 @@ SOURCES += main.cpp\
     NxLauncher.cpp \
     MessageFrame.cpp \
     ShadowEffect.cpp \
-    CNX_VolumeBar.cpp \
-    media/CNX_UeventManager.cpp \
-    media/CNX_MediaScanner.cpp \
-    media/CNX_MediaDatabase.cpp \
-    media/uevent.c \
-    media/CNX_File.cpp \
-    media/MediaScanner.cpp \
-    media/CNX_VolumeManager.cpp \
-    media/CNX_DiskManager.cpp
+    CNX_VolumeBar.cpp
 
 HEADERS  += \
     nxappinfo.h \
@@ -60,17 +53,7 @@ HEADERS  += \
     NxLauncher.h \
     MessageFrame.h \
     ShadowEffect.h \
-    CNX_VolumeBar.h \
-    media/CNX_UeventManager.h \
-    media/CNX_MediaScanner.h \
-    media/CNX_MediaDatabase.h \
-    media/uevent.h \
-    media/CNX_Base.h \
-    media/CNX_File.h \
-    media/MediaScanner.h \
-    media/CNX_VolumeManager.h \
-    media/MediaConf.h \
-    media/CNX_DiskManager.h
+    CNX_VolumeBar.h
 
 FORMS    += \
 #nxlauncher.ui \
@@ -82,6 +65,32 @@ FORMS    += \
 
 RESOURCES += \
     nxlauncher.qrc
+
+CONFIG_MEDIA_SCANNER {
+    DEFINES += CONFIG_MEDIA_SCANNER
+
+    SOURCES += \
+        media/CNX_UeventManager.cpp \
+        media/CNX_MediaScanner.cpp \
+        media/CNX_MediaDatabase.cpp \
+        media/uevent.c \
+        media/CNX_File.cpp \
+        media/MediaScanner.cpp \
+        media/CNX_VolumeManager.cpp \
+        media/CNX_DiskManager.cpp
+
+    HEADERS +=  \
+        media/CNX_UeventManager.h \
+        media/CNX_MediaScanner.h \
+        media/CNX_MediaDatabase.h \
+        media/uevent.h \
+        media/CNX_Base.h \
+        media/CNX_File.h \
+        media/MediaScanner.h \
+        media/CNX_VolumeManager.h \
+        media/MediaConf.h \
+        media/CNX_DiskManager.h
+}
 
 INCLUDEPATH += $$_PRO_FILE_PWD_/../../library/include
 
