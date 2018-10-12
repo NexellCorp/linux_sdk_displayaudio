@@ -24,8 +24,6 @@ CNX_VolumeBar::CNX_VolumeBar(QWidget *parent) :
 	ui->slider->installEventFilter(this);
 
 	connect(&m_Timer, SIGNAL(timeout()), this, SLOT(slotTimer()));
-
-	ui->slider->installEventFilter(this);
 }
 
 CNX_VolumeBar::~CNX_VolumeBar()
@@ -66,10 +64,10 @@ void CNX_VolumeBar::on_slider_sliderReleased()
 	emit signalSetVolume(ui->slider->value());
 }
 
-void CNX_VolumeBar::raise()
+void CNX_VolumeBar::Raise()
 {
 	ResetCountDown();
-	QFrame::raise();
+	raise();
 }
 
 void CNX_VolumeBar::slotTimer()

@@ -23,7 +23,7 @@ public:
 	explicit CNX_VolumeBar(QWidget *parent = 0);
 	~CNX_VolumeBar();
 
-	void raise();
+	void Raise();
 
 	void SetValue(int value);
 

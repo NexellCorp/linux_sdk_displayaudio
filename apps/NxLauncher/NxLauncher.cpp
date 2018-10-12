@@ -1008,7 +1008,7 @@ void NxLauncher::PopupMessageEvent(NxPopupMessageEvent *e)
 void NxLauncher::VolumeControlEvent(NxVolumeControlEvent *)
 {
 	ui->volumeBar->SetValue(ui->statusBar->GetVolume());
-	ui->volumeBar->raise();
+	ui->volumeBar->Raise();
 }
 
 void NxLauncher::Execute(QString plugin)
