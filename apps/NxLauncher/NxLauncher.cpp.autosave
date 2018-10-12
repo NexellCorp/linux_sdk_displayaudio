@@ -843,9 +843,6 @@ void NxLauncher::Terminate(QString requestor)
 	{
 		m_PlugIns[requestor]->m_pdeInit();
 
-//		owner = m_VideoFocusQueue.first();
-//		m_VideoFocusQueue.removeAll(requestor);
-
 		RemoveVideoFocus(requestor);
 
 		if (owner == requestor)

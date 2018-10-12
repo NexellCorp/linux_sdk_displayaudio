@@ -36,6 +36,8 @@ public:
 
 	bool Initialize();
 
+	void BackButtonClicked();
+
 private slots:
 	void on_BUTTON_PLAY_START_clicked();
 
@@ -94,12 +96,6 @@ public:
 	static void RegisterRequestVolume(void (*cbFunc)(void));
 
 private:
-	static void cbStatusHome(void *pObj);
-
-	static void cbStatusBack(void *pObj);
-
-	static void cbStatusVolume(void *pObj);
-
 	void setUIState(UIState state);
 
 	void updateToUIForMediaElements(QStringList& tokens);
@@ -117,9 +113,6 @@ private:
 
 	BTCommandProcessor *m_pCommandProcessor;
 
-	// Launcher Show
-	static void (*m_pRequestLauncherShow)(bool *bOk);
-
 	// Send Message
 	static void (*m_pRequestSendMessage)(const char *pDst, const char *pMsg, int32_t iMsgSize);
 
@@ -130,9 +123,6 @@ private:
 
 	// Terminate
 	static void (*m_pRequestTerminate)(void);
-
-	// Volume
-	static void (*m_pRequestVolume)(void);
 
 	// Focus
 	bool m_bHasVideoFocus;

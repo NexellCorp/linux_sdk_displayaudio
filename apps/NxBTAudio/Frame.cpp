@@ -7,15 +7,12 @@
 
 Frame* Frame::m_spInstance = NULL;
 
-void (*Frame::m_pRequestLauncherShow)(bool *bOk) = NULL;
 void (*Frame::m_pRequestSendMessage)(const char *pDst, const char *pMsg, int32_t iMsgSize) = NULL;
 void (*Frame::m_pRequestVideoFocus)(FocusPriority ePriority, bool *bOk) = NULL;
 void (*Frame::m_pRequestVideoFocusTransient)(FocusPriority ePriority, bool *bOk) = NULL;
 void (*Frame::m_pRequestVideoFocusLoss)(void) = NULL;
 void (*Frame::m_pRequestTerminate)(void) = NULL;
-void (*Frame::m_pRequestVolume)(void) = NULL;
 
-#include <QDebug>
 Frame::Frame(QWidget *parent) :
 	QFrame(parent),
 	ui(new Ui::Frame)
@@ -24,10 +21,7 @@ Frame::Frame(QWidget *parent) :
 
 	m_bInitialized = false;
 
-	ui->statusBar->SetTitleName("Nexell BT Audio Player");
-	ui->statusBar->RegOnClickedHome(cbStatusHome);
-	ui->statusBar->RegOnClickedBack(cbStatusBack);
-	ui->statusBar->RegOnClickedVolume(cbStatusVolume);
+	move(0, 60);
 
 	setUIState(UIState_Stopped);
 
@@ -112,26 +106,10 @@ bool Frame::event(QEvent *event)
 	return QFrame::event(event);
 }
 
-void Frame::StatusHomeEvent(NxStatusHomeEvent *)
-{
-	if (m_pRequestLauncherShow)
-	{
-		bool bOk = false;
-		m_pRequestLauncherShow(&bOk);
-		NXLOGI("[%s] REQUEST LAUNCHER SHOW <%s>", __FUNCTION__, bOk ? "OK" : "NG");
-	}
-}
-
 void Frame::StatusBackEvent(NxStatusBackEvent *)
 {
 	if (m_pRequestTerminate)
 		m_pRequestTerminate();
-}
-
-void Frame::StatusVolumeEvent(NxStatusVolumeEvent *e)
-{
-	if (m_pRequestVolume)
-		m_pRequestVolume();
 }
 
 Frame* Frame::GetInstance(void *pObj)
@@ -156,22 +134,9 @@ void Frame::DestroyInstance()
 	}
 }
 
-void Frame::cbStatusHome(void *pObj)
+void Frame::BackButtonClicked()
 {
-	Frame *p = (Frame *)pObj;
-	QApplication::postEvent(p, new NxStatusHomeEvent());
-}
-
-void Frame::cbStatusBack(void *pObj)
-{
-	Frame *p = (Frame *)pObj;
-	QApplication::postEvent(p, new NxStatusBackEvent());
-}
-
-void Frame::cbStatusVolume(void *pObj)
-{
-	Frame *p = (Frame *)pObj;
-	QApplication::postEvent(p, new NxStatusVolumeEvent());
+	QApplication::postEvent(this, new NxStatusBackEvent());
 }
 
 void Frame::setUIState(UIState state)
@@ -441,11 +406,6 @@ void Frame::Lower()
 		p->lower();
 }
 
-void Frame::RegisterRequestLauncherShow(void (*cbFunc)(bool *bOk))
-{
-	if (cbFunc)
-		m_pRequestLauncherShow = cbFunc;
-}
 /************************************************************************************\
  * D-AUDIO INTERFACE - Init
  *
@@ -563,10 +523,3 @@ void Frame::RegisterRequestTerminate(void (*cbFunc)(void))
 	if (cbFunc)
 		m_pRequestTerminate = cbFunc;
 }
-
-void Frame::RegisterRequestVolume(void (*cbFunc)(void))
-{
-	if (cbFunc)
-		m_pRequestVolume = cbFunc;
-}
-

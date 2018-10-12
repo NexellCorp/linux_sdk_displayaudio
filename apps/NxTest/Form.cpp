@@ -10,9 +10,6 @@
 
 Form* Form::m_spInstance = NULL;
 
-// Launcher Show
-void (*Form::m_pRequestLauncherShow)(bool *bOk) = NULL;
-
 // Message
 void (*Form::m_pRequestSendMessage)(const char *pDst, const char *pMsg, int32_t iMsgSize) = NULL;
 
@@ -33,30 +30,21 @@ void (*Form::m_pRequestVideoFocusLoss)(void) = NULL;
 // Terminate
 void (*Form::m_pRequestTerminate)(void) = NULL;
 
-// Volume
-void (*Form::m_pRequestVolume)(void) = NULL;
 
 Form::Form(QWidget *parent) :
 	QFrame(parent),
 	ui(new Ui::Form)
 {
 	ui->setupUi(this);
+
+	move(0, 60);
+
 	// Reset flags
 	//  Initialize
 	m_bInitialized = false;
 	//  Focus
 	m_bHasAudioFocus = false;
 	m_bHasVideoFocus = false;
-
-	// Settings for 'Status bar'
-#ifdef CONFIG_TEST2
-	ui->statusBar->SetTitleName("Nexell Test Application-2");
-#else
-	ui->statusBar->SetTitleName("Nexell Test Application-1");
-#endif
-	ui->statusBar->RegOnClickedHome(cbStatusHome);
-	ui->statusBar->RegOnClickedBack(cbStatusBack);
-	ui->statusBar->RegOnClickedVolume(cbStatusVolume);
 }
 
 Form::~Form()
@@ -95,27 +83,6 @@ bool Form::Initialize()
 bool Form::event(QEvent *event)
 {
 	switch ((int)event->type()) {
-	case E_NX_EVENT_STATUS_HOME:
-	{
-		NxStatusHomeEvent *e = static_cast<NxStatusHomeEvent *>(event);
-		StatusHomeEvent(e);
-		return true;
-	}
-
-	case E_NX_EVENT_STATUS_BACK:
-	{
-		NxStatusBackEvent *e = static_cast<NxStatusBackEvent *>(event);
-		StatusBackEvent(e);
-		return true;
-	}
-
-	case E_NX_EVENT_STATUS_VOLUME:
-	{
-		NxStatusVolumeEvent *e = static_cast<NxStatusVolumeEvent *>(event);
-		StatusVolumeEvent(e);
-		return true;
-	}
-
 	case E_NX_EVENT_TERMINATE:
 	{
 		NxTerminateEvent *e = static_cast<NxTerminateEvent *>(event);
@@ -139,28 +106,6 @@ bool Form::event(QEvent *event)
 	}
 
 	return QFrame::event(event);
-}
-
-void Form::StatusHomeEvent(NxStatusHomeEvent *)
-{
-	if (m_pRequestLauncherShow)
-	{
-		bool bOk = false;
-		m_pRequestLauncherShow(&bOk);
-		NXLOGI("[%s] REQUEST LAUNCHER SHOW <%s>", __FUNCTION__, bOk ? "OK" : "NG");
-	}
-}
-
-void Form::StatusBackEvent(NxStatusBackEvent *)
-{
-	if (m_pRequestTerminate)
-		m_pRequestTerminate();
-}
-
-void Form::StatusVolumeEvent(NxStatusVolumeEvent *)
-{
-	if (m_pRequestVolume)
-		m_pRequestVolume();
 }
 
 void Form::TerminateEvent(NxTerminateEvent *)
@@ -189,30 +134,6 @@ void Form::DestroyInstance()
 		delete m_spInstance;
 		m_spInstance = NULL;
 	}
-}
-
-void Form::cbStatusHome(void *pObj)
-{
-	Form *p = (Form *)pObj;
-	QApplication::postEvent(p, new NxStatusHomeEvent());
-}
-
-void Form::cbStatusBack(void *pObj)
-{
-	Form *p = (Form *)pObj;
-	QApplication::postEvent(p, new NxStatusBackEvent());
-}
-
-void Form::cbStatusVolume(void *pObj)
-{
-	Form *p = (Form *)pObj;
-	QApplication::postEvent(p, new NxStatusVolumeEvent());
-}
-
-void Form::RegisterRequestLauncherShow(void (*cbFunc)(bool *bOk))
-{
-	if (cbFunc)
-		m_pRequestLauncherShow = cbFunc;
 }
 
 // Message
@@ -289,11 +210,10 @@ void Form::RegisterRequestAudioFocusLoss(void (*cbFunc)(void))
 	if (cbFunc)
 		m_pRequestAudioFocusLoss = cbFunc;
 }
-#include <QDebug>
+
 // Video Focus
 void Form::RequestVideoFocus(FocusType eType, FocusPriority ePriority, bool *bOk)
 {
-	qDebug() << Q_FUNC_INFO << 1;
 	if (eType == FocusType_Get)
 	{
 		FocusPriority eCurrPriority;
@@ -313,7 +233,6 @@ void Form::RequestVideoFocus(FocusType eType, FocusPriority ePriority, bool *bOk
 	}
 	else // FocusType_Set
 	{
-		qDebug() << Q_FUNC_INFO << 2;
 		*bOk = true;
 		m_bHasVideoFocus = true;
 
@@ -363,12 +282,6 @@ void Form::RegisterRequestTerminate(void (*cbFunc)(void))
 {
 	if (cbFunc)
 		m_pRequestTerminate = cbFunc;
-}
-
-void Form::RegisterRequestVolume(void (*cbFunc)(void))
-{
-	if (cbFunc)
-		m_pRequestVolume = cbFunc;
 }
 
 void Form::RegisterRequestPopupMessage(void (*cbFunc)(PopupMessage *, bool *))
@@ -544,4 +457,9 @@ void Form::MediaEventChanged(NxMediaEvent eEvent)
 		NXLOGI("[%s] NX_EVENT_MEDIA_UNKNOWN", __FUNCTION__);
 		break;
 	}
+}
+
+void Form::BackButtonClicked()
+{
+	QApplication::postEvent(this, new NxTerminateEvent());
 }

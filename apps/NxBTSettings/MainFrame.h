@@ -32,9 +32,6 @@ public:
 
 	bool Initialize();
 
-	// Launcher Show
-	static void RegisterRequestLauncherShow(void (*cbFunc)(bool *bOk));
-
 	// Message
 	void SendMessage(QString msg);
 
@@ -58,6 +55,8 @@ public:
 
 	//
 	static void RegisterRequestTerminate(void (*cbFunc)());
+
+	void BackButtonClicked();
 
 private:
 	explicit MainFrame(QWidget *parent = 0);

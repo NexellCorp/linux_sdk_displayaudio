@@ -87,6 +87,8 @@ private:
 	// Video Focus Management
 	static void RequestVideoFocus(FocusPriority ePriority, bool *bOk);
 
+	void VideoFocus(FocusPriority ePriority, bool *bOk);
+
 	static void RequestVideoFocusTransient(FocusPriority ePriority, bool *bOk);
 
 	static void RequestVideoFocusLoss();
@@ -101,9 +103,6 @@ private:
 	//
 	static void RequestTerminate();
 
-	// Volume
-	static void RequestVolume();
-
 	void KeyEvent(NxKeyEvent* e);
 
 	void PopupMessageEvent(NxPopupMessageEvent *e);
@@ -112,6 +111,10 @@ private:
 
 	static QString FindCaller(uint32_t uiLevel);
 
+	static void cbStatusHome(void *pObj);
+
+	static void cbStatusBack(void *pObj);
+
 	static void cbStatusVolume(void *pObj);
 
 	void NextVideoFocus();
@@ -119,6 +122,14 @@ private:
 	void Terminate(QString requestor);
 
 	void Execute(QString plugin);
+
+	bool AddVideoFocus(QString owner);
+
+	void RemoveVideoFocus(QString requestor);
+
+	void UpdateTitle(QString owner);
+
+	void BackButtonClicked();
 
 private:
 	static NxLauncher *m_spInstance;

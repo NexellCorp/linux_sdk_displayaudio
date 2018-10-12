@@ -77,13 +77,5 @@ linux-oe-g++ {
     ###########################################################
     #  Set DisplayAudio library include and library path
     NX_DAUDIO_LIB_PATH = $$PWD/../../library
-
     INCLUDEPATH += $${NX_DAUDIO_LIB_PATH}/include/
-    LIBS += -L$${NX_DAUDIO_LIB_PATH}/lib/
-
-    ###########################################################
-    # ui module (for status bar)
-    LIBS += -lnxbaseui -lnxdaudioutils
-
-    LIBS += -lpthread
 }

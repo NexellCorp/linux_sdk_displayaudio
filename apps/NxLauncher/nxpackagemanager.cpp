@@ -112,6 +112,10 @@ void NxPackageScanner::FillPluginInfo(const QFileInfo& szInfo, bool bInitialized
 		{
 			psInfo->setEnabled(settings.value(key, "active").toString().toLower() == "active");
 		}
+		else if (lowerKey == "title")
+		{
+			psInfo->setTitle(settings.value(key).toString());
+		}
 	}
 
 	qDebug() << psInfo->getName() << psInfo->getEnabled();

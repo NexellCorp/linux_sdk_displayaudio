@@ -66,22 +66,12 @@ public:
 	// Media Event
 	void MediaEventChanged(NxMediaEvent eEvent);
 
+	void BackButtonClicked();
+
 protected:
 	bool event(QEvent *e);
 
 private:
-	static void cbStatusHome(void *pObj);
-
-	static void cbStatusBack(void *pObj);
-
-	static void cbStatusVolume(void *pObj);
-
-	void StatusHomeEvent(NxStatusHomeEvent *e);
-
-	void StatusBackEvent(NxStatusBackEvent *e);
-
-	void StatusVolumeEvent(NxStatusVolumeEvent *e);
-
 	void TerminateEvent(NxTerminateEvent *e);
 
 private:
@@ -91,9 +81,6 @@ private:
 	static Form *m_spInstance;
 
 private:
-	// Launcher Show
-	static void (*m_pRequestLauncherShow)(bool *bOk);
-
 	// Message
 	static void (*m_pRequestSendMessage)(const char *pDst, const char *pMsg, int32_t iMsgSize);
 
@@ -113,9 +100,6 @@ private:
 
 	// Terminate
 	static void (*m_pRequestTerminate)(void);
-
-	// Volume
-	static void (*m_pRequestVolume)(void);
 
 	// Focus
 	bool m_bHasAudioFocus;

@@ -44,10 +44,12 @@ NxPluginInfo::NxPluginInfo() : QObject()
 	m_pRegisterRequestPopupMessage = NULL;
 	m_pRegisterRequestExpirePopupMessage = NULL;
 	m_pPopupMessageResponse = NULL;
-	// Volume
-	m_pRegisterRequestVolume = NULL;
+//	// Volume
+//	m_pRegisterRequestVolume = NULL;
 	// Media Event
 	m_pMediaEventChanged = NULL;
+
+	m_pBackButtonClicked = NULL;
 }
 
 QString NxPluginInfo::getType() const
@@ -148,4 +150,14 @@ bool NxPluginInfo::getEnabled()
 void NxPluginInfo::setEnabled(bool enabled)
 {
 	m_bEnabled = enabled;
+}
+
+QString NxPluginInfo::getTitle()
+{
+	return m_szTitle;
+}
+
+void NxPluginInfo::setTitle(QString szTitle)
+{
+	m_szTitle = szTitle;
 }

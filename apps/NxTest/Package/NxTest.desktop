@@ -3,6 +3,7 @@ Type=Application
 Version=1.1.0
 Name=NxTest
 Name[ko]=NxTest
+Title="Test"
 Comment=Nexell Test for QT
 Comment[ko]=Nexell Test for QT
 Icon=icon_btsettings.png

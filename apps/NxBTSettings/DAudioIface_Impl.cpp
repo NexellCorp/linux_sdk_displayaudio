@@ -64,12 +64,6 @@ void Lower()
 		p->lower();
 }
 
-// Launcher Show
-void RegisterRequestLauncherShow(void (*cbFunc)(bool *bOk))
-{
-	MainFrame::RegisterRequestLauncherShow(cbFunc);
-}
-
 // Message
 void SendMessage(const char *pSrc, const char *pMsg, int32_t iMsgSize)
 {
@@ -133,4 +127,13 @@ void RegisterRequestVideoFocusLoss(void (*cbFunc)(void))
 void RegisterRequestTerminate(void (*cbFunc)())
 {
 	MainFrame::RegisterRequestTerminate(cbFunc);
+}
+
+void BackButtonClicked()
+{
+	MainFrame *p = MainFrame::GetInstance();
+	if (p)
+	{
+		p->BackButtonClicked();
+	}
 }

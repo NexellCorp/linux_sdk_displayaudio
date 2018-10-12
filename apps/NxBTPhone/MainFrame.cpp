@@ -43,6 +43,8 @@ MainFrame::MainFrame(QWidget *parent) :
 {
 	ui->setupUi(this);
 
+	move(0, 60);
+
 	m_bHasVideoFocus = false;
 	m_bHasVideoFocusTransient = false;
 
@@ -65,15 +67,10 @@ MainFrame::MainFrame(QWidget *parent) :
 	connect(ui->callingMenu, SIGNAL(signalCommandToServer(QString)), m_pCommandProcessor, SLOT(slotCommandToServer(QString)));
 	connect(m_pCommandProcessor, SIGNAL(signalCommandFromServer(QString)), ui->callingMenu, SLOT(slotCommandFromServer(QString)));
 
-	qDebug() << "m_pRequestSendMessage" << m_pRequestSendMessage;
 	if (m_pRequestSendMessage)
 		m_pCommandProcessor->RegisterRequestSendMessage(m_pRequestSendMessage);
 
 	m_pCommandProcessor->start();
-
-	ui->statusBar->RegOnClickedHome(cbStatusHome);
-	ui->statusBar->RegOnClickedBack(cbStatusBack);
-	ui->statusBar->SetTitleName("Nexell BT Phone");
 
 	connect(ui->selectMenu, SIGNAL(signalCurrentMenuChanged(Menu)), this, SLOT(slotCurrentMenuChanged(Menu)));
 
@@ -88,13 +85,6 @@ MainFrame::~MainFrame()
 bool MainFrame::event(QEvent *event)
 {
 	switch ((int)event->type()) {
-	case E_NX_EVENT_STATUS_HOME:
-	{
-		NxStatusHomeEvent *e = static_cast<NxStatusHomeEvent *>(event);
-		StatusHomeEvent(e);
-		return true;
-	}
-
 	case E_NX_EVENT_STATUS_BACK:
 	{
 		NxStatusBackEvent *e = static_cast<NxStatusBackEvent *>(event);
@@ -146,12 +136,6 @@ bool MainFrame::Initialize(QString args)
 	m_bInitialized = true;
 
 	return true;
-}
-
-void MainFrame::RegisterRequestLauncherShow(void (*cbFunc)(bool *bOk))
-{
-	if (cbFunc)
-		m_pRequestLauncherShow = cbFunc;
 }
 
 void MainFrame::RegisterRequestSendMessage(void (*cbFunc)(const char *pDst, const char *pMsg, int32_t iMsgSize))
@@ -228,16 +212,6 @@ void MainFrame::RegisterRequestTerminate(void (*cbFunc)(void))
 		m_pRequestTerminate = cbFunc;
 }
 
-void MainFrame::StatusHomeEvent(NxStatusHomeEvent *)
-{
-	if (m_pRequestLauncherShow)
-	{
-		bool bOk = false;
-		m_pRequestLauncherShow(&bOk);
-		NXLOGI("[%s] REQUEST LAUNCHER SHOW <%s>", __FUNCTION__, bOk ? "OK" : "NG");
-	}
-}
-
 void MainFrame::StatusBackEvent(NxStatusBackEvent *)
 {
 	switch (m_eCurrentMenu) {
@@ -253,18 +227,6 @@ void MainFrame::StatusBackEvent(NxStatusBackEvent *)
 
 	default: break;
 	}
-}
-
-void MainFrame::cbStatusHome(void *pObj)
-{
-	MainFrame *p = (MainFrame *)pObj;
-	QApplication::postEvent(p, new NxStatusHomeEvent());
-}
-
-void MainFrame::cbStatusBack(void *pObj)
-{
-	MainFrame *p = (MainFrame *)pObj;
-	QApplication::postEvent(p, new NxStatusBackEvent());
 }
 
 void MainFrame::SetCurrentMenu(Menu menu, bool update/*= true*/)
@@ -404,4 +366,9 @@ void MainFrame::ProcessForCallDisconnected()
 				m_pRequestTerminate();
 		}
 	}
+}
+
+void MainFrame::BackButtonClicked()
+{
+	QApplication::postEvent(this, new NxStatusBackEvent());
 }

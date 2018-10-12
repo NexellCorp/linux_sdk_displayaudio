@@ -1,8 +1,9 @@
 [Desktop Entry]
 Type=Application
 Version=1.1.0
-Name=NxBTPhoneR
-Name[ko]=NxBTPhoneR
+Name=NxBTPhone
+Name[ko]=NxBTPhone
+Title=Nexell BT Phone
 Comment=Nexell BT PhoneR for QT
 Comment[ko]=Nexell BT PhoneR for QT
 Icon=icon_btphoner.png

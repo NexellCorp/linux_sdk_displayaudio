@@ -39,6 +39,9 @@ public:
 
 	void (*m_pLower)();
 
+	//
+	void (*m_pBackButtonClicked)();
+
 	// register callback function
 	void (*m_pRegisterLauncherShow)(void(*)(bool *));
 
@@ -46,7 +49,7 @@ public:
 
 	void (*m_pRegisterRequestTerminate)(void(*cbFunc)());
 
-	void (*m_pRegisterRequestVolume)(void(*cbFunc)());
+//	void (*m_pRegisterRequestVolume)(void(*cbFunc)());
 
 	void (*m_pRequestAudioFocus)(FocusType eType, FocusPriority ePriority, bool* pbOk);
 
@@ -114,6 +117,9 @@ public:
 	bool getEnabled();
 	void setEnabled(bool enabled);
 
+	QString getTitle();
+	void setTitle(QString szTitle);
+
 private:
 	// https://specifications.freedesktop.org/desktop-entry-spec/latest/ar01s05.html
 	QString m_szType;
@@ -125,6 +131,7 @@ private:
 	QString m_szTryExec;
 	QString m_szExec;
 	QString m_szPath;
+	QString m_szTitle;
 	bool m_bEnabled;
 };
 

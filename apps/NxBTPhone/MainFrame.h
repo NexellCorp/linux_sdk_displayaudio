@@ -52,6 +52,8 @@ public:
 
 	static void RegisterRequestTerminate(void (*cbFunc)(void));
 
+	void BackButtonClicked();
+
 private:
 	explicit MainFrame(QWidget *parent = 0);
 
@@ -60,15 +62,9 @@ private:
 protected:
 	bool event(QEvent *e);
 
-	void StatusHomeEvent(NxStatusHomeEvent *e);
-
 	void StatusBackEvent(NxStatusBackEvent *e);
 
 private:
-	static void cbStatusHome(void *pObj);
-
-	static void cbStatusBack(void *pObj);
-
 	void SetCurrentMenu(Menu menu, bool update = true);
 
 	void ProcessForCallDisconnected();

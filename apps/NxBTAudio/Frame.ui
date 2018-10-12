@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>1024</width>
-    <height>600</height>
+    <height>540</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -22,27 +22,11 @@
   <property name="frameShadow">
    <enum>QFrame::Raised</enum>
   </property>
-  <widget class="CNX_StatusBar" name="statusBar">
-   <property name="geometry">
-    <rect>
-     <x>0</x>
-     <y>0</y>
-     <width>1024</width>
-     <height>60</height>
-    </rect>
-   </property>
-   <property name="frameShape">
-    <enum>QFrame::NoFrame</enum>
-   </property>
-   <property name="frameShadow">
-    <enum>QFrame::Plain</enum>
-   </property>
-  </widget>
   <widget class="QPushButton" name="BUTTON_PLAY_PAUSE">
    <property name="geometry">
     <rect>
      <x>375</x>
-     <y>428</y>
+     <y>368</y>
      <width>300</width>
      <height>150</height>
     </rect>
@@ -69,7 +53,7 @@ QPushButton:pressed {
    <property name="geometry">
     <rect>
      <x>10</x>
-     <y>70</y>
+     <y>10</y>
      <width>291</width>
      <height>231</height>
     </rect>
@@ -87,7 +71,7 @@ QPushButton:pressed {
    <property name="geometry">
     <rect>
      <x>740</x>
-     <y>365</y>
+     <y>305</y>
      <width>141</width>
      <height>51</height>
     </rect>
@@ -114,7 +98,7 @@ QPushButton:pressed {
    <property name="geometry">
     <rect>
      <x>120</x>
-     <y>310</y>
+     <y>250</y>
      <width>761</width>
      <height>51</height>
     </rect>
@@ -167,7 +151,7 @@ QSlider::sub-page:horizontal {
    <property name="geometry">
     <rect>
      <x>120</x>
-     <y>365</y>
+     <y>305</y>
      <width>161</width>
      <height>51</height>
     </rect>
@@ -188,7 +172,7 @@ QSlider::sub-page:horizontal {
    <property name="geometry">
     <rect>
      <x>375</x>
-     <y>428</y>
+     <y>368</y>
      <width>300</width>
      <height>150</height>
     </rect>
@@ -214,7 +198,7 @@ QPushButton:pressed {
    <property name="geometry">
     <rect>
      <x>20</x>
-     <y>428</y>
+     <y>368</y>
      <width>255</width>
      <height>150</height>
     </rect>
@@ -241,7 +225,7 @@ QPushButton:pressed {
    <property name="geometry">
     <rect>
      <x>780</x>
-     <y>428</y>
+     <y>368</y>
      <width>225</width>
      <height>150</height>
     </rect>
@@ -268,7 +252,7 @@ QPushButton:pressed {
    <property name="geometry">
     <rect>
      <x>320</x>
-     <y>150</y>
+     <y>90</y>
      <width>681</width>
      <height>141</height>
     </rect>
@@ -286,7 +270,7 @@ QPushButton:pressed {
    <property name="geometry">
     <rect>
      <x>320</x>
-     <y>90</y>
+     <y>30</y>
      <width>681</width>
      <height>61</height>
     </rect>
@@ -301,14 +285,6 @@ QPushButton:pressed {
    </property>
   </widget>
  </widget>
- <customwidgets>
-  <customwidget>
-   <class>CNX_StatusBar</class>
-   <extends>QFrame</extends>
-   <header>CNX_StatusBar.h</header>
-   <container>1</container>
-  </customwidget>
- </customwidgets>
  <resources/>
  <connections/>
 </ui>

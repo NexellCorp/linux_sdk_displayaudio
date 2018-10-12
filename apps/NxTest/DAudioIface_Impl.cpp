@@ -37,7 +37,6 @@ void deInit()
 
 void Show()
 {
-	NXLOGI("[%s]", __FUNCTION__);
 	Form *p = Form::GetInstance();
 	if (p)
 		p->show();
@@ -45,7 +44,6 @@ void Show()
 
 void Hide()
 {
-	NXLOGI("[%s]", __FUNCTION__);
 	Form *p = Form::GetInstance();
 	if (p)
 		p->hide();
@@ -53,7 +51,6 @@ void Hide()
 
 void Raise()
 {
-	NXLOGI("[%s]", __FUNCTION__);
 	Form *p = Form::GetInstance();
 	if (p)
 	{
@@ -75,18 +72,14 @@ void Lower()
 		p->lower();
 }
 
-// Launcher Show
-void RegisterRequestLauncherShow(void (*cbFunc)(bool *bOk))
-{
-	Form::RegisterRequestLauncherShow(cbFunc);
-}
-
 // Send Message
 void SendMessage(const char *pMsg, int32_t iMsgSize)
 {
 	Form *p = Form::GetInstance();
 	if (p)
 		p->SendMessage(pMsg);
+
+	(void)iMsgSize;
 }
 
 void RegisterRequestSendMessage(void (*cbFunc)(const char *pDst, const char *pMsg, int32_t iMsgSize))
@@ -172,28 +165,23 @@ void RegisterRequestVideoFocusLoss(void (*cbFunc)(void))
 	Form::RegisterRequestVideoFocusLoss(cbFunc);
 }
 
-void RegisterRequestPlugInRun(void (*cbFunc)(const char *pPlugin, const char *pArgs))
-{
-
-}
-
-void RegisterRequestPlugInTerminate(void (*cbFunc)(const char *pPlugin))
-{
-
-}
-
 void RegisterRequestTerminate(void (*cbFunc)())
 {
 	Form::RegisterRequestTerminate(cbFunc);
 }
 
-void RegisterRequestVolume(void (*cbFunc)())
-{
-	Form::RegisterRequestVolume(cbFunc);
-}
 void MediaEventChanged(NxMediaEvent eEvent)
 {
 	Form *p = Form::GetInstance();
 	if (p)
 		p->MediaEventChanged(eEvent);
+}
+
+void BackButtonClicked()
+{
+	Form *p = Form::GetInstance();
+	if (p)
+	{
+		p->BackButtonClicked();
+	}
 }

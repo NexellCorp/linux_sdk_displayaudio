@@ -71,12 +71,6 @@ void Lower()
 		p->lower();
 }
 
-// Launcher Show
-void RegisterRequestLauncherShow(void (*cbFunc)(bool *bOk))
-{
-	Frame::RegisterRequestLauncherShow(cbFunc);
-}
-
 // Message
 void SendMessage(const char *pSrc, const char *pMsg, int32_t iMsgSize)
 {
@@ -128,4 +122,13 @@ void RegisterRequestTerminate(void (*cbFunc)())
 void RegisterRequestVolume(void (*cbFunc)())
 {
 	Frame::RegisterRequestVolume(cbFunc);
+}
+
+void BackButtonClicked()
+{
+	Frame *p = Frame::GetInstance();
+	if (p)
+	{
+		p->BackButtonClicked();
+	}
 }

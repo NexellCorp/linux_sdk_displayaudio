@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>1024</width>
-    <height>600</height>
+    <height>540</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -22,27 +22,11 @@
   <property name="frameShadow">
    <enum>QFrame::Raised</enum>
   </property>
-  <widget class="CNX_StatusBar" name="statusBar">
-   <property name="geometry">
-    <rect>
-     <x>0</x>
-     <y>0</y>
-     <width>1024</width>
-     <height>60</height>
-    </rect>
-   </property>
-   <property name="frameShape">
-    <enum>QFrame::StyledPanel</enum>
-   </property>
-   <property name="frameShadow">
-    <enum>QFrame::Raised</enum>
-   </property>
-  </widget>
   <widget class="SelectMenuWidget" name="selectMenu" native="true">
    <property name="geometry">
     <rect>
      <x>0</x>
-     <y>60</y>
+     <y>0</y>
      <width>1024</width>
      <height>540</height>
     </rect>
@@ -52,7 +36,7 @@
    <property name="geometry">
     <rect>
      <x>0</x>
-     <y>60</y>
+     <y>0</y>
      <width>1024</width>
      <height>540</height>
     </rect>
@@ -62,7 +46,7 @@
    <property name="geometry">
     <rect>
      <x>0</x>
-     <y>60</y>
+     <y>0</y>
      <width>1024</width>
      <height>540</height>
     </rect>
@@ -74,23 +58,16 @@
      <x>0</x>
      <y>0</y>
      <width>1024</width>
-     <height>600</height>
+     <height>540</height>
     </rect>
    </property>
   </widget>
   <zorder>callingMenu</zorder>
-  <zorder>statusBar</zorder>
   <zorder>selectMenu</zorder>
   <zorder>callMenu</zorder>
   <zorder>messageMenu</zorder>
  </widget>
  <customwidgets>
-  <customwidget>
-   <class>CNX_StatusBar</class>
-   <extends>QFrame</extends>
-   <header location="global">CNX_StatusBar.h</header>
-   <container>1</container>
-  </customwidget>
   <customwidget>
    <class>SelectMenuWidget</class>
    <extends>QWidget</extends>

@@ -27,11 +27,9 @@ MainFrame::MainFrame(QWidget *parent) :
 {
 	ui->setupUi(this);
 
-	m_bInitialized = false;
+	move(0, 60);
 
-	ui->statusBar->RegOnClickedHome(cbStatusHome);
-	ui->statusBar->RegOnClickedBack(cbStatusBack);
-	ui->statusBar->SetTitleName("Nexell BT Settings");
+	m_bInitialized = false;
 
 	m_pCommandProcessor = new BTCommandProcessor();
 	connect(m_pCommandProcessor, SIGNAL(signalCommandFromServer(QString)), this, SLOT(slotCommandFromServer(QString)));
@@ -118,13 +116,6 @@ bool MainFrame::Initialize()
 bool MainFrame::event(QEvent *event)
 {
 	switch ((int)event->type()) {
-	case E_NX_EVENT_STATUS_HOME:
-	{
-		NxStatusHomeEvent *e = static_cast<NxStatusHomeEvent *>(event);
-		StatusHomeEvent(e);
-		return true;
-	}
-
 	case E_NX_EVENT_STATUS_BACK:
 	{
 		NxStatusBackEvent *e = static_cast<NxStatusBackEvent *>(event);
@@ -150,8 +141,23 @@ void MainFrame::StatusHomeEvent(NxStatusHomeEvent *)
 
 void MainFrame::StatusBackEvent(NxStatusBackEvent *)
 {
-	if (m_pRequestTerminate)
-		m_pRequestTerminate();
+	Menu eMenu = GetCurrentMenu();
+
+	switch (eMenu) {
+	case Menu_Init:
+	case Menu_Select:
+		if (m_pRequestTerminate)
+			m_pRequestTerminate();
+		break;
+
+	case Menu_Connection:
+		setCurrentMenu(Menu_Select);
+		break;
+
+	case Menu_Advanced:
+		setCurrentMenu(Menu_Select);
+		break;
+	}
 }
 
 void MainFrame::cbStatusHome(void *pObj)
@@ -252,13 +258,6 @@ void MainFrame::slotCurrentMenuChanged(Menu eMenu)
 	setCurrentMenu(eMenu);
 }
 
-// Launcher Show
-void MainFrame::RegisterRequestLauncherShow(void (*cbFunc)(bool *bOk))
-{
-	if (cbFunc)
-		m_pRequestLauncherShow = cbFunc;
-}
-
 // Message
 void MainFrame::SendMessage(QString msg)
 {
@@ -344,4 +343,9 @@ void MainFrame::RegisterRequestTerminate(void (*cbFunc)())
 {
 	if (cbFunc)
 		m_pRequestTerminate = cbFunc;
+}
+
+void MainFrame::BackButtonClicked()
+{
+	QApplication::postEvent(this, new NxStatusBackEvent());
 }
