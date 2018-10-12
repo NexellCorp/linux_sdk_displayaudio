@@ -25,30 +25,30 @@ public:
 
 	~CNX_DAudioStatus();
 
-        int32_t SetBTConnection(int32_t value);
+	int32_t SetBTConnection(int32_t value);
 
-        int32_t GetBTConnection();
+	int32_t GetBTConnection();
 
-        int32_t SetVolume(int32_t value);
+	int32_t SetVolume(int32_t value);
 
-        int32_t GetVolume();
+	int32_t GetVolume();
 
 private:
-        int32_t OpenDataBase();
+	int32_t OpenDataBase();
 
-        int32_t CloseDataBase();
+	int32_t CloseDataBase();
 
-        int32_t IsOpenedDataBase();
+	int32_t IsOpenedDataBase();
 
-        int32_t CreateTable();
+	int32_t CreateTable();
 
-        int32_t InsertTuple();
+	int32_t InsertTuple();
 
-        int32_t RowCount();
+	int32_t RowCount();
 
-        int32_t IsExistByID(int32_t id);
+	int32_t IsExistByID(int32_t id);
 
-        int32_t SetSystemVolume(int32_t percentage);
+	int32_t SetSystemVolume(int32_t percentage);
 
 private:
 	sqlite3* m_pHandle;

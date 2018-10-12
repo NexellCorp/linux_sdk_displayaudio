@@ -28,6 +28,7 @@ static int cbSqlite3Exec(void* data, int argc, char** argv, char** column)
 
 CNX_DAudioStatus::CNX_DAudioStatus(string database/*= DEFAULT_DAUDIO_STATUS_DATABASE*/)
 {
+	int volume;
 	m_pHandle = NULL;
 
 	size_t length = database.length();
@@ -40,20 +41,24 @@ CNX_DAudioStatus::CNX_DAudioStatus(string database/*= DEFAULT_DAUDIO_STATUS_DATA
 
 	m_DataBasePath = database;
 
-        OpenDataBase();
+	OpenDataBase();
 
-        CreateTable();
+	CreateTable();
 
-        if (!IsExistByID(0))
+	if (!IsExistByID(0))
 	{
-                InsertTuple();
+		InsertTuple();
 	}
+
+	volume = GetVolume();
+	if (volume > 0)
+		SetSystemVolume(volume);
 }
 
 CNX_DAudioStatus::~CNX_DAudioStatus()
 {
-        if (IsOpenedDataBase())
-                CloseDataBase();
+	if (IsOpenedDataBase())
+		CloseDataBase();
 }
 
 int32_t CNX_DAudioStatus::OpenDataBase()
@@ -94,7 +99,7 @@ int32_t CNX_DAudioStatus::CreateTable()
 	int32_t ret = 1;
 	char query[1024] = {0,};
 
-        if (!IsOpenedDataBase())
+	if (!IsOpenedDataBase())
 		return 0;
 
 	sprintf(query, "CREATE TABLE IF NOT EXISTS %s (", DEFAULT_DAUDIO_STATUS_DATABASE_TABLE);
@@ -111,7 +116,7 @@ int32_t CNX_DAudioStatus::InsertTuple()
 	int32_t ret = 1;
 	char query[1024] = {0,};
 
-        if (!IsOpenedDataBase())
+	if (!IsOpenedDataBase())
 		return 0;
 
 	sprintf(query, "INSERT INTO %s (_ID, _VOLUME, _BT_CONNECTION) VALUES (%d, %d, %d);", DEFAULT_DAUDIO_STATUS_DATABASE_TABLE, 0, 50, 0);
@@ -126,7 +131,7 @@ int32_t CNX_DAudioStatus::RowCount()
 	char query[1024] = {0,};
 	int32_t ret = 0;
 
-        if (!IsOpenedDataBase())
+	if (!IsOpenedDataBase())
 		return 0;
 
 	sprintf(query, "SELECT COUNT(*) FROM %s;", DEFAULT_DAUDIO_STATUS_DATABASE_TABLE);
@@ -142,7 +147,7 @@ int32_t CNX_DAudioStatus::IsExistByID(int32_t id)
 	char query[1024] = {0,};
 	int32_t ret = 0;
 
-        if (!IsOpenedDataBase())
+	if (!IsOpenedDataBase())
 		return 0;
 
 	sprintf(query, "SELECT * FROM %s WHERE _ID=%d;", DEFAULT_DAUDIO_STATUS_DATABASE_TABLE, id);
@@ -158,7 +163,7 @@ int32_t CNX_DAudioStatus::SetBTConnection(int32_t value)
 	char query[1024] = {0,};
 	int32_t ret = 0;
 
-        if (!IsOpenedDataBase())
+	if (!IsOpenedDataBase())
 		return 0;
 
 	sprintf(query, "UPDATE %s set _BT_CONNECTION = %d where _ID = %d;", DEFAULT_DAUDIO_STATUS_DATABASE_TABLE, value, 0);
@@ -186,7 +191,7 @@ int32_t CNX_DAudioStatus::SetVolume(int32_t value)
 	char query[1024] = {0,};
 	int32_t ret = 0;
 
-    if (!IsOpenedDataBase())
+	if (!IsOpenedDataBase())
 		return 0;
 
 	sprintf(query, "UPDATE %s set _VOLUME = %d where _ID = %d;", DEFAULT_DAUDIO_STATUS_DATABASE_TABLE, value, 0);
