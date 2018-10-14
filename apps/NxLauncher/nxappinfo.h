@@ -49,7 +49,7 @@ public:
 
 	void (*m_pRegisterRequestTerminate)(void(*cbFunc)());
 
-//	void (*m_pRegisterRequestVolume)(void(*cbFunc)());
+	void (*m_pRegisterRequestVolume)(void(*cbFunc)());
 
 	void (*m_pRequestAudioFocus)(FocusType eType, FocusPriority ePriority, bool* pbOk);
 

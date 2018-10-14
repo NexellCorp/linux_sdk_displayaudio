@@ -103,6 +103,8 @@ private:
 	//
 	static void RequestTerminate();
 
+	static void RequestVolume();
+
 	void KeyEvent(NxKeyEvent* e);
 
 	void PopupMessageEvent(NxPopupMessageEvent *e);

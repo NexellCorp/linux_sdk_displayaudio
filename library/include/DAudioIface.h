@@ -65,7 +65,7 @@ extern "C" {
 	void RegisterRequestTerminate(void (*cbFunc)());
 
 	// Volume
-//	void RegisterRequestVolume(void (*cbFunc)());
+	void RegisterRequestVolume(void (*cbFunc)());
 
 	// Media - disk insert/remove, scan done
 	void MediaEventChanged(NxMediaEvent eEvent);

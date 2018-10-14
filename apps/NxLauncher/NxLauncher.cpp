@@ -139,6 +139,7 @@ NxLauncher::NxLauncher(QWidget *parent) :
 		psInfo->m_pPopupMessageResponse = (void (*)(bool))dlsym(psInfo->m_pHandle, "PopupMessageResponse");
 		// terminate
 		psInfo->m_pRegisterRequestTerminate = (void (*)(void (*)(void)))dlsym(psInfo->m_pHandle, "RegisterRequestTerminate");
+		psInfo->m_pRegisterRequestVolume = (void (*)(void (*)(void)))dlsym(psInfo->m_pHandle, "RegisterRequestVolume");
 		// back button clicked
 		psInfo->m_pBackButtonClicked = (void (*)())dlsym(psInfo->m_pHandle, "BackButtonClicked");
 		// media event
@@ -209,8 +210,8 @@ NxLauncher::NxLauncher(QWidget *parent) :
 			psInfo->m_pRegisterRequestPluginTerminate(RequestPlugInTerminate);
 		if (psInfo->m_pRegisterRequestTerminate)
 			psInfo->m_pRegisterRequestTerminate(RequestTerminate);
-//		if (psInfo->m_pRegisterRequestVolume)
-//			psInfo->m_pRegisterRequestVolume(RequestVolume);
+		if (psInfo->m_pRegisterRequestVolume)
+			psInfo->m_pRegisterRequestVolume(RequestVolume);
 	}
 
 	foreach (NxPluginInfo *psInfo, m_PlugIns) {
@@ -832,6 +833,11 @@ void NxLauncher::RequestTerminate()
 	{
 		m_spInstance->Terminate(requestor);
 	}
+}
+
+void NxLauncher::RequestVolume()
+{
+	QApplication::postEvent(m_spInstance, new NxVolumeControlEvent());
 }
 
 void NxLauncher::Terminate(QString requestor)
