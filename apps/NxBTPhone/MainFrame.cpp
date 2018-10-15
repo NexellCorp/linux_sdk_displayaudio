@@ -4,8 +4,6 @@
 #define LOG_TAG "[NxBTPhone]"
 #include <NX_Log.h>
 
-#include <QDebug>
-
 MainFrame* MainFrame::m_spInstance = NULL;
 
 void (*MainFrame::m_pRequestLauncherShow)(bool *bOk) = NULL;
@@ -146,7 +144,6 @@ void MainFrame::RegisterRequestSendMessage(void (*cbFunc)(const char *pDst, cons
 
 void MainFrame::SendMessage(QString msg)
 {
-	qDebug() << Q_FUNC_INFO << msg;
 	if (m_pCommandProcessor)
 		m_pCommandProcessor->Push(msg);
 }
@@ -312,12 +309,8 @@ void MainFrame::slotCommandFromServer(QString command)
 	}
 
 	if (tokens[2] == "CALL STATUS") {
-		qDebug() << Q_FUNC_INFO << 1 << body;
-
 		if (tokens.size() < 4)
 			return;
-
-		qDebug() << Q_FUNC_INFO << 2 << body;
 
 		if (tokens[3] == "INCOMMING CALL") {
 			m_bDisconnectedCall = false;
@@ -358,7 +351,7 @@ void MainFrame::slotCommandFromServer(QString command)
 void MainFrame::ProcessForCallDisconnected()
 {
 	if (!m_bBTConnectedForHS || (m_bDisconnectedCall && m_bAudioClosedForHS)) {
-		SetCurrentMenu(Menu_CallingEnd);
+		SetCurrentMenu(Menu_CallingEnd, false);
 
 		// if all menu dialog(except IncommingCallDialog) is hide state, send NX_REQUEST_PROCESS_SHOW to d-audio manager.
 		if (m_bDisconnectedCallIsExit) {
