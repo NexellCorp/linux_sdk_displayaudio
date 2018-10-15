@@ -15,7 +15,11 @@ void (*Form::m_pRequestSendMessage)(const char *pDst, const char *pMsg, int32_t 
 
 // Popup Message
 void (*Form::m_pRequestPopupMessage)(PopupMessage *, bool *) = NULL;
-void (*Form::m_pReqeustExpirePopupMessage)() = NULL;
+void (*Form::m_pRequestExpirePopupMessage)() = NULL;
+
+// Notification
+void (*Form::m_pRequestNotification)(PopupMessage *) = NULL;
+void (*Form::m_pRequestExpireNotification)() = NULL;
 
 // Audio
 void (*Form::m_pRequestAudioFocus)(FocusPriority ePriority, bool *bOk) = NULL;
@@ -293,10 +297,27 @@ void Form::RegisterRequestPopupMessage(void (*cbFunc)(PopupMessage *, bool *))
 void Form::RegisterRequestExpirePopupMessage(void (*cbFunc)())
 {
 	if (cbFunc)
-		m_pReqeustExpirePopupMessage = cbFunc;
+		m_pRequestExpirePopupMessage = cbFunc;
 }
 
 void Form::PopupMessageResponse(bool bOk)
+{
+	NXLOGI("[%s] <%s>", __FUNCTION__, bOk ? "ACCEPT" : "REJECT");
+}
+
+void Form::RegisterRequestNotification(void (*cbFunc)(PopupMessage *))
+{
+	if (cbFunc)
+		m_pRequestNotification = cbFunc;
+}
+
+void Form::RegisterRequestExpireNotification(void (*cbFunc)())
+{
+	if (cbFunc)
+		m_pRequestExpireNotification = cbFunc;
+}
+
+void Form::NotificationResponse(bool bOk)
 {
 	NXLOGI("[%s] <%s>", __FUNCTION__, bOk ? "ACCEPT" : "REJECT");
 }
@@ -421,13 +442,52 @@ void Form::on_BUTTON_POPUP_MESSAGE_clicked()
 #endif
 
 	sData.eVisibility = ButtonVisibility_Default;
-	sData.uiTimeout = 0;
+	sData.uiTimeout = ui->LABEL_TIMEOUT->text().toInt() * 1000;
 
 	if (m_pRequestPopupMessage)
 		m_pRequestPopupMessage(&sData, &bOk);
 
 	delete[] sData.pMsgTitle;
 	delete[] sData.pMsgBody;
+}
+
+void Form::on_BUTTON_EXPIRE_POPUP_MESSAGE_clicked()
+{
+	if (m_pRequestExpirePopupMessage)
+	{
+		m_pRequestExpirePopupMessage();
+	}
+}
+
+void Form::on_BUTTON_NOTIFICATION_clicked()
+{
+	NXLOGI("[%s] <%s> ", __FUNCTION__, "TRY");
+	PopupMessage sData;
+	QString body = QString("<p><b>[Bluetooth pairing request] </b>'%1'(%2) PIN CODE: <font color=\"blue\">%3</font></p>").arg("han  iphone").arg("28:5A:EB:78:2A:63").arg(300608);
+
+	sData.pMsgBody = new char[body.length()+1];
+	strcpy(sData.pMsgBody, body.toStdString().c_str());
+	sData.eVisibility = ButtonVisibility_Default;
+	if (ui->RADIO_ONLY_OK->isChecked())
+		sData.eVisibility = ButtonVisibility_Ok;
+	else if (ui->RADIO_ONLY_CANCEL->isChecked())
+		sData.eVisibility = ButtonVisibility_Cencel;
+	else
+		sData.eVisibility = ButtonVisibility_Default;
+	sData.uiTimeout = ui->LABEL_TIMEOUT->text().toInt() * 1000;
+
+	if (m_pRequestNotification)
+		m_pRequestNotification(&sData);
+
+	delete[] sData.pMsgBody;
+}
+
+void Form::on_BUTTON_EXPIRE_NOTIFICATION_clicked()
+{
+	if (m_pRequestExpireNotification)
+	{
+		m_pRequestExpireNotification();
+	}
 }
 
 void Form::MediaEventChanged(NxMediaEvent eEvent)
@@ -462,4 +522,22 @@ void Form::MediaEventChanged(NxMediaEvent eEvent)
 void Form::BackButtonClicked()
 {
 	QApplication::postEvent(this, new NxTerminateEvent());
+}
+
+void Form::on_BUTTON_MINUS_clicked()
+{
+	int value = ui->LABEL_TIMEOUT->text().toInt();
+	if (value > 0)
+	{
+		ui->LABEL_TIMEOUT->setText(QString("%1").arg(--value));
+	}
+}
+
+void Form::on_BUTTON_PLUS_clicked()
+{
+	int value = ui->LABEL_TIMEOUT->text().toInt();
+	if (value < 10)
+	{
+		ui->LABEL_TIMEOUT->setText(QString("%1").arg(++value));
+	}
 }

@@ -105,6 +105,23 @@ void PopupMessageResponse(bool bOk)
 		p->PopupMessageResponse(bOk);
 }
 
+void RegisterRequestNotification(void (*cbFunc)(PopupMessage *))
+{
+	Form::RegisterRequestNotification(cbFunc);
+}
+
+void RegisterRequestExpireNotification(void (*cbFunc)())
+{
+	Form::RegisterRequestExpireNotification(cbFunc);
+}
+
+void NotificationResponse(bool bOk)
+{
+	Form *p = Form::GetInstance();
+	if (p)
+		p->NotificationResponse(bOk);
+}
+
 // Audio Focus
 void RequestAudioFocus(FocusType eType, FocusPriority ePriority, bool *bOk)
 {

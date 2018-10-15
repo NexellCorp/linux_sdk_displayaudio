@@ -35,9 +35,13 @@ class NxLauncher : public QDialog
 private slots:
 	void slotExecute(QString);
 
-	void slotAccept();
+	void slotPopupMessageAccept();
 
-	void slotReject();
+	void slotPopupMessageReject();
+
+	void slotNotificationAccept();
+
+	void slotNotificationReject();
 
 	void slotTimer();
 
@@ -100,6 +104,13 @@ private:
 
 	void ExpirePopupMessage();
 
+	// Notification
+	static void RequestNotification(PopupMessage *psPopup);
+
+	static void RequestExpireNotification();
+
+	void ExpireNotification();
+
 	//
 	static void RequestTerminate();
 
@@ -108,6 +119,8 @@ private:
 	void KeyEvent(NxKeyEvent* e);
 
 	void PopupMessageEvent(NxPopupMessageEvent *e);
+
+	void NotificationEvent(NxNotificationEvent *e);
 
 	void VolumeControlEvent(NxVolumeControlEvent *e);
 

@@ -12,8 +12,11 @@ MessageFrame::MessageFrame(QWidget *parent) :
 	bodyShadow->setBlurRadius(55.0);
 	bodyShadow->setDistance(10);
 	bodyShadow->setColor(QColor(0, 0, 0, 100));
-
 	ui->frame->setGraphicsEffect(bodyShadow);
+
+	m_uiTimeout = 0;
+
+	connect(&m_Timer, SIGNAL(timeout()), this, SLOT(slotTimer()));
 }
 
 MessageFrame::~MessageFrame()
@@ -85,7 +88,9 @@ void MessageFrame::SetButonStyleSheet(ButtonType eType, QString styleSheet)
 
 void MessageFrame::SetTimeout(unsigned int uiTimeout)
 {
-
+	if (uiTimeout > 10000)
+		uiTimeout = 10000;
+	m_uiTimeout = uiTimeout;
 }
 
 void MessageFrame::SetMessageTitle(QString msgTitle)
@@ -98,8 +103,23 @@ void MessageFrame::SetMessageBody(QString msgBody)
 	ui->LABEL_MESSAGE->setText(msgBody);
 }
 
+void MessageFrame::Raise()
+{
+	if (m_uiTimeout)
+		m_Timer.start(m_uiTimeout);
+	raise();
+}
+
+void MessageFrame::Lower()
+{
+	m_Timer.stop();
+	lower();
+}
+
 void MessageFrame::on_BUTTON_OK_clicked()
 {
+	m_Timer.stop();
+
 	lower();
 
 	emit signalOk();
@@ -107,6 +127,17 @@ void MessageFrame::on_BUTTON_OK_clicked()
 
 void MessageFrame::on_BUTTON_CANCEL_clicked()
 {
+	m_Timer.stop();
+
+	lower();
+
+	emit signalCancel();
+}
+
+void MessageFrame::slotTimer()
+{
+	m_Timer.stop();
+
 	lower();
 
 	emit signalCancel();

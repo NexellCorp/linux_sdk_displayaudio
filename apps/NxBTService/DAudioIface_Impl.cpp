@@ -101,6 +101,24 @@ void PopupMessageResponse(bool bOk)
 	}
 }
 
+void RegisterRequestNotification(void (*cbFunc)(PopupMessage *))
+{
+	NxBTService::RegisterRequestNotification(cbFunc);
+}
+
+void RegisterRequestExpireNotification(void (*cbFunc)())
+{
+	NxBTService::RegisterRequestExpireNotification(cbFunc);
+}
+
+void NotificationResponse(bool bOk)
+{
+	NxBTService *p = NxBTService::GetInstance();
+	if (p) {
+		p->NotificationResponse(bOk);
+	}
+}
+
 /************************************************************************************\
  * D-AUDIO INTERFACE - RequestAudioFocus
  *
@@ -187,4 +205,9 @@ void RegisterRequestPlugInRun(void (*cbFunc)(const char *pPlugin, const char *pA
 void RegisterRequestPlugInTerminate(void (*cbFunc)(const char *pPlugin))
 {
 	NxBTService::RegisterRequestPlugInTerminate(cbFunc);
+}
+
+void RegisterRequestPlugInIsRunning(void (*cbFunc)(const char *pPlugin, bool *bOk))
+{
+	NxBTService::RegisterRequestPlugInIsRunning(cbFunc);
 }

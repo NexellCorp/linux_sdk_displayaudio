@@ -33,11 +33,15 @@ void (*NxBTService::m_pRequestAudoFocusLoss)() = NULL;
 // Plug-in Run/Terminate
 void (*NxBTService::m_pRequestPlugInRun)(const char *pPlugin, const char *pArgs) = NULL;
 void (*NxBTService::m_pRequestPlugInTerminate)(const char *pPlugin) = NULL;
+void (*NxBTService::m_pRequestPlugInIsRunning)(const char *pPlugin, bool *bOk) = NULL;
 // Send Message
 void (*NxBTService::m_pRequestSendMessage)(const char *pDst, const char *pMsg, int32_t iMsgSize) = NULL;
 // Popup Message
 void (*NxBTService::m_pRequestPopupMessage)(PopupMessage *, bool *) = NULL;
 void (*NxBTService::m_pRequestExpirePopupMessage)() = NULL;
+//
+void (*NxBTService::m_pRequestNotification)(PopupMessage *) = NULL;
+void (*NxBTService::m_pRequestExpireNotification)() = NULL;
 
 bool NxBTService::g_calling_mode_on = false;
 bool NxBTService::g_has_audio_focus = false;
@@ -534,43 +538,50 @@ void NxBTService::sendHSCallStatus_stub(void *pObj, int32_t call_status)
 
 	// Switching audio focus
 	switch (call_status) {
-		case HANG_UP_CALL:
-		case DISCONNECTED_CALL:
-			// Switching calling mode
-			g_calling_mode_on = false;
+	case HANG_UP_CALL:
+	case DISCONNECTED_CALL:
+	{
+		// Switching calling mode
+		g_calling_mode_on = false;
 
-			if (!m_pModel->isOpenedAudioHS() && g_has_audio_focus_transient) {
-				// release audio focus
-				if (self->m_pRequestAudoFocusLoss) {
-					self->m_pRequestAudoFocusLoss();
-					g_has_audio_focus_transient = false;
-				}
+		if (!m_pModel->isOpenedAudioHS() && g_has_audio_focus_transient) {
+			// release audio focus
+			if (self->m_pRequestAudoFocusLoss) {
+				self->m_pRequestAudoFocusLoss();
+				g_has_audio_focus_transient = false;
 			}
-			break;
-		case INCOMMING_CALL:
-		case READY_OUTGOING_CALL:
-		{
-			// Switching calling mode
-			g_calling_mode_on = true;
-
-			// Switching audio focus (get)
-			if (!g_has_audio_focus) {
-				bool bOk = false;
-				if (self->m_pRequestAudioFocusTransient) {
-					self->m_pRequestAudioFocusTransient(FocusPriority_High, &bOk);
-				}
-				g_has_audio_focus_transient = bOk;
-			}
-
-#ifdef CONFIG_HSP_PROCESS_MANAGEMENT
-			if (self->m_pRequestPlugInRun) {
-				self->m_pRequestPlugInRun("NxBTPhone", "--menu calling");
-			}
-#endif
-			break;
 		}
-		default:
-			break;
+
+		if (m_pRequestExpireNotification)
+		{
+			if (self->m_NotificationType != NotificationMessageType_Unknown)
+			{
+				self->m_NotificationType = NotificationMessageType_Unknown;
+				m_pRequestExpireNotification();
+			}
+		}
+		break;
+	}
+
+	case INCOMMING_CALL:
+	case READY_OUTGOING_CALL:
+	{
+		// Switching calling mode
+		g_calling_mode_on = true;
+
+		// Switching audio focus (get)
+		if (!g_has_audio_focus) {
+			bool bOk = false;
+			if (self->m_pRequestAudioFocusTransient) {
+				self->m_pRequestAudioFocusTransient(FocusPriority_High, &bOk);
+			}
+			g_has_audio_focus_transient = bOk;
+		}
+		break;
+	}
+
+	default:
+		break;
 	}
 }
 
@@ -626,6 +637,32 @@ void NxBTService::sendHSIncommingCallNumber_stub(void *pObj, char *number)
 	NxBTService* self = (NxBTService*)pObj;
 	char buffer[BUFFER_SIZE] = {0,};
 
+#ifdef CONFIG_HSP_PROCESS_MANAGEMENT
+	if (self->m_pRequestPlugInIsRunning)
+	{
+		bool bOk = false;
+		self->m_pRequestPlugInIsRunning("NxBTPhone", &bOk);
+		if (!bOk)
+		{
+			// notification
+			if (m_pRequestNotification)
+			{
+				PopupMessage sData;
+
+				sData.pMsgBody = new char[1024];
+				sprintf(sData.pMsgBody, "[BT Incoming] %s", number);
+				sData.eVisibility = ButtonVisibility_Default;
+				sData.uiTimeout = 0;
+
+				self->m_NotificationType = NotificationMessageType_IncomingCall;
+
+				m_pRequestNotification(&sData);
+
+				delete[] sData.pMsgBody;
+			}
+		}
+	}
+#endif
 	/*
 	 * NXBT HS Event : Send incomming call number to UI =>  "0316987429",129,,,"      "
 	 * [sendHSIncommingCallNumber_stub] number =  "0316987429",129,,,"      "
@@ -770,6 +807,8 @@ NxBTService::NxBTService()
 	// Init DB for bluetooth status
 	m_pDAudioStatus = new CNX_DAudioStatus(DAUDIO_STATUS_DATABASE_PATH);
 	m_pDAudioStatus->SetBTConnection(0);
+
+	m_NotificationType = NotificationMessageType_Unknown;
 
 	// Variable reset to 0
 	memset(&m_AVK, 0, sizeof(m_AVK));
@@ -2248,6 +2287,42 @@ void NxBTService::PopupMessageResponse(bool bOk)
 	}
 }
 
+void NxBTService::RegisterRequestNotification(void (*cbFunc)(PopupMessage *))
+{
+	if (cbFunc) {
+		m_pRequestNotification = cbFunc;
+	}
+}
+
+void NxBTService::RegisterRequestExpireNotification(void (*cbFunc)())
+{
+	if (cbFunc) {
+		m_pRequestExpireNotification = cbFunc;
+	}
+}
+
+void NxBTService::NotificationResponse(bool bOk)
+{
+	switch (m_NotificationType) {
+	case NotificationMessageType_IncomingCall:
+	{
+		if (g_calling_mode_on)
+		{
+			m_NotificationType = NotificationMessageType_Unknown;
+
+			if (bOk)
+				m_spInstance->pickUpCall();
+			else
+				m_spInstance->hangUpCall();
+		}
+		break;
+	}
+
+	default:
+		break;
+	}
+}
+
 void NxBTService::RegisterRequestAudioFocus(void (*cbFunc)(FocusPriority ePriority, bool *bOk))
 {
 	if (cbFunc) {
@@ -2280,6 +2355,13 @@ void NxBTService::RegisterRequestPlugInTerminate(void (*cbFunc)(const char *pPlu
 {
 	if (cbFunc) {
 		m_pRequestPlugInTerminate = cbFunc;
+	}
+}
+
+void NxBTService::RegisterRequestPlugInIsRunning(void (*cbFunc)(const char *pPlugin, bool *bOk))
+{
+	if (cbFunc) {
+		m_pRequestPlugInIsRunning = cbFunc;
 	}
 }
 

@@ -129,6 +129,7 @@ NxLauncher::NxLauncher(QWidget *parent) :
 		psInfo->m_pRegisterRequestVideoFocusLoss = (void (*)(void (*)()))dlsym(psInfo->m_pHandle, "RegisterRequestVideoFocusLoss");
 		psInfo->m_pRegisterRequestPluginRun = (void (*)(void (*)(const char*, const char*)))dlsym(psInfo->m_pHandle, "RegisterRequestPlugInRun");
 		psInfo->m_pRegisterRequestPluginTerminate = (void (*)(void (*)(const char*)))dlsym(psInfo->m_pHandle, "RegisterRequestPlugInTerminate");
+		psInfo->m_pRegisterRequestPluginIsRunning = (void (*)(void (*)(const char*, bool*)))dlsym(psInfo->m_pHandle, "RegisterRequestPlugInIsRunning");
 		// send message
 		psInfo->m_pSendMessage = (void (*)(const char *, const char*, int32_t))dlsym(psInfo->m_pHandle, "SendMessage");
 		// register callback for request send message
@@ -137,6 +138,10 @@ NxLauncher::NxLauncher(QWidget *parent) :
 		psInfo->m_pRegisterRequestPopupMessage = (void (*)(void (*)(PopupMessage*, bool*)))dlsym(psInfo->m_pHandle, "RegisterRequestPopupMessage");
 		psInfo->m_pRegisterRequestExpirePopupMessage = (void (*)(void (*)()))dlsym(psInfo->m_pHandle, "RegisterRequestExpirePopupMessage");
 		psInfo->m_pPopupMessageResponse = (void (*)(bool))dlsym(psInfo->m_pHandle, "PopupMessageResponse");
+		// notification
+		psInfo->m_pRegisterRequestNotification = (void (*)(void (*)(PopupMessage*)))dlsym(psInfo->m_pHandle, "RegisterRequestNotification");
+		psInfo->m_pRegisterRequestExpireNotification = (void (*)(void (*)()))dlsym(psInfo->m_pHandle, "RegisterRequestExpireNotification");
+		psInfo->m_pNotificationResponse = (void (*)(bool))dlsym(psInfo->m_pHandle, "NotificationResponse");
 		// terminate
 		psInfo->m_pRegisterRequestTerminate = (void (*)(void (*)(void)))dlsym(psInfo->m_pHandle, "RegisterRequestTerminate");
 		psInfo->m_pRegisterRequestVolume = (void (*)(void (*)(void)))dlsym(psInfo->m_pHandle, "RegisterRequestVolume");
@@ -200,6 +205,11 @@ NxLauncher::NxLauncher(QWidget *parent) :
 			psInfo->m_pRegisterRequestPopupMessage(RequestPopupMessage);
 		if (psInfo->m_pRegisterRequestExpirePopupMessage)
 			psInfo->m_pRegisterRequestExpirePopupMessage(RequestExpirePopupMessage);
+		// notification
+		if (psInfo->m_pRegisterRequestNotification)
+			psInfo->m_pRegisterRequestNotification(RequestNotification);
+		if (psInfo->m_pRegisterRequestExpireNotification)
+			psInfo->m_pRegisterRequestExpireNotification(RequestExpireNotification);
 		// message
 		if (psInfo->m_pRegisterRequestMessage)
 			psInfo->m_pRegisterRequestMessage(RequestSendMessage);
@@ -208,6 +218,9 @@ NxLauncher::NxLauncher(QWidget *parent) :
 			psInfo->m_pRegisterRequestPluginRun(RequestPlugInRun);
 		if (psInfo->m_pRegisterRequestPluginTerminate)
 			psInfo->m_pRegisterRequestPluginTerminate(RequestPlugInTerminate);
+		if (psInfo->m_pRegisterRequestPluginIsRunning)
+			psInfo->m_pRegisterRequestPluginIsRunning(RequestPlugInIsRunning);
+
 		if (psInfo->m_pRegisterRequestTerminate)
 			psInfo->m_pRegisterRequestTerminate(RequestTerminate);
 		if (psInfo->m_pRegisterRequestVolume)
@@ -240,8 +253,10 @@ NxLauncher::NxLauncher(QWidget *parent) :
 		connect(ui->launcherWidget->rootObject(), SIGNAL(launchProgram(QString)), this, SLOT(slotExecute(QString)));
 	}
 
-	connect(ui->messageFrame, SIGNAL(signalOk()), this, SLOT(slotAccept()));
-	connect(ui->messageFrame, SIGNAL(signalCancel()), this, SLOT(slotReject()));
+	connect(ui->messageFrame, SIGNAL(signalOk()), this, SLOT(slotPopupMessageAccept()));
+	connect(ui->messageFrame, SIGNAL(signalCancel()), this, SLOT(slotPopupMessageReject()));
+	connect(ui->notificationBar, SIGNAL(signalOk()), this, SLOT(slotNotificationAccept()));
+	connect(ui->notificationBar, SIGNAL(signalCancel()), this, SLOT(slotNotificationReject()));
 #ifdef CONFIG_MEDIA_SCANNER
 	m_pMediaScanner = new MediaScanner();
 	connect(m_pMediaScanner, SIGNAL(signalMediaEvent(NxEventTypes)), this, SLOT(slotMediaEvent(NxEventTypes)));
@@ -524,7 +539,9 @@ void NxLauncher::RequestPlugInIsRunning(const char *pPlugin, bool *bOk)
 	}
 
 	// check if the instance exists.
+	NXLOGI("[%s] %s %d <1>", __FUNCTION__, key.toStdString().c_str(), !!*bOk);
 	p->m_PlugIns[key]->m_pIsInit(bOk);
+	NXLOGI("[%s] %s %d <2>", __FUNCTION__, key.toStdString().c_str(), !!*bOk);
 }
 
 /************************************************************************************\
@@ -822,8 +839,24 @@ void NxLauncher::RequestExpirePopupMessage()
 
 void NxLauncher::ExpirePopupMessage()
 {
-	ui->messageFrame->lower();
+	ui->messageFrame->Lower();
 	NextVideoFocus();
+}
+
+void NxLauncher::RequestNotification(PopupMessage *psPopup)
+{
+	QString caller = FindCaller(2);
+	QApplication::postEvent(m_spInstance, new NxNotificationEvent(psPopup, caller));
+}
+
+void NxLauncher::RequestExpireNotification()
+{
+	m_spInstance->ExpireNotification();
+}
+
+void NxLauncher::ExpireNotification()
+{
+	ui->notificationBar->Lower();
 }
 
 void NxLauncher::RequestTerminate()
@@ -904,6 +937,13 @@ bool NxLauncher::event(QEvent *event)
 	{
 		NxPopupMessageEvent *e = static_cast<NxPopupMessageEvent *>(event);
 		PopupMessageEvent(e);
+		return true;
+	}
+
+	case E_NX_EVENT_NOTIFICATION:
+	{
+		NxNotificationEvent *e = static_cast<NxNotificationEvent *>(event);
+		NotificationEvent(e);
 		return true;
 	}
 
@@ -1007,8 +1047,21 @@ void NxLauncher::PopupMessageEvent(NxPopupMessageEvent *e)
 		ui->messageFrame->SetTimeout(e->m_uiTimeout);
 		ui->messageFrame->SetMessageTitle(e->m_MsgTitle);
 		ui->messageFrame->SetMessageBody(e->m_MsgBody);
-		ui->messageFrame->raise();
+		ui->messageFrame->Raise();
 	}
+}
+
+void NxLauncher::NotificationEvent(NxNotificationEvent *e)
+{
+	ui->notificationBar->SetRequestor(e->m_Requestor);
+	ui->notificationBar->SetButtonVisibility(e->m_eButtonVisibility);
+	ui->notificationBar->SetButtonLocation(e->m_eButtonLocation);
+	ui->notificationBar->SetButonStyleSheet(ButtonType_Ok, e->m_ButtonStylesheet[ButtonType_Ok]);
+	ui->notificationBar->SetButonStyleSheet(ButtonType_Cancel, e->m_ButtonStylesheet[ButtonType_Cancel]);
+	ui->notificationBar->SetTimeout(e->m_uiTimeout);
+	ui->notificationBar->SetMessageTitle(e->m_MsgTitle);
+	ui->notificationBar->SetMessageBody(e->m_MsgBody);
+	ui->notificationBar->Raise();
 }
 
 void NxLauncher::VolumeControlEvent(NxVolumeControlEvent *)
@@ -1240,7 +1293,7 @@ void NxLauncher::slotTimer()
  *  - This is the Qt Slot function that occurs when the 'Ok' Button in the
  *    'Message Widget' or 'Notification Bar' is clicked.
  ************************************************************************************/
-void NxLauncher::slotAccept()
+void NxLauncher::slotPopupMessageAccept()
 {
 	NXLOGI("[%s]", __FUNCTION__);
 	QString requestor = ui->messageFrame->GetRequestor();
@@ -1273,13 +1326,11 @@ void NxLauncher::slotAccept()
  *  - This is the Qt Slot function that occurs when the 'Cancel' Button in the
  *    'Message Widget' or 'Notification Bar' is clicked.
  ************************************************************************************/
-void NxLauncher::slotReject()
+void NxLauncher::slotPopupMessageReject()
 {
 	NXLOGI("[%s]", __FUNCTION__);
 	QString requestor = ui->messageFrame->GetRequestor();
 	bool bOk = false;
-
-	qDebug() << __FUNCTION__ << requestor;
 
 	if (!(m_PlugIns[requestor]->m_pIsInit) || !(m_PlugIns[requestor]->m_pPopupMessageResponse))
 	{
@@ -1299,6 +1350,54 @@ void NxLauncher::slotReject()
 	m_PlugIns[requestor]->m_pPopupMessageResponse(false);
 
 	NextVideoFocus();
+}
+
+void NxLauncher::slotNotificationAccept()
+{
+	NXLOGI("[%s]", __FUNCTION__);
+	QString requestor = ui->notificationBar->GetRequestor();
+	bool bOk = false;
+
+	if (!(m_PlugIns[requestor]->m_pIsInit) || !(m_PlugIns[requestor]->m_pNotificationResponse))
+	{
+		NXLOGE("[%s] The D-Audio Interface has a missing function.", __FUNCTION__);
+		NXLOGE("[%s] Make sure the IsInit and NotificationResponse functions are defined.", __FUNCTION__);
+		return;
+	}
+
+	m_PlugIns[requestor]->m_pIsInit(&bOk);
+
+	if (!bOk)
+	{
+		NXLOGW("[%s] <%s> does not exists.", __FUNCTION__, requestor.toStdString().c_str());
+		return;
+	}
+
+	m_PlugIns[requestor]->m_pNotificationResponse(true);
+}
+
+void NxLauncher::slotNotificationReject()
+{
+	NXLOGI("[%s]", __FUNCTION__);
+	QString requestor = ui->notificationBar->GetRequestor();
+	bool bOk = false;
+
+	if (!(m_PlugIns[requestor]->m_pIsInit) || !(m_PlugIns[requestor]->m_pNotificationResponse))
+	{
+		NXLOGE("[%s] The D-Audio Interface has a missing function.", __FUNCTION__);
+		NXLOGE("[%s] Make sure the IsInit and NotificationResponse functions are defined.", __FUNCTION__);
+		return;
+	}
+
+	m_PlugIns[requestor]->m_pIsInit(&bOk);
+
+	if (!bOk)
+	{
+		NXLOGW("[%s] <%s> does not exists.", __FUNCTION__, requestor.toStdString().c_str());
+		return;
+	}
+
+	m_PlugIns[requestor]->m_pNotificationResponse(false);
 }
 
 void NxLauncher::slotDetectCommand()

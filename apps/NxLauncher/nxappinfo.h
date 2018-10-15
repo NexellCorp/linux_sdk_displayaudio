@@ -75,6 +75,8 @@ public:
 
 	void (*m_pRegisterRequestPluginTerminate)(void (*cbFunc)(const char *pPlugin));
 
+	void (*m_pRegisterRequestPluginIsRunning)(void (*cbFunc)(const char *pPlugin, bool *bOk));
+
 	void (*m_pRegisterRequestMessage)(void (*cbFunc)(const char* pDst, const char* pMsg, int32_t iMsgSize));
 
 	void (*m_pSendMessage)(const char* pSrc, const char* pMsg, int32_t iMsgSize);
@@ -84,6 +86,12 @@ public:
 	void (*m_pRegisterRequestExpirePopupMessage)(void (*cbFunc)());
 
 	void (*m_pPopupMessageResponse)(bool bOk);
+
+	void (*m_pRegisterRequestNotification)(void (*cbFunc)(PopupMessage*));
+
+	void (*m_pRegisterRequestExpireNotification)(void (*cbFunc)());
+
+	void (*m_pNotificationResponse)(bool bOk);
 
 	void (*m_pMediaEventChanged)(NxMediaEvent eEvent);
 

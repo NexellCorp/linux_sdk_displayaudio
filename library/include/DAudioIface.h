@@ -33,6 +33,13 @@ extern "C" {
 
 	void PopupMessageResponse(bool bOk);
 
+	// Notification
+	void RegisterRequestNotification(void (*cbFunc)(PopupMessage *));
+
+	void RegisterRequestExpireNotification(void (*cbFunc)());
+
+	void NotificationResponse(bool bOk);
+
 	// Audio Focus
 	void RequestAudioFocus(FocusType eType, FocusPriority ePriority, bool *bOk);
 
@@ -59,7 +66,10 @@ extern "C" {
 	void RegisterRequestPlugInRun(void (*cbFunc)(const char *pPlugin, const char *pArgs));
 
 	// Plug-in Terminate
-	void RegisterRequestPlugInTerminate(void (*cbFunc)(const char *pPlugin));	
+	void RegisterRequestPlugInTerminate(void (*cbFunc)(const char *pPlugin));
+
+	// Plug-in IsRunning
+	void RegisterRequestPlugInIsRunning(void (*cbFunc)(const char *pPlugin, bool *bOk));
 
 	// Application Terminate
 	void RegisterRequestTerminate(void (*cbFunc)());

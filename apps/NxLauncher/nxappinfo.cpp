@@ -38,12 +38,17 @@ NxPluginInfo::NxPluginInfo() : QObject()
 	//
 	m_pRegisterRequestPluginRun = NULL;
 	m_pRegisterRequestPluginTerminate = NULL;
+	m_pRegisterRequestPluginIsRunning = NULL;
 	//
 	m_pRegisterRequestMessage = NULL;
 	//
 	m_pRegisterRequestPopupMessage = NULL;
 	m_pRegisterRequestExpirePopupMessage = NULL;
 	m_pPopupMessageResponse = NULL;
+	//
+	m_pRegisterRequestNotification = NULL;
+	m_pRegisterRequestExpireNotification = NULL;
+	m_pNotificationResponse = NULL;
 //	// Volume
 	m_pRegisterRequestVolume = NULL;
 	// Media Event

@@ -10,6 +10,7 @@
 enum NxEventTypes {
 	E_NX_EVENT_KEY = NX_EVENT_BASE,
 	E_NX_EVENT_POPUP_MESSAGE,
+	E_NX_EVENT_NOTIFICATION,
 	E_NX_EVENT_VOLUME_CONTROL,
 	E_NX_EVENT_SDCARD_MOUNT,
 	E_NX_EVENT_SDCARD_UMOUNT,
@@ -66,6 +67,41 @@ public:
 		m_eButtonVisibility = psPopupMessage->eVisibility;
 		m_eButtonLocation = psPopupMessage->eLocation;
 		m_uiTimeout = psPopupMessage->uiTimeout;
+	}
+};
+
+class NxNotificationEvent : public QEvent
+{
+public:
+	QString m_Requestor;
+
+	QString m_MsgTitle;
+	QString m_MsgBody;
+	ButtonVisibility m_eButtonVisibility;
+	ButtonLocation m_eButtonLocation;
+	QString m_ButtonStylesheet[ButtonType_Count];
+	unsigned int m_uiTimeout;
+
+	NxNotificationEvent(PopupMessage *psNotification, QString requestor)
+		: QEvent((QEvent::Type)E_NX_EVENT_NOTIFICATION)
+	{
+		m_Requestor = requestor;
+
+		if (psNotification->pMsgTitle)
+			m_MsgTitle = QString::fromLatin1(psNotification->pMsgTitle);
+
+		if (psNotification->pMsgBody)
+			m_MsgBody = QString::fromLatin1(psNotification->pMsgBody);
+
+		for (int32_t i = 0; i < ButtonType_Count; ++i)
+		{
+			if (psNotification->pStylesheet[i])
+				m_ButtonStylesheet[i] = psNotification->pStylesheet[i];
+		}
+
+		m_eButtonVisibility = psNotification->eVisibility;
+		m_eButtonLocation = psNotification->eLocation;
+		m_uiTimeout = psNotification->uiTimeout;
 	}
 };
 

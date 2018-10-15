@@ -2,6 +2,7 @@
 #define MESSAGEFRAME_H
 
 #include <QFrame>
+#include <QTimer>
 #include <NX_Type.h>
 
 namespace Ui {
@@ -16,6 +17,9 @@ signals:
 	void signalOk();
 
 	void signalCancel();
+
+private slots:
+	void slotTimer();
 
 public:
 	explicit MessageFrame(QWidget *parent = 0);
@@ -37,10 +41,9 @@ public:
 
 	void SetMessageBody(QString msgBody);
 
-//private slots:
-//	void on_BUTTON_OK_clicked();
+	void Raise();
 
-//	void on_BUTTON_CANCEL_clicked();
+	void Lower();
 
 private slots:
 	void on_BUTTON_OK_clicked();
@@ -51,6 +54,10 @@ private:
 	QString m_Requestor;
 
 	bool m_bAccept;
+
+	unsigned int m_uiTimeout;
+
+	QTimer m_Timer;
 
 private:
 	Ui::MessageFrame *ui;

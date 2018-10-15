@@ -37,6 +37,13 @@ public:
 
 	void PopupMessageResponse(bool bOk);
 
+	// Notification
+	static void RegisterRequestNotification(void (*cbFunc)(PopupMessage *));
+
+	static void RegisterRequestExpireNotification(void (*cbFunc)());
+
+	void NotificationResponse(bool bOk);
+
 	// Audio Focus
 	void RequestAudioFocus(FocusType eType, FocusPriority ePriority, bool *bOk);
 
@@ -86,7 +93,11 @@ private:
 
 	// Popup Message
 	static void (*m_pRequestPopupMessage)(PopupMessage *, bool *);
-	static void (*m_pReqeustExpirePopupMessage)();
+	static void (*m_pRequestExpirePopupMessage)();
+
+	// Notification
+	static void (*m_pRequestNotification)(PopupMessage *);
+	static void (*m_pRequestExpireNotification)();
 
 	// Audio
 	static void (*m_pRequestAudioFocus)(FocusPriority ePriority, bool *bOk);
@@ -125,6 +136,16 @@ private slots:
 	void on_BUTTON_SEND_MESSAGE_clicked();
 
 	void on_BUTTON_POPUP_MESSAGE_clicked();
+
+	void on_BUTTON_NOTIFICATION_clicked();
+
+	void on_BUTTON_MINUS_clicked();
+
+	void on_BUTTON_PLUS_clicked();
+
+	void on_BUTTON_EXPIRE_POPUP_MESSAGE_clicked();
+
+	void on_BUTTON_EXPIRE_NOTIFICATION_clicked();
 
 private:
 	Ui::Form *ui;

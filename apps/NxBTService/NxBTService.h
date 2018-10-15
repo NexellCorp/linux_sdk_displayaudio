@@ -87,10 +87,15 @@ public:
 		DownloadType_CallHistory
 	};
 
-	enum PopupMessgaeType {
+	enum PopupMessageType {
 		PopupMessageType_PairingRequest_AutoOff,
 		PopupMessageType_PairingRequest_AutoOn,
 		PopupMessageType_PairingRequest_Unknown
+	};
+
+	enum NotificationMessageType {
+		NotificationMessageType_IncomingCall,
+		NotificationMessageType_Unknown
 	};
 
 	struct PlayInfo {
@@ -151,6 +156,13 @@ public:
 
 	void PopupMessageResponse(bool bOk);
 
+	// Notification
+	static void RegisterRequestNotification(void (*cbFunc)(PopupMessage *));
+
+	static void RegisterRequestExpireNotification(void (*cbFunc)());
+
+	void NotificationResponse(bool bOk);
+
 	bool runCommand(const char* command);
 
 	void RequestAudioFocus(FocusType eType, FocusPriority ePriority, bool *bOk);
@@ -166,6 +178,8 @@ public:
 	static void RegisterRequestPlugInRun(void (*cbFunc)(const char *pPlugin, const char *pArgs));
 
 	static void RegisterRequestPlugInTerminate(void (*cbFunc)(const char *pPlugin));
+
+	static void RegisterRequestPlugInIsRunning(void (*cbFunc)(const char *pPlugin, bool *bOk));
 
 	void registerCallbackFunctions();
 
@@ -317,9 +331,9 @@ public:
 
 	bool reDialPhoneNumber(std::string service, std::string command);
 
-	bool pickUpCall(std::string service, std::string command);
+	bool pickUpCall(std::string service = "HS", std::string command = "PICK UP CALL");
 
-	bool hangUpCall(std::string service, std::string command);
+	bool hangUpCall(std::string service = "HS", std::string command = "HANG UP CALL");
 
 	bool muteMicrophoneHS(std::string service, std::string command);
 
@@ -407,6 +421,8 @@ private:
 
 	static void (*m_pRequestPlugInTerminate)(const char *pPlugin);
 
+	static void (*m_pRequestPlugInIsRunning)(const char *pPlugin, bool *bOk);
+
 	// Send Message
 	static void (*m_pRequestSendMessage)(const char *pDst, const char *pMsg, int32_t iMsgSize);
 
@@ -415,13 +431,19 @@ private:
 
 	static void (*m_pRequestExpirePopupMessage)();
 
+	// Notification
+	static void (*m_pRequestNotification)(PopupMessage *);
+
+	static void (*m_pRequestExpireNotification)();
+
 	void Broadcast(const char *pMsg);
 
 	static bool g_calling_mode_on;
 	static bool g_has_audio_focus;
 	static bool g_has_audio_focus_transient;
 
-	PopupMessgaeType m_PopupMessageType;
+	PopupMessageType m_PopupMessageType;
+	NotificationMessageType m_NotificationType;
 };
 
 #endif // NXBTSERVICE_H
