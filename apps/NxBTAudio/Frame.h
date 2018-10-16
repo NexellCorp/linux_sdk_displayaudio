@@ -93,8 +93,6 @@ public:
 
 	static void RegisterRequestTerminate(void (*cbFunc)(void));
 
-	static void RegisterRequestVolume(void (*cbFunc)(void));
-
 private:
 	void setUIState(UIState state);
 
