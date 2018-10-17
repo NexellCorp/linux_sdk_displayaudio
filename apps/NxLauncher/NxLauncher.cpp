@@ -954,6 +954,12 @@ bool NxLauncher::event(QEvent *event)
 		return true;
 	}
 
+	case QEvent::WindowActivate:
+	{
+		NXLOGI("NX_LAUNCHER SHOWN");
+		break;
+	}
+
 	default:
 		break;
 	}
