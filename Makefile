@@ -73,53 +73,36 @@ QT_INC_TOP	:= library/include
 
 LIBS :=
 LIBS += KeyReceiver
-#LIBS += libnxdaudioipc
 LIBS += libnxconfig
 LIBS += libnxdaudioutils
-ifneq ($(OECORE_SDK_VERSION),2.3.1)
-# FIX ME. ( QT5.4 SDK don't have NEXELL private library. )
 LIBS += libavin
 LIBS += librearcam
-endif
 
 QT_LIBS :=
 QT_LIBS += libnxbaseui
-#QT_LIBS += libnxpacpclient
 
 APPS :=
 APPS += NxBTServiceConsole
 APPS += KeyInputSender
-#APPS += NxDAudioManager
 APPS += NxCommandSender
 APPS += NxBTService
 
 QT_APPS :=
-QT_APPS += NxBaseUiTest
 QT_APPS += NxLauncher
 QT_APPS += NxBTAudio
 QT_APPS += NxBTPhone
 QT_APPS += NxBTSettings
-ifneq ($(OECORE_SDK_VERSION),2.3.1)
-# FIX ME. ( QT5.4 SDK don't have NEXELL private library. )
+
 QT_APPS += NxAudioPlayer
 QT_APPS += NxVideoPlayer
-#QT_APPS += NxQuickRearCam
-#QT_APPS += NxAVIn
-endif
-
-QT_PODO	:=
-ifneq ($(OECORE_SDK_VERSION),2.3.1)
-QT_PODO	+= core
-QT_PODO	+= pdwindowcompositor
-endif
 
 TOOLS :=
 TOOLS += NxCapture
 TOOLS += NxLogcat
 
-RESULT_LIBS := libnxkeyreceiver.so* libnxdaudioipc.so* libnxconfig.so* libnxbaseui.so* libnxavin.so* libnxpacpclient.so* libnxrearcam.so* libnxdaudioutils.so*
+RESULT_LIBS := libnxkeyreceiver.so* libnxconfig.so* libnxbaseui.so* libnxavin.so* libnxrearcam.so* libnxdaudioutils.so*
 
-QT_INC := CNX_BaseDialog.h CNX_KeyboardFrame.h CNX_MediaController.h CNX_MessageBox.h CNX_StatusBar.h NX_PacpClient.h
+QT_INC := CNX_BaseDialog.h CNX_KeyboardFrame.h CNX_MediaController.h CNX_MessageBox.h CNX_StatusBar.h
 
 ######################################################################
 # Build

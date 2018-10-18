@@ -10,18 +10,14 @@ USR_LIB="usr/lib"
 NXBT_ETC="etc/bluetooth"
 BUILD_TOP="qt_build"
 
-function package_podo_compositor()
-{
-	echo "<< Package podo compositor"
-	mkdir -p ${RESULT_DIR}/podo/apps/pdwindowcompositor
-	cp -av ${TOP}/${BUILD_TOP}/build-core/podo ${RESULT_DIR}/podo/
-	cp -av ${TOP}/${BUILD_TOP}/build-pdwindowcompositor/pdwindowcompositor ${RESULT_DIR}/podo/apps/pdwindowcompositor/
-}
-
 function package_luncher()
 {
 	echo "<< Package Launcher Application>>"
-	cp -va ${TOP}/${BUILD_TOP}/build-NxLauncher/NxLauncher ${RESULT_DIR}/${USR_BIN}/
+	cp -aR ${TOP}/${BUILD_TOP}/build-NxLauncher/NxLauncher ${RESULT_DIR}/${USR_BIN}/
+
+	echo "<< Package ipc libraries >>"
+	cp -aR ${TOP}/library/lib/libnxconfig.so ${RESULT_DIR}/${USR_LIB}/
+	cp -aR ${TOP}/library/lib/libnxdaudioutils.so ${RESULT_DIR}/${USR_LIB}/
 }
 
 function package_bt_service()
@@ -29,8 +25,8 @@ function package_bt_service()
 	local app_name=NxBTService
 	echo "<< Package ${app_name} >>"
 	mkdir -p ${RESULT_DIR}/${PACKAGE_ROOT}/${app_name}
-	cp -va ${TOP}/apps/${app_name}/*.so ${RESULT_DIR}/${PACKAGE_ROOT}/${app_name}/
-	cp -va ${TOP}/apps/${app_name}/${PACKAGE_DIR}/* ${RESULT_DIR}/${PACKAGE_ROOT}/${app_name}/
+	cp -aR ${TOP}/apps/${app_name}/*.so ${RESULT_DIR}/${PACKAGE_ROOT}/${app_name}/
+	cp -aR ${TOP}/apps/${app_name}/${PACKAGE_DIR}/* ${RESULT_DIR}/${PACKAGE_ROOT}/${app_name}/
 }
 
 function package_bt_application()
@@ -38,17 +34,17 @@ function package_bt_application()
 	local app_name=${1}
 	echo "<< Package ${1} >>"
 	mkdir -p ${RESULT_DIR}/${PACKAGE_ROOT}/${app_name};
-	cp -va ${TOP}/apps/${app_name}/${PACKAGE_DIR}/* ${RESULT_DIR}/${PACKAGE_ROOT}/${app_name}/;
-	cp -va ${TOP}/${BUILD_TOP}/build-${app_name}/*.so ${RESULT_DIR}/${PACKAGE_ROOT}/${app_name}/;
+	cp -aR ${TOP}/apps/${app_name}/${PACKAGE_DIR}/* ${RESULT_DIR}/${PACKAGE_ROOT}/${app_name}/;
+	cp -aR ${TOP}/${BUILD_TOP}/build-${app_name}/*.so ${RESULT_DIR}/${PACKAGE_ROOT}/${app_name}/;
 }
 
-function package_application()
+function package_videoplayer_application()
 {
-    local app_name=${1}
-    echo "<< Package ${1} >>"
+    local app_name=NxVideoPlayer
+    echo "<< Package ${app_name} >>"
     mkdir -p ${RESULT_DIR}/${PACKAGE_ROOT}/${app_name};
-    cp -va ${TOP}/apps/${app_name}/${PACKAGE_DIR}/* ${RESULT_DIR}/${PACKAGE_ROOT}/${app_name}/;
-    cp -va ${TOP}/${BUILD_TOP}/build-${app_name}/*.so* ${RESULT_DIR}/${PACKAGE_ROOT}/${app_name}/;
+    cp -aR ${TOP}/apps/${app_name}/${PACKAGE_DIR}/* ${RESULT_DIR}/${PACKAGE_ROOT}/${app_name}/;
+    cp -aR ${TOP}/${BUILD_TOP}/build-${app_name}/*.so* ${RESULT_DIR}/${PACKAGE_ROOT}/${app_name}/;
 }
 
 function package_audioplayer_application()
@@ -59,8 +55,8 @@ function package_audioplayer_application()
 	mkdir -p ${RESULT_DIR}/${PACKAGE_ROOT}/${app_name}/lib;
 
 	echo "<< Copy ${app_name} Binary & Package Informations >>"
-    cp -va ${TOP}/apps/${app_name}/${PACKAGE_DIR}/* ${RESULT_DIR}/${PACKAGE_ROOT}/${app_name}/;
-    cp -va ${TOP}/${BUILD_TOP}/build-${app_name}/*.so* ${RESULT_DIR}/${PACKAGE_ROOT}/${app_name}/;
+    cp -aR ${TOP}/apps/${app_name}/${PACKAGE_DIR}/* ${RESULT_DIR}/${PACKAGE_ROOT}/${app_name}/;
+    cp -aR ${TOP}/${BUILD_TOP}/build-${app_name}/*.so* ${RESULT_DIR}/${PACKAGE_ROOT}/${app_name}/;
 
 	echo "<< Package ID3 Libraries >>"
 	cp -aR ${TOP}/library/lib/id3-3.8/lib/libid3.so* ${RESULT_DIR}/${PACKAGE_ROOT}/${app_name}/lib/;
@@ -75,11 +71,11 @@ function package_quickrearcam_application()
 	mkdir -p ${RESULT_DIR}/${PACKAGE_ROOT}/${app_name}/lib;
 
 	echo "<< Copy ${app_name} Binary & Package Informations >>"
-	cp -va ${TOP}/apps/${app_name}/${PACKAGE_DIR}/* ${RESULT_DIR}/${PACKAGE_ROOT}/${app_name}/;
-	cp -va ${TOP}/${BUILD_TOP}/build-${app_name}/${app_name} ${RESULT_DIR}/${PACKAGE_ROOT}/${app_name}/;
+	cp -aR ${TOP}/apps/${app_name}/${PACKAGE_DIR}/* ${RESULT_DIR}/${PACKAGE_ROOT}/${app_name}/;
+	cp -aR ${TOP}/${BUILD_TOP}/build-${app_name}/${app_name} ${RESULT_DIR}/${PACKAGE_ROOT}/${app_name}/;
 
 	echo "<< Copy Rear Camera Libraries >>"
-	cp -va ${TOP}/library/lib/libnxrearcam*  ${RESULT_DIR}/${PACKAGE_ROOT}/${app_name}/lib/
+	cp -aR ${TOP}/library/lib/libnxrearcam*  ${RESULT_DIR}/${PACKAGE_ROOT}/${app_name}/lib/
 }
 
 function package_avin_application()
@@ -90,11 +86,11 @@ function package_avin_application()
 	mkdir -p ${RESULT_DIR}/${PACKAGE_ROOT}/${app_name}/lib;
 
 	echo "<< Copy ${app_name} Binary & Package Informations >>"
-	cp -va ${TOP}/apps/${app_name}/${PACKAGE_DIR}/* ${RESULT_DIR}/${PACKAGE_ROOT}/${app_name}/;
-	cp -va ${TOP}/${BUILD_TOP}/build-${app_name}/${app_name} ${RESULT_DIR}/${PACKAGE_ROOT}/${app_name}/;
+	cp -aR ${TOP}/apps/${app_name}/${PACKAGE_DIR}/* ${RESULT_DIR}/${PACKAGE_ROOT}/${app_name}/;
+	cp -aR ${TOP}/${BUILD_TOP}/build-${app_name}/${app_name} ${RESULT_DIR}/${PACKAGE_ROOT}/${app_name}/;
 
 	echo "<< Copy Rear Camera Libraries >>"
-	cp -va ${TOP}/library/lib/libnxavin*  ${RESULT_DIR}/${PACKAGE_ROOT}/${app_name}/lib/
+	cp -aR ${TOP}/library/lib/libnxavin*  ${RESULT_DIR}/${PACKAGE_ROOT}/${app_name}/lib/
 }
 
 function package_common_libraries()
@@ -106,18 +102,19 @@ function package_common_libraries()
 	cp -aR ${TOP}/${BUILD_TOP}/build-libnxbaseui/libnxbaseui.so* ${RESULT_DIR}/${USR_LIB}/
 
 	echo "<< Package Nexell Video Libraries >>"
-	cp -va ${TOP}/library/lib/libnxfilter* ${RESULT_DIR}/${USR_LIB}/
-	cp -va ${TOP}/library/lib/libnxsubtitleparser.so ${RESULT_DIR}/${USR_LIB}/
-	cp -va ${TOP}/library/lib/libnxmpmanager.so ${RESULT_DIR}/${USR_LIB}/
+	cp -aR ${TOP}/library/lib/libnxfilter* ${RESULT_DIR}/${USR_LIB}/
+	cp -aR ${TOP}/library/lib/libnxsubtitleparser.so ${RESULT_DIR}/${USR_LIB}/
+	cp -aR ${TOP}/library/lib/libnxmpmanager.so ${RESULT_DIR}/${USR_LIB}/
+	cp -aR ${TOP}/library/lib/libnxdaudioutils.so ${RESULT_DIR}/${USR_LIB}/
 
 	echo "<< Package Key Input Receiver >>"
-	cp -va ${TOP}/library/lib/libnxkeyreceiver.so ${RESULT_DIR}/${USR_LIB}/
+	cp -aR ${TOP}/library/lib/libnxkeyreceiver.so ${RESULT_DIR}/${USR_LIB}/
 
 	echo "<< Package Nexell BT Libraries, server & HCD file >>"
-	cp -va ${TOP}/library/lib/nxbt1xx/lib/libappbt.so ${RESULT_DIR}/${USR_LIB}/
-	cp -va ${TOP}/library/lib/nxbt1xx/lib/libnxbt.so ${RESULT_DIR}/${USR_LIB}/
-	cp -va ${TOP}/library/lib/nxbt1xx/lib/libnxalsa.so ${RESULT_DIR}/${USR_LIB}/
-	cp -va ${TOP}/library/lib/nxbt1xx/lib/libnrec_hf.so ${RESULT_DIR}/${USR_LIB}/
+	cp -aR ${TOP}/library/lib/nxbt1xx/lib/libappbt.so ${RESULT_DIR}/${USR_LIB}/
+	cp -aR ${TOP}/library/lib/nxbt1xx/lib/libnxbt.so ${RESULT_DIR}/${USR_LIB}/
+	cp -aR ${TOP}/library/lib/nxbt1xx/lib/libnxalsa.so ${RESULT_DIR}/${USR_LIB}/
+	cp -aR ${TOP}/library/lib/nxbt1xx/lib/libnrec_hf.so ${RESULT_DIR}/${USR_LIB}/
 }
 
 function package_etc()
@@ -126,7 +123,6 @@ function package_etc()
 	echo "<< Package etc Applications >>"
 	mkdir -p ${RESULT_DIR}/${USR_BIN}
 	cp -aR ${TOP}/bin/* ${RESULT_DIR}/${USR_BIN}/
-#	cp -va ${TOP}/apps/NxService/* ${RESULT_DIR}/${USR_BIN}/
 	mkdir -p ${RESULT_DIR}/${USR_SBIN}
 }
 
@@ -139,15 +135,12 @@ mkdir -p ${RESULT_DIR}/${PACKAGE_ROOT};
 package_common_libraries
 package_luncher
 package_audioplayer_application
-package_quickrearcam_application
-package_avin_application
-package_application NxVideoPlayer
+package_videoplayer_application
+#package_quickrearcam_application
+#package_avin_application
+
 package_bt_service
 package_bt_application NxBTAudio
 package_bt_application NxBTPhone
 package_bt_application NxBTSettings
 package_etc
-if [ ${OECORE_SDK_VERSION} != "2.3.1" ]; then
-	package_podo_compositor
-fi
-

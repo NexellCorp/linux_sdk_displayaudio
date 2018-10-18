@@ -1,2 +1,2 @@
 TEMPLATE = subdirs
-SUBDIRS = libnxpacpclient libnxbaseui
+SUBDIRS = libnxbaseui

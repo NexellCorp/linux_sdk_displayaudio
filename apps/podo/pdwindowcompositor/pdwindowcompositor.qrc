@@ -1,5 +1,0 @@
-<RCC>
-    <qresource prefix="/">
-        <file alias="background.png">launcher_bg.png</file>
-    </qresource>
-</RCC>

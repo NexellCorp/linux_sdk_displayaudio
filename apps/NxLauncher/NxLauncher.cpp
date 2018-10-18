@@ -417,7 +417,7 @@ QString NxLauncher::FindCaller(uint32_t uiLevel)
 }
 
 void NxLauncher::RequestSendMessage(const char *pDst, const char *pMsg, int32_t iMsgSize)
-{	
+{
 	QString from = FindCaller(2);
 	QString key = QString::fromLatin1(pDst);
 
@@ -956,7 +956,7 @@ bool NxLauncher::event(QEvent *event)
 
 	case QEvent::WindowActivate:
 	{
-		NXLOGI("NX_LAUNCHER SHOWN");
+		printf("NX_LAUNCHER SHOWN\n");
 		break;
 	}
 
@@ -1169,7 +1169,7 @@ void NxLauncher::slotSetVolume(int value)
  *  - Try to set the launcher to the top level.
  ************************************************************************************/
 void NxLauncher::LauncherShow(bool *bOk, bool bRequireRequestFocus)
-{	
+{
 	*bOk = !bRequireRequestFocus;
 	if (bRequireRequestFocus)
 	{
