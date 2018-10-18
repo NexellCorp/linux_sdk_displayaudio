@@ -90,6 +90,8 @@ Item {
         pane.createAppList()
 
         swipe.updateAppList()
+
+        gui.show()
     }
 
     function activeChanged() {
