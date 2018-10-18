@@ -26,6 +26,10 @@ int main(int argc, char *argv[])
 	QApplication a(argc, argv);
 	NxLauncher w;
 
+	QFont font = qApp->font();
+	font.setFamily("Sans Serif");
+	qApp->setFont(font);
+
 	NXDA_StartKeyProcessing( (void*)&w, cbKeyReceiver );
 	w.show();
 
