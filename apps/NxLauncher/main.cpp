@@ -31,6 +31,7 @@ int main(int argc, char *argv[])
 	qApp->setFont(font);
 
 	NXDA_StartKeyProcessing( (void*)&w, cbKeyReceiver );
+	w.show();
 
 	// bootanimation exit
 	system("killall bootanimation");
