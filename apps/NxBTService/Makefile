@@ -3,15 +3,13 @@ include ../../env.mk
 ################################################################################
 # Build options
 INCLUDE += -I./
-INCLUDE += -I../../library/include/
-INCLUDE += -I../../library/lib/nxbt1xx/include
+INCLUDE += -I../../library/include
+INCLUDE += -I../../library/prebuilt/include
 
 LIBRARY += -L../../library/lib/ -lnxdaudioutils
-LIBRARY += -L../../library/lib/nxbt1xx/lib
+LIBRARY += -L../../library/prebuilt/lib/
 LIBRARY += -lnxbt -lappbt -lnrec_hf -lnxalsa
 LIBRARY += -lpthread
-
-#LDFLAGS += -Wl, -rpath=/home/doriya/working/solution/display-audio/library/lib
 
 ################################################################################
 # Target

@@ -57,6 +57,17 @@ ifeq ($(QT_CONF_PATH), )
 export QT_CONF_PATH=$(NX_QT_CONF_PATH)
 endif
 
+ifeq ($(NX_DAUDIO_ENABLE_BT), )
+export SDK_ENABLE_BT := yes
+else
+export SDK_ENABLE_BT := $(NX_DAUDIO_ENABLE_BT)
+endif
+ifeq ($(NX_DAUDIO_ENABLE_CAM), )
+export SDK_ENABLE_CAM := yes
+else
+export SDK_ENABLE_CAM := $(NX_DAUDIO_ENABLE_CAM)
+endif
+
 QMAKE_PATH=$(OE_QMAKE_PATH_HOST_BINS)
 
 TOP_DIR:=$(shell dirname $(realpath $(lastword $(MAKEFILE_LIST))))
@@ -64,49 +75,44 @@ TOP_DIR:=$(shell dirname $(realpath $(lastword $(MAKEFILE_LIST))))
 LIB_TOP		:= library/src
 APP_TOP		:= apps
 TOOL_TOP	:= tools
-PODO_TOP	:= $(APP_TOP)/podo
 BUILD_TOP	:= qt_build
 BIN_TOP		:= bin
-RESULT		:= result
-RESULT_LIB_TOP := library/lib
-QT_INC_TOP	:= library/include
+RESULT_TOP	:= result
+OUT_LIB_TOP := library/lib
+OUT_INC_TOP	:= library/include
 
 LIBS :=
 LIBS += KeyReceiver
+LIBS += libavin
 LIBS += libnxconfig
 LIBS += libnxdaudioutils
-LIBS += libavin
 LIBS += librearcam
 
 QT_LIBS :=
 QT_LIBS += libnxbaseui
 
 APPS :=
-APPS += NxBTServiceConsole
 APPS += KeyInputSender
-APPS += NxCommandSender
 APPS += NxBTService
+APPS += NxBTServiceConsole
+APPS += NxCommandSender
 
 QT_APPS :=
-QT_APPS += NxLauncher
+QT_APPS += NxAudioPlayer
 QT_APPS += NxBTAudio
 QT_APPS += NxBTPhone
 QT_APPS += NxBTSettings
-
-QT_APPS += NxAudioPlayer
+QT_APPS += NxLauncher
 QT_APPS += NxVideoPlayer
 
 TOOLS :=
 TOOLS += NxCapture
 TOOLS += NxLogcat
 
-RESULT_LIBS := libnxkeyreceiver.so* libnxconfig.so* libnxbaseui.so* libnxavin.so* libnxrearcam.so* libnxdaudioutils.so*
-
-QT_INC := CNX_BaseDialog.h CNX_KeyboardFrame.h CNX_MediaController.h CNX_MessageBox.h CNX_StatusBar.h
-
 ######################################################################
 # Build
 all:
+	@echo "===== Displayaudio SDK building ====="
 	mkdir -p $(BIN_TOP)
 	@for dir in $(LIBS); do							\
 	make -C $(LIB_TOP)/$$dir -j$(JOBS) || exit $?;	\
@@ -135,13 +141,9 @@ all:
 	make -j$(JOBS) || exit $?;						\
 	cd -; 											\
 	done
-	@for dir in $(QT_PODO); do						\
-	mkdir -p $(BUILD_TOP)/build-$$dir;				\
-	cd $(BUILD_TOP)/build-$$dir; 					\
-	$(QMAKE_PATH)/qmake $(TOP_DIR)/$(PODO_TOP)/$$dir || exit $?;\
-	make -j$(JOBS) || exit $?;						\
-	cd -; 											\
-	done
+	@echo ""
+	@echo "===== Building complete ====="
+	@echo ""
 	./tools/scripts/make_package.sh
 
 clean_linux:
@@ -157,13 +159,13 @@ clean_linux:
 
 distclean_linux:
 	@for dir in $(LIBS); do							\
-	make -C $(LIB_TOP)/$$dir distclean || exit $?;		\
+	make -C $(LIB_TOP)/$$dir distclean || exit $?;	\
 	done
 	@for dir in $(APPS); do							\
-	make -C $(APP_TOP)/$$dir distclean || exit $?;		\
+	make -C $(APP_TOP)/$$dir distclean || exit $?;	\
 	done
 	@for dir in $(TOOLS); do						\
-	make -C $(TOOL_TOP)/$$dir distclean || exit $?;		\
+	make -C $(TOOL_TOP)/$$dir distclean || exit $?;	\
 	done
 
 clean_qt:
@@ -190,16 +192,16 @@ clean_qt:
 	done
 
 clean_libs:
-	@for dir in $(RESULT_LIB_TOP); do				\
-	cd $(RESULT_LIB_TOP);							\
-	rm -rf $(RESULT_LIBS);							\
+	@for dir in $(OUT_LIB_TOP); do					\
+	cd $(OUT_LIB_TOP);								\
+	rm -rf *;										\
 	cd -;											\
 	done
 
-clean_qt_header:
-	@for dir in $(QT_INC_TOP); do					\
-	cd $(QT_INC_TOP);								\
-	rm -rf $(QT_INC);								\
+clean_header:
+	@for dir in $(OUT_INC_TOP); do					\
+	cd $(OUT_INC_TOP);								\
+	rm -rf *;										\
 	cd -;											\
 	done
 
@@ -212,10 +214,10 @@ clean:
 distclean:
 	make distclean_linux
 	make clean_libs
-	make clean_qt_header
+	make clean_header
 	rm -rf $(BIN_TOP)
 	rm -rf $(BUILD_TOP)
-	rm -rf $(RESULT)
+	rm -rf $(RESULT_TOP)
 
 package:
 	./tools/scripts/make_package.sh

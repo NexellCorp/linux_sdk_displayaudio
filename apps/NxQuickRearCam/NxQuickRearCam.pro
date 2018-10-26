@@ -14,12 +14,12 @@ QMAKE_RPATHDIR += /nexell/daudio/NxQuickRearCam/lib/
 
 # Add RearCam Library
 INCLUDEPATH += $$PWD/../../library/include
+INCLUDEPATH += $$PWD/../../library/prebuilt/include
 LIBS += -L$$PWD/../../library/lib -lnxrearcam
 LIBS += -ldrm -lnx_v4l2 -lnx_video_api
 
 # Add Common UI Module
-LIBS += -L$$PWD/../../library/lib -lnxbaseui -lnxdaudioipc -lnxdaudioutils -lnxpacpclient
-INCLUDEPATH += $$PWD/../../library/include
+LIBS += -L$$PWD/../../library/lib -lnxbaseui -lnxdaudioutils
 
 SOURCES += main.cpp\
 	mainwindow.cpp

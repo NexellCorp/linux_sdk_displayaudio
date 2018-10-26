@@ -19,13 +19,12 @@ TARGET = NxAudioPlayer
 TEMPLATE = lib
 CONFIG += plugin
 
-QMAKE_RPATHDIR += /nexell/daudio/NxAudioPlayer/lib/
-
-# Add Media Player's Libraries
+# Add Media Player Libraries
 LIBS += -lnx_drm_allocator -lnx_video_api
-LIBS += -L$$PWD/../../library/lib/ -lnxmpmanager -lnxfilterhelper -lnxfilter
+LIBS += -L$$PWD/../../library/prebuilt/lib -lnxmpmanager -lnxfilterhelper -lnxfilter
 
 INCLUDEPATH += $$PWD/../../library/include
+INCLUDEPATH += $$PWD/../../library/prebuilt/include
 
 # Add SQL library
 LIBS += -L$$PWD/../../library/lib/ -lnxdaudioutils
@@ -36,9 +35,8 @@ LIBS += -L$$PWD/../../library/lib/ -lnxconfig -lxml2
 # Add Common UI Module
 LIBS += -L$$PWD/../../library/lib -lnxbaseui
 
-# Add id3 library.
-INCLUDEPATH += $$PWD/../../library/lib/id3-3.8/include
-LIBS        += $$PWD/../../library/lib/id3-3.8/lib/libid3.so
+# Add Id3 libraries
+LIBS += -lid3 -lid3tag
 
 SOURCES +=   \
     CNX_FileList.cpp \
@@ -48,9 +46,9 @@ SOURCES +=   \
     PlayListAudioFrame.cpp \
     PlayerAudioFrame.cpp
 
-HEADERS  += \
-    ../../library/include/NX_MoviePlay.h \
-    ../../library/include/NX_Utils.h \
+HEADERS += \
+    ../../library/prebuilt/include/NX_MoviePlay.h \
+    ../../library/prebuilt/include/NX_Utils.h \
     CAudioPlayerSignals.h \
     CNX_FileList.h \
     CNX_AudioPlayer.h \
@@ -59,13 +57,13 @@ HEADERS  += \
     PlayerAudioFrame.h \
     NxEvent.h
 
-FORMS    += \
+FORMS += \
     MainFrame.ui \
     PlayerAudioFrame.ui \
     PlayListAudioFrame.ui
 
 DISTFILES += \
-            default.jpeg
+    default.jpeg
 
 RESOURCES += \
-        resources.qrc
+    resources.qrc

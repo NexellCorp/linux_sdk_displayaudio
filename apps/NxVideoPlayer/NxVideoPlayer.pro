@@ -20,18 +20,19 @@ CONFIG += plugin
 
     # Add Graphic Tool Library
     LIBS += -lnx_drm_allocator -lnx_video_api
-    LIBS += -L$$PWD/../../library/lib/ -lnxmpmanager -lnxfilterhelper -lnxfilter
+    LIBS += -L$$PWD/../../library/prebuilt/lib -lnxmpmanager -lnxfilterhelper -lnxfilter
 
     # Add SQL library
-    LIBS += -L$$PWD/../../library/lib/ -lnxdaudioutils
+    LIBS += -L$$PWD/../../library/lib -lnxdaudioutils
 
     # Add xml config library
-    LIBS += -L$$PWD/../../library/lib/ -lnxconfig -lxml2
+    LIBS += -L$$PWD/../../library/lib -lnxconfig -lxml2
 
     # Add Common UI Module
     LIBS += -L$$PWD/../../library/lib -lnxbaseui
 
     INCLUDEPATH += $$PWD/../../library/include
+    INCLUDEPATH += $$PWD/../../library/prebuilt/include
 
 
 SOURCES += \

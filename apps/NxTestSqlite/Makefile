@@ -2,12 +2,8 @@ include ../../env.mk
 
 ################################################################################
 # Build options
-INCLUDE += -I./ -I../../library/external/sqlite-autoconf-3200000/result/include
-LIBRARY += -L../../library/external/sqlite-autoconf-3200000/result/lib -lsqlite3
-
+LIBRARY += -lsqlite3
 LIBRARY	+= -lstdc++ -lpthread
-
-#LDFLAGS += -Wl, -rpath=/home/doriya/working/solution/display-audio/library/lib
 
 ################################################################################
 # Target

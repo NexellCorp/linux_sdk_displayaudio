@@ -1,2 +1,2 @@
 TEMPLATE = subdirs
-SUBDIRS = NxQuickRearCam NxAudioPlayer NxBTSettings NxBTAudio NxBTService NxBTPhone NxVideoPlayer NxLauncher NxAVIn
+SUBDIRS = NxAVIn NxAudioPlayer NxBTAudio NxBTPhone NxBTSettings NxBaseUiTest NxLauncher NxQuickRearCam NxTest NxVideoPlayer

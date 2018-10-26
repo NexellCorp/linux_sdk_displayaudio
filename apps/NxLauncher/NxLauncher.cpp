@@ -18,11 +18,9 @@
 #include "NX_DAudioUtils.h"
 
 #ifdef Q_PROCESSOR_X86
-//#define NX_APP_PATH         "/home/doriya/working/solution/display-audio/bin"
 #define NX_APP_PATH	"/home/daegeun/workspace/daudio-5.6/displayaudio/result/nexell/daudio"
 #else
-// #define NX_APP_PATH         "/podo/apps"
-#define NX_APP_PATH         "/nexell/daudio"
+#define NX_APP_PATH "/nexell/daudio"
 #endif
 
 // for dlopen

@@ -1,6 +1,6 @@
 ########################################################################
 # Get Linux Build Enviornment:
-include ../env.mk
+include ../../../../env.mk
 
 CFLAGS		+= -fPIC
 CPPFLAGS	+= -fPIC
@@ -12,6 +12,7 @@ CPPFLAGS	+= -fPIC
 #########################################################################
 #	Local Application Includes
 INCLUDE		+= -I./ -I../../../include
+INCLUDE		+= -I./ -I../../../prebuilt/include
 ifneq ($(SDKTARGETSYSROOT), )
 INCLUDE		+= -I$(SDKTARGETSYSROOT)/usr/include/drm
 endif

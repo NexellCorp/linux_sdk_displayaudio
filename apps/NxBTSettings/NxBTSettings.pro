@@ -61,9 +61,11 @@ FORMS += \
 
 linux-oe-g++ {
     INCLUDEPATH += $$PWD/../../library/include
+    INCLUDEPATH += $$PWD/../../library/prebuilt/include
     LIBS += -L$$PWD/../../library/lib -lnxbaseui -lnxdaudioutils
 } else {
     INCLUDEPATH += $$PWD/../../library/include
+    INCLUDEPATH += $$PWD/../../library/prebuilt/include
     LIBS += -L$$PWD/../../library/lib/x64 -lnxbaseui -lnxdaudioutils
 }
 

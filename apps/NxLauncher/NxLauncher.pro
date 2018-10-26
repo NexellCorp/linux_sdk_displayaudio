@@ -93,8 +93,8 @@ CONFIG_MEDIA_SCANNER {
 }
 
 INCLUDEPATH += $$_PRO_FILE_PWD_/../../library/include
+INCLUDEPATH += $$_PRO_FILE_PWD_/../../library/prebuilt/include
 
-#LIBS += -L$$_PRO_FILE_PWD_/../../library/lib -lnxbaseui -lnxdaudioipc -lnxkeyreceiver -lnxdaudioutils -lnxpacpclient
 linux-oe-g++ {
     LIBS += -L$$_PRO_FILE_PWD_/../../library/lib -lnxkeyreceiver -lnxbaseui -lnxdaudioutils -lsqlite3 -lcrypto
 } else {

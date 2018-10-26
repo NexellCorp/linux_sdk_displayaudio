@@ -3,6 +3,7 @@ include ../../../env.mk
 ######################################################################
 # Build options
 INCLUDE += -I./ -I../../include
+INCLUDE += -I./ -I../../prebuilt/include
 ifneq ($(SDKTARGETSYSROOT), )
 INCLUDE += -I$(SDKTARGETSYSROOT)/usr/include/libxml2
 endif

@@ -3,6 +3,7 @@ include ../../../env.mk
 ######################################################################
 # Build options
 INCLUDE += -I./ -I../../include
+INCLUDE += -I./ -I../../prebuilt/include
 LIBRARY	+= -lstdc++ -lpthread -lm -lsqlite3 -lasound
 
 ######################################################################

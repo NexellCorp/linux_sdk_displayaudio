@@ -3,8 +3,8 @@ include ../../env.mk
 #########################################################################
 #	Toolchain.
 #########################################################################
-LIB_DIR	:= ../../library/lib/nxbt1xx/lib
-INC_DIR	:= ../../library/lib/nxbt1xx/include
+LIB_DIR	:= ../../library/prebuilt/lib
+INC_DIR	:= ../../library/prebuilt/include
 BIN_DIR	:= ../../bin
 
 CFLAGS	+= -g

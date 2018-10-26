@@ -15,15 +15,15 @@ QMAKE_RPATHDIR += /nexell/daudio/NxAVIn/lib/
 
 # Add AVIN Library
 INCLUDEPATH += $$PWD/../../library/include
-LIBS += -L$$PWD/../../library/lib -lnxavin
-LIBS += -ldrm -lnx_v4l2 -lnx_video_api
+INCLUDEPATH += $$PWD/../../library/prebuilt/include
+LIBS += -L$$PWD/../../library/lib
+LIBS += -lnxavin -ldrm -lnx_v4l2 -lnx_video_api
 
 # Add Common UI Module
-LIBS += -L$$PWD/../../library/lib -lnxbaseui -lnxdaudioipc -lnxdaudioutils -lnxpacpclient
-INCLUDEPATH += $$PWD/../../library/include
+LIBS += -lnxbaseui -lnxdaudioutils
 
 SOURCES += main.cpp\
-        avinmainwindow.cpp \
+    avinmainwindow.cpp \
     avindisplayview.cpp
 
 HEADERS  += avinmainwindow.h \

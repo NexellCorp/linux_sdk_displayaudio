@@ -35,28 +35,23 @@ DEFINES += QT_DEPRECATED_WARNINGS
 #DEFINES += QT_DISABLE_DEPRECATED_BEFORE=0x060000    # disables all the APIs deprecated before Qt 6.0.0
 
 SOURCES += \
-#    Frame.cpp \
     Form.cpp \
     DAudioIface_Impl.cpp
 
 
 HEADERS += \
-        libnxtest_global.h \ 
-#    Frame.h \
-#    DAudioIface.h \
+    libnxtest_global.h \
     Form.h \
     NxEvent.h
 
 FORMS += \
     Form.ui
-#    Frame.ui \
 
 unix {
     target.path = /usr/lib
     INSTALLS += target
 }
 
-
-
 INCLUDEPATH += $$_PRO_FILE_PWD_/../../library/include
+INCLUDEPATH += $$_PRO_FILE_PWD_/../../library/prebuilt/include
 LIBS += -L$$_PRO_FILE_PWD_/../../library/lib -lnxbaseui
