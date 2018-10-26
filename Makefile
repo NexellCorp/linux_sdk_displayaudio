@@ -194,14 +194,14 @@ clean_qt:
 clean_libs:
 	@for dir in $(OUT_LIB_TOP); do					\
 	cd $(OUT_LIB_TOP);								\
-	rm -rf *;										\
+	rm -rf *.so *.so.*;								\
 	cd -;											\
 	done
 
 clean_header:
 	@for dir in $(OUT_INC_TOP); do					\
 	cd $(OUT_INC_TOP);								\
-	rm -rf *;										\
+	rm -rf *.h;										\
 	cd -;											\
 	done
 
