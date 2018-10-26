@@ -14,13 +14,13 @@ function package_sdk_libraries()
 {
 	echo "<< Package SDK libraries >>"
 
-	package_sdk_common_libraries
+	package_sdk_built_libraries
 	package_sdk_prebuilt_libaries
 }
 
-function package_sdk_common_libraries()
+function package_sdk_built_libraries()
 {
-	echo "<< Package SDK common libraries >>"
+	echo "<< Package SDK built libraries >>"
 
 	mkdir -p ${RESULT_DIR}/${USR_LIB}
 	cp -apvR ${TOP}/${USER_LIB}/* ${RESULT_DIR}/${USR_LIB}/
@@ -35,7 +35,7 @@ function package_sdk_prebuilt_libaries()
 
 function package_sdk_binaries()
 {
-	echo "<< Package SDK common binaries >>"
+	echo "<< Package SDK built binaries >>"
 
 	mkdir -p ${RESULT_DIR}/${USR_BIN}
 	cp -apvR ${TOP}/bin/* ${RESULT_DIR}/${USR_BIN}/
