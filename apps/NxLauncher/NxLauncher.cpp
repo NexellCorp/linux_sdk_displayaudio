@@ -259,10 +259,6 @@ NxLauncher::NxLauncher(QWidget *parent) :
 	m_pMediaScanner = new MediaScanner();
 	connect(m_pMediaScanner, SIGNAL(signalMediaEvent(NxEventTypes)), this, SLOT(slotMediaEvent(NxEventTypes)));
 #endif
-	m_pWatcher = new QFileSystemWatcher(this);
-	m_pWatcher->addPath(TEST_COMMAND_PATH);
-	connect(m_pWatcher, SIGNAL(fileChanged(QString)), this, SLOT(slotDetectCommand()));
-
 	connect(&m_Timer, SIGNAL(timeout()), this, SLOT(slotTimer()));
 	m_Timer.start(5000);
 }
@@ -1402,39 +1398,4 @@ void NxLauncher::slotNotificationReject()
 	}
 
 	m_PlugIns[requestor]->m_pNotificationResponse(false);
-}
-
-void NxLauncher::slotDetectCommand()
-{
-	QFile file(TEST_COMMAND_PATH);
-	if (file.open(QFile::ReadWrite))
-	{
-		QString data = file.readAll();
-		QStringList commands = data.split('\n');
-		QString type, args;
-		int pos;
-		foreach (QString command, commands)
-		{
-			// execute,[App name]
-			if (command.isEmpty())
-				continue;
-
-			pos = command.indexOf(",");
-			if (pos < 0)
-				continue;
-
-			type = command.left(pos);
-			if (type.toLower() == "execute")
-			{
-				args = command.mid(pos+1);
-				Execute(args);
-			}
-		}
-
-		file.close();
-	}
-
-	m_pWatcher->removePath(TEST_COMMAND_PATH);
-	file.resize(0);
-	m_pWatcher->addPath(TEST_COMMAND_PATH);
 }

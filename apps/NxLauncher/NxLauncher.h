@@ -22,7 +22,6 @@
 #include "nxappinfo.h"
 
 #include <QTimer>
-#include <QFileSystemWatcher>
 
 namespace Ui {
 class NxLauncher;
@@ -44,8 +43,6 @@ private slots:
 	void slotNotificationReject();
 
 	void slotTimer();
-
-	void slotDetectCommand();
 
 	void slotPlugInUpdated(QString plugin);
 
@@ -160,8 +157,6 @@ private:
 	QTimer m_Timer;
 
 	int m_iPosition;
-
-	QFileSystemWatcher *m_pWatcher;
 
 	MediaScanner *m_pMediaScanner;
 

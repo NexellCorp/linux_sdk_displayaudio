@@ -14,6 +14,7 @@ const char *pstMountPosition[] = {
 
 MediaScanner::MediaScanner()
 {
+	qRegisterMetaType<uint32_t>("uint32_t");
 	m_pDiskManager = new CNX_DiskManager();
 	connect(m_pDiskManager, SIGNAL(signalDetectUevent(uint32_t,uint8_t*)), this, SLOT(slotDetectUevent(uint32_t,uint8_t*)));
 	m_pDiskManager->Start();
