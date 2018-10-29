@@ -73,6 +73,9 @@ QLabel, QLabel::disabled {
          <height>0</height>
         </size>
        </property>
+       <property name="focusPolicy">
+        <enum>Qt::NoFocus</enum>
+       </property>
        <property name="styleSheet">
         <string notr="true">QPushButton {
 	border-image: url(:/image/bg_home_normal.png);
@@ -104,6 +107,9 @@ QPushButton::disabled {
          <pointsize>15</pointsize>
         </font>
        </property>
+       <property name="focusPolicy">
+        <enum>Qt::NoFocus</enum>
+       </property>
        <property name="text">
         <string>Nexell BT Audio Player</string>
        </property>
@@ -111,6 +117,9 @@ QPushButton::disabled {
      </item>
      <item>
       <spacer name="horizontalSpacer">
+       <property name="focusPolicy">
+        <enum>Qt::NoFocus</enum>
+       </property>
        <property name="orientation">
         <enum>Qt::Horizontal</enum>
        </property>
@@ -135,6 +144,9 @@ QPushButton::disabled {
          <pointsize>15</pointsize>
         </font>
        </property>
+       <property name="focusPolicy">
+        <enum>Qt::NoFocus</enum>
+       </property>
        <property name="text">
         <string>06:38:10 PM</string>
        </property>
@@ -145,6 +157,9 @@ QPushButton::disabled {
      </item>
      <item>
       <spacer name="horizontalSpacer_3">
+       <property name="focusPolicy">
+        <enum>Qt::NoFocus</enum>
+       </property>
        <property name="orientation">
         <enum>Qt::Horizontal</enum>
        </property>
@@ -176,6 +191,9 @@ QPushButton::disabled {
          <height>60</height>
         </size>
        </property>
+       <property name="focusPolicy">
+        <enum>Qt::NoFocus</enum>
+       </property>
        <property name="styleSheet">
         <string notr="true">QPushButton {
 	border-image: url(:/image/bg_vol.png);
@@ -199,6 +217,9 @@ QPushButton::disabled {
          <pointsize>15</pointsize>
         </font>
        </property>
+       <property name="focusPolicy">
+        <enum>Qt::NoFocus</enum>
+       </property>
        <property name="text">
         <string>100</string>
        </property>
@@ -206,6 +227,9 @@ QPushButton::disabled {
      </item>
      <item>
       <spacer name="horizontalSpacer_4">
+       <property name="focusPolicy">
+        <enum>Qt::NoFocus</enum>
+       </property>
        <property name="orientation">
         <enum>Qt::Horizontal</enum>
        </property>
@@ -239,6 +263,9 @@ QPushButton::disabled {
          <width>60</width>
          <height>60</height>
         </size>
+       </property>
+       <property name="focusPolicy">
+        <enum>Qt::NoFocus</enum>
        </property>
        <property name="styleSheet">
         <string notr="true">QPushButton:disabled {
@@ -276,6 +303,9 @@ QPushButton:checked:disabled {
          <pointsize>15</pointsize>
         </font>
        </property>
+       <property name="focusPolicy">
+        <enum>Qt::NoFocus</enum>
+       </property>
        <property name="text">
         <string>Disconnected</string>
        </property>
@@ -283,6 +313,9 @@ QPushButton:checked:disabled {
      </item>
      <item>
       <spacer name="horizontalSpacer_2">
+       <property name="focusPolicy">
+        <enum>Qt::NoFocus</enum>
+       </property>
        <property name="orientation">
         <enum>Qt::Horizontal</enum>
        </property>
@@ -316,6 +349,9 @@ QPushButton:checked:disabled {
          <width>60</width>
          <height>60</height>
         </size>
+       </property>
+       <property name="focusPolicy">
+        <enum>Qt::NoFocus</enum>
        </property>
        <property name="styleSheet">
         <string notr="true">QPushButton {
