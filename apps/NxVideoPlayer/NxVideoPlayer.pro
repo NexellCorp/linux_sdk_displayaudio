@@ -18,7 +18,7 @@ TARGET = NxVideoPlayer
 TEMPLATE = lib
 CONFIG += plugin
 
-    # Add Graphic Tool Library
+    # Add Graphic tool libraries
     LIBS += -lnx_drm_allocator -lnx_video_api
     LIBS += -L$$PWD/../../library/prebuilt/lib -lnxmpmanager -lnxfilterhelper -lnxfilter
 
@@ -31,13 +31,16 @@ CONFIG += plugin
     # Add Common UI Module
     LIBS += -L$$PWD/../../library/lib -lnxbaseui
 
+    # Add icu libraries
+    LIBS += -licuuc -licui18n
+
     INCLUDEPATH += $$PWD/../../library/include
     INCLUDEPATH += $$PWD/../../library/prebuilt/include
-
 
 SOURCES += \
     CNX_MoviePlayer.cpp \
     CNX_FileList.cpp \
+    CNX_SubtitleParser.cpp \
     MainFrame.cpp \
     DAudioIface_Impl.cpp \
     PlayerVideoFrame.cpp \
