@@ -1,60 +1,60 @@
 ifndef	JOBS
-JOBJS	:= 8
+JOBJS := 8
 endif
 
 ifeq ($(OE_QMAKE_AR), )
-export OE_QMAKE_AR=$(NX_OE_QMAKE_AR)
+export OE_QMAKE_AR = $(NX_OE_QMAKE_AR)
 endif
 ifeq ($(OE_QMAKE_CC), )
-export OE_QMAKE_CC=$(NX_OE_QMAKE_CC)
+export OE_QMAKE_CC = $(NX_OE_QMAKE_CC)
 endif
 ifeq ($(OE_QMAKE_CFLAGS), )
-export OE_QMAKE_CFLAGS=$(NX_OE_QMAKE_CFLAGS)
+export OE_QMAKE_CFLAGS = $(NX_OE_QMAKE_CFLAGS)
 endif
 ifeq ($(OE_QMAKE_CXX), )
-export OE_QMAKE_CXX=$(NX_OE_QMAKE_CXX)
+export OE_QMAKE_CXX = $(NX_OE_QMAKE_CXX)
 endif
 ifeq ($(OE_QMAKE_CXXFLAGS), )
-export OE_QMAKE_CXXFLAGS=$(NX_OE_QMAKE_CXXFLAGS)
+export OE_QMAKE_CXXFLAGS = $(NX_OE_QMAKE_CXXFLAGS)
 endif
 ifeq ($(OE_QMAKE_INCDIR_QT), )
-export OE_QMAKE_INCDIR_QT=$(NX_OE_QMAKE_INCDIR_QT)
+export OE_QMAKE_INCDIR_QT = $(NX_OE_QMAKE_INCDIR_QT)
 endif
 ifeq ($(OE_QMAKE_LDFLAGS), )
-export OE_QMAKE_LDFLAGS=$(NX_OE_QMAKE_LDFLAGS)
+export OE_QMAKE_LDFLAGS = $(NX_OE_QMAKE_LDFLAGS)
 endif
 ifeq ($(OE_QMAKE_LIBDIR_QT), )
-export OE_QMAKE_LIBDIR_QT=$(NX_OE_QMAKE_LIBDIR_QT)
+export OE_QMAKE_LIBDIR_QT = $(NX_OE_QMAKE_LIBDIR_QT)
 endif
 ifeq ($(OE_QMAKE_LINK), )
-export OE_QMAKE_LINK=$(NX_OE_QMAKE_LINK)
+export OE_QMAKE_LINK = $(NX_OE_QMAKE_LINK)
 endif
 ifeq ($(OE_QMAKE_QDBUSCPP2XML), )
-export OE_QMAKE_QDBUSCPP2XML=$(NX_OE_QMAKE_QDBUSCPP2XML)
+export OE_QMAKE_QDBUSCPP2XML = $(NX_OE_QMAKE_QDBUSCPP2XML)
 endif
 ifeq ($(OE_QMAKE_QDBUSXML2CPP), )
-export OE_QMAKE_QDBUSXML2CPP=$(NX_OE_QMAKE_QDBUSXML2CPP)
+export OE_QMAKE_QDBUSXML2CPP = $(NX_OE_QMAKE_QDBUSXML2CPP)
 endif
 ifeq ($(OE_QMAKE_QT_CONFIG), )
-export OE_QMAKE_QT_CONFIG=$(NX_OE_QMAKE_QT_CONFIG)
+export OE_QMAKE_QT_CONFIG = $(NX_OE_QMAKE_QT_CONFIG)
 endif
 ifeq ($(OE_QMAKE_MOC), )
-export OE_QMAKE_MOC=$(NX_OE_QMAKE_MOC)
+export OE_QMAKE_MOC = $(NX_OE_QMAKE_MOC)
 endif
 ifeq ($(OE_QMAKE_RCC), )
-export OE_QMAKE_RCC=$(NX_OE_QMAKE_RCC)
+export OE_QMAKE_RCC = $(NX_OE_QMAKE_RCC)
 endif
 ifeq ($(OE_QMAKE_UIC), )
-export OE_QMAKE_UIC=$(NX_OE_QMAKE_UIC)
+export OE_QMAKE_UIC = $(NX_OE_QMAKE_UIC)
 endif
 ifeq ($(OE_QMAKE_PATH_HOST_BINS), )
-export OE_QMAKE_PATH_HOST_BINS=$(NX_OE_QMAKE_PATH_HOST_BINS)
+export OE_QMAKE_PATH_HOST_BINS = $(NX_OE_QMAKE_PATH_HOST_BINS)
 endif
 ifeq ($(QMAKESPEC), )
-export QMAKESPEC=$(NX_OE_XQMAKESPEC)
+export QMAKESPEC = $(NX_OE_XQMAKESPEC)
 endif
 ifeq ($(QT_CONF_PATH), )
-export QT_CONF_PATH=$(NX_QT_CONF_PATH)
+export QT_CONF_PATH = $(NX_QT_CONF_PATH)
 endif
 
 ifeq ($(NX_DAUDIO_ENABLE_BT), )
@@ -68,16 +68,16 @@ else
 export SDK_ENABLE_CAM := $(NX_DAUDIO_ENABLE_CAM)
 endif
 
-QMAKE_PATH=$(OE_QMAKE_PATH_HOST_BINS)
+QMAKE_PATH = $(OE_QMAKE_PATH_HOST_BINS)
 
-TOP_DIR:=$(shell dirname $(realpath $(lastword $(MAKEFILE_LIST))))
+TOP_DIR := $(shell dirname $(realpath $(lastword $(MAKEFILE_LIST))))
 
-LIB_TOP		:= library/src
-APP_TOP		:= apps
-TOOL_TOP	:= tools
-BUILD_TOP	:= qt_build
-BIN_TOP		:= bin
-RESULT_TOP	:= result
+LIB_TOP := library/src
+APP_TOP := apps
+TOOL_TOP := tools
+BUILD_TOP := qt_build
+BIN_TOP := bin
+RESULT_TOP := result
 OUT_LIB_TOP := library/lib
 OUT_INC_TOP	:= library/include
 
