@@ -23,6 +23,8 @@ CNX_StatusBar::CNX_StatusBar(QWidget *parent) :
 	connect(&m_UpdateDAudioStatus, SIGNAL(timeout()), this, SLOT(slotUpdateDAudioStatus()));
 	m_UpdateDAudioStatus.start(1000);
 	slotUpdateDAudioStatus();
+
+	ui->LABEL_TITLE->setElideMode(Qt::ElideRight);
 }
 
 CNX_StatusBar::~CNX_StatusBar()

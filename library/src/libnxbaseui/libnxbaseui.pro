@@ -27,7 +27,8 @@ SOURCES +=  \
     CNX_BaseUI.cpp \
     CNX_MediaController.cpp \
     CNX_MessageBox.cpp \
-    CNX_KeyboardFrame.cpp
+    CNX_KeyboardFrame.cpp \
+    ElideLabel.cpp
 
 HEADERS +=  \
     CNX_StatusBar.h \
@@ -35,7 +36,8 @@ HEADERS +=  \
     CNX_MediaController.h \
     CNX_BaseUI_global.h \
     CNX_MessageBox.h \
-    CNX_KeyboardFrame.h
+    CNX_KeyboardFrame.h \
+    ElideLabel.h
 
 RESOURCES += \
     CNX_BaseUI.qrc \
