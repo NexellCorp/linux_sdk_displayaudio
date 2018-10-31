@@ -70,8 +70,6 @@ NxLauncher::NxLauncher(QWidget *parent) :
 	m_pPackageManager = new NxPackageScanner(NX_APP_PATH, &m_PlugIns);
 	connect(m_pPackageManager, SIGNAL(signalPlugInUpdated(QString)), this, SLOT(slotPlugInUpdated(QString)));
 
-	m_pProcessManager = new NxProcessManager( this );
-
 	// step2. scan applications - extract function pointer
 	foreach (NxPluginInfo *psInfo, m_PlugIns)
 	{
@@ -255,10 +253,10 @@ NxLauncher::NxLauncher(QWidget *parent) :
 	connect(ui->messageFrame, SIGNAL(signalCancel()), this, SLOT(slotPopupMessageReject()));
 	connect(ui->notificationBar, SIGNAL(signalOk()), this, SLOT(slotNotificationAccept()));
 	connect(ui->notificationBar, SIGNAL(signalCancel()), this, SLOT(slotNotificationReject()));
-#ifdef CONFIG_MEDIA_SCANNER
+
 	m_pMediaScanner = new MediaScanner();
 	connect(m_pMediaScanner, SIGNAL(signalMediaEvent(NxEventTypes)), this, SLOT(slotMediaEvent(NxEventTypes)));
-#endif
+
 	connect(&m_Timer, SIGNAL(timeout()), this, SLOT(slotTimer()));
 	m_Timer.start(5000);
 }

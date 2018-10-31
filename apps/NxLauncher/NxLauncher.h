@@ -12,7 +12,6 @@
 #include <NX_Type.h>
 
 #include "nxpackagemanager.h"
-#include "nxprocessmanager.h"
 
 #include <media/MediaScanner.h>
 
@@ -149,7 +148,6 @@ private:
 	QMap<QString, NxPluginInfo*> m_PlugIns;
 
 	NxPackageScanner* m_pPackageManager;
-	NxProcessManager* m_pProcessManager;
 
 	static QQueue<QString> m_AudioFocusQueue;
 	static QQueue<QString> m_VideoFocusQueue;
