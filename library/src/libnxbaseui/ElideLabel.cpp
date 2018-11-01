@@ -1,5 +1,4 @@
 #include "ElideLabel.h"
-#include <QDebug>
 #include <QResizeEvent>
 
 ElideLabel::ElideLabel(QWidget *parent)
@@ -18,10 +17,7 @@ void ElideLabel::setText(const QString &s)
 void ElideLabel::setText()
 {
 	QFontMetrics fm(font());
-	int w = width() - 2;
-//	QLabel::setText(fm.elidedText(m_Text, m_ElideMode, w));
 	QLabel::setText(fm.elidedText(m_Text, m_ElideMode, width()));
-	qDebug() << m_ElideMode;
 }
 
 void ElideLabel::setElideMode(Qt::TextElideMode eMode)
@@ -34,9 +30,7 @@ void ElideLabel::setElideMode(Qt::TextElideMode eMode)
 
 void ElideLabel::resizeEvent(QResizeEvent *e)
 {
-	qDebug() << Q_FUNC_INFO << e->size();
-//	Q_UNUSED(e)
+	Q_UNUSED(e)
 
-//	QLabel::setText(m_Text);
 	setText();
 }
