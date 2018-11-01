@@ -15,10 +15,17 @@
 
 CNX_DiskManager::CNX_DiskManager()
 {
+	while (0 != access(STORAGE_PATH, F_OK))
+	{
+		usleep(100000);
+	}
+
 	QDir dir;
 	dir.setPath("/dev/disk/by-uuid");
 	foreach (QFileInfo f, dir.entryInfoList(QDir::Files))
+	{
 		m_DeviceMap[f.fileName()] = f.symLinkTarget();
+	}
 
 	m_bThreadRun = false;
 }
@@ -71,8 +78,12 @@ void CNX_DiskManager::run()
 				char target[1024] = {0,};
 				int pos = 0;
 				size_t count = 0;
-
 				sprintf(devpath, "/dev/disk/by-uuid/%s", event->name);
+				if (0 != access(devpath, F_OK))
+				{
+					i += EVENT_SIZE + event->len;
+					continue;
+				}
 
 				count = readlink(devpath, target, sizeof(target));
 				if (count <= 0)
@@ -86,7 +97,6 @@ void CNX_DiskManager::run()
 
 				sprintf(devpath, "/dev/%s", target+pos);
 				m_DeviceMap[event->name] = devpath;
-
 				iEventType = strstr(devpath, "mmcblk") ? E_NX_EVENT_SDCARD_INSERT : E_NX_EVENT_USB_INSERT;
 				emit signalDetectUevent(iEventType, (uint8_t*)devpath);
 			}
