@@ -6,7 +6,7 @@
 static void cbStatusHome( void *pObj )
 {
     (void) pObj;
-    qDebug(">>>>>>>>>>>>>>>> cbStatusHome\n");
+    qDebug("List >>>>>>>>>>>>>>>> cbStatusHome\n");
     PlayListAudioFrame *p = (PlayListAudioFrame *)pObj;
     QApplication::postEvent(p, new NxStatusHomeEvent());
 }

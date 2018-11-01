@@ -29,6 +29,11 @@ CNX_StatusBar::CNX_StatusBar(QWidget *parent) :
 
 CNX_StatusBar::~CNX_StatusBar()
 {
+	if(m_pDAudioStatus)
+	{
+		delete m_pDAudioStatus;
+	}
+
 	delete ui;
 }
 
