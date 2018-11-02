@@ -66,8 +66,6 @@ private:
 	// callback functions
 	static void RequestLauncherShow(bool *bOk);
 
-	static void RequestShow();	
-
 	static void RequestSendMessage(const char *pDst, const char *pMsg, int32_t iMsgSize);
 
 	// Plugin Management from other plugin

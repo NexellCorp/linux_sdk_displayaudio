@@ -9,10 +9,6 @@ NxPluginInfo::NxPluginInfo() : QObject()
 	m_pInit = NULL;
 	m_pIsInit = NULL;
 	m_pdeInit = NULL;
-	m_pShow = NULL;
-	m_pHide = NULL;
-	m_pRaise = NULL;
-	m_pLower = NULL;
 	//
 	m_pRequestAudioFocus = NULL;
 	m_pRequestAudioFocusTransient = NULL;
@@ -25,7 +21,6 @@ NxPluginInfo::NxPluginInfo() : QObject()
 	// register callback functions
 	//
 	m_pRegisterLauncherShow = NULL;
-	m_pRegisterShow = NULL;
 	m_pRegisterRequestTerminate = NULL;
 	//
 	m_pRegisterRequestAudioFocus = NULL;
@@ -49,7 +44,7 @@ NxPluginInfo::NxPluginInfo() : QObject()
 	m_pRegisterRequestNotification = NULL;
 	m_pRegisterRequestExpireNotification = NULL;
 	m_pNotificationResponse = NULL;
-//	// Volume
+	// Volume
 	m_pRegisterRequestVolume = NULL;
 	// Media Event
 	m_pMediaEventChanged = NULL;

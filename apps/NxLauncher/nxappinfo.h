@@ -31,21 +31,11 @@ public:
 
 	void (*m_pdeInit)();
 
-	void (*m_pShow)();
-
-	void (*m_pHide)();
-
-	void (*m_pRaise)();
-
-	void (*m_pLower)();
-
 	//
 	void (*m_pBackButtonClicked)();
 
 	// register callback function
 	void (*m_pRegisterLauncherShow)(void(*)(bool *));
-
-	void (*m_pRegisterShow)(void(*)());
 
 	void (*m_pRegisterRequestTerminate)(void(*cbFunc)());
 

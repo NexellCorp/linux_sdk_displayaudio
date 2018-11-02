@@ -91,18 +91,8 @@ NxLauncher::NxLauncher(QWidget *parent) :
 		psInfo->m_pIsInit = (void (*)(bool *))dlsym(psInfo->m_pHandle, "IsInit");
 		// deInitialize
 		psInfo->m_pdeInit = (void (*)())dlsym(psInfo->m_pHandle, "deInit");
-		// show for gui application
-		psInfo->m_pShow = (void (*)())dlsym(psInfo->m_pHandle, "Show");
-		// hide for gui application
-		psInfo->m_pHide = (void (*)())dlsym(psInfo->m_pHandle, "Hide");
-		// raise for gui application - change z-order
-		psInfo->m_pRaise = (void (*)())dlsym(psInfo->m_pHandle, "Raise");
-		// lower for gui application - change z-order
-		psInfo->m_pLower = (void (*)())dlsym(psInfo->m_pHandle, "Lower");
 		// launcher topmost
 		psInfo->m_pRegisterLauncherShow = (void (*)(void(*)(bool*)))dlsym(psInfo->m_pHandle, "RegisterRequestLauncherShow");
-		// ???
-		psInfo->m_pRegisterShow = (void (*)(void(*)()))dlsym(psInfo->m_pHandle, "RegisterShow");
 		// request audio focus
 		psInfo->m_pRequestAudioFocus = (void (*)(FocusType, FocusPriority, bool*))dlsym(psInfo->m_pHandle, "RequestAudioFocus");
 		// register callback for request audio focus
@@ -333,7 +323,6 @@ void NxLauncher::BackButtonClicked()
 		if (m_PlugIns[owner]->m_pBackButtonClicked)
 			m_PlugIns[owner]->m_pBackButtonClicked();
 	}
-
 }
 
 void NxLauncher::cbStatusVolume(void *)
@@ -346,11 +335,6 @@ void NxLauncher::RequestLauncherShow(bool *bOk)
 	NXLOGI("[%s]", __FUNCTION__);
 	if (m_spInstance)
 		m_spInstance->LauncherShow(bOk, true);
-}
-
-void NxLauncher::RequestShow()
-{
-
 }
 
 QString NxLauncher::FindCaller(uint32_t uiLevel)
@@ -511,6 +495,16 @@ void NxLauncher::RequestPlugInTerminate(const char *pPlugin)
 		p->m_PlugIns[key]->m_pdeInit();
 }
 
+/************************************************************************************\
+ * D-AUDIO INTERFACE - RequestPlugInIsRunning
+ *
+ * Description
+ *  - Check that the plug-in is running.
+ *
+ * Parameters
+ *  - pPlugin : The plug-in you want to check.
+ *  - bOk : If the plug-in is running, set 'bOk' to true. Otherwise, set 'bOk' to false.
+ ************************************************************************************/
 void NxLauncher::RequestPlugInIsRunning(const char *pPlugin, bool *bOk)
 {
 	NxLauncher *p = m_spInstance;
@@ -531,9 +525,7 @@ void NxLauncher::RequestPlugInIsRunning(const char *pPlugin, bool *bOk)
 	}
 
 	// check if the instance exists.
-	NXLOGI("[%s] %s %d <1>", __FUNCTION__, key.toStdString().c_str(), !!*bOk);
 	p->m_PlugIns[key]->m_pIsInit(bOk);
-	NXLOGI("[%s] %s %d <2>", __FUNCTION__, key.toStdString().c_str(), !!*bOk);
 }
 
 /************************************************************************************\
@@ -596,6 +588,19 @@ void NxLauncher::RequestAudioFocus(FocusPriority ePriority, bool *bOk)
 	}
 }
 
+/************************************************************************************\
+ * D-AUDIO INTERFACE - RequestAudioFocusTransient
+ *
+ * Description
+ *  - Gets the focus from the focus owner for a moment, uses it, and then passes
+ *    the focus back to the original owner.
+ *  - If the focus of the current owner is higher than the priority of the requestor,
+ *    it always fails.
+ *
+ * Return value
+ *  - If successful, 'bOk' is set to 'true';
+ *  - Otherwise, 'bOk' is set to 'false'.
+ ************************************************************************************/
 void NxLauncher::RequestAudioFocusTransient(FocusPriority ePriority, bool *bOk)
 {
 	QString caller = FindCaller(2);
@@ -640,6 +645,12 @@ void NxLauncher::RequestAudioFocusTransient(FocusPriority ePriority, bool *bOk)
 	}
 }
 
+/************************************************************************************\
+ * D-AUDIO INTERFACE - RequestAudioFocusLoss
+ *
+ * Description
+ *  - After the focus has been used, it should be called.
+ ************************************************************************************/
 void NxLauncher::RequestAudioFocusLoss()
 {
 	QString caller = FindCaller(2);
@@ -672,7 +683,18 @@ void NxLauncher::RequestAudioFocusLoss()
 	NXLOGI("[%s] <DONE> owner(%s)", __FUNCTION__, curr.toStdString().c_str());
 }
 
-// Video Focus Management
+/************************************************************************************\
+ * D-AUDIO INTERFACE - RequestVideoFocus
+ *
+ * Description
+ *  - Gets the focus from the focus owner and passes the focus to the requestor.
+ *  - If the focus of the current owner is higher than the priority of the requestor,
+ *    it always fails.
+ *
+ * Return value
+ *  - If successful, 'bOk' is set to 'true';
+ *  - Otherwise, 'bOk' is set to 'false'.
+ ************************************************************************************/
 void NxLauncher::RequestVideoFocus(FocusPriority ePriority, bool *bOk)
 {
 	if (m_spInstance)
@@ -725,6 +747,19 @@ void NxLauncher::VideoFocus(FocusPriority ePriority, bool *bOk)
 	}
 }
 
+/************************************************************************************\
+ * D-AUDIO INTERFACE - RequestVideoFocusTransient
+ *
+ * Description
+ *  - Gets the focus from the focus owner for a moment, uses it, and then passes
+ *    the focus back to the original owner.
+ *  - If the focus of the current owner is higher than the priority of the requestor,
+ *    it always fails.
+ *
+ * Return value
+ *  - If successful, 'bOk' is set to 'true';
+ *  - Otherwise, 'bOk' is set to 'false'.
+ ************************************************************************************/
 void NxLauncher::RequestVideoFocusTransient(FocusPriority ePriority, bool *bOk)
 {
 	QString caller = FindCaller(2);
@@ -776,6 +811,12 @@ void NxLauncher::RequestVideoFocusTransient(FocusPriority ePriority, bool *bOk)
 	}
 }
 
+/************************************************************************************\
+ * D-AUDIO INTERFACE - RequestVideoFocusLoss
+ *
+ * Description
+ *  - After the focus has been used, it should be called.
+ ************************************************************************************/
 void NxLauncher::RequestVideoFocusLoss()
 {
 	QString caller = FindCaller(2);
@@ -816,6 +857,12 @@ void NxLauncher::RequestVideoFocusLoss()
 	NXLOGI("[%s] <DONE> owner(%s)", __FUNCTION__, curr.toStdString().c_str());
 }
 
+/************************************************************************************\
+ * D-AUDIO INTERFACE - RequestPopupMessage
+ *
+ * Description
+ *  - Request a pop-up message.
+ ************************************************************************************/
 void NxLauncher::RequestPopupMessage(PopupMessage *psPopup, bool *bOk)
 {
 	QString caller = FindCaller(2);
@@ -824,33 +871,71 @@ void NxLauncher::RequestPopupMessage(PopupMessage *psPopup, bool *bOk)
 	QApplication::postEvent(m_spInstance, new NxPopupMessageEvent(psPopup, caller));
 }
 
+/************************************************************************************\
+ * D-AUDIO INTERFACE - RequestExpirePopupMessage
+ *
+ * Description
+ *  - A pop-up message is requested to expire.
+ ************************************************************************************/
 void NxLauncher::RequestExpirePopupMessage()
 {
 	m_spInstance->ExpirePopupMessage();
 }
 
+/************************************************************************************\
+ * D-AUDIO INTERFACE Wrapper - ExpirePopupMessage
+ *
+ * Description
+ *  - Close the pop-up message.
+ *  - Restores the original video focus.
+ ************************************************************************************/
 void NxLauncher::ExpirePopupMessage()
 {
 	ui->messageFrame->Lower();
 	NextVideoFocus();
 }
 
+/************************************************************************************\
+ * D-AUDIO INTERFACE - RequestNotification
+ *
+ * Description
+ *  - Request a notification.
+ *  - The notification is at the top regardless of the video focus.
+ ************************************************************************************/
 void NxLauncher::RequestNotification(PopupMessage *psPopup)
 {
 	QString caller = FindCaller(2);
 	QApplication::postEvent(m_spInstance, new NxNotificationEvent(psPopup, caller));
 }
 
+/************************************************************************************\
+ * D-AUDIO INTERFACE - RequestExpireNotification
+ *
+ * Description
+ *  - A notification is requested to expire.
+ ************************************************************************************/
 void NxLauncher::RequestExpireNotification()
 {
 	m_spInstance->ExpireNotification();
 }
 
+/************************************************************************************\
+ * D-AUDIO INTERFACE Wrapper - ExpireNotification
+ *
+ * Description
+ *  - Close the notification.
+ ************************************************************************************/
 void NxLauncher::ExpireNotification()
 {
 	ui->notificationBar->Lower();
 }
 
+/************************************************************************************\
+ * D-AUDIO INTERFACE - RequestTerminate
+ *
+ * Description
+ *  - The plug-in requests termination.
+ ************************************************************************************/
 void NxLauncher::RequestTerminate()
 {
 	QString requestor = FindCaller(2);
@@ -860,11 +945,13 @@ void NxLauncher::RequestTerminate()
 	}
 }
 
-void NxLauncher::RequestVolume()
-{
-	QApplication::postEvent(m_spInstance, new NxVolumeControlEvent());
-}
-
+/************************************************************************************\
+ * D-AUDIO INTERFACE Wrapper - Terminate
+ *
+ * Description
+ *  - Call the deInit function of the plugin that requested termination.
+ *  - Then, it recovers the focus of the plugin requesting termination.
+ ************************************************************************************/
 void NxLauncher::Terminate(QString requestor)
 {
 	QString owner;
@@ -873,9 +960,6 @@ void NxLauncher::Terminate(QString requestor)
 	if (m_PlugIns[requestor]->m_pdeInit)
 	{
 		m_PlugIns[requestor]->m_pdeInit();
-
-//		owner = m_VideoFocusQueue.first();
-//		m_VideoFocusQueue.removeAll(requestor);
 
 		RemoveVideoFocus(requestor);
 
@@ -901,6 +985,11 @@ void NxLauncher::Terminate(QString requestor)
 			}
 		}
 	}
+}
+
+void NxLauncher::RequestVolume()
+{
+	QApplication::postEvent(m_spInstance, new NxVolumeControlEvent());
 }
 
 QVariantList NxLauncher::getPluginInfoList()
