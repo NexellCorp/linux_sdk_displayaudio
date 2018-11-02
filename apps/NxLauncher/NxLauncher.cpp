@@ -1092,7 +1092,6 @@ bool NxLauncher::event(QEvent *event)
 			}
 		}
 
-		delete m_spInstance;
 		exit(0);
 		return true;
 	}
