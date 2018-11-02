@@ -15,18 +15,6 @@
 
 CNX_DiskManager::CNX_DiskManager()
 {
-	while (0 != access(STORAGE_PATH, F_OK))
-	{
-		usleep(100000);
-	}
-
-	QDir dir;
-	dir.setPath("/dev/disk/by-uuid");
-	foreach (QFileInfo f, dir.entryInfoList(QDir::Files))
-	{
-		m_DeviceMap[f.fileName()] = f.symLinkTarget();
-	}
-
 	m_bThreadRun = false;
 }
 
@@ -38,8 +26,19 @@ CNX_DiskManager::~CNX_DiskManager()
 void CNX_DiskManager::run()
 {
 	int fd, wd, iEventType = 0;
-
 	char buffer[BUFFER_SIZE];
+
+	while (0 != access(STORAGE_PATH, F_OK))
+	{
+		usleep(100000);
+	}
+
+	QDir dir;
+	dir.setPath("/dev/disk/by-uuid");
+	foreach (QFileInfo f, dir.entryInfoList(QDir::Files))
+	{
+		m_DeviceMap[f.fileName()] = f.symLinkTarget();
+	}
 
 	m_bThreadRun = true;
 
