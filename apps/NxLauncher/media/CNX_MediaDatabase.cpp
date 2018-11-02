@@ -223,6 +223,9 @@ static int32_t cbQuerySuccess( void *pObj, int32_t iColumnNum, char **ppColumnVa
 {
 	int32_t *pResult = (int32_t*)pObj;
 	*pResult = true;
+	(void)iColumnNum;
+	(void)ppColumnValue;
+	(void)ppColumnName;
 	return 0;
 }
 
@@ -264,6 +267,8 @@ static int32_t cbCompareColumn( void *pObj, int32_t iColumnNum, char **ppColumnV
 {
 	int32_t iColumnIndex = -1;
 	int32_t bResult = false;
+
+	(void)pObj;
 
 	for( int32_t i = 0; i < iColumnNum; i++ )
 	{

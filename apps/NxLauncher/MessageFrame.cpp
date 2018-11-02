@@ -60,11 +60,6 @@ void MessageFrame::SetButtonVisibility(ButtonVisibility eVisibility)
 	}
 }
 
-void MessageFrame::SetButtonLocation(ButtonLocation eLocation)
-{
-
-}
-
 void MessageFrame::SetButonStyleSheet(ButtonType eType, QString styleSheet)
 {
 	switch (eType) {

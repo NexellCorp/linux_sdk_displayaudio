@@ -21,6 +21,7 @@
 #include <unistd.h>
 #include <poll.h>
 #include <pthread.h>
+#include <stdlib.h>
 
 #include <sys/socket.h>
 #include <sys/un.h>

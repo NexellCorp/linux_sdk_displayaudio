@@ -42,12 +42,13 @@ const char *pstDefaultMountPosition[] = {
 
 //------------------------------------------------------------------------------
 CNX_VolumeManager::CNX_VolumeManager()
-	: m_bThreadRun(false)
-	, m_ppDeviceReserved( NULL )
-	, m_ppMountPosition( NULL )
-	, m_iNumDeviceReserved( 0 )
-	, m_iNumMountPosition( 0 )
 {
+	m_bThreadRun = false;
+	m_ppDeviceReserved = NULL;
+	m_ppMountPosition = NULL;
+	m_iNumDeviceReserved = 0;
+	m_iNumMountPosition = 0;
+
 	m_ppDeviceReserved   = pstDefaultDeviceReserved;
 	m_iNumDeviceReserved = sizeof(pstDefaultDeviceReserved) / sizeof(pstDefaultDeviceReserved[0]);
 

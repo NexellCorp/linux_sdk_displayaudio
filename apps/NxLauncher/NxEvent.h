@@ -78,7 +78,6 @@ public:
 	QString m_MsgTitle;
 	QString m_MsgBody;
 	ButtonVisibility m_eButtonVisibility;
-	ButtonLocation m_eButtonLocation;
 	QString m_ButtonStylesheet[ButtonType_Count];
 	unsigned int m_uiTimeout;
 
@@ -100,7 +99,6 @@ public:
 		}
 
 		m_eButtonVisibility = psNotification->eVisibility;
-		m_eButtonLocation = psNotification->eLocation;
 		m_uiTimeout = psNotification->uiTimeout;
 	}
 };

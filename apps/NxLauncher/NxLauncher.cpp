@@ -1128,7 +1128,6 @@ void NxLauncher::PopupMessageEvent(NxPopupMessageEvent *e)
 
 		ui->messageFrame->SetRequestor(e->m_Requestor);
 		ui->messageFrame->SetButtonVisibility(e->m_eButtonVisibility);
-		ui->messageFrame->SetButtonLocation(e->m_eButtonLocation);
 		ui->messageFrame->SetButonStyleSheet(ButtonType_Ok, e->m_ButtonStylesheet[ButtonType_Ok]);
 		ui->messageFrame->SetButonStyleSheet(ButtonType_Cancel, e->m_ButtonStylesheet[ButtonType_Cancel]);
 		ui->messageFrame->SetTimeout(e->m_uiTimeout);
@@ -1142,7 +1141,6 @@ void NxLauncher::NotificationEvent(NxNotificationEvent *e)
 {
 	ui->notificationBar->SetRequestor(e->m_Requestor);
 	ui->notificationBar->SetButtonVisibility(e->m_eButtonVisibility);
-	ui->notificationBar->SetButtonLocation(e->m_eButtonLocation);
 	ui->notificationBar->SetButonStyleSheet(ButtonType_Ok, e->m_ButtonStylesheet[ButtonType_Ok]);
 	ui->notificationBar->SetButonStyleSheet(ButtonType_Cancel, e->m_ButtonStylesheet[ButtonType_Cancel]);
 	ui->notificationBar->SetTimeout(e->m_uiTimeout);

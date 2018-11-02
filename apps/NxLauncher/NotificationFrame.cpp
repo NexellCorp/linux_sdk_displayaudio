@@ -49,11 +49,6 @@ void NotificationFrame::SetButtonVisibility(ButtonVisibility eVisibility)
 	}
 }
 
-void NotificationFrame::SetButtonLocation(ButtonLocation eLocation)
-{
-
-}
-
 void NotificationFrame::SetButonStyleSheet(ButtonType eType, QString styleSheet)
 {
 	switch (eType) {

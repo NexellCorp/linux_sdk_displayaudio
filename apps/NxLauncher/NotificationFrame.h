@@ -31,8 +31,6 @@ public:
 
 	void SetButtonVisibility(ButtonVisibility eVisibility);
 
-	void SetButtonLocation(ButtonLocation eLocation);
-
 	void SetButonStyleSheet(ButtonType eType, QString styleSheet);
 
 	void SetTimeout(unsigned int uiTimeout);
