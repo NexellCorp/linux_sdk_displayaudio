@@ -321,7 +321,7 @@ int main (int argc, char *argv[])
 	INX_BT *pInstance = getInstance();
 	int choice, sel;
 	int i, j;
-	char *localAddress;
+	char *localAddress = NULL;
 	nxbt_paired_dev_t pairedDev;
 	nxbt_avk_connected_dev_t connectedDevAVK;
 	char number[20];
