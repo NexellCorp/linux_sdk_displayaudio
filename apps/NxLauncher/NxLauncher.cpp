@@ -37,8 +37,9 @@ NxLauncher* NxLauncher::m_spInstance = NULL;
 QQueue<QString> NxLauncher::m_AudioFocusQueue = QQueue<QString>();
 QQueue<QString> NxLauncher::m_VideoFocusQueue = QQueue<QString>();
 
-static void signal_handler(int)
+static void signal_handler(int sig)
 {
+	NXLOGI("[%s] %d", __FUNCTION__, sig);
 	void *array[10];
 	size_t i, size;
 	char **strings;
@@ -51,7 +52,29 @@ static void signal_handler(int)
 		NXLOGE("[%s] %s", __FUNCTION__, strings[i]);
 	}
 
-	exit(EXIT_FAILURE);
+	qDebug() << Q_FUNC_INFO << sig;
+	NxLauncher *pInstance = NxLauncher::GetInstance();
+//	if (pInstance)
+//		delete pInstance;
+
+//	exit(EXIT_FAILURE);
+	if (sig == SIGTERM || sig == SIGINT)
+	{
+		if (pInstance)
+		{
+			QApplication::postEvent(pInstance, new QEvent((QEvent::Type)E_NX_EVENT_TERMINATE));
+		}
+	}
+
+	signal(SIGABRT, NULL);
+	signal(SIGSEGV, NULL);
+	signal(SIGINT, NULL);
+	signal(SIGTERM, NULL);
+}
+
+NxLauncher* NxLauncher::GetInstance()
+{
+	return m_spInstance;
 }
 
 NxLauncher::NxLauncher(QWidget *parent) :
@@ -65,6 +88,8 @@ NxLauncher::NxLauncher(QWidget *parent) :
 
 	signal(SIGABRT, signal_handler);
 	signal(SIGSEGV, signal_handler);
+	signal(SIGINT, signal_handler);
+	signal(SIGTERM, signal_handler);
 
 	// scan applications
 	m_pPackageManager = new NxPackageScanner(NX_APP_PATH, &m_PlugIns);
@@ -248,12 +273,25 @@ NxLauncher::NxLauncher(QWidget *parent) :
 	connect(m_pMediaScanner, SIGNAL(signalMediaEvent(NxEventTypes)), this, SLOT(slotMediaEvent(NxEventTypes)));
 
 	connect(&m_Timer, SIGNAL(timeout()), this, SLOT(slotTimer()));
-	m_Timer.start(5000);
+//	m_Timer.start(5000);
+
+//	QTimer::singleShot(2000, this, SLOT(slotStartSerivceTimer()));
 }
 
 NxLauncher::~NxLauncher()
 {
 	delete ui;
+}
+
+void NxLauncher::slotStartSerivceTimer()
+{
+	foreach (NxPluginInfo *psInfo, m_PlugIns) {
+		if (psInfo->getType().toLower() == "service" && psInfo->getEnabled())
+		{
+			if (psInfo->m_pInit)
+				psInfo->m_pInit(this, "");
+		}
+	}
 }
 
 void NxLauncher::slotMediaEvent(NxEventTypes eType)
@@ -1032,6 +1070,30 @@ bool NxLauncher::event(QEvent *event)
 	{
 		NxVolumeControlEvent *e = static_cast<NxVolumeControlEvent *>(event);
 		VolumeControlEvent(e);
+		return true;
+	}
+
+	case E_NX_EVENT_TERMINATE:
+	{
+		m_Timer.stop();
+
+		foreach (NxPluginInfo *psInfo, m_PlugIns) {
+			if (psInfo->m_pIsInit && psInfo->m_pdeInit)
+			{				
+				bool bOk = false;
+				psInfo->m_pIsInit(&bOk);
+
+				if (bOk)
+					psInfo->m_pdeInit();
+
+				NXLOGI("[%s] dlclose %p 1 ", __FUNCTION__, psInfo->m_pHandle);
+				dlclose(psInfo->m_pHandle);
+				NXLOGI("[%s] dlclose %p 2 ", __FUNCTION__, psInfo->m_pHandle);
+			}
+		}
+
+		delete m_spInstance;
+		exit(0);
 		return true;
 	}
 

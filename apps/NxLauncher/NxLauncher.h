@@ -49,9 +49,13 @@ private slots:
 
 	void slotMediaEvent(NxEventTypes eType);
 
+	void slotStartSerivceTimer();
+
 public:
 	explicit NxLauncher(QWidget *parent = 0);
 	~NxLauncher();
+
+	static NxLauncher* GetInstance();
 
 public:
 	// call function from qml
