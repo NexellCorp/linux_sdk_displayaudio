@@ -55,12 +55,6 @@ int32_t CNX_AudioPlayer::CloseHandle()
 		NXLOGE( "%s: Error! Handle is not initialized!", __FUNCTION__ );
 		return -1;
 	}
-	MP_RESULT iResult = NX_MPClearTrack( m_hPlayer );
-	if( MP_ERR_NONE != iResult )
-	{
-		NXLOGE( "%s(): Error! NX_MPClearTrack() Failed! (ret = %d)", __FUNCTION__, iResult);
-		return -1;
-	}
 
 	NX_MPClose( m_hPlayer );
 

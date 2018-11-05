@@ -153,6 +153,13 @@ PlayerAudioFrame::~PlayerAudioFrame()
     pthread_mutex_destroy(&m_listMutex);
     if(m_pNxPlayer)
     {
+        NX_MediaStatus state = m_pNxPlayer->GetState();
+        if( (PlayingState == state)||(PausedState == state) )
+        {
+            StopAudio();
+            CloseAudio();
+        }
+
         delete m_pNxPlayer;
         m_pNxPlayer = NULL;
     }
@@ -161,6 +168,13 @@ PlayerAudioFrame::~PlayerAudioFrame()
         delete m_pPlayListFrame;
         m_pPlayListFrame = NULL;
     }
+
+    if(m_pStatusBar)
+    {
+        delete m_pStatusBar;
+
+    }
+
     delete ui;
 }
 
@@ -410,8 +424,8 @@ void PlayerAudioFrame::UpdateFileList()
     //	read data base that Media Scaning made.
     char szPath[256];
     snprintf( szPath, sizeof(szPath), "%s/%s", NX_MEDIA_DATABASE_PATH, NX_MEDIA_DATABASE_NAME );
-    NX_SQLiteGetData( szPath, NX_MEDIA_DATABASE_TABLE, cbSqliteRowCallback, (void*)this);
-    NXLOGD("<<< Total file list = %d\n", m_FileList.GetSize());
+    int ret = NX_SQLiteGetData( szPath, NX_MEDIA_DATABASE_TABLE, cbSqliteRowCallback, (void*)this);
+    NXLOGD("<<< Total file list = %d, ret(%d)\n", m_FileList.GetSize(), ret);
 }
 
 CNX_FileList *PlayerAudioFrame::GetFileList()
@@ -857,6 +871,7 @@ bool PlayerAudioFrame::event(QEvent *event)
         {
             m_iCurFileListIdx = m_pPlayListFrame->getCurrentIndex();
             StopAudio();
+            CloseAudio();
             PlayAudio();
 
             delete m_pPlayListFrame;
@@ -865,8 +880,11 @@ bool PlayerAudioFrame::event(QEvent *event)
         }
         case NX_CUSTOM_BASE_REJECT:
         {
-            delete m_pPlayListFrame;
-            m_pPlayListFrame = NULL;
+            if(m_pPlayListFrame)
+            {
+                delete m_pPlayListFrame;
+                m_pPlayListFrame = NULL;
+            }
             return true;
         }
         case E_NX_EVENT_STATUS_HOME:

@@ -189,6 +189,7 @@ void MainFrame::RequestAudioFocus(FocusType eType, FocusPriority ePriority, bool
         if(m_bHasAudioFocus == false)
         {
             ui->m_PlayerFrame->StopAudio();
+            ui->m_PlayerFrame->CloseAudio();
             QApplication::postEvent(this, new NxTerminateEvent());
         }
     }
