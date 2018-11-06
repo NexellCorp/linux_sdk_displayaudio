@@ -646,6 +646,9 @@ QPushButton:pressed {
       <height>511</height>
      </rect>
     </property>
+    <property name="batchSize">
+     <number>100</number>
+    </property>
    </widget>
   </widget>
   <widget class="QPushButton" name="BUTTON_SYNC">

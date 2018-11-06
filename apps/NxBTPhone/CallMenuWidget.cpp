@@ -16,6 +16,10 @@ CallMenuWidget::CallMenuWidget(QWidget *parent) :
     // command response timer
     connect(&m_ResponseTimer, SIGNAL(timeout()), this, SLOT(slotCommandResponseTimer()));
 
+	qRegisterMetaType<vector<CallLogInfo>>("vector<CallLogInfo>");
+	connect(&m_UpdateCallLogThread, SIGNAL(signalAdd(vector<CallLogInfo>)), this, SLOT(slotAdd(vector<CallLogInfo>)));
+	connect(&m_UpdateCallLogThread, SIGNAL(signalCompleted()), this, SLOT(slotCompleted()));
+
     // gif
     m_pAnimation = new QMovie("://loading/loading3_100x100.gif");
     ui->LABEL_LOADING->setMovie(m_pAnimation);
@@ -253,6 +257,7 @@ void CallMenuWidget::on_BUTTON_SYNC_clicked()
 
     case CurrentMenu_Log:
         setUIState(UIState_Downloading);
+		clearCallLog();
         commandToServer("$PBC#DOWNLOAD CALL LOG\n", "$OK#PBC#DOWNLOAD CALL LOG#FILE CREATED");
         break;
 
@@ -303,8 +308,9 @@ bool CallMenuWidget::updateForPhoneBook(QStringList &tokens)
 bool CallMenuWidget::updateForCallLog(QStringList &tokens)
 {
     // example) "$OK#PBC#DOWNLAOD CALL LOG#FILE CREATED#/etc/bluetooth/pb_data.vcf"
-    if (tokens.size() == 5) {        
-        if (tokens[3] == "FILE CREATED") {
+	if (tokens.size() == 5) {
+		if (tokens[3] == "FILE CREATED") {
+#if 0
             VCardReader reader;
             if (reader.read(tokens[4].toStdString())) {
                 m_CallLog = reader.properties();
@@ -314,20 +320,6 @@ bool CallMenuWidget::updateForCallLog(QStringList &tokens)
                 QString direction;
                 QString owner;
                 QString type;
-
-                // clear list widget
-                for (int i = 0; i < ui->LISTWIDGET_CALL_LOG->count(); i++) {
-                    item = ui->LISTWIDGET_CALL_LOG->item(i);
-                    if (item) {
-                        custom = (CallLogItem*)ui->LISTWIDGET_CALL_LOG->itemWidget(item);
-                        if (custom)
-                            delete custom;
-
-                        delete item;
-                    }
-                }
-
-                ui->LISTWIDGET_CALL_LOG->clear();
 
                 for (size_t i = 0; i < m_CallLog.size(); i++) {
 
@@ -395,17 +387,71 @@ bool CallMenuWidget::updateForCallLog(QStringList &tokens)
                     custom->setCallNumberOwner(owner);
                     custom->setCallNumberType(type);
 
+					qDebug() << 0 << tm.elapsed();
                     ui->LISTWIDGET_CALL_LOG->addItem(item);
-                    ui->LISTWIDGET_CALL_LOG->setItemWidget(item, custom);
+					qDebug() << 1 << tm.elapsed();
+					ui->LISTWIDGET_CALL_LOG->setItemWidget(item, custom);
+					qDebug() << 2 << tm.elapsed();
+
                 }
             }
 
-            setUIState(UIState_DownloadCompleted);
+
+			setUIState(UIState_DownloadCompleted);
+			qDebug() << 3 << tm.elapsed() << ui->LISTWIDGET_CALL_LOG->count();
+#else
+			m_UpdateCallLogThread.SetFile(tokens[4]);
+			m_UpdateCallLogThread.Start();
+#endif
             return true;
         }
     }
 
     return false;
+}
+
+void CallMenuWidget::clearCallLog()
+{
+	// clear list widget
+	QListWidgetItem *item = NULL;
+	CallLogItem *custom = NULL;
+
+	for (int i = 0; i < ui->LISTWIDGET_CALL_LOG->count(); i++) {
+		item = ui->LISTWIDGET_CALL_LOG->item(i);
+		if (item) {
+			custom = (CallLogItem*)ui->LISTWIDGET_CALL_LOG->itemWidget(item);
+			if (custom)
+				delete custom;
+
+			delete item;
+		}
+	}
+
+	ui->LISTWIDGET_CALL_LOG->clear();
+}
+
+void CallMenuWidget::slotAdd(vector<CallLogInfo> sInfoList)
+{
+	QListWidgetItem *item = NULL;
+	CallLogItem *custom = NULL;
+
+	for (size_t i = 0; i < sInfoList.size(); ++i)
+	{
+		item = new QListWidgetItem;
+		item->setSizeHint(QSize(ui->LISTWIDGET_CALL_LOG->width()-50, 100));
+		custom = new CallLogItem;
+		custom->setCallDirection(sInfoList[i].direction);
+		custom->setCallNumberOwner(sInfoList[i].owner);
+		custom->setCallNumberType(sInfoList[i].type);
+
+		ui->LISTWIDGET_CALL_LOG->addItem(item);
+		ui->LISTWIDGET_CALL_LOG->setItemWidget(item, custom);
+	}
+}
+
+void CallMenuWidget::slotCompleted()
+{
+	setUIState(UIState_DownloadCompleted);
 }
 
 void CallMenuWidget::on_LISTWIDGET_PHONEBOOK_currentRowChanged(int currentRow)

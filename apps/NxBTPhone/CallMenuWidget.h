@@ -9,11 +9,14 @@
 #include <QListWidgetItem>
 #include <QQueue>
 #include <QTimer>
+#include <QElapsedTimer>
 
 #include "defines.h"
 
 // for read/parse vCard (*.vcf file format)
 #include <io/vCard/VCardReader.h>
+
+#include "UpdateCallLogThread.h"
 
 #define MAX_RESPONSE_TIME  5000
 
@@ -32,6 +35,10 @@ private slots:
     void slotCommandFromServer(QString command);
 
     void slotCommandResponseTimer();
+
+	void slotAdd(vector<CallLogInfo> sInfoList);
+
+	void slotCompleted();
 
 public:
     enum CurrentMenu {
@@ -110,6 +117,8 @@ private:
 
     bool updateForCallLog(QStringList& tokens);
 
+	void clearCallLog();
+
     void commandToServer(QString command, QString return_command = QString());
 
 private:
@@ -118,6 +127,8 @@ private:
     std::vector<VCardReader::VCardProperty> m_PhoneBook;
 
     std::vector<VCardReader::VCardProperty> m_CallLog;
+
+	UpdateCallLogThread m_UpdateCallLogThread;
 
     // 1st. QString : command
     // 2nd. QString : valid return command
