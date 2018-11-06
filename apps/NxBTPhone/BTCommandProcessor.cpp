@@ -46,7 +46,6 @@ void BTCommandProcessor::run()
 void BTCommandProcessor::Push(QString command)
 {
 	m_Mutex.lock();
-	qDebug() << Q_FUNC_INFO << command;
 	m_Commands.push_back(command);
 	m_Cond.wakeAll();
 	m_Mutex.unlock();
