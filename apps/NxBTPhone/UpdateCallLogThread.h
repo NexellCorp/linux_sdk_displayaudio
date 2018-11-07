@@ -23,9 +23,13 @@ signals:
 public:
 	UpdateCallLogThread();
 
+	~UpdateCallLogThread();
+
 	void SetFile(QString path);
 
 	void Start();
+
+	void Stop();
 
 protected:
 	virtual void run();

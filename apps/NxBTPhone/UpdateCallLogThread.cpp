@@ -5,6 +5,11 @@ UpdateCallLogThread::UpdateCallLogThread()
 
 }
 
+UpdateCallLogThread::~UpdateCallLogThread()
+{
+	Stop();
+}
+
 void UpdateCallLogThread::SetFile(QString path)
 {
 	m_File = path;
@@ -12,14 +17,19 @@ void UpdateCallLogThread::SetFile(QString path)
 
 void UpdateCallLogThread::Start()
 {
+	Stop();
+
+	start();
+}
+
+void UpdateCallLogThread::Stop()
+{
 	if (isRunning())
 	{
 		m_bRunning = false;
 		quit();
 		wait();
 	}
-
-	start();
 }
 
 void UpdateCallLogThread::run()
