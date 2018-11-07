@@ -4,30 +4,42 @@
 #
 #-------------------------------------------------
 
-QT       += core gui \
+QT       += core gui
+QT       += network     \
+            xml         \
+            multimedia  \
+            multimediawidgets \
+            widgets \
             quickwidgets
 
 greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
 
 TARGET = NxAVIn
-TEMPLATE = app
-QMAKE_RPATHDIR += /nexell/daudio/NxAVIn/lib/
+TEMPLATE = lib
+CONFIG += plugin
 
-# Add AVIN Library
-INCLUDEPATH += $$PWD/../../library/include
-INCLUDEPATH += $$PWD/../../library/prebuilt/include
-LIBS += -L$$PWD/../../library/lib
-LIBS += -lnxavin -ldrm -lnx_v4l2 -lnx_video_api
+# Add Graphic tool libraries
+LIBS += -lnx_drm_allocator -lnx_video_api
+LIBS += -L$$PWD/../../library/prebuilt/lib -lnxavin
+
+LIBS += -L$$PWD/../../library/lib -lnxdaudioutils
 
 # Add Common UI Module
-LIBS += -lnxbaseui -lnxdaudioutils
+LIBS += -L$$PWD/../../library/lib -lnxbaseui
 
-SOURCES += main.cpp\
-    avinmainwindow.cpp \
-    avindisplayview.cpp
+INCLUDEPATH += $$PWD/../../library/include
+INCLUDEPATH += $$PWD/../../library/prebuilt/include
 
-HEADERS  += avinmainwindow.h \
-    ../../library/include/NX_AVIn.h \
-    avindisplayview.h
+SOURCES += \
+    MainFrame.cpp \
+    DAudioIface_Impl.cpp \
+    AVInFrame.cpp \
 
-FORMS    += avinmainwindow.ui
+HEADERS  += \
+    MainFrame.h \
+    NxEvent.h \
+    AVInFrame.h \
+ 
+FORMS    += \
+    MainFrame.ui \
+    AVInFrame.ui \
