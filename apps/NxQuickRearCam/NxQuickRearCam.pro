@@ -5,25 +5,41 @@
 #-------------------------------------------------
 
 QT       += core gui
+QT       += network     \
+            xml         \
+            multimedia  \
+            multimediawidgets \
+            widgets \
+            quickwidgets
 
 greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
 
 TARGET = NxQuickRearCam
-TEMPLATE = app
-QMAKE_RPATHDIR += /nexell/daudio/NxQuickRearCam/lib/
+TEMPLATE = lib
+CONFIG += plugin
 
-# Add RearCam Library
-INCLUDEPATH += $$PWD/../../library/include
-INCLUDEPATH += $$PWD/../../library/prebuilt/include
-LIBS += -L$$PWD/../../library/lib -lnxrearcam
-LIBS += -ldrm -lnx_v4l2 -lnx_video_api
+# Add Graphic tool libraries
+LIBS += -lnx_drm_allocator -lnx_video_api
+LIBS += -L$$PWD/../../library/prebuilt/lib -lnxrearcam
+
+LIBS += -L$$PWD/../../library/lib -lnxdaudioutils
 
 # Add Common UI Module
-LIBS += -L$$PWD/../../library/lib -lnxbaseui -lnxdaudioutils
+LIBS += -L$$PWD/../../library/lib -lnxbaseui
 
-SOURCES += main.cpp\
-	mainwindow.cpp
+INCLUDEPATH += $$PWD/../../library/include
+INCLUDEPATH += $$PWD/../../library/prebuilt/include
 
-HEADERS  += mainwindow.h
+SOURCES += \
+    MainFrame.cpp \
+    DAudioIface_Impl.cpp \
+    QuickRearCamFrame.cpp \
 
-FORMS    += mainwindow.ui
+HEADERS  += \
+    MainFrame.h \
+    NxEvent.h \
+    QuickRearCamFrame.h \
+ 
+FORMS    += \
+    MainFrame.ui \
+    QuickRearCamFrame.ui \
