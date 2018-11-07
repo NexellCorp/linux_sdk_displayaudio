@@ -60,9 +60,11 @@ function package_sdk_applications()
 	fi
 
 	if [ ${SDK_ENABLE_CAM} == "yes" ]; then
-		echo "<< Camera related features are not ready! >>"
+		package_sdk_qtapplication NxAVIn
+		package_sdk_qtapplication NxQuickRearCam
 	elif [ ${SDK_ENABLE_CAM} == "no" ]; then
-		echo ""
+		unpackage_sdk_qtapplication NxAVIn
+		unpackage_sdk_qtapplication NxQuickRearCam
 	fi
 
 	package_sdk_qtapplication NxAudioPlayer

@@ -99,10 +99,12 @@ APPS += NxCommandSender
 
 QT_APPS :=
 QT_APPS += NxAudioPlayer
+QT_APPS += NxAVIn
 QT_APPS += NxBTAudio
 QT_APPS += NxBTPhone
 QT_APPS += NxBTSettings
 QT_APPS += NxLauncher
+QT_APPS += NxQuickRearCam
 QT_APPS += NxVideoPlayer
 
 TOOLS :=
