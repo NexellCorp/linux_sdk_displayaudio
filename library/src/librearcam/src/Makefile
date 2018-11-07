@@ -38,7 +38,7 @@ CPPOBJS		+=	NX_CRearCamMgr.o
 #								Library									#
 #																		#
 #########################################################################
-LIBRARY 	?= -lnx_video_api -lnx_v4l2  -ldrm
+LIBRARY 	+= -lnx_video_api -lnx_v4l2  -ldrm
 
 #########################################################################
 #																		#
@@ -59,14 +59,14 @@ $(TARGET): depend $(OBJS)
 	@echo "done"
 
 install:
-	cp -a $(TARGET) ../../../lib/
-	cp -a NX_RearCam.h ../../../include/
+	cp -a $(TARGET) ../../../prebuilt/lib/
+	cp -a NX_RearCam.h ../../../prebuilt/include/
 
 clean:
 	rm -f $(TARGET) *.o .depend
 
 distclean: clean
-	rm -f ../../../include/NX_RearCam.h
+	rm -f ../../../prebuilt/include/NX_RearCam.h
 
 #########################################################################
 # Dependency
