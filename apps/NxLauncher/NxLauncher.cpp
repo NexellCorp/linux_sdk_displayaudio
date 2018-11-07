@@ -27,6 +27,7 @@
 #include <dlfcn.h>
 
 #define NX_LAUNCHER "NxLauncher"
+#define NX_LAUNCHER_P "NxLauncherP" // for Popup
 
 #define LOG_TAG "[NxLauncher]"
 #include <NX_Log.h>
@@ -1176,16 +1177,8 @@ void NxLauncher::PopupMessageEvent(NxPopupMessageEvent *e)
 
 	if (bOk)
 	{
-#if 0
-		m_VideoFocusQueue.removeAll(NX_LAUNCHER);
-		m_VideoFocusQueue.push_front(NX_LAUNCHER);
-#else
-		m_iPosition = m_VideoFocusQueue.indexOf(NX_LAUNCHER);
-		for (int i = m_iPosition; i > 0; --i)
-		{
-			m_VideoFocusQueue.swap(i, i-1);
-		}
-#endif
+		m_VideoFocusQueue.removeAll(NX_LAUNCHER_P);
+		m_VideoFocusQueue.push_front(NX_LAUNCHER_P);
 
 		ui->messageFrame->SetRequestor(e->m_Requestor);
 		ui->messageFrame->SetButtonVisibility(e->m_eButtonVisibility);
@@ -1390,11 +1383,9 @@ void NxLauncher::NextVideoFocus()
 {
 	QString owner;
 
-	if (m_VideoFocusQueue.size() <= m_iPosition)
-		m_iPosition = m_VideoFocusQueue.size()-1;
-
-	for (int i = 0; i < m_iPosition; ++i)
-		m_VideoFocusQueue.swap(i, i+1);
+	owner = m_VideoFocusQueue.first();
+	if (owner == NX_LAUNCHER_P)
+		m_VideoFocusQueue.removeAll(NX_LAUNCHER_P);
 
 	owner = m_VideoFocusQueue.first();
 	if (owner != NX_LAUNCHER)

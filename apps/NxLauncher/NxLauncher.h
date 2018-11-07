@@ -156,8 +156,6 @@ private:
 
 	QTimer m_Timer;
 
-	int m_iPosition;
-
 	MediaScanner *m_pMediaScanner;
 
 private:
