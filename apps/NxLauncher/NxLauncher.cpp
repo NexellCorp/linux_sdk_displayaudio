@@ -873,7 +873,10 @@ void NxLauncher::RequestVideoFocusLoss()
 		m_VideoFocusQueue.removeAll(prev);
 		m_VideoFocusQueue.push_back(prev);
 #else
-		m_VideoFocusQueue.swap(0, m_VideoFocusQueue.size()-1);
+		for (int i = 0; i < m_VideoFocusQueue.size()-1; ++i)
+		{
+			m_VideoFocusQueue.swap(i, i+1);
+		}
 #endif
 
 		// 2. check whether the next owner exists.
