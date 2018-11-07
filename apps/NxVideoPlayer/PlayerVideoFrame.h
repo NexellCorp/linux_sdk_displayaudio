@@ -59,6 +59,7 @@ signals:
 private slots:
     void slotPlayListFrameAccept();
     void slotPlayListFrameReject();
+    void subTitleDisplayUpdate();
     void statusChanged(int eventType);
     void DoPositionUpdate();
 
@@ -118,9 +119,16 @@ public:
     bool VideoMuteStop();
     void PlaySeek();
 
+    //
+    //	SubTitle
+    int	 OpenSubTitle();
+    void PlaySubTitle();
+    void StopSubTitle();
+
 private:
     CNX_MoviePlayer	*m_pNxPlayer;
     QTextCodec*		m_pCodec;
+    bool			m_bSubThreadFlag;
     int				m_iScrWidth;
     int				m_iScrHeight;
     int				m_iVolValue;

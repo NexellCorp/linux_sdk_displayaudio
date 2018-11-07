@@ -390,11 +390,29 @@
      <height>40</height>
     </size>
    </property>
+   <property name="styleSheet">
+    <string notr="true">QProgressBar {
+border: 2px solid grey;
+border-radius: 5px;
+}
+
+QProgressBar::chunk {
+background-color: rgb(37, 86, 201);
+/*background-color: #05B8CC;*/
+width: 20px;
+/*margin: 0.5px;*/
+}
+
+</string>
+   </property>
    <property name="maximum">
     <number>100000</number>
    </property>
    <property name="value">
     <number>24</number>
+   </property>
+   <property name="alignment">
+    <set>Qt::AlignCenter</set>
    </property>
    <property name="textVisible">
     <bool>true</bool>
