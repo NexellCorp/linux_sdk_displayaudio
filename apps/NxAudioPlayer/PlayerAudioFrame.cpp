@@ -560,6 +560,8 @@ bool PlayerAudioFrame::StopAudio()
         return false;
     }
     m_pNxPlayer->Stop();
+    CloseAudio();
+
     return true;
 }
 
@@ -869,13 +871,16 @@ bool PlayerAudioFrame::event(QEvent *event)
     {
         case NX_CUSTOM_BASE_ACCEPT:
         {
-            m_iCurFileListIdx = m_pPlayListFrame->getCurrentIndex();
-            StopAudio();
-            CloseAudio();
-            PlayAudio();
+            if(m_pPlayListFrame)
+            {
+                m_iCurFileListIdx = m_pPlayListFrame->getCurrentIndex();
+                StopAudio();
+                CloseAudio();
+                PlayAudio();
 
-            delete m_pPlayListFrame;
-            m_pPlayListFrame = NULL;
+                delete m_pPlayListFrame;
+                m_pPlayListFrame = NULL;
+            }
             return true;
         }
         case NX_CUSTOM_BASE_REJECT:

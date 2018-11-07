@@ -45,6 +45,7 @@
 #include <QDebug>
 #include "CNX_Util.h"
 #include <NX_MoviePlay.h>
+#include "CNX_SubtitleParser.h"
 
 // Drm CtrlId, PlaneId
 #define LCD_CTRLID      26
@@ -126,6 +127,7 @@ public:
 
     void DrmVideoMute(int bOnOff);
 
+    int MakeThumbnail(const char *pInFile, const char *pOutFile, int maxWidth, int maxHeight, int timeRatio);
 
 private:
     //
@@ -154,7 +156,6 @@ private:
     MP_DSP_CONFIG	*m_pDspConfig[MAX_DISPLAY_CHANNEL];
     MP_DSP_CONFIG	m_SubInfo;
 
-    NX_MediaStatus	m_iStatus;
     int				m_iDspMode;
     int				m_iSubDspWidth;
     int				m_iSubDspHeight;
@@ -164,6 +165,33 @@ private:
 
 public:
     int IsCbQtUpdateImg();
+
+public:
+    //
+    // Subtitle
+    CNX_SubtitleParser* m_pSubtitleParser;
+    pthread_mutex_t m_SubtitleLock;
+    pthread_t m_subtitleThread;
+    int m_iSubtitleSeekTime;
+
+    void	CloseSubtitle();
+    int		OpenSubtitle(char * subtitlePath);
+    int		GetSubtitleStartTime();
+    void	SetSubtitleIndex(int idx);
+    int		GetSubtitleIndex();
+    int		GetSubtitleMaxIndex();
+    void	IncreaseSubtitleIndex();
+    void	SeekSubtitle(int milliseconds);
+    char*	GetSubtitleText();
+    bool	IsSubtitleAvailable();
+    const char*	GetBestSubtitleEncode();
+    const char* GetBestStringEncode(const char* str);
+
+private:
+    //
+    // Subtitle
+    static void* ThreadWrapForSubtitleSeek(void *Obj);
+    void SeekSubtitleThread(void);
 };
 
 #endif // CNX_MoviePlayer_H

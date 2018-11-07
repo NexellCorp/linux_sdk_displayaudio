@@ -13,21 +13,30 @@
 //------------------------------------------------------------------------------
 CNX_MoviePlayer::CNX_MoviePlayer()
     : m_hPlayer( NULL )
-    , m_iStatus( StoppedState )
     , m_iDspMode( DSP_MODE_DEFAULT )
     , m_iSubDspWidth( 0 )
     , m_iSubDspHeight( 0 )
     , m_iMediaType( 0 )
     , m_bVideoMute( 0 )
+    , m_pSubtitleParser(NULL)
+    , m_iSubtitleSeekTime( 0 )
 {
     pthread_mutex_init( &m_hLock, NULL );
+    pthread_mutex_init( &m_SubtitleLock, NULL );
 
     memset(&m_MediaInfo, 0x00, sizeof(MP_MEDIA_INFO));
+    m_pSubtitleParser = new CNX_SubtitleParser();
 }
 
 CNX_MoviePlayer::~CNX_MoviePlayer()
 {
     pthread_mutex_destroy( &m_hLock );
+    pthread_mutex_destroy( &m_SubtitleLock );
+    if(m_pSubtitleParser)
+    {
+        delete m_pSubtitleParser;
+        m_pSubtitleParser = NULL;
+    }
 }
 
 //================================================================================================================
@@ -58,7 +67,6 @@ int CNX_MoviePlayer::InitMediaPlayer(	void (*pCbEventCallback)( void *privateDes
     }
 
     //PrintMediaInfo(pUri);
-    m_iStatus = ReadyState;
     return 0;
 }
 
@@ -68,12 +76,6 @@ int CNX_MoviePlayer::CloseHandle()
     if( NULL == m_hPlayer )
     {
         NXLOGE( "%s: Error! Handle is not initialized!", __FUNCTION__ );
-        return -1;
-    }
-    MP_RESULT iResult = NX_MPClearTrack( m_hPlayer );
-    if( MP_ERR_NONE != iResult )
-    {
-        NXLOGE( "%s(): Error! NX_MPClearTrack() Failed! (ret = %d)", __FUNCTION__, iResult);
         return -1;
     }
 
@@ -93,7 +95,6 @@ int CNX_MoviePlayer::CloseHandle()
 
     m_hPlayer = NULL;
 
-    m_iStatus = StoppedState;
     return 0;
 }
 
@@ -132,7 +133,6 @@ int CNX_MoviePlayer::Play()
         return -1;
     }
 
-    m_iStatus = PlayingState;
     return 0;
 }
 
@@ -169,7 +169,6 @@ int CNX_MoviePlayer::Pause()
         return -1;
     }
 
-    m_iStatus = PausedState;
     return 0;
 }
 
@@ -187,7 +186,6 @@ int CNX_MoviePlayer::Stop()
         NXLOGE( "%s(): Error! NX_MPStop() Failed! (ret = %d)", __FUNCTION__, iResult);
         return -1;
     }
-    m_iStatus = StoppedState;
     return 0;
 }
 
@@ -238,7 +236,7 @@ NX_MediaStatus CNX_MoviePlayer::GetState()
     {
         return StoppedState;
     }
-    return m_iStatus;
+    return (NX_MediaStatus)NX_GetState(m_hPlayer);
 }
 
 void CNX_MoviePlayer::PrintMediaInfo( const char *pUri )
@@ -721,8 +719,171 @@ int CNX_MoviePlayer::GetTrackIndex( int trackType, int track )
 }
 
 //================================================================================================================
+// subtitle routine
+void CNX_MoviePlayer::CloseSubtitle()
+{
+    CNX_AutoLock lock( &m_SubtitleLock );
+    if(m_pSubtitleParser)
+    {
+        if(m_pSubtitleParser->NX_SPIsParsed())
+        {
+            m_pSubtitleParser->NX_SPClose();
+        }
+    }
+}
+
+int CNX_MoviePlayer::OpenSubtitle(char * subtitlePath)
+{
+    CNX_AutoLock lock( &m_SubtitleLock );
+    if(m_pSubtitleParser)
+    {
+        return m_pSubtitleParser->NX_SPOpen(subtitlePath);
+    }else
+    {
+        NXLOGW("in OpenSubtitle no parser instance\n");
+        return 0;
+    }
+}
+
+int CNX_MoviePlayer::GetSubtitleStartTime()
+{
+    CNX_AutoLock lock( &m_SubtitleLock );
+    if(m_pSubtitleParser->NX_SPIsParsed())
+    {
+        return m_pSubtitleParser->NX_SPGetStartTime();
+    }else
+    {
+        return 0;
+    }
+}
+
+void CNX_MoviePlayer::SetSubtitleIndex(int idx)
+{
+    CNX_AutoLock lock( &m_SubtitleLock );
+    if(m_pSubtitleParser->NX_SPIsParsed())
+    {
+        m_pSubtitleParser->NX_SPSetIndex(idx);
+    }
+}
+
+int CNX_MoviePlayer::GetSubtitleIndex()
+{
+    CNX_AutoLock lock( &m_SubtitleLock );
+    if(m_pSubtitleParser->NX_SPIsParsed())
+    {
+        return m_pSubtitleParser->NX_SPGetIndex();
+    }else
+    {
+        return 0;
+    }
+}
+
+int CNX_MoviePlayer::GetSubtitleMaxIndex()
+{
+    CNX_AutoLock lock( &m_SubtitleLock );
+    if(m_pSubtitleParser->NX_SPIsParsed())
+    {
+        return m_pSubtitleParser->NX_SPGetMaxIndex();
+    }else
+    {
+        return 0;
+    }
+}
+
+void CNX_MoviePlayer::IncreaseSubtitleIndex()
+{
+    CNX_AutoLock lock( &m_SubtitleLock );
+    if(m_pSubtitleParser->NX_SPIsParsed())
+    {
+        m_pSubtitleParser->NX_SPIncreaseIndex();
+    }
+}
+
+char* CNX_MoviePlayer::GetSubtitleText()
+{
+    CNX_AutoLock lock( &m_SubtitleLock );
+    if(m_pSubtitleParser->NX_SPIsParsed())
+    {
+        return m_pSubtitleParser->NX_SPGetSubtitle();
+    }else
+    {
+        return NULL;
+    }
+}
+
+bool CNX_MoviePlayer::IsSubtitleAvailable()
+{
+    return m_pSubtitleParser->NX_SPIsParsed();
+}
+
+const char *CNX_MoviePlayer::GetBestSubtitleEncode()
+{
+    CNX_AutoLock lock( &m_SubtitleLock );
+    if(m_pSubtitleParser->NX_SPIsParsed())
+    {
+        return m_pSubtitleParser->NX_SPGetBestTextEncode();
+    }else
+    {
+        return NULL;
+    }
+}
+
+const char *CNX_MoviePlayer::GetBestStringEncode(const char *str)
+{
+    if(!m_pSubtitleParser)
+    {
+        NXLOGW("GetBestStringEncode no parser instance\n");
+        return "EUC-KR";
+    }else
+    {
+        return m_pSubtitleParser->NX_SPFindStringEncode(str);
+    }
+}
+
+void CNX_MoviePlayer::SeekSubtitle(int milliseconds)
+{
+    if (0 > pthread_create(&m_subtitleThread, NULL, ThreadWrapForSubtitleSeek, this) )
+    {
+        NXLOGE("SeekSubtitle creating Thread err\n");
+        m_pSubtitleParser->NX_SPSetIndex(0);
+        return;
+    }
+
+    m_iSubtitleSeekTime = milliseconds;
+    NXLOGD("seek input  : %d\n",milliseconds);
+
+    pthread_join(m_subtitleThread, NULL);
+}
+
+void* CNX_MoviePlayer::ThreadWrapForSubtitleSeek(void *Obj)
+{
+    if( NULL != Obj )
+    {
+        NXLOGD("ThreadWrapForSubtitleSeek ok\n");
+        ( (CNX_MoviePlayer*)Obj )->SeekSubtitleThread();
+    }else
+    {
+        NXLOGE("ThreadWrapForSubtitleSeek err\n");
+        return (void*)0xDEADDEAD;
+    }
+    return (void*)1;
+}
+
+void CNX_MoviePlayer::SeekSubtitleThread(void)
+{
+    CNX_AutoLock lock( &m_SubtitleLock );
+    m_pSubtitleParser->NX_SPSetIndex(m_pSubtitleParser->NX_SPSeekSubtitleIndex(m_iSubtitleSeekTime));
+}
+
+//================================================================================================================
 void CNX_MoviePlayer::DrmVideoMute(int bOnOff)
 {
+    if( NULL == m_hPlayer )
+    {
+        NXLOGE( "%s: Error! Handle is not initialized!", __FUNCTION__ );
+        return;
+    }
+
     m_bVideoMute = bOnOff;
     NX_MPVideoMute(m_hPlayer, m_bVideoMute, m_pDspConfig[0]);
 }
@@ -731,4 +892,15 @@ int CNX_MoviePlayer::IsCbQtUpdateImg()
 {
     return m_bIsCbQtUpdateImg;
 }
+
+//================================================================================================================
+int CNX_MoviePlayer::MakeThumbnail(const char *pInFile, const char *pOutFile, int maxWidth, int maxHeight, int timeRatio)
+{
+    int ret = 0;
+    ret = NX_MPMakeThumbnail( pInFile, pOutFile, maxWidth, maxHeight, timeRatio );
+
+    return ret;
+}
+
+
 

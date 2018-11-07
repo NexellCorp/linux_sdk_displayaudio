@@ -135,7 +135,6 @@ private:
 
 	MP_MEDIA_INFO	m_MediaInfo;
 
-	NX_MediaStatus	m_iStatus;
 	int				m_iMediaType;
 };
 

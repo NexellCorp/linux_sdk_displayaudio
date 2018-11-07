@@ -13,7 +13,6 @@
 //------------------------------------------------------------------------------
 CNX_AudioPlayer::CNX_AudioPlayer()
 	: m_hPlayer( NULL )
-	, m_iStatus( StoppedState )
 	, m_iMediaType( 0 )
 {
 	pthread_mutex_init( &m_hLock, NULL );
@@ -43,7 +42,6 @@ int32_t CNX_AudioPlayer::InitMediaPlayer(	void (*pCbEventCallback)( void *privat
 	if(0 > GetMediaInfo() )									return -1;
 	if(0 > AddTrack(mediaType) )							return -1;
 	//PrintMediaInfo(pUri);
-	m_iStatus = ReadyState;
 	return 0;
 }
 
@@ -60,7 +58,6 @@ int32_t CNX_AudioPlayer::CloseHandle()
 
 	m_hPlayer = NULL;
 
-	m_iStatus = StoppedState;
 	return 0;
 }
 
@@ -100,7 +97,6 @@ int32_t CNX_AudioPlayer::Play()
 		return -1;
 	}
 
-	m_iStatus = PlayingState;
 	return 0;
 }
 
@@ -137,7 +133,6 @@ int32_t CNX_AudioPlayer::Pause()
 		return -1;
 	}
 
-	m_iStatus = PausedState;
 	return 0;
 }
 
@@ -155,7 +150,7 @@ int32_t CNX_AudioPlayer::Stop()
 		NXLOGE( "%s(): Error! NX_MPStop() Failed! (ret = %d)", __FUNCTION__, iResult);
 		return -1;
 	}
-	m_iStatus = StoppedState;
+
 	return 0;
 }
 
@@ -207,7 +202,8 @@ NX_MediaStatus CNX_AudioPlayer::GetState()
 	{
 		return StoppedState;
 	}
-	return m_iStatus;
+
+    return (NX_MediaStatus)NX_GetState(m_hPlayer);
 }
 
 void CNX_AudioPlayer::PrintMediaInfo( const char *pUri )
