@@ -136,6 +136,7 @@ void Frame::DestroyInstance()
 
 void Frame::BackButtonClicked()
 {
+	emit signalCommandToServer("$AVK#PLAY STOP\n");
 	QApplication::postEvent(this, new NxStatusBackEvent());
 }
 

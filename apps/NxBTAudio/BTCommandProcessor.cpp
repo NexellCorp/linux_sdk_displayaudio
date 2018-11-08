@@ -1,5 +1,4 @@
 #include "BTCommandProcessor.h"
-#include <QDebug>
 
 BTCommandProcessor::BTCommandProcessor()
 {
@@ -58,13 +57,12 @@ void BTCommandProcessor::slotCommandToServer(QString command)
 
 void BTCommandProcessor::CommandToServer(QString command)
 {
-	qDebug() << Q_FUNC_INFO << command;
 	std::string s_command = command.toStdString();
 	char c_command[s_command.size()+1]; // + 1 null character
 	strcpy(c_command, s_command.c_str());
 
 	if (m_pRequestSendMessage)
-	{qDebug() << Q_FUNC_INFO << command << 1;
+	{
 		m_pRequestSendMessage("NxBTService", command.toStdString().c_str(), strlen(command.toStdString().c_str()));
 	}
 }
