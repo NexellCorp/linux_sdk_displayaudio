@@ -881,6 +881,7 @@ void NxLauncher::RequestVideoFocusLoss()
 
 		// 2. check whether the next owner exists.
 		curr = m_VideoFocusQueue.first();
+		m_spInstance->UpdateTitle(curr);
 
 		if (NX_LAUNCHER == curr)
 		{
@@ -908,8 +909,21 @@ void NxLauncher::RequestVideoFocusLoss()
 void NxLauncher::RequestPopupMessage(PopupMessage *psPopup, bool *bOk)
 {
 	QString caller = FindCaller(2);
+	QString owner = m_VideoFocusQueue.first();
 
-	*bOk = true;
+	if (owner == NX_LAUNCHER)
+		*bOk = true;
+	else
+	{
+		m_spInstance->m_PlugIns[owner]->m_pRequestVideoFocusTransient(FocusPriority_Normal, bOk);
+
+		if (!*bOk)
+		{
+			NXLOGE("[%s] REQUEST VIDEO FOCUS TRANSIENT", __FUNCTION__);
+			return;
+		}
+	}
+
 	QApplication::postEvent(m_spInstance, new NxPopupMessageEvent(psPopup, caller));
 }
 
@@ -1165,6 +1179,7 @@ void NxLauncher::KeyEvent(NxKeyEvent* e)
 
 void NxLauncher::PopupMessageEvent(NxPopupMessageEvent *e)
 {
+#if 0
 	QString owner = m_VideoFocusQueue.first();
 	bool bOk = false;
 
@@ -1180,6 +1195,7 @@ void NxLauncher::PopupMessageEvent(NxPopupMessageEvent *e)
 
 	if (bOk)
 	{
+#endif
 		m_VideoFocusQueue.removeAll(NX_LAUNCHER_P);
 		m_VideoFocusQueue.push_front(NX_LAUNCHER_P);
 
@@ -1191,7 +1207,9 @@ void NxLauncher::PopupMessageEvent(NxPopupMessageEvent *e)
 		ui->messageFrame->SetMessageTitle(e->m_MsgTitle);
 		ui->messageFrame->SetMessageBody(e->m_MsgBody);
 		ui->messageFrame->Raise();
+#if 0
 	}
+#endif
 }
 
 void NxLauncher::NotificationEvent(NxNotificationEvent *e)

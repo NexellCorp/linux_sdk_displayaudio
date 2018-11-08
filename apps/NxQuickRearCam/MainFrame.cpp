@@ -287,7 +287,7 @@ void MainFrame::RegisterRequestVideoFocus(void (*cbFunc)(FocusPriority ePriority
 
 void MainFrame::RequestVideoFocusTransient(FocusPriority ePriority, bool *bOk)
 {
-    FocusPriority eCurrPriority  = FocusPriority_Normal;
+	FocusPriority eCurrPriority = m_bBackGearDetected ? FocusPriority_Highest : FocusPriority_Normal;
 
     if (eCurrPriority > ePriority)
     {
