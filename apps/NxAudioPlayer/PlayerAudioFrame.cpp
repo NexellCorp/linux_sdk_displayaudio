@@ -65,7 +65,6 @@ static void cbStatusBack( void *pObj )
     PlayerAudioFrame *pW = (PlayerAudioFrame *)pObj;
     pW->SaveInfo();
     pW->StopAudio();
-    pW->CloseAudio();
     pW->close();
     QApplication::postEvent(pW, new NxStatusBackEvent());
 }
@@ -157,7 +156,6 @@ PlayerAudioFrame::~PlayerAudioFrame()
         if( (PlayingState == state)||(PausedState == state) )
         {
             StopAudio();
-            CloseAudio();
         }
 
         delete m_pNxPlayer;
@@ -349,7 +347,6 @@ void PlayerAudioFrame::StorageRemoved()
     {
         SaveInfo();
         StopAudio();
-        CloseAudio();
     }else
     {
         NXLOGD("%s(), line: %d, m_pNxPlayer is NULL \n", __FUNCTION__, __LINE__);
@@ -640,7 +637,6 @@ bool PlayerAudioFrame::SetAudioVolume( int32_t volume )
 bool PlayerAudioFrame::PlayNextAudio()
 {
     StopAudio();
-    CloseAudio();
 
     //	find next index
     if(0 != m_FileList.GetSize())
@@ -653,7 +649,6 @@ bool PlayerAudioFrame::PlayNextAudio()
 bool PlayerAudioFrame::PlayPreviousAudio()
 {
     StopAudio();
-    CloseAudio();
 
     //	Find previous index
     if(0 != m_FileList.GetSize())
@@ -875,7 +870,6 @@ bool PlayerAudioFrame::event(QEvent *event)
             {
                 m_iCurFileListIdx = m_pPlayListFrame->getCurrentIndex();
                 StopAudio();
-                CloseAudio();
                 PlayAudio();
 
                 delete m_pPlayListFrame;
