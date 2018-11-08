@@ -408,22 +408,26 @@ void MainFrame::MediaEventChanged(NxMediaEvent eEvent)
 {
     switch (eEvent)
     {
+#if 0
         case NX_EVENT_MEDIA_SDCARD_INSERT:
         {
             NXLOGD("############### NX_EVENT_MEDIA_SDCARD_INSERT !!!\n");
             break;
         }
+#endif
         case NX_EVENT_MEDIA_SDCARD_REMOVE:
         {
             NXLOGD("############### NX_EVENT_MEDIA_SDCARD_REMOVE !!!\n");
             ui->m_PlayerFrame->StorageRemoved();
             break;
         }
+#if 0
         case NX_EVENT_MEDIA_USB_INSERT:
         {
             NXLOGD("############### NX_EVENT_MEDIA_USB_INSERT !!!\n");
             break;
         }
+#endif
         case NX_EVENT_MEDIA_USB_REMOVE:
         {
             NXLOGD("############### NX_EVENT_MEDIA_USB_REMOVE !!!\n");
