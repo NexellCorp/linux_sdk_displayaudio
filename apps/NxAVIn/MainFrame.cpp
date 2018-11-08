@@ -110,20 +110,17 @@ bool MainFrame::event(QEvent *event)
     switch ((int32_t)event->type())
     {
         case NX_CUSTOM_AVIN_START:
-        {
-            if(ui->m_AVInFrame->IsShowAVIn())
-                ui->m_AVInFrame->StopAVIn();
-            
+        {            
+            if(!ui->m_AVInFrame->IsShowAVIn())
+                ui->m_AVInFrame->ShowAVIn();
             return true;
         }
         case NX_CUSTOM_AVIN_STOP:
         {
-            if(!ui->m_AVInFrame->IsShowAVIn())
-                ui->m_AVInFrame->ShowAVIn();
-            
+            if(ui->m_AVInFrame->IsShowAVIn())
+                ui->m_AVInFrame->StopAVIn();    
             return true;
         }
-
         case E_NX_EVENT_TERMINATE:
         {
             NxTerminateEvent *e = static_cast<NxTerminateEvent *>(event);
@@ -206,7 +203,6 @@ void MainFrame::RequestAudioFocus(FocusType eType, FocusPriority ePriority, bool
         {
             *bOk = true;
         }
-
         m_bHasAudioFocus = *bOk ? false : true;
         if(m_bHasAudioFocus == false)
         {
@@ -271,7 +267,9 @@ void MainFrame::RequestVideoFocus(FocusType eType, FocusPriority ePriority, bool
             *bOk = false;
         else
         {              
-            QApplication::postEvent(this, new QEvent((QEvent::Type)NX_CUSTOM_AVIN_STOP));
+            //QApplication::postEvent(this, new QEvent((QEvent::Type)NX_CUSTOM_AVIN_STOP));
+            if(ui->m_AVInFrame->IsShowAVIn())
+                ui->m_AVInFrame->StopAVIn();     
             *bOk = true;        
         }
         m_bHasVideoFocus = *bOk ? false : true;       
@@ -281,8 +279,10 @@ void MainFrame::RequestVideoFocus(FocusType eType, FocusPriority ePriority, bool
     {     
         qDebug() << Q_FUNC_INFO << 2;   
 
-        QApplication::postEvent(this, new QEvent((QEvent::Type)NX_CUSTOM_AVIN_START));  
-
+        //QApplication::postEvent(this, new QEvent((QEvent::Type)NX_CUSTOM_AVIN_START));
+        if(!ui->m_AVInFrame->IsShowAVIn())
+            ui->m_AVInFrame->ShowAVIn();       
+        
         *bOk = true;
         m_bHasVideoFocus = true;
      
