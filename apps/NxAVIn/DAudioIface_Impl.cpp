@@ -184,10 +184,10 @@ void RegisterRequestTerminate(void (*cbFunc)())
 }
 
 void RegisterRequestVolume(void (*cbFunc)())
-{   
+{
 }
 
 void MediaEventChanged(NxMediaEvent eEvent)
 {
-    
+
 }

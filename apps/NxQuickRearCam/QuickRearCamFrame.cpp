@@ -24,6 +24,8 @@ QuickRearCamFrame::QuickRearCamFrame(QWidget *parent)
     //UI Setting
     ui->setupUi(this);
 
+	m_pIConfig = GetConfigHandle();
+
     pFrame = this;
 
 }
@@ -64,8 +66,6 @@ bool QuickRearCamFrame::ShowCamera()
 
     NXLOGI("[%s] ShowCamera", __FUNCTION__);
 
-	int32_t planeId   = 27;	//	DRM plain ID
-	int32_t crtcId    = 26;	//	DRM crtc ID
 	int32_t camWidth  = 704;
 	int32_t camHeight = 480;
 
@@ -85,9 +85,41 @@ bool QuickRearCamFrame::ShowCamera()
 	m_CamInfo.iOutWidth     = camWidth;
 	m_CamInfo.iOutHeight	= camHeight;
 
+	m_DspInfo.iDspCrtcIdx 	= -1;
+	m_DspInfo.iDspLayerIdx  = -1;
+    //load crtcIdx and layerIdx
+    {
+        char *pBuf = NULL;
+        if(0 > m_pIConfig->Open("/nexell/daudio/NxQuickRearCam/config.xml"))
+		{
+            NXLOGI("[%s]xml open err\n", __FUNCTION__);
+            m_DspInfo.iDspCrtcIdx 	= 0;
+	        m_DspInfo.iDspLayerIdx  = 0;
+		}else
+		{
+			//load crtcIdx and layerIdx
+			if(0 > m_pIConfig->Read("ctrc_idx",&pBuf))
+			{
+				NXLOGI("[%s]xml read ctrc_idx err\n", __FUNCTION__);
+                m_DspInfo.iDspCrtcIdx 	= 0;
+			}else
+            {
+				m_DspInfo.iDspCrtcIdx = atoi(pBuf);
+            }
+
+            if(0 > m_pIConfig->Read("layer_idx",&pBuf))
+			{
+				NXLOGI("[%s]xml read layer_idx err\n", __FUNCTION__);
+	            m_DspInfo.iDspLayerIdx  = 0;
+			}else
+            {
+				m_DspInfo.iDspLayerIdx = atoi(pBuf);
+            }
+			m_pIConfig->Close();
+		}
+    }
+    NXLOGI("[%s]============ crtcidx : %d   layeridx : %d\n", __FUNCTION__, m_DspInfo.iDspCrtcIdx, m_DspInfo.iDspLayerIdx);
 	//	Get graphic view's rect
-	m_DspInfo.iPlaneId		= planeId;
-	m_DspInfo.iCrtcId		= crtcId;
 	m_DspInfo.uDrmFormat	= DRM_FORMAT_YUV420;
 	m_DspInfo.iSrcWidth		= camWidth;
 	m_DspInfo.iSrcHeight	= camHeight;
@@ -120,10 +152,61 @@ void QuickRearCamFrame::HideCamera()
 		printf("Fail, NXDA_HideRearCam().\n");
 	}
 
+	SaveInfo();
+
 	m_bShowCamera = false;
 }
 
 bool QuickRearCamFrame::IsShowCamera()
 {
 	return m_bShowCamera;
+}
+
+int QuickRearCamFrame::SaveInfo()
+{
+    if(0 > m_pIConfig->Open("/nexell/daudio/NxQuickRearCam/config.xml"))
+	{
+		printf("xml open err\n");
+		QFile qFile;
+		qFile.setFileName("/nexell/daudio/NxQuickRearCam/config.xml");
+		if(qFile.remove())
+		{
+			printf("config.xml is removed because of open err\n");
+			if(0 > m_pIConfig->Open("/nexell/daudio/NxQuickRearCam/config.xml"))
+			{
+				printf("xml open err again!!\n");
+				return -1;
+			}
+		}else
+		{
+			printf("Deleting config.xml is failed!\n");
+			return -1;
+		}
+	}
+
+    //save ctrcIdx
+    {
+        char pCrtcIdx[sizeof(int)] = {};
+        sprintf(pCrtcIdx, "%d", m_DspInfo.iDspCrtcIdx );
+        if(0 > m_pIConfig->Write("ctrc_idx", pCrtcIdx))
+		{
+			printf("xml write crtc index err\n");
+			m_pIConfig->Close();
+			return -1;
+		}
+    }
+    //save LayerIdx
+    {
+        char pLayerIdx[sizeof(int)] = {};
+        sprintf(pLayerIdx, "%d", m_DspInfo.iDspLayerIdx );
+        if(0 > m_pIConfig->Write("layer_idx", pLayerIdx))
+		{
+			printf("xml write layer index err\n");
+			m_pIConfig->Close();
+			return -1;
+		}
+    }
+
+    m_pIConfig->Close();
+    return 0;
 }

@@ -49,14 +49,14 @@ public:
     static void RegisterRequestVideoFocusTransient(void (*cbFunc)(FocusPriority ePriority, bool *bOk));
     static void RegisterRequestVideoFocusLoss(void (*cbFunc)(void));
     static void RegisterRequestTerminate(void (*cbFunc)(void));
- 
+
 
 public:
     explicit MainFrame(QWidget *parent = 0);
     ~MainFrame();
 
     static MainFrame *m_spInstance;
- 
+
 protected:
     bool event(QEvent *e);
 

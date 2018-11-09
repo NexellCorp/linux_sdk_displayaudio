@@ -79,7 +79,7 @@ AVInFrame::AVInFrame(QWidget *parent)
     pFrame = this;
 
     ui->graphicsView->viewport()->installEventFilter(this);
-   
+
 
     setAttribute(Qt::WA_AcceptTouchEvents, true);
 
@@ -93,7 +93,9 @@ AVInFrame::AVInFrame(QWidget *parent)
     m_pStatusBar->RegOnClickedHome( cbStatusHome );
     m_pStatusBar->RegOnClickedBack( cbStatusBack );
     m_pStatusBar->SetTitleName( "Nexell AVIn" );
-    
+
+    m_pIConfig = GetConfigHandle();
+
  //   ui->appNameLabel->setStyleSheet("QLabel { color : white; }");
 
     ShowAVIn();
@@ -235,9 +237,42 @@ bool AVInFrame::ShowAVIn()
 	m_CamInfo.iOutWidth     = camWidth;
 	m_CamInfo.iOutHeight	= camHeight;
 
+    m_DspInfo.iDspCrtcIdx 	= -1;
+	m_DspInfo.iDspLayerIdx  = -1;
+    //load crtcIdx and layerIdx
+    {
+        char *pBuf = NULL;
+        if(0 > m_pIConfig->Open("/nexell/daudio/NxAVIn/config.xml"))
+		{
+            NXLOGI("[%s]xml open err\n", __FUNCTION__);
+            m_DspInfo.iDspCrtcIdx 	= 0;
+	        m_DspInfo.iDspLayerIdx  = 0;
+		}else
+		{
+			//load crtcIdx and layerIdx
+			if(0 > m_pIConfig->Read("ctrc_idx",&pBuf))
+			{
+				NXLOGI("[%s]xml read ctrc_idx err\n", __FUNCTION__);
+                m_DspInfo.iDspCrtcIdx 	= 0;
+			}else
+            {
+				m_DspInfo.iDspCrtcIdx = atoi(pBuf);
+            }
+
+            if(0 > m_pIConfig->Read("layer_idx",&pBuf))
+			{
+				NXLOGI("[%s]xml read layer_idx err\n", __FUNCTION__);
+	            m_DspInfo.iDspLayerIdx  = 0;
+			}else
+            {
+				m_DspInfo.iDspLayerIdx = atoi(pBuf);
+            }
+			m_pIConfig->Close();
+		}
+    }
+
+    	NXLOGI("[%s]============ crtcidx : %d   layeridx : %d\n", __FUNCTION__, m_DspInfo.iDspCrtcIdx, m_DspInfo.iDspLayerIdx);
 	//	Get graphic view's rect
-	m_DspInfo.iPlaneId		= planeId;
-	m_DspInfo.iCrtcId		= crtcId;
 	m_DspInfo.uDrmFormat	= DRM_FORMAT_YUV420;
 	m_DspInfo.iSrcWidth		= camWidth;
 	m_DspInfo.iSrcHeight	= camHeight;
@@ -266,7 +301,8 @@ void AVInFrame::StopAVIn()
 		return ;
 
     ui->graphicsView->hide();
-	NXDA_StopAVInService();	
+    NXDA_StopAVInService();
+    SaveInfo();
 
 	m_bShowAVIn = false;
 }
@@ -279,4 +315,53 @@ bool AVInFrame::IsShowAVIn()
 void AVInFrame::SetVideoFocus(bool m_bVideoFocusStatus)
 {
     m_bVideoFocus = m_bVideoFocusStatus;
+}
+
+int AVInFrame::SaveInfo()
+{
+    if(0 > m_pIConfig->Open("/nexell/daudio/NxAVIn/config.xml"))
+	{
+		printf("xml open err\n");
+		QFile qFile;
+		qFile.setFileName("/nexell/daudio/NxAVIn/config.xml");
+		if(qFile.remove())
+		{
+			printf("config.xml is removed because of open err\n");
+			if(0 > m_pIConfig->Open("/nexell/daudio/NxAVIn/config.xml"))
+			{
+				printf("xml open err again!!\n");
+				return -1;
+			}
+		}else
+		{
+			printf("Deleting config.xml is failed!\n");
+			return -1;
+		}
+	}
+
+    //save ctrcIdx
+    {
+        char pCrtcIdx[sizeof(int)] = {};
+        sprintf(pCrtcIdx, "%d", m_DspInfo.iDspCrtcIdx );
+        if(0 > m_pIConfig->Write("ctrc_idx", pCrtcIdx))
+		{
+			printf("xml write crtc index err\n");
+			m_pIConfig->Close();
+			return -1;
+		}
+    }
+    //save LayerIdx
+    {
+        char pLayerIdx[sizeof(int)] = {};
+        sprintf(pLayerIdx, "%d", m_DspInfo.iDspLayerIdx );
+        if(0 > m_pIConfig->Write("layer_idx", pLayerIdx))
+		{
+			printf("xml write layer index err\n");
+			m_pIConfig->Close();
+			return -1;
+		}
+    }
+
+    m_pIConfig->Close();
+    return 0;
 }

@@ -45,6 +45,7 @@ typedef struct tagCAMERA_INFO{
 } CAMERA_INFO;
 
 typedef struct tagDISPLAY_INFO{
+	int32_t		iConnectorID;    //  Dsp Connector ID
 	int32_t		iPlaneId;       //  DRM Plane ID
 	int32_t		iCrtcId;        //  DRM CRTC ID
 	uint32_t	uDrmFormat;		//	DRM Data Format
@@ -58,11 +59,13 @@ typedef struct tagDISPLAY_INFO{
 	int32_t		iDspY;
 	int32_t		iDspWidth;
 	int32_t		iDspHeight;
+	int32_t		iDspCrtcIdx;
+	int32_t		iDspLayerIdx;
 } DISPLAY_INFO;
 
 
 //
-//	A/V In Service Start/Stop Control	
+//	A/V In Service Start/Stop Control
 //
 int32_t NXDA_StartAVInService(CAMERA_INFO *, DISPLAY_INFO *);
 void NXDA_StopAVInService();

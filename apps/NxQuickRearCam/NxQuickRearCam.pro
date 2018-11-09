@@ -24,6 +24,9 @@ LIBS += -L$$PWD/../../library/prebuilt/lib -lnxrearcam
 
 LIBS += -L$$PWD/../../library/lib -lnxdaudioutils
 
+# Add xml config library
+LIBS += -L$$PWD/../../library/lib/ -lnxconfig -lxml2
+
 # Add Common UI Module
 LIBS += -L$$PWD/../../library/lib -lnxbaseui
 

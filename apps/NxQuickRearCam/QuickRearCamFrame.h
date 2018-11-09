@@ -61,20 +61,20 @@ public:
 
 private:
     void TerminateEvent(NxTerminateEvent *e);
- 
+
 public:
     void RegisterRequestTerminate(void (*cbFunc)(void));
     void RegisterRequestLauncherShow(void (*cbFunc)(bool *bOk));
 
 private:
     bool			m_bIsInitialized;
-    
+
  public:
     bool ShowCamera();
     void HideCamera();
     bool IsShowCamera();
 
-private:    
+private:
     bool m_bShowCamera;
     CAMERA_INFO m_CamInfo;
 	DISPLAY_INFO m_DspInfo;
@@ -85,9 +85,11 @@ private:
     void (*m_pRequestTerminate)(void);
     void (*m_pRequestLauncherShow)(bool *bOk);
 
+    int SaveInfo();
 
 private:
     Ui::QuickRearCamFrame *ui;
+    NX_IConfig*		m_pIConfig;	//xml
 };
 
 #endif // QUICKREARCAM_H

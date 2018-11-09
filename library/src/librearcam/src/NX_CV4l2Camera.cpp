@@ -351,7 +351,7 @@ void NX_CV4l2Camera::Deinit( void )
 //------------------------------------------------------------------------------
 void NX_CV4l2Camera::V4l2Deinit()
 {
-	nx_v4l2_streamoff(m_iClipperSubdevFd, nx_clipper_video);
+	nx_v4l2_streamoff(m_iClipperVideoFd, nx_clipper_video);
 	nx_v4l2_reqbuf(m_iClipperVideoFd, nx_clipper_video, 0);
 	nx_v4l2_cleanup();
 	if(m_iSensorFd>0)

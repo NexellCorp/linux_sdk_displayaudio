@@ -68,7 +68,7 @@ private:
     void TerminateEvent(NxTerminateEvent *e);
     void StatusHomeEvent(NxStatusHomeEvent *e);
     void StatusBackEvent(NxStatusBackEvent *e);
- 
+
 public:
     void RegisterRequestTerminate(void (*cbFunc)(void));
     void RegisterRequestLauncherShow(void (*cbFunc)(bool *bOk));
@@ -77,7 +77,7 @@ public:
 
 private:
     bool			m_bIsInitialized;
-    
+
     CNX_StatusBar* m_pStatusBar;
 
     bool	m_bButtonHide;
@@ -94,7 +94,7 @@ public:
     int32_t m_bGearStatus;
     bool m_bVideoFocus;
 
-private:    
+private:
     bool m_bShowAVIn;
     CAMERA_INFO m_CamInfo;
 	DISPLAY_INFO m_DspInfo;
@@ -113,8 +113,11 @@ private:
     void (*m_pRequestLauncherShow)(bool *bOk);
     void (*m_pRequestVolume)(void);
 
+    int SaveInfo();
+
 private:
     Ui::AVInFrame *ui;
+    NX_IConfig*		m_pIConfig;	//xml
 };
 
 #endif // AVINFRAME_H

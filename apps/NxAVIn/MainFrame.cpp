@@ -53,7 +53,7 @@ MainFrame::MainFrame(QWidget *parent) :
     // Register Request function
     ui->m_AVInFrame->RegisterRequestTerminate(m_pRequestTerminate);
     ui->m_AVInFrame->RegisterRequestLauncherShow(m_pRequestLauncherShow);
- 
+
 }
 
 MainFrame::~MainFrame()
@@ -110,7 +110,7 @@ bool MainFrame::event(QEvent *event)
     switch ((int32_t)event->type())
     {
         case NX_CUSTOM_AVIN_START:
-        {            
+        {
             if(!ui->m_AVInFrame->IsShowAVIn())
                 ui->m_AVInFrame->ShowAVIn();
             return true;
@@ -118,7 +118,7 @@ bool MainFrame::event(QEvent *event)
         case NX_CUSTOM_AVIN_STOP:
         {
             if(ui->m_AVInFrame->IsShowAVIn())
-                ui->m_AVInFrame->StopAVIn();    
+                ui->m_AVInFrame->StopAVIn();
             return true;
         }
         case E_NX_EVENT_TERMINATE:
@@ -138,8 +138,8 @@ bool MainFrame::event(QEvent *event)
 void MainFrame::TerminateEvent(NxTerminateEvent *)
 {
     if (m_pRequestTerminate)
-    {        
-        m_pRequestTerminate();        
+    {
+        m_pRequestTerminate();
     }
 }
 
@@ -260,32 +260,32 @@ void MainFrame::RequestVideoFocus(FocusType eType, FocusPriority ePriority, bool
 {
     qDebug() << Q_FUNC_INFO << 1;
     if (eType == FocusType_Get)
-    {        
+    {
         FocusPriority eCurrPriority = FocusPriority_Normal;
 
         if (eCurrPriority > ePriority)
             *bOk = false;
         else
-        {              
+        {
             //QApplication::postEvent(this, new QEvent((QEvent::Type)NX_CUSTOM_AVIN_STOP));
             if(ui->m_AVInFrame->IsShowAVIn())
-                ui->m_AVInFrame->StopAVIn();     
-            *bOk = true;        
+                ui->m_AVInFrame->StopAVIn();
+            *bOk = true;
         }
-        m_bHasVideoFocus = *bOk ? false : true;       
-                
+        m_bHasVideoFocus = *bOk ? false : true;
+
     }
     else // FocusType_Set
-    {     
-        qDebug() << Q_FUNC_INFO << 2;   
+    {
+        qDebug() << Q_FUNC_INFO << 2;
 
         //QApplication::postEvent(this, new QEvent((QEvent::Type)NX_CUSTOM_AVIN_START));
         if(!ui->m_AVInFrame->IsShowAVIn())
-            ui->m_AVInFrame->ShowAVIn();       
-        
+            ui->m_AVInFrame->ShowAVIn();
+
         *bOk = true;
         m_bHasVideoFocus = true;
-     
+
         if (isHidden())
             show();
         raise();

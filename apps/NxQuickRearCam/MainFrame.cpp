@@ -23,7 +23,7 @@ static void cbBackGearStatus( void *pObj, int32_t iStatus )
     {
         p->m_bBackGearDetected = true;
 		QApplication::postEvent(p, new QEvent((QEvent::Type)NX_CUSTOM_CAM_START));
-    } 
+    }
 }
 
 
@@ -255,16 +255,15 @@ void MainFrame::RequestVideoFocus(FocusType eType, FocusPriority ePriority, bool
             *bOk = true;
 
         m_bHasVideoFocus = *bOk ? false : true;
-           
     }
     else // FocusType_Set
     {
 
-        if(m_bBackGearDetected == true)  
+        if(m_bBackGearDetected == true)
         {
             *bOk = true;
             m_bHasVideoFocus = true;
-            
+
             if (isHidden())
                 show();
             raise();
@@ -272,7 +271,7 @@ void MainFrame::RequestVideoFocus(FocusType eType, FocusPriority ePriority, bool
         {
             *bOk = false;
             m_bHasVideoFocus = false;
-            hide();            
+            hide();
         }
     }
 }
@@ -297,7 +296,7 @@ void MainFrame::RequestVideoFocusTransient(FocusPriority ePriority, bool *bOk)
     {
         *bOk = true;
     }
- 
+
     m_bHasVideoFocus = *bOk ? false : true;
 }
 
@@ -355,7 +354,7 @@ bool MainFrame::RearCamStart(void)
     {
         NXLOGE("[%s] REQUEST VIDEO FOCUS <FAIL>", __FUNCTION__);
         return false;
-    }  
+    }
 
     ui->m_QuickRearCamFrame->ShowCamera();
 
@@ -363,14 +362,13 @@ bool MainFrame::RearCamStart(void)
     raise();
 
     return true;
-    
 }
 
 void MainFrame::RearCamStop(void)
-{   
+{
     ui->m_QuickRearCamFrame->HideCamera();
-    m_pRequestVideoFocusLoss();    
+    m_pRequestVideoFocusLoss();
 	hide();
 //	lower();
-    m_bHasVideoFocus = false;   
+    m_bHasVideoFocus = false;
 }
