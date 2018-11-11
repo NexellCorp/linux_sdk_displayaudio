@@ -48,11 +48,11 @@
 #include "CNX_SubtitleParser.h"
 
 // Drm CtrlId, PlaneId
-#define LCD_CTRLID      26
-#define LCD_PLANEID     27
+//#define LCD_CTRLID      26
+//#define LCD_PLANEID     27
 
-#define HDMI_CTRLID      34
-#define HDMI_PLANEID     35
+//#define HDMI_CTRLID      34
+//#define HDMI_PLANEID     35
 
 // Width, Height Info
 #define DSP_LCD_WIDTH      1024
@@ -128,6 +128,7 @@ public:
     void DrmVideoMute(int bOnOff);
 
     int MakeThumbnail(const char *pInFile, const char *pOutFile, int maxWidth, int maxHeight, int timeRatio);
+    int GetVideoPlane( int crtcIdx, int layerIdx, int findRgb, MP_DRM_PLANE_INFO *pDrmPlaneInfo );
 
 private:
     //
@@ -162,6 +163,8 @@ private:
     int				m_iMediaType;
     int             m_bVideoMute;
     int 			m_bIsCbQtUpdateImg;
+    MP_DRM_PLANE_INFO m_idPrimaryDisplay;
+    MP_DRM_PLANE_INFO m_idSecondDisplay;
 
 public:
     int IsCbQtUpdateImg();
