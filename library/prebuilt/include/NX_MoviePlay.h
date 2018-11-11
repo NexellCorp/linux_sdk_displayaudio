@@ -125,6 +125,13 @@ typedef struct MP_DSP_CONFIG {
 } MP_DSP_CONFIG;
 
 
+typedef struct MP_DRM_PLANE_INFO {
+	int32_t		iConnectorID;		//  Dsp Connector ID
+	int32_t		iPlaneId;			//  DRM Plane ID
+	int32_t		iCrtcId;			//  DRM CRTC ID
+} MP_DRM_PLANE_INFO;
+
+
 #ifdef __cplusplus
 extern "C" {
 #endif
@@ -185,8 +192,8 @@ int32_t 	NX_MPMakeThumbnail( const char *pInFile, const char *pOutFile, int32_t 
 int32_t		NX_MPGetVersion( void );				// MSB|  Major( 8bit ) - Minor( 8bit ) - Revision( 8bit ) - Reserved( 8bit )  |LSB
 int32_t		NX_GetState( MP_HANDLE hMp );
 
-void	NX_MPVideoMute( MP_HANDLE hMp, int32_t bOnoff, MP_DSP_CONFIG *pInfo);
-MP_RESULT	NX_MPSetVideoLayerPriority( MP_HANDLE hMp, int32_t iTrack, int32_t iModule, int32_t iPriority );
+void		NX_MPVideoMute( MP_HANDLE hMp, int32_t bOnoff, MP_DSP_CONFIG *pInfo);
+int32_t 	NX_MPGetPlaneForDisplay( int crtcIdx, int layerIdx, int32_t findRgb, MP_DRM_PLANE_INFO *pDrmPlaneInfo );
 
 #ifdef __cplusplus
 }
