@@ -21,11 +21,39 @@ CNX_MoviePlayer::CNX_MoviePlayer()
     , m_pSubtitleParser(NULL)
     , m_iSubtitleSeekTime( 0 )
 {
+    int crtcIdx  = -1;
+    int layerIdx = -1;
+    int findRgb  = -1;  //1:rgb, 0:video
+
     pthread_mutex_init( &m_hLock, NULL );
     pthread_mutex_init( &m_SubtitleLock, NULL );
 
     memset(&m_MediaInfo, 0x00, sizeof(MP_MEDIA_INFO));
     m_pSubtitleParser = new CNX_SubtitleParser();
+
+    m_idPrimaryDisplay.iConnectorID = -1;
+    m_idPrimaryDisplay.iCrtcId      = -1;
+    m_idPrimaryDisplay.iPlaneId     = -1;
+
+    m_idSecondDisplay.iConnectorID = -1;
+    m_idSecondDisplay.iCrtcId      = -1;
+    m_idSecondDisplay.iPlaneId     = -1;
+
+    crtcIdx  = 0;
+    layerIdx = 1;
+    findRgb  = 0;
+    if( 0 > GetVideoPlane(crtcIdx, layerIdx, findRgb, &m_idPrimaryDisplay) )
+    {
+        NXLOGE( "cannot found video format for %dth crtc\n", crtcIdx );
+    }
+
+    crtcIdx  = 1;
+    layerIdx = 1;
+    findRgb  = 0;
+    if( 0 > GetVideoPlane( crtcIdx, layerIdx, findRgb, &m_idSecondDisplay) )
+    {
+        NXLOGE( "cannot found video format for %dth crtc\n", crtcIdx );
+    }
 }
 
 CNX_MoviePlayer::~CNX_MoviePlayer()
@@ -502,7 +530,7 @@ int CNX_MoviePlayer::AddTrackForVideo()
             dstRect.iWidth   = m_iSubDspWidth;
             dstRect.iHeight  = m_iSubDspHeight;
 
-            if( 0 > AddVideoConfig( 0, HDMI_PLANEID, HDMI_CTRLID, srcRect, dstRect ) )
+            if( 0 > AddVideoConfig( 0, m_idSecondDisplay.iPlaneId, m_idSecondDisplay.iCrtcId, srcRect, dstRect ) )
             {
                 NXLOGE( "%s: Error! AddVideoConfig()\n", __FUNCTION__);
                 return -1;
@@ -526,7 +554,7 @@ int CNX_MoviePlayer::AddTrackForVideo()
             dstRect.iWidth   = DSP_LCD_WIDTH;
             dstRect.iHeight  = DSP_LCD_HEIGHT;
 
-            if( 0 > AddVideoConfig( 0, LCD_PLANEID, LCD_CTRLID, srcRect, dstRect ) )
+            if( 0 > AddVideoConfig( 0, m_idPrimaryDisplay.iPlaneId, m_idPrimaryDisplay.iCrtcId, srcRect, dstRect ) )
             {
                 NXLOGE( "%s: Error! AddVideoConfig()\n", __FUNCTION__);
                 return -1;
@@ -650,7 +678,7 @@ int CNX_MoviePlayer::AddVideoTrack( int track )
 
     if( MP_ERR_NONE != iResult )
     {
-        NXLOGE( "%s(): Error! NX_MPAddTrack() Failed! (ret = %d)", __FUNCTION__, iResult);
+        NXLOGE( "%s(): Error! NX_MPAddVideoTrack() Failed! (ret = %d)", __FUNCTION__, iResult);
         return -1;
     }
 
@@ -688,7 +716,7 @@ int CNX_MoviePlayer::AddAudioTrack( int track )
 
     if( MP_ERR_NONE != iResult )
     {
-        NXLOGE( "%s(): Error! NX_MPAddTrack() Failed! (ret = %d)", __FUNCTION__, iResult);
+        NXLOGE( "%s(): Error! NX_MPAddAudioTrack() Failed! (ret = %d)", __FUNCTION__, iResult);
         return -1;
     }
     return 0;
@@ -902,5 +930,11 @@ int CNX_MoviePlayer::MakeThumbnail(const char *pInFile, const char *pOutFile, in
     return ret;
 }
 
+//================================================================================================================
+int CNX_MoviePlayer::GetVideoPlane( int crtcIdx, int layerIdx, int findRgb, MP_DRM_PLANE_INFO *pDrmPlaneInfo )
+{
+    int ret = 0;
+    ret = NX_MPGetPlaneForDisplay( crtcIdx, layerIdx, findRgb, pDrmPlaneInfo );
 
-
+    return ret;
+}
