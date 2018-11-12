@@ -42,7 +42,7 @@ HEADERS  += \
     MainFrame.h \
     NxEvent.h \
     AVInFrame.h \
- 
+
 FORMS    += \
     MainFrame.ui \
     AVInFrame.ui \
