@@ -14,10 +14,6 @@ CallMenuWidget::CallMenuWidget(QWidget *parent) :
 	// command response timer
 	connect(&m_ResponseTimer, SIGNAL(timeout()), this, SLOT(slotCommandResponseTimer()));
 
-	qRegisterMetaType<vector<CallLogInfo>>("vector<CallLogInfo>");
-	connect(&m_UpdateCallLogThread, SIGNAL(signalAdd(vector<CallLogInfo>)), this, SLOT(slotAdd(vector<CallLogInfo>)));
-	connect(&m_UpdateCallLogThread, SIGNAL(signalCompleted()), this, SLOT(slotCompleted()));
-
 	// gif
 	m_pAnimation = new QMovie("://loading/loading3_100x100.gif");
 	ui->LABEL_LOADING->setMovie(m_pAnimation);
@@ -308,8 +304,90 @@ bool CallMenuWidget::updateForCallLog(QStringList &tokens)
 	// example) "$OK#PBC#DOWNLAOD CALL LOG#FILE CREATED#/etc/bluetooth/pb_data.vcf"
 	if (tokens.size() == 5) {
 		if (tokens[3] == "FILE CREATED") {
-			m_UpdateCallLogThread.SetFile(tokens[4]);
-			m_UpdateCallLogThread.Start();
+			VCardReader reader;
+			if (reader.read(tokens[4].toStdString())) {
+				m_CallLog = reader.properties();
+
+				QListWidgetItem* item = NULL;
+				CallLogItem* custom = NULL;
+				QString direction;
+				QString owner;
+				QString type;
+
+				if (m_CallLog.size() > 50)
+					m_CallLog.resize(50);
+
+				for (size_t i = 0; i < m_CallLog.size(); i++) {
+
+					if (m_CallLog[i].TEL.size() == 0) {
+						continue;
+					}
+
+					switch (m_CallLog[i].X_IRMC_CALL_DATETIME.type) {
+					case VCardReader::CallType_Dialed:
+						direction = "S";
+						break;
+
+					case VCardReader::CallType_Receivced:
+						direction = "R";
+						break;
+
+					case VCardReader::CallType_Missed:
+						direction = "M";
+						break;
+
+					default: // assume call log empty!
+						continue;
+					}
+
+					if (m_CallLog[i].FN.empty()) {
+						owner = QString::fromStdString(m_CallLog[i].TEL[0].number);
+					} else {
+						owner = QString::fromStdString(m_CallLog[i].FN);
+					}
+
+					switch (m_CallLog[i].TEL[0].type) {
+					case VCardReader::TelephoneType_Voice:
+						type = tr("Voice");
+						break;
+
+					case VCardReader::TelephoneType_Home:
+						type = tr("Home");
+						break;
+
+					case VCardReader::TelephoneType_Cell:
+						type = tr("Cell");
+						break;
+
+					case VCardReader::TelephoneType_Work:
+						type = tr("Work");
+						break;
+
+					case VCardReader::TelephoneType_Tel:
+						type = tr("Tel");
+						break;
+
+					case VCardReader::TelephoneType_Etc:
+						type = tr("Etc");
+						break;
+
+					default:
+						type = tr("Unknown");
+						break;
+					}
+
+					item = new QListWidgetItem;
+					item->setSizeHint(QSize(ui->LISTWIDGET_CALL_LOG->width()-50, 100));
+					custom = new CallLogItem;
+					custom->setCallDirection(direction);
+					custom->setCallNumberOwner(owner);
+					custom->setCallNumberType(type);
+
+					ui->LISTWIDGET_CALL_LOG->addItem(item);
+					ui->LISTWIDGET_CALL_LOG->setItemWidget(item, custom);
+				}
+			}
+
 			return true;
 		}
 	}
@@ -335,30 +413,6 @@ void CallMenuWidget::clearCallLog()
 	}
 
 	ui->LISTWIDGET_CALL_LOG->clear();
-}
-
-void CallMenuWidget::slotAdd(vector<CallLogInfo> sInfoList)
-{
-	QListWidgetItem *item = NULL;
-	CallLogItem *custom = NULL;
-
-	for (size_t i = 0; i < sInfoList.size(); ++i)
-	{
-		item = new QListWidgetItem;
-		item->setSizeHint(QSize(ui->LISTWIDGET_CALL_LOG->width()-50, 100));
-		custom = new CallLogItem;
-		custom->setCallDirection(sInfoList[i].direction);
-		custom->setCallNumberOwner(sInfoList[i].owner);
-		custom->setCallNumberType(sInfoList[i].type);
-
-		ui->LISTWIDGET_CALL_LOG->addItem(item);
-		ui->LISTWIDGET_CALL_LOG->setItemWidget(item, custom);
-	}
-}
-
-void CallMenuWidget::slotCompleted()
-{
-	setUIState(UIState_DownloadCompleted);
 }
 
 void CallMenuWidget::on_LISTWIDGET_PHONEBOOK_currentRowChanged(int currentRow)

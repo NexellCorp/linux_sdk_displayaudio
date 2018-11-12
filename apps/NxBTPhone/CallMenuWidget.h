@@ -16,8 +16,6 @@
 // for read/parse vCard (*.vcf file format)
 #include <io/vCard/VCardReader.h>
 
-#include "UpdateCallLogThread.h"
-
 #define MAX_RESPONSE_TIME  5000
 
 namespace Ui {
@@ -35,10 +33,6 @@ private slots:
     void slotCommandFromServer(QString command);
 
     void slotCommandResponseTimer();
-
-	void slotAdd(vector<CallLogInfo> sInfoList);
-
-	void slotCompleted();
 
 public:
     enum CurrentMenu {
@@ -127,8 +121,6 @@ private:
     std::vector<VCardReader::VCardProperty> m_PhoneBook;
 
     std::vector<VCardReader::VCardProperty> m_CallLog;
-
-	UpdateCallLogThread m_UpdateCallLogThread;
 
     // 1st. QString : command
     // 2nd. QString : valid return command
