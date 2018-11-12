@@ -57,14 +57,14 @@ $(TARGET): depend $(OBJS)
 	@echo "done"
 
 install:
-	cp -a $(TARGET) ../../../prebuilt/lib/
-	cp -a NX_AVIn.h ../../../prebuilt/include/
+	cp -a $(TARGET) ../../../lib/
+	cp -a NX_AVIn.h ../../../include/
 
 clean:
 	rm -f $(TARGET) *.o .depend
 
 distclean: clean
-	rm -f ../../../prebuilt/include/NX_AVIn.h
+	rm -f ../../../include/NX_AVIn.h
 
 #########################################################################
 # Dependency
