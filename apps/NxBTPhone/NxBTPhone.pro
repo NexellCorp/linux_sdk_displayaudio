@@ -37,8 +37,7 @@ SOURCES += \
     SelectMenuWidget.cpp \
     MainFrame.cpp \
     DAudioIface_Impl.cpp \
-    CallingMenuWidget.cpp \
-    UpdateCallLogThread.cpp
+    CallingMenuWidget.cpp
 
 HEADERS += \
     BTCommandProcessor.h \
@@ -51,8 +50,7 @@ HEADERS += \
     SelectMenuWidget.h \
     NxEvent.h \
     MainFrame.h \
-    CallingMenuWidget.h \
-    UpdateCallLogThread.h
+    CallingMenuWidget.h
 
 FORMS += \
     gui/CallLog/CallLogItem.ui \
