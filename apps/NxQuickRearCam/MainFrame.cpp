@@ -78,24 +78,23 @@ MainFrame::~MainFrame()
 
 bool MainFrame::event(QEvent *e)
 {
-	switch ((int)e->type()) {
-	case NX_CUSTOM_CAM_STOP:
-		RearCamStop();
-		return true;
+    switch ((int)e->type()) {
+        case NX_CUSTOM_CAM_STOP:
+            RearCamStop();
+            return true;
 
-	case NX_CUSTOM_CAM_START:
-		RearCamStart();
-		return true;
+        case NX_CUSTOM_CAM_START:
+            RearCamStart();
+            return true;
 
-	default:
-		break;
-	}
-	return QFrame::event(e);
+        default:
+            break;
+    }
+    return QFrame::event(e);
 }
 
 bool MainFrame::Initialize()
 {
-    bool bOk = false;
     if (m_bInitialized)
     {
         return true;
@@ -368,7 +367,8 @@ void MainFrame::RearCamStop(void)
 {
     ui->m_QuickRearCamFrame->HideCamera();
     m_pRequestVideoFocusLoss();
-	hide();
+    hide();
+
 //	lower();
     m_bHasVideoFocus = false;
 }
