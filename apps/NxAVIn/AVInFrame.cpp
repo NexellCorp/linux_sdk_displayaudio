@@ -65,12 +65,12 @@ AVInFrame::AVInFrame(QWidget *parent)
     , m_bIsInitialized(false)
     , m_pStatusBar(NULL)
     , m_bButtonHide(false)
+    , m_bGearStatus(1)
+    , m_bVideoFocus(true)
+    , m_bShowAVIn(false)
     , m_bIsVideoFocus(false)
     , m_pRequestTerminate(NULL)
     , m_pRequestLauncherShow(NULL)
-    , m_bShowAVIn(false)
-    , m_bGearStatus(1)
-    , m_bVideoFocus(true)
     , ui(new Ui::AVInFrame)
 {
     //UI Setting
@@ -211,94 +211,92 @@ void AVInFrame::RegisterRequestLauncherShow(void (*cbFunc)(bool *bOk))
 
 bool AVInFrame::ShowAVIn()
 {
-	if( m_bShowAVIn )
-		return false;
+    if( m_bShowAVIn )
+        return false;
 
-	ui->graphicsView->show();
+    ui->graphicsView->show();
 
-	int32_t planeId   = 27;	//	DRM plain ID
-	int32_t crtcId    = 26;	//	DRM crtc ID
-	int32_t camWidth  = 704;
-	int32_t camHeight = 480;
+    int32_t camWidth  = 704;
+    int32_t camHeight = 480;
 
-	memset( &m_CamInfo, 0, sizeof(m_CamInfo) );
-	memset( &m_DspInfo, 0, sizeof(m_DspInfo) );
+    memset( &m_CamInfo, 0, sizeof(m_CamInfo) );
+    memset( &m_DspInfo, 0, sizeof(m_DspInfo) );
 
-	//  Camera Information
-	m_CamInfo.iModule		= 1;
-	m_CamInfo.bInterlace	= 1;
-	m_CamInfo.iSensorId		= nx_sensor_subdev;
-	m_CamInfo.iWidth		= camWidth;
-	m_CamInfo.iHeight		= camHeight;
-	m_CamInfo.iCropX		= 0;
-	m_CamInfo.iCropY		= 0;
-	m_CamInfo.iCropWidth	= camWidth;
-	m_CamInfo.iCropHeight	= camHeight;
-	m_CamInfo.iOutWidth     = camWidth;
-	m_CamInfo.iOutHeight	= camHeight;
+    //  Camera Information
+    m_CamInfo.iModule		= 1;
+    m_CamInfo.bInterlace	= 1;
+    m_CamInfo.iSensorId		= nx_sensor_subdev;
+    m_CamInfo.iWidth		= camWidth;
+    m_CamInfo.iHeight		= camHeight;
+    m_CamInfo.iCropX		= 0;
+    m_CamInfo.iCropY		= 0;
+    m_CamInfo.iCropWidth	= camWidth;
+    m_CamInfo.iCropHeight	= camHeight;
+    m_CamInfo.iOutWidth     = camWidth;
+    m_CamInfo.iOutHeight	= camHeight;
 
     m_DspInfo.iDspCrtcIdx 	= -1;
-	m_DspInfo.iDspLayerIdx  = -1;
+    m_DspInfo.iDspLayerIdx  = -1;
     //load crtcIdx and layerIdx
     {
         char *pBuf = NULL;
         if(0 > m_pIConfig->Open("/nexell/daudio/NxAVIn/config.xml"))
-		{
-            NXLOGI("[%s]xml open err\n", __FUNCTION__);
+        {
+            NXLOGE("[%s]xml open err\n", __FUNCTION__);
             m_DspInfo.iDspCrtcIdx 	= 0;
-	        m_DspInfo.iDspLayerIdx  = 0;
-		}else
-		{
-			//load crtcIdx and layerIdx
-			if(0 > m_pIConfig->Read("ctrc_idx",&pBuf))
-			{
-				NXLOGI("[%s]xml read ctrc_idx err\n", __FUNCTION__);
-                m_DspInfo.iDspCrtcIdx 	= 0;
-			}else
+            m_DspInfo.iDspLayerIdx  = 0;
+        }else
+        {
+            //load crtcIdx and layerIdx
+            if(0 > m_pIConfig->Read("ctrc_idx",&pBuf))
             {
-				m_DspInfo.iDspCrtcIdx = atoi(pBuf);
+                NXLOGE("[%s]xml read ctrc_idx err\n", __FUNCTION__);
+                m_DspInfo.iDspCrtcIdx 	= 0;
+            }else
+            {
+                m_DspInfo.iDspCrtcIdx = atoi(pBuf);
             }
 
             if(0 > m_pIConfig->Read("layer_idx",&pBuf))
-			{
-				NXLOGI("[%s]xml read layer_idx err\n", __FUNCTION__);
-	            m_DspInfo.iDspLayerIdx  = 0;
-			}else
             {
-				m_DspInfo.iDspLayerIdx = atoi(pBuf);
+                NXLOGE("[%s]xml read layer_idx err\n", __FUNCTION__);
+                m_DspInfo.iDspLayerIdx  = 0;
+            }else
+            {
+                m_DspInfo.iDspLayerIdx = atoi(pBuf);
             }
-			m_pIConfig->Close();
-		}
+            m_pIConfig->Close();
+        }
+    }
+    
+    NXLOGI("[%s]============ crtcidx : %d   layeridx : %d\n", __FUNCTION__, m_DspInfo.iDspCrtcIdx, m_DspInfo.iDspLayerIdx);
+    //	Get graphic view's rect
+    m_DspInfo.uDrmFormat	= DRM_FORMAT_YUV420;
+    m_DspInfo.iSrcWidth		= camWidth;
+    m_DspInfo.iSrcHeight	= camHeight;
+    m_DspInfo.iCropX		= 0;
+    m_DspInfo.iCropY		= 0;
+    m_DspInfo.iCropWidth	= camWidth;
+    m_DspInfo.iCropHeight	= camHeight;
+    m_DspInfo.iDspX			= ui->graphicsView->geometry().x();
+    m_DspInfo.iDspY			= ui->graphicsView->geometry().y();
+    m_DspInfo.iDspWidth 	= ui->graphicsView->geometry().width();
+    m_DspInfo.iDspHeight	= ui->graphicsView->geometry().height();
+
+    if( 0 != NXDA_StartAVInService( &m_CamInfo, &m_DspInfo ) )
+    {
+        NXLOGE("Fail, NXDA_StartAVInService().\n");
+        return false;
     }
 
-    	NXLOGI("[%s]============ crtcidx : %d   layeridx : %d\n", __FUNCTION__, m_DspInfo.iDspCrtcIdx, m_DspInfo.iDspLayerIdx);
-	//	Get graphic view's rect
-	m_DspInfo.uDrmFormat	= DRM_FORMAT_YUV420;
-	m_DspInfo.iSrcWidth		= camWidth;
-	m_DspInfo.iSrcHeight	= camHeight;
-	m_DspInfo.iCropX		= 0;
-	m_DspInfo.iCropY		= 0;
-	m_DspInfo.iCropWidth	= camWidth;
-	m_DspInfo.iCropHeight	= camHeight;
-	m_DspInfo.iDspX			= ui->graphicsView->geometry().x();
-	m_DspInfo.iDspY			= ui->graphicsView->geometry().y();
-	m_DspInfo.iDspWidth 	= ui->graphicsView->geometry().width();
-	m_DspInfo.iDspHeight	= ui->graphicsView->geometry().height();
-
-	if( 0 != NXDA_StartAVInService( &m_CamInfo, &m_DspInfo ) )
-	{
-		printf("Fail, NXDA_StartAVInService().\n");
-		return false;
-	}
-
-	m_bShowAVIn = true;
-	return true;
+    m_bShowAVIn = true;
+    return true;
 }
 
 void AVInFrame::StopAVIn()
 {
- 	if( !m_bShowAVIn )
-		return ;
+    if( !m_bShowAVIn )
+        return ;
 
     ui->graphicsView->hide();
     NXDA_StopAVInService();
@@ -309,7 +307,7 @@ void AVInFrame::StopAVIn()
 
 bool AVInFrame::IsShowAVIn()
 {
-	return m_bShowAVIn;
+    return m_bShowAVIn;
 }
 
 void AVInFrame::SetVideoFocus(bool m_bVideoFocusStatus)
@@ -320,46 +318,46 @@ void AVInFrame::SetVideoFocus(bool m_bVideoFocusStatus)
 int AVInFrame::SaveInfo()
 {
     if(0 > m_pIConfig->Open("/nexell/daudio/NxAVIn/config.xml"))
-	{
-		printf("xml open err\n");
-		QFile qFile;
-		qFile.setFileName("/nexell/daudio/NxAVIn/config.xml");
-		if(qFile.remove())
-		{
-			printf("config.xml is removed because of open err\n");
-			if(0 > m_pIConfig->Open("/nexell/daudio/NxAVIn/config.xml"))
-			{
-				printf("xml open err again!!\n");
-				return -1;
-			}
-		}else
-		{
-			printf("Deleting config.xml is failed!\n");
-			return -1;
-		}
-	}
+    {
+        NXLOGE("xml open err\n");
+        QFile qFile;
+        qFile.setFileName("/nexell/daudio/NxAVIn/config.xml");
+        if(qFile.remove())
+        {
+            NXLOGE("config.xml is removed because of open err\n");
+            if(0 > m_pIConfig->Open("/nexell/daudio/NxAVIn/config.xml"))
+            {
+                NXLOGE("xml open err again!!\n");
+                return -1;
+            }
+        }else
+        {
+            NXLOGE("Deleting config.xml is failed!\n");
+            return -1;
+        }
+    }
 
     //save ctrcIdx
     {
         char pCrtcIdx[sizeof(int)] = {};
         sprintf(pCrtcIdx, "%d", m_DspInfo.iDspCrtcIdx );
         if(0 > m_pIConfig->Write("ctrc_idx", pCrtcIdx))
-		{
-			printf("xml write crtc index err\n");
-			m_pIConfig->Close();
-			return -1;
-		}
+        {
+            NXLOGE("xml write crtc index err\n");
+            m_pIConfig->Close();
+            return -1;
+        }
     }
     //save LayerIdx
     {
         char pLayerIdx[sizeof(int)] = {};
         sprintf(pLayerIdx, "%d", m_DspInfo.iDspLayerIdx );
         if(0 > m_pIConfig->Write("layer_idx", pLayerIdx))
-		{
-			printf("xml write layer index err\n");
-			m_pIConfig->Close();
-			return -1;
-		}
+        {
+            NXLOGE("xml write layer index err\n");
+            m_pIConfig->Close();
+            return -1;
+        }
     }
 
     m_pIConfig->Close();
