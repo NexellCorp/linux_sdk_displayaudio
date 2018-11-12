@@ -31,19 +31,19 @@
 #include <QObject>
 class CallBackSignal : public QObject
 {
-    Q_OBJECT
+	Q_OBJECT
 
 public:
-    CallBackSignal() {}
+	CallBackSignal() {}
 
 public slots:
-    void statusChanged(int eventType)
-    {
-        emit mediaStatusChanged(eventType);
-    }
+	void statusChanged(int eventType)
+	{
+		emit mediaStatusChanged(eventType);
+	}
 
 signals:
-    void mediaStatusChanged(int newValue);
+	void mediaStatusChanged(int newValue);
 };
 
 namespace Ui {
@@ -52,44 +52,44 @@ class QuickRearCamFrame;
 
 class QuickRearCamFrame : public QFrame
 {
-    Q_OBJECT
+	Q_OBJECT
 
 public:
-    explicit QuickRearCamFrame(QWidget *parent = 0);
-    ~QuickRearCamFrame();
+	explicit QuickRearCamFrame(QWidget *parent = 0);
+	~QuickRearCamFrame();
 
 
 private:
-    void TerminateEvent(NxTerminateEvent *e);
+	void TerminateEvent(NxTerminateEvent *e);
 
 public:
-    void RegisterRequestTerminate(void (*cbFunc)(void));
-    void RegisterRequestLauncherShow(void (*cbFunc)(bool *bOk));
+	void RegisterRequestTerminate(void (*cbFunc)(void));
+	void RegisterRequestLauncherShow(void (*cbFunc)(bool *bOk));
 
 private:
-    bool			m_bIsInitialized;
+	bool			m_bIsInitialized;
 
  public:
-    bool ShowCamera();
-    void HideCamera();
-    bool IsShowCamera();
+	bool ShowCamera();
+	void HideCamera();
+	bool IsShowCamera();
 
 private:
-    bool m_bShowCamera;
-    CAMERA_INFO m_CamInfo;
+	bool m_bShowCamera;
+	CAMERA_INFO m_CamInfo;
 	DISPLAY_INFO m_DspInfo;
 
 private:
 
-    // Terminate
-    void (*m_pRequestTerminate)(void);
-    void (*m_pRequestLauncherShow)(bool *bOk);
+	// Terminate
+	void (*m_pRequestTerminate)(void);
+	void (*m_pRequestLauncherShow)(bool *bOk);
 
-    int SaveInfo();
+	int SaveInfo();
 
 private:
-    Ui::QuickRearCamFrame *ui;
-    NX_IConfig*		m_pIConfig;	//xml
+	Ui::QuickRearCamFrame *ui;
+	NX_IConfig*		m_pIConfig;	//xml
 };
 
 #endif // QUICKREARCAM_H

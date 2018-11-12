@@ -24,7 +24,7 @@
   </property>
   <property name="frameShadow">
    <enum>QFrame::Raised</enum>
-  </property>  
+  </property>
   <widget class="QGraphicsView" name="graphicsView">
    <property name="geometry">
     <rect>
@@ -159,7 +159,7 @@
     </palette>
    </property>
   </widget>
-  <zorder>graphicsView</zorder>  
+  <zorder>graphicsView</zorder>
  </widget>
  <resources/>
  <connections/>

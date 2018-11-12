@@ -31,19 +31,19 @@
 #include <QObject>
 class CallBackSignal : public QObject
 {
-    Q_OBJECT
+	Q_OBJECT
 
 public:
-    CallBackSignal() {}
+	CallBackSignal() {}
 
 public slots:
-    void statusChanged(int eventType)
-    {
-        emit mediaStatusChanged(eventType);
-    }
+	void statusChanged(int eventType)
+	{
+		emit mediaStatusChanged(eventType);
+	}
 
 signals:
-    void mediaStatusChanged(int newValue);
+	void mediaStatusChanged(int newValue);
 };
 
 namespace Ui {
@@ -52,72 +52,72 @@ class AVInFrame;
 
 class AVInFrame : public QFrame
 {
-    Q_OBJECT
+	Q_OBJECT
 
 // signals:
 //     void signalPlayList();
 
 public:
-    explicit AVInFrame(QWidget *parent = 0);
-    ~AVInFrame();
+	explicit AVInFrame(QWidget *parent = 0);
+	~AVInFrame();
 
 protected:
-    bool event(QEvent *e);
+	bool event(QEvent *e);
 
 private:
-    void TerminateEvent(NxTerminateEvent *e);
-    void StatusHomeEvent(NxStatusHomeEvent *e);
-    void StatusBackEvent(NxStatusBackEvent *e);
+	void TerminateEvent(NxTerminateEvent *e);
+	void StatusHomeEvent(NxStatusHomeEvent *e);
+	void StatusBackEvent(NxStatusBackEvent *e);
 
 public:
-    void RegisterRequestTerminate(void (*cbFunc)(void));
-    void RegisterRequestLauncherShow(void (*cbFunc)(bool *bOk));
-    void displayTouchEvent();
+	void RegisterRequestTerminate(void (*cbFunc)(void));
+	void RegisterRequestLauncherShow(void (*cbFunc)(bool *bOk));
+	void displayTouchEvent();
 
 
 private:
-    bool			m_bIsInitialized;
+	bool			m_bIsInitialized;
 
-    CNX_StatusBar* m_pStatusBar;
+	CNX_StatusBar* m_pStatusBar;
 
-    bool	m_bButtonHide;
+	bool	m_bButtonHide;
 
-    //	event filter
-    bool eventFilter(QObject *watched, QEvent *event);
+	//	event filter
+	bool eventFilter(QObject *watched, QEvent *event);
 
 public:
-    bool ShowAVIn();
-    void StopAVIn();
-    bool IsShowAVIn();
-    void SetVideoFocus(bool m_bVideoFocusStatus);
+	bool ShowAVIn();
+	void StopAVIn();
+	bool IsShowAVIn();
+	void SetVideoFocus(bool m_bVideoFocusStatus);
 
-    int32_t m_bGearStatus;
-    bool m_bVideoFocus;
+	int32_t m_bGearStatus;
+	bool m_bVideoFocus;
 
 private:
-    bool m_bShowAVIn;
-    CAMERA_INFO m_CamInfo;
+	bool m_bShowAVIn;
+	CAMERA_INFO m_CamInfo;
 	DISPLAY_INFO m_DspInfo;
 
 
 private:
-    int		m_iCurFileListIdx;	//index of media list
-    bool	m_bTurnOffFlag;		//for close control
-    bool	m_bStopRenderingFlag;//flag for stopping rendering callback
-    bool	m_bTryFlag;			//try playing back last status
-    NX_CMutex	m_listMutex;	//for storage event
-     bool 	m_bIsVideoFocus;
+	int		m_iCurFileListIdx;	//index of media list
+	bool	m_bTurnOffFlag;		//for close control
+	bool	m_bStopRenderingFlag;//flag for stopping rendering callback
+	bool	m_bTryFlag;			//try playing back last status
+	NX_CMutex	m_listMutex;	//for storage event
+	 bool 	m_bIsVideoFocus;
 
-    // Terminate
-    void (*m_pRequestTerminate)(void);
-    void (*m_pRequestLauncherShow)(bool *bOk);
-    void (*m_pRequestVolume)(void);
+	// Terminate
+	void (*m_pRequestTerminate)(void);
+	void (*m_pRequestLauncherShow)(bool *bOk);
+	void (*m_pRequestVolume)(void);
 
-    int SaveInfo();
+	int SaveInfo();
 
 private:
-    Ui::AVInFrame *ui;
-    NX_IConfig*		m_pIConfig;	//xml
+	Ui::AVInFrame *ui;
+	NX_IConfig*		m_pIConfig;	//xml
 };
 
 #endif // AVINFRAME_H

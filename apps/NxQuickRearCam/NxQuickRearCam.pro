@@ -42,7 +42,7 @@ HEADERS  += \
     MainFrame.h \
     NxEvent.h \
     QuickRearCamFrame.h \
- 
+
 FORMS    += \
     MainFrame.ui \
     QuickRearCamFrame.ui \
