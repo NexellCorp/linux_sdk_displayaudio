@@ -7,165 +7,165 @@
 
 void Init(void *pObj, const char *pArgs)
 {
-    (void)pArgs;
-     MainFrame *p = MainFrame::GetInstance(pObj);
-    if (!p)
-    {
-        NXLOGE("[%s] Instance does not exists.", __FUNCTION__);
-        return;
-    }
+	(void)pArgs;
+	 MainFrame *p = MainFrame::GetInstance(pObj);
+	if (!p)
+	{
+		NXLOGE("[%s] Instance does not exists.", __FUNCTION__);
+		return;
+	}
 
-    if (!p->Initialize())
-    {
-        NXLOGE("[%s] Initialize().", __FUNCTION__);
-        return;
-    }
+	if (!p->Initialize())
+	{
+		NXLOGE("[%s] Initialize().", __FUNCTION__);
+		return;
+	}
 }
 
 void IsInit(bool *bOk)
 {
-    *bOk = MainFrame::GetInstance() ? true : false;
+	*bOk = MainFrame::GetInstance() ? true : false;
 }
 
 void deInit()
 {
-    MainFrame::DestroyInstance();
+	MainFrame::DestroyInstance();
 }
 
 void Show()
 {
-    NXLOGI("[%s]", __FUNCTION__);
-    MainFrame *p = MainFrame::GetInstance();
-    if (p)
-        p->show();
+	NXLOGI("[%s]", __FUNCTION__);
+	MainFrame *p = MainFrame::GetInstance();
+	if (p)
+		p->show();
 }
 
 void Hide()
 {
-    NXLOGI("[%s]", __FUNCTION__);
-    MainFrame *p = MainFrame::GetInstance();
-    if (p)
-        p->hide();
+	NXLOGI("[%s]", __FUNCTION__);
+	MainFrame *p = MainFrame::GetInstance();
+	if (p)
+		p->hide();
 }
 
 void Raise()
 {
-    NXLOGI("[%s]", __FUNCTION__);
-    MainFrame *p = MainFrame::GetInstance();
-    if (p)
-    {
-        if (p->isHidden())
-        {
-            NXLOGI("[%s] <HIDDEN>", __FUNCTION__);
-            p->show();
-        }
-        p->raise();
-    }
+	NXLOGI("[%s]", __FUNCTION__);
+	MainFrame *p = MainFrame::GetInstance();
+	if (p)
+	{
+		if (p->isHidden())
+		{
+			NXLOGI("[%s] <HIDDEN>", __FUNCTION__);
+			p->show();
+		}
+		p->raise();
+	}
 }
 
 void Lower()
 {
-    NXLOGI("[%s]", __FUNCTION__);
-    MainFrame *p = MainFrame::GetInstance();
-    if (p)
-        p->lower();
+	NXLOGI("[%s]", __FUNCTION__);
+	MainFrame *p = MainFrame::GetInstance();
+	if (p)
+		p->lower();
 }
 
 // Launcher Show
 void RegisterRequestLauncherShow(void (*cbFunc)(bool *bOk))
 {
-    MainFrame::RegisterRequestLauncherShow(cbFunc);
+	MainFrame::RegisterRequestLauncherShow(cbFunc);
 }
 
 // Send Message
 void SendMessage(const char *pMsg, int32_t iMsgSize)
 {
-    MainFrame *p = MainFrame::GetInstance();
-    if (p)
-        p->SendMessage(pMsg);
+	MainFrame *p = MainFrame::GetInstance();
+	if (p)
+		p->SendMessage(pMsg);
 }
 
 void RegisterRequestSendMessage(void (*cbFunc)(const char *pDst, const char *pMsg, int32_t iMsgSize))
 {
-    MainFrame::RegisterRequestSendMessage(cbFunc);
+	MainFrame::RegisterRequestSendMessage(cbFunc);
 }
 
 // Popup Message
 void RegisterRequestPopupMessage(void (*cbFunc)(PopupMessage *, bool *))
 {
-    MainFrame::RegisterRequestPopupMessage(cbFunc);
+	MainFrame::RegisterRequestPopupMessage(cbFunc);
 }
 
 void RegisterRequestExpirePopupMessage(void (*cbFunc)())
 {
-    MainFrame::RegisterRequestExpirePopupMessage(cbFunc);
+	MainFrame::RegisterRequestExpirePopupMessage(cbFunc);
 }
 
 void PopupMessageResponse(bool bOk)
 {
-    MainFrame *p = MainFrame::GetInstance();
-    if (p)
-        p->PopupMessageResponse(bOk);
+	MainFrame *p = MainFrame::GetInstance();
+	if (p)
+		p->PopupMessageResponse(bOk);
 }
 
 // Audio Focus
 void RequestAudioFocus(FocusType eType, FocusPriority ePriority, bool *bOk)
 {
-    MainFrame *p = MainFrame::GetInstance();
-    if (p)
-        p->RequestAudioFocus(eType, ePriority, bOk);
+	MainFrame *p = MainFrame::GetInstance();
+	if (p)
+		p->RequestAudioFocus(eType, ePriority, bOk);
 }
 
 void RegisterRequestAudioFocus(void (*cbFunc)(FocusPriority ePriority, bool *bOk))
 {
-    MainFrame::RegisterRequestAudioFocus(cbFunc);
+	MainFrame::RegisterRequestAudioFocus(cbFunc);
 }
 
 void RequestAudioFocusTransient(FocusPriority ePriority, bool *bOk)
 {
-    MainFrame *p = MainFrame::GetInstance();
-    if (p)
-        p->RequestAudioFocusTransient(ePriority, bOk);
+	MainFrame *p = MainFrame::GetInstance();
+	if (p)
+		p->RequestAudioFocusTransient(ePriority, bOk);
 }
 
 void RegisterRequestAudioFocusTransient(void (*cbFunc)(FocusPriority ePriority, bool *bOk))
 {
-    MainFrame::RegisterRequestAudioFocusTransient(cbFunc);
+	MainFrame::RegisterRequestAudioFocusTransient(cbFunc);
 }
 
 void RegisterRequestAudioFocusLoss(void (*cbFunc)(void))
 {
-    MainFrame::RegisterRequestAudioFocusLoss(cbFunc);
+	MainFrame::RegisterRequestAudioFocusLoss(cbFunc);
 }
 
 // Video Focus
 void RequestVideoFocus(FocusType eType, FocusPriority ePriority, bool *bOk)
 {
-    MainFrame *p = MainFrame::GetInstance();
-    if (p)
-        p->RequestVideoFocus(eType, ePriority,bOk);
+	MainFrame *p = MainFrame::GetInstance();
+	if (p)
+		p->RequestVideoFocus(eType, ePriority,bOk);
 }
 
 void RegisterRequestVideoFocus(void (*cbFunc)(FocusPriority ePriority, bool *bOk))
 {
-    MainFrame::RegisterRequestVideoFocus(cbFunc);
+	MainFrame::RegisterRequestVideoFocus(cbFunc);
 }
 
 void RequestVideoFocusTransient(FocusPriority ePriority, bool *bOk)
 {
-    MainFrame *p = MainFrame::GetInstance();
-    if (p)
-        p->RequestVideoFocusTransient(ePriority,bOk);
+	MainFrame *p = MainFrame::GetInstance();
+	if (p)
+		p->RequestVideoFocusTransient(ePriority,bOk);
 }
 
 void RegisterRequestVideoFocusTransient(void (*cbFunc)(FocusPriority ePriority, bool *bOk))
 {
-    MainFrame::RegisterRequestVideoFocusTransient(cbFunc);
+	MainFrame::RegisterRequestVideoFocusTransient(cbFunc);
 }
 
 void RegisterRequestVideoFocusLoss(void (*cbFunc)(void))
 {
-    MainFrame::RegisterRequestVideoFocusLoss(cbFunc);
+	MainFrame::RegisterRequestVideoFocusLoss(cbFunc);
 }
 
 void RegisterRequestPlugInRun(void (*cbFunc)(const char *pPlugin, const char *pArgs))
@@ -180,7 +180,7 @@ void RegisterRequestPlugInTerminate(void (*cbFunc)(const char *pPlugin))
 
 void RegisterRequestTerminate(void (*cbFunc)())
 {
-    MainFrame::RegisterRequestTerminate(cbFunc);
+	MainFrame::RegisterRequestTerminate(cbFunc);
 }
 
 void RegisterRequestVolume(void (*cbFunc)())
