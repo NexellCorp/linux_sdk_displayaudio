@@ -970,6 +970,8 @@ bool NxBTService::runCommand(const char *command)
 			return closeAudioAVK(tokens[CommandType_Service], tokens[CommandType_Command]);
 		} else if (tokens[CommandType_Command].find("OPEN AUDIO") == 0) {
 			return openAudioAVK(tokens[CommandType_Service], tokens[CommandType_Command]);
+		} else if (tokens[CommandType_Command].find("GET MEDIA ELEMENTS") == 0) {
+			return requestGetElementAttr(tokens[CommandType_Service], tokens[CommandType_Command]);
 		}
 	} else if (tokens[CommandType_Service] == "HS") {
 		if (tokens[CommandType_Command].find("CONNECTED DEVICE INDEX") == 0) {
@@ -1698,6 +1700,26 @@ bool NxBTService::closeAudioAVK(std::string service/*= "AVK"*/, std::string comm
 	Broadcast(MakeReplyCommand(result, reply).c_str());
 
 	return result;
+}
+
+bool NxBTService::requestGetElementAttr(std::string service/*= "AVK"*/, std::string command/*= "GET MEDIA ELEMENTS"*/)
+{
+    std::vector<std::string> reply;
+    char bd_addr[6];
+    bool result = true;
+
+    reply.push_back(service);
+    reply.push_back(command);
+
+    result = !(m_pModel->getConnectionDevAddrAVK(AVK_CONNECTED_INDEX, bd_addr) < 0 || m_pModel->requestGetElementAttr(bd_addr) < 0);
+
+    if (result) {
+        reply.push_back(bdAddrToString(bd_addr, DEVICE_ADDRESS_SIZE, ':'));
+    }
+
+    Broadcast(MakeReplyCommand(result, reply).c_str());
+
+    return result;
 }
 
 //-----------------------------------------------------------------------

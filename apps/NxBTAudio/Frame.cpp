@@ -226,9 +226,12 @@ void Frame::slotCommandFromServer(QString command)
 		updateToUIForPlayStatus(tokens);
 	} else if (tokens[2] == "PLAY INFO") {
 		updateToUIForPlayInformation(tokens);
-	} else if (tokens[2] == "IS CONNECTED") {
-//		if (tokens.size() >= 4 && tokens[3] == "CONNECTED")
-//			emit signalCommandToServer("$AVK#PLAY START\n");
+	} else if (tokens[2] == "IS CONNECTED" || tokens[2] == "CONNECTION STATUS") {
+		if (tokens.size() >= 4 && tokens[3] == "CONNECTED") {
+			emit signalCommandToServer("$AVK#PLAY PAUSE\n");
+			emit signalCommandToServer("$AVK#GET MEDIA ELEMENTS\n");
+			emit signalCommandToServer("$AVK#PLAY START\n");
+		}
 	}
 }
 
