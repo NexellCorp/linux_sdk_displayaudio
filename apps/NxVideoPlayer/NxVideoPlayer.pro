@@ -51,6 +51,7 @@ HEADERS  += \
     CNX_Util.h \
     CNX_MoviePlayer.h \
     CNX_FileList.h \
+    CNX_SubtitleParser.h \
     MainFrame.h \
     NxEvent.h \
     PlayListVideoFrame.h \

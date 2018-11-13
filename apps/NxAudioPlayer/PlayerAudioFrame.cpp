@@ -995,8 +995,7 @@ void PlayerAudioFrame::UpdateAlbumInfo()
 
     //	Get Album General Information From ID3V1 Parser
     id3Tag.Clear();
-    id3Tag.Link(fileName.toStdString().c_str(), ID3TT_ID3V1 | ID3TT_LYRICS3V2 | ID3TT_MUSICMATCH);
-    //id3Tag.Link(fileName.toStdString().c_str(), ID3TT_ID3V1);
+    id3Tag.Link(fileName.toStdString().c_str(), ID3TT_ID3);
 
     //	Album
     str = ID3_GetAlbum( &id3Tag );
