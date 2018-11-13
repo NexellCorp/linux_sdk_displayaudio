@@ -317,6 +317,8 @@ public:
 
 	bool closeAudioAVK(std::string service = "AVK", std::string command = "CLOSE AUDIO");
 
+	bool requestGetElementAttr(std::string service = "AVK", std::string command = "GET MEDIA ELEMENTS");
+
 	//-----------------------------------------------------------------------
 	// HS functions
 	bool connectToHS(std::string service, std::string command);
