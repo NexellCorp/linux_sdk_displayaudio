@@ -110,7 +110,7 @@ public:
 	struct connect_state_t {
 		bool on;
 		int index; // connected index
-		char bd_addr[DEVICE_ADDRESS_SIZE];
+		unsigned char bd_addr[DEVICE_ADDRESS_SIZE];
 		char name[DEVICE_NAME_SIZE];
 	};
 
@@ -189,7 +189,7 @@ public:
 
 	std::vector<std::string> createTokensFromCommand(const char* command);
 
-	std::string bdAddrToString(char* bd_addr, int len, char seperator);
+	std::string bdAddrToString(unsigned char* bd_addr, int len, char seperator);
 
 	// Callback functions
 	static void sendMGTOpenSucceed_stub(void* pObj, int32_t result);
@@ -202,13 +202,13 @@ public:
 
 	static void updateUnpairedDevices_stub(void *pObj);
 
-	static void sendPairingRequest_stub(void *pObj, bool auto_mode, char *name, char *bd_addr, int32_t pairing_code);
+	static void sendPairingRequest_stub(void *pObj, bool auto_mode, char *name, unsigned char *bd_addr, int32_t pairing_code);
 
-	static void callbackLinkDownEventManager(void* pObj, char* bd_addr, int32_t reason_code);
+	static void callbackLinkDownEventManager(void* pObj, unsigned char* bd_addr, int32_t reason_code);
 
 	static void sendAVKOpenFailed_stub(void *pObj);
 
-	static void sendAVKConnectionStatus_stub(void *pObj, bool is_connected, char *name, char *bd_addr);
+	static void sendAVKConnectionStatus_stub(void *pObj, bool is_connected, char *name, unsigned char *bd_addr);
 
 	static void sendAVKRCConnectionStatus_stub(void *pObj, bool is_connected);
 
@@ -225,7 +225,7 @@ public:
 	// HS
 	static void sendHSOpenFailed_stub(void *pObj);
 
-	static void sendHSConnectionStatus_stub(void *pObj_, bool is_connected_, char *name_, char *bd_addr_);
+	static void sendHSConnectionStatus_stub(void *pObj_, bool is_connected_, char *name_, unsigned char *bd_addr_);
 
 	static void sendHSCallStatus_stub(void *pObj, int32_t call_status);
 

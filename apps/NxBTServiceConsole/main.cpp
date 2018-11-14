@@ -119,6 +119,7 @@ void app_display_main_menu(void) {
 	printf(" %d		=> Prev play\n", APP_AVK_MENU_PLAY_PREV);
 	printf(" %d		=> Open ALSA\n", APP_AVK_MENU_OPEN_AUDIO);
 	printf(" %d		=> Close ALSA\n", APP_AVK_MENU_CLOSE_AUDIO);
+	printf(" %d		=> Get media elements\n", APP_AVK_MENU_GET_MEDIA_ELEMENT);
 	printf("[HS]==================================================\n");
 	printf(" %d		=> HS connection\n", APP_HS_MENU_OPEN);
 	printf(" %d		=> HS disconnection\n", APP_HS_MENU_CLOSE);
@@ -216,11 +217,11 @@ static void updateUnpairedDevices_stub(void *pObj) {
 	// To do : callback
 }
 
-static void sendPairingRequest_stub(void *pObj, bool auto_mode, char *name, char *bd_addr, int32_t pairing_code) {
+static void sendPairingRequest_stub(void *pObj, bool auto_mode, char *name, unsigned char *bd_addr, int32_t pairing_code) {
 	// To do : callback
 }
 
-static void sendLinkDownEvent_stub(void *pObj, char *bd_addr, int32_t reason_code) {
+static void sendLinkDownEvent_stub(void *pObj, unsigned char *bd_addr, int32_t reason_code) {
 	// To do : callback
 }
 
@@ -240,7 +241,7 @@ static void updatePlayStatusAVK_stub(void *pObj, int32_t play_status) {
 	// To do : callback
 }
 
-static void sendAVKConnectionStatus_stub(void *pObj, bool is_connected, char *name, char *bd_addr) {
+static void sendAVKConnectionStatus_stub(void *pObj, bool is_connected, char *name, unsigned char *bd_addr) {
 	// To do : callback
 }
 
@@ -260,7 +261,7 @@ static void sendHSOpenFailed_stub(void *pObj) {
 	// To do : callback
 }
 
-static void sendHSConnectionStatus_stub(void *pObj, bool is_connected, char *name, char *bd_addr) {
+static void sendHSConnectionStatus_stub(void *pObj, bool is_connected, char *name, unsigned char *bd_addr) {
 	// To do : callback
 }
 
@@ -321,12 +322,12 @@ int main (int argc, char *argv[])
 	INX_BT *pInstance = getInstance();
 	int choice, sel;
 	int i, j;
-	char *localAddress = NULL;
+	unsigned char *localAddress = NULL;
 	nxbt_paired_dev_t pairedDev;
 	nxbt_avk_connected_dev_t connectedDevAVK;
 	char number[20];
 	char key;
-	char hs_connected_bd_addr[6];
+	unsigned char hs_connected_bd_addr[6];
 	int dummy;
 	void *m_pObjHandler = &dummy;		// UI handler
 	Bmessage_info_t bmsg;				// BMessage
@@ -508,6 +509,10 @@ int main (int argc, char *argv[])
 				break;
 			case APP_AVK_MENU_CLOSE_AUDIO:
 				pInstance->closeAudioAVK();
+				break;
+			case APP_AVK_MENU_GET_MEDIA_ELEMENT:
+				sel = app_get_choice("Select device index");
+				pInstance->requestGetElementAttr(pairedDev.pairedDevInfo[sel].bd_addr);
 				break;
 			case APP_HS_MENU_OPEN:
 				sel = app_get_choice("Select device index");
