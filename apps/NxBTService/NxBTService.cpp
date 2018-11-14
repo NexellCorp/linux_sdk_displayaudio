@@ -114,7 +114,7 @@ void NxBTService::updatePairedDevices_stub(void *pObj)
 	char buffer[BUFFER_SIZE];
 	int count = m_pModel->getPairedDevCount();
 	char name[249] = {0,};
-	char bd_addr[6] = {0,};
+	unsigned char bd_addr[6] = {0,};
 	char avk_connection[100] = {0,};
 	char hs_connection[100] = {0,};
 	std::string s_bd_addr;
@@ -125,13 +125,13 @@ void NxBTService::updatePairedDevices_stub(void *pObj)
 		if (0 > m_pModel->getPairedDevInfoByIndex(i, name, bd_addr))
 			continue;
 
-		if (strcmp(self->m_AVK.connection.bd_addr, bd_addr) == 0 && self->m_AVK.connection.on) {
+		if (memcmp(self->m_AVK.connection.bd_addr, bd_addr, sizeof(bd_addr)) == 0 && self->m_AVK.connection.on) {
 			strcpy(avk_connection, "CONNECTED");
 		} else {
 			strcpy(avk_connection, "DISCONNECTED");
 		}
 
-		if (strcmp(self->m_HS.hs.bd_addr, bd_addr) == 0 && self->m_HS.hs.on) {
+		if (memcmp(self->m_HS.hs.bd_addr, bd_addr, sizeof(bd_addr)) == 0 && self->m_HS.hs.on) {
 			strcpy(hs_connection, "CONNECTED");
 		} else {
 			strcpy(hs_connection, "DISCONNECTED");
@@ -157,7 +157,7 @@ void NxBTService::updateUnpairedDevices_stub(void *pObj)
 	char buffer[BUFFER_SIZE];
 	int count = m_pModel->getPairedDevCount();
 	char name[249] = {0,};
-	char bd_addr[6] = {0,};
+	unsigned char bd_addr[6] = {0,};
 	char avk_connection[100] = {0,};
 	char hs_connection[100] = {0,};
 	std::string s_bd_addr;
@@ -169,13 +169,13 @@ void NxBTService::updateUnpairedDevices_stub(void *pObj)
 			continue;
 		}
 
-		if (strcmp(self->m_AVK.connection.bd_addr, bd_addr) == 0 && self->m_AVK.connection.on) {
+		if (memcmp(self->m_AVK.connection.bd_addr, bd_addr, sizeof(bd_addr)) == 0 && self->m_AVK.connection.on) {
 			strcpy(avk_connection, "CONNECTED");
 		} else {
 			strcpy(avk_connection, "DISCONNECTED");
 		}
 
-		if (strcmp(self->m_HS.hs.bd_addr, bd_addr) == 0 && self->m_HS.hs.on) {
+		if (memcmp(self->m_HS.hs.bd_addr, bd_addr, sizeof(bd_addr)) == 0 && self->m_HS.hs.on) {
 			strcpy(hs_connection, "CONNECTED");
 		} else {
 			strcpy(hs_connection, "DISCONNECTED");
@@ -190,16 +190,16 @@ void NxBTService::updateUnpairedDevices_stub(void *pObj)
 	self->Broadcast(buffer);
 }
 
-void NxBTService::sendPairingRequest_stub(void *pObj_, bool auto_mode_, char *name_, char *bd_addr_, int32_t pairing_code_)
+void NxBTService::sendPairingRequest_stub(void *pObj_, bool auto_mode_, char *name_, unsigned char *bd_addr_, int32_t pairing_code_)
 {
 	// example 1) AUTO ON   > $OK#MGT#PAIRING REQUEST#AUTO ON#iPhone6-xxx#18:6D:99:20:09:CB#915112\n
 	// example 2) AUTO OFF  > $OK#MGT#PAIRING REQUEST#AUTO OFF#iPhone6-xxx#18:6D:99:20:09:CB#915112\n
 	NxBTService* self = (NxBTService*)pObj_;
 	char name[DEVICE_NAME_SIZE] = {0,};
-	char bd_addr[DEVICE_ADDRESS_SIZE] = {0,};
+	unsigned char bd_addr[DEVICE_ADDRESS_SIZE] = {0,};
 
-	strcpy(name, name_);
-	strcpy(bd_addr, bd_addr_);
+	strncpy(name, name_, strlen(name_));
+	memcpy(bd_addr, bd_addr_, sizeof(bd_addr));
 
 	std::string s_bd_addr = self->bdAddrToString(bd_addr, DEVICE_ADDRESS_SIZE, ':');
 
@@ -222,7 +222,7 @@ void NxBTService::sendPairingRequest_stub(void *pObj_, bool auto_mode_, char *na
 	}
 }
 
-void NxBTService::callbackLinkDownEventManager(void* pObj, char* bd_addr, int32_t reason_code)
+void NxBTService::callbackLinkDownEventManager(void* pObj, unsigned char* bd_addr, int32_t reason_code)
 {
 	NXLOGD(__FUNCTION__);
 	(void)bd_addr;
@@ -262,14 +262,14 @@ void NxBTService::sendAVKOpenFailed_stub(void *pObj)
 	self->Broadcast(buffer);
 }
 
-void NxBTService::sendAVKConnectionStatus_stub(void *pObj, bool is_connected, char *name, char *bd_addr)
+void NxBTService::sendAVKConnectionStatus_stub(void *pObj, bool is_connected, char *name, unsigned char *bd_addr)
 {
 	NxBTService* self = (NxBTService*)pObj;
 	char buffer[BUFFER_SIZE] = {0,};
 	string s_bd_addr;
 
-	strcpy(self->m_AVK.connection.bd_addr, bd_addr);
-	strcpy(self->m_AVK.connection.name, name);
+	memcpy(self->m_AVK.connection.bd_addr, bd_addr, sizeof(self->m_AVK.connection.bd_addr));
+	strncpy(self->m_AVK.connection.name, name, strlen(name));
 
 	// Update connection status and connected index
 	self->m_AVK.connection.on = is_connected;
@@ -302,7 +302,7 @@ void NxBTService::sendAVKRCConnectionStatus_stub(void *pObj, bool is_connected)
 {
 	NxBTService* self = (NxBTService*)pObj;
 	char buffer[BUFFER_SIZE] = {0,};
-	char bd_addr[DEVICE_ADDRESS_SIZE] = {0,};
+	unsigned char bd_addr[DEVICE_ADDRESS_SIZE] = {0,};
 
 	sprintf(buffer, "$OK#%s#%s#%s\n", "AVK", "RC CONNECTION STATUS", is_connected ? "CONNECTED" : "DISCONNECTED");
 
@@ -454,7 +454,7 @@ void NxBTService::sendHSOpenFailed_stub(void *pObj)
     self->Broadcast(buffer);
 }
 
-void NxBTService::sendHSConnectionStatus_stub(void *pObj, bool is_connected, char *name, char *bd_addr)
+void NxBTService::sendHSConnectionStatus_stub(void *pObj, bool is_connected, char *name, unsigned char *bd_addr)
 {
 	NxBTService* self = (NxBTService*)pObj;
 	char buffer[BUFFER_SIZE] = {0,};
@@ -462,14 +462,14 @@ void NxBTService::sendHSConnectionStatus_stub(void *pObj, bool is_connected, cha
 
 	// Update device address
 	if (bd_addr) {
-		strcpy(self->m_HS.hs.bd_addr, bd_addr);
+		memcpy(self->m_HS.hs.bd_addr, bd_addr, sizeof(self->m_HS.hs.bd_addr));
 	} else {
 		memset(self->m_HS.hs.bd_addr, 0, DEVICE_ADDRESS_SIZE);
 	}
 
 	// Update device name
 	if (name) {
-		strcpy(self->m_HS.hs.name, name);
+		strncpy(self->m_HS.hs.name, name, strlen(name));
 	} else {
 		self->m_HS.hs.name[0] = '\0';
 	}
@@ -756,7 +756,7 @@ void NxBTService::sendMCEConnectionStatus_stub(void *pObj, bool is_connected)
 {
 	NxBTService* self = (NxBTService*)pObj;
 	char buffer[BUFFER_SIZE] = {0,};
-	char bd_addr[DEVICE_ADDRESS_SIZE] = {0,};
+	unsigned char bd_addr[DEVICE_ADDRESS_SIZE] = {0,};
 
 	self->m_HS.mce.on = is_connected;
 	if (0 > self->m_pModel->getConnectionDevAddrHS(bd_addr)) {
@@ -1069,7 +1069,7 @@ error_occur:
 	return tokens;
 }
 
-std::string NxBTService::bdAddrToString(char* bd_addr, int len, char seperator)
+std::string NxBTService::bdAddrToString(unsigned char* bd_addr, int len, char seperator)
 {
 	char buffer[BUFFER_SIZE] = {0,};
 
@@ -1309,7 +1309,7 @@ bool NxBTService::infoListOfPairedDeviceAll(std::string service, std::string com
 	std::string temp;
 	int32_t count = m_pModel->getPairedDevCount();
 	char name[DEVICE_NAME_SIZE] = {0,};
-	char bd_addr[DEVICE_ADDRESS_SIZE] = {0,};
+	unsigned char bd_addr[DEVICE_ADDRESS_SIZE] = {0,};
 	bool avk_connected = false;
 	bool hs_connected = false;
 	bool result = true;
@@ -1344,7 +1344,7 @@ bool NxBTService::infoOfPairedDeviceByIndex(std::string service, std::string com
 	std::string argument = findArgument(&command);
 	std::string temp;
 	char name[DEVICE_NAME_SIZE] = {0,};
-	char bd_addr[DEVICE_ADDRESS_SIZE] = {0,};
+	unsigned char bd_addr[DEVICE_ADDRESS_SIZE] = {0,};
 	bool result = (isDigit(argument) && m_pModel->getPairedDevInfoByIndex(atoi(argument.c_str()), name, bd_addr) == RET_OK);
 
 	if (result) {
@@ -1383,7 +1383,7 @@ bool NxBTService::addressOfPairedDeviceByIndex(std::string service, std::string 
 {
 	std::vector<std::string> reply;
 	std::string argument = findArgument(&command);
-	char bd_addr[DEVICE_ADDRESS_SIZE] = {0,};
+	unsigned char bd_addr[DEVICE_ADDRESS_SIZE] = {0,};
 	bool result = (isDigit(argument) && m_pModel->getPairedDevAddrByIndex(atoi(argument.c_str()), bd_addr) == RET_OK);
 
 	reply.push_back(service);
@@ -1423,7 +1423,7 @@ bool NxBTService::connectToAVK(std::string service, std::string command)
 bool NxBTService::disconnectToAVK(std::string service, std::string command)
 {
 	std::vector<std::string> reply;
-	char bd_addr[6] = {0,};
+	unsigned char bd_addr[6] = {0,};
 	bool already_disconnected = !m_pModel->isConnectedAVK();
 	bool result = true;
 
@@ -1464,12 +1464,12 @@ void NxBTService::updateAVKConnectionState(struct connect_state_t target)
 		m_AVK.connection.index = target.index;
 	}
 
-	if (strcmp(m_AVK.connection.name, target.name) != 0) {
-		memcpy(m_AVK.connection.name, target.name, DEVICE_ADDRESS_SIZE);
+	if (strncmp(m_AVK.connection.name, target.name, strlen(m_AVK.connection.name)) != 0) {
+		strncpy(m_AVK.connection.name, target.name, strlen(target.name));
 	}
 
-	if (strcmp(m_AVK.connection.bd_addr, target.bd_addr) == 0) {
-		memcpy(m_AVK.connection.bd_addr, target.bd_addr, DEVICE_ADDRESS_SIZE);
+	if (memcmp(m_AVK.connection.bd_addr, target.bd_addr, sizeof(target.bd_addr)) == 0) {
+		memcpy(m_AVK.connection.bd_addr, target.bd_addr, sizeof(m_AVK.connection.bd_addr));
 	}
 }
 
@@ -1510,7 +1510,7 @@ bool NxBTService::indexOfConnectedDeviceToAVK(std::string service, std::string c
 bool NxBTService::addressOfConnectedDeviceToAVK(std::string service, std::string command)
 {
 	std::vector<std::string> reply;
-	char bd_addr[DEVICE_ADDRESS_SIZE] = {0,};
+	unsigned char bd_addr[DEVICE_ADDRESS_SIZE] = {0,};
 	bool result = (m_pModel->getConnectionDevAddrAVK(AVK_CONNECTED_INDEX, bd_addr) == RET_OK);
 
 	reply.push_back(service);
@@ -1528,7 +1528,7 @@ bool NxBTService::addressOfConnectedDeviceToAVK(std::string service, std::string
 bool NxBTService::playStartAVK(std::string service/*= "AVK"*/, std::string command/*= "PLAY START"*/)
 {
 	std::vector<std::string> reply;
-	char bd_addr[6];
+	unsigned char bd_addr[6];
 	bool result = true;
 
 	reply.push_back(service);
@@ -1548,7 +1548,7 @@ bool NxBTService::playStartAVK(std::string service/*= "AVK"*/, std::string comma
 bool NxBTService::playStopAVK(std::string service/*= "AVK"*/, std::string command/*= "PLAY STOP"*/)
 {
 	std::vector<std::string> reply;
-	char bd_addr[6];
+	unsigned char bd_addr[6];
 	bool result = true;
 
 	reply.push_back(service);
@@ -1568,7 +1568,7 @@ bool NxBTService::playStopAVK(std::string service/*= "AVK"*/, std::string comman
 bool NxBTService::playPauseAVK(std::string service/*= "AVK"*/, std::string command/*= "PLAY PAUSE"*/)
 {
 	std::vector<std::string> reply;
-	char bd_addr[6];
+	unsigned char bd_addr[6];
 	bool result = true;
 
 	reply.push_back(service);
@@ -1588,7 +1588,7 @@ bool NxBTService::playPauseAVK(std::string service/*= "AVK"*/, std::string comma
 bool NxBTService::playPrevAVK(std::string service/*= "AVK"*/, std::string command/*= "PLAY PREV"*/)
 {
 	std::vector<std::string> reply;
-	char bd_addr[6];
+	unsigned char bd_addr[6];
 	bool result = true;
 
 	reply.push_back(service);
@@ -1608,7 +1608,7 @@ bool NxBTService::playPrevAVK(std::string service/*= "AVK"*/, std::string comman
 bool NxBTService::playNextAVK(std::string service/*= "AVK"*/, std::string command/*= "PLAY NEXT"*/)
 {
 	std::vector<std::string> reply;
-	char bd_addr[6];
+	unsigned char bd_addr[6];
 	bool result = true;
 
 	reply.push_back(service);
@@ -1705,7 +1705,7 @@ bool NxBTService::closeAudioAVK(std::string service/*= "AVK"*/, std::string comm
 bool NxBTService::requestGetElementAttr(std::string service/*= "AVK"*/, std::string command/*= "GET MEDIA ELEMENTS"*/)
 {
     std::vector<std::string> reply;
-    char bd_addr[6];
+    unsigned char bd_addr[6];
     bool result = true;
 
     reply.push_back(service);
