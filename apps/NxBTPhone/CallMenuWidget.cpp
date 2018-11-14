@@ -388,6 +388,7 @@ bool CallMenuWidget::updateForCallLog(QStringList &tokens)
 				}
 			}
 
+			setUIState(UIState_DownloadCompleted);
 			return true;
 		}
 	}
