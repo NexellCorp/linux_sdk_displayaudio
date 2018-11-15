@@ -59,7 +59,7 @@ public:
 		if (psPopupMessage->pMsgBody)
 			m_MsgBody = QString::fromLatin1(psPopupMessage->pMsgBody);
 
-		for (int32_t i = 0; i < ButtonType_Count; ++i)
+		for (int32_t i = ButtonType_Ok; i < ButtonType_Count; ++i)
 		{
 			if (psPopupMessage->pStylesheet[i])
 				m_ButtonStylesheet[i] = psPopupMessage->pStylesheet[i];
