@@ -82,18 +82,18 @@ bool MainFrame::Initialize()
 		return false;
 	}
 
-	if (!m_pRequestAudioFocus)
-	{
-		NXLOGE("[%s] REQUEST AUDIO FOCUS does not exist.", __FUNCTION__);
-		return false;
-	}
+	// if (!m_pRequestAudioFocus)
+	// {
+	// 	NXLOGE("[%s] REQUEST AUDIO FOCUS does not exist.", __FUNCTION__);
+	// 	return false;
+	// }
 
-	m_pRequestAudioFocus(FocusPriority_Normal, &bOk);
-	if (!bOk)
-	{
-		NXLOGE("[%s] REQUEST AUDIO FOCUS <FAIL>", __FUNCTION__);
-		return false;
-	}
+	//m_pRequestAudioFocus(FocusPriority_Normal, &bOk);
+	// if (!bOk)
+	// {
+	// 	NXLOGE("[%s] REQUEST AUDIO FOCUS <FAIL>", __FUNCTION__);
+	// 	return false;
+	// }
 
 	if (isHidden())
 	{
