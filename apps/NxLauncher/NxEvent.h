@@ -93,7 +93,7 @@ public:
 		if (psNotification->pMsgBody)
 			m_MsgBody = QString::fromLatin1(psNotification->pMsgBody);
 
-		for (int32_t i = 0; i < ButtonType_Count; ++i)
+		for (int32_t i = ButtonType_Ok; i < ButtonType_Count; ++i)
 		{
 			if (psNotification->pStylesheet[i])
 				m_ButtonStylesheet[i] = psNotification->pStylesheet[i];
