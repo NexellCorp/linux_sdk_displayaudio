@@ -214,7 +214,9 @@ void Frame::slotCommandFromServer(QString command)
 		updateToUIForMediaElements(tokens);
 	} else if (tokens[2] == "UPDATE PLAY POSITION") {
 		updateToUIForPlayPosition(tokens);
-	} else if (tokens[2] == "PLAY START") {
+//	} else if (tokens[2] == "PLAY START") {
+//		setUIState(UIState_Playing);
+	} else if (tokens[2] == "STREAMING STARTED") {
 		setUIState(UIState_Playing);
 	} else if (tokens[2] == "PLAY PAUSE") {
 		setUIState(UIState_Paused);
@@ -228,8 +230,6 @@ void Frame::slotCommandFromServer(QString command)
 		updateToUIForPlayInformation(tokens);
 	} else if (tokens[2] == "IS CONNECTED" || tokens[2] == "CONNECTION STATUS") {
 		if (tokens.size() >= 4 && tokens[3] == "CONNECTED") {
-			emit signalCommandToServer("$AVK#PLAY PAUSE\n");
-			emit signalCommandToServer("$AVK#GET MEDIA ELEMENTS\n");
 			emit signalCommandToServer("$AVK#PLAY START\n");
 		}
 	}
@@ -272,11 +272,9 @@ void Frame::updateToUIForPlayPosition(QStringList& tokens)
 void Frame::updateToUIForPlayStatus(QStringList& tokens)
 {
 	// example) "$OK#AVK#UPDATE PLAY STATUS#[STATUS]\n"
-
 	if (tokens.size() == 4) {
 		if (tokens[3] == "PLAYING") {
-			setUIState( UIState_Playing );
-
+			setUIState(UIState_Playing);
 //			if (isHidden()) {
 
 //				if (m_pRequestShow)

@@ -409,7 +409,7 @@ void NxBTService::sendAVKStreamingStarted_stub(void* pObj, bool is_opened)
 	if (is_opened) {
 		sprintf(buffer, "$OK#%s#%s#%s\n", "AVK", "STREAMING STARTED", "ALSA DEVICE OPENED");
 	} else {
-		sprintf(buffer, "$OK#%s#%s#%s\n", "AVK", "STREAMING STARTED", "ALSA DEVICE OPEN FAILED");
+		sprintf(buffer, "$OK#%s#%s#%s\n", "AVK", "STREAMING STARTED", "ALSA DEVICE NOT OPENED");
 	}
 
 	self->Broadcast(buffer);
