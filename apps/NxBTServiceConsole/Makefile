@@ -28,7 +28,7 @@ install:
 	cp $(TARGET) $(BIN_DIR)
 
 clean:
-	rm -rf $(OBJS) $(TARGET) core .depend
+	rm -rf $(OBJS) $(TARGET) .depend
 
 distclean: clean
 
