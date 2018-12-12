@@ -27,7 +27,7 @@ DEFINES += QT_DEPRECATED_WARNINGS
 
 
 SOURCES += \
-        main.cpp \
+    main.cpp \
     BTCommandProcessor.cpp \
     io/vCard/VCardReader.cpp \
     gui/phonebook/PhoneBookItem.cpp \
