@@ -17,6 +17,9 @@ endif
 ifeq ($(OE_QMAKE_CXXFLAGS), )
 export OE_QMAKE_CXXFLAGS = $(NX_OE_QMAKE_CXXFLAGS)
 endif
+ifeq ($(OE_QMAKE_STRIP), )
+export OE_QMAKE_STRIP = $(NX_OE_QMAKE_STRIP)
+endif
 ifeq ($(OE_QMAKE_INCDIR_QT), )
 export OE_QMAKE_INCDIR_QT = $(NX_OE_QMAKE_INCDIR_QT)
 endif
