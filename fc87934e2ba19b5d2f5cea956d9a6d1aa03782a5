@@ -1,0 +1,73 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "8a2c8c1a_4b00d89b",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 2
+      },
+      "lineNbr": 9,
+      "author": {
+        "id": 1015509
+      },
+      "writtenOn": "2018-12-21T10:03:32Z",
+      "side": 1,
+      "message": "What is AVK? And How to improved response process?",
+      "range": {
+        "startLine": 9,
+        "startChar": 20,
+        "endLine": 9,
+        "endChar": 24
+      },
+      "revId": "fc87934e2ba19b5d2f5cea956d9a6d1aa03782a5",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "4980336b_0d241a30",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 2
+      },
+      "lineNbr": 9,
+      "author": {
+        "id": 1015509
+      },
+      "writtenOn": "2018-12-21T10:03:32Z",
+      "side": 1,
+      "message": "the",
+      "range": {
+        "startLine": 9,
+        "startChar": 54,
+        "endLine": 9,
+        "endChar": 58
+      },
+      "revId": "fc87934e2ba19b5d2f5cea956d9a6d1aa03782a5",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "9777cb8e_ef890042",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 2
+      },
+      "lineNbr": 10,
+      "author": {
+        "id": 1015509
+      },
+      "writtenOn": "2018-12-21T10:03:32Z",
+      "side": 1,
+      "message": "What is HS? And how impoves HS response process?\nPlease describe more detailed.",
+      "range": {
+        "startLine": 10,
+        "startChar": 20,
+        "endLine": 10,
+        "endChar": 23
+      },
+      "revId": "fc87934e2ba19b5d2f5cea956d9a6d1aa03782a5",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
+      "unresolved": true
+    }
+  ]
+}
