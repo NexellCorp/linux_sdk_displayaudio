@@ -51,6 +51,8 @@ private slots:
 
 	void slotStartSerivceTimer();
 
+	void slotCommandTimer();
+
 public:
 	explicit NxLauncher(QWidget *parent = 0);
 	~NxLauncher();
@@ -155,6 +157,8 @@ private:
 	static QQueue<QString> m_VideoFocusQueue;
 
 	QTimer m_Timer;
+
+	QTimer m_CommandTimer;
 
 	MediaScanner *m_pMediaScanner;
 
