@@ -273,8 +273,11 @@ NxLauncher::NxLauncher(QWidget *parent) :
 	m_pMediaScanner = new MediaScanner();
 	connect(m_pMediaScanner, SIGNAL(signalMediaEvent(NxEventTypes)), this, SLOT(slotMediaEvent(NxEventTypes)));
 
+	connect(&m_CommandTimer, SIGNAL(timeout()), this, SLOT(slotCommandTimer()));
+	m_CommandTimer.start(100);
+
 	connect(&m_Timer, SIGNAL(timeout()), this, SLOT(slotTimer()));
-//	m_Timer.start(5000);
+//	m_Timer.start(10000);
 
 //	QTimer::singleShot(2000, this, SLOT(slotStartSerivceTimer()));
 }
@@ -1235,7 +1238,7 @@ void NxLauncher::Execute(QString plugin)
 	bool bOk = false;
 	if (m_PlugIns.find(plugin) == m_PlugIns.end())
 	{
-		NXLOGE("[%s] Plug-in <NG>", Q_FUNC_INFO);
+		NXLOGE("[%s] Plug-in : %s <NG>", Q_FUNC_INFO, plugin.toStdString().c_str());
 		return;
 	}
 
@@ -1556,4 +1559,32 @@ void NxLauncher::slotNotificationReject()
 	}
 
 	m_PlugIns[requestor]->m_pNotificationResponse(false);
+}
+
+void NxLauncher::slotCommandTimer()
+{
+	QDir dir("/home/root");
+	QFileInfoList entries = dir.entryInfoList(QStringList() << "cmd", QDir::Files);
+
+	foreach (QFileInfo entry, entries)
+	{
+		QFile f(entry.filePath());
+		if (f.open(QFile::ReadOnly))
+		{
+			QString data = f.readAll();
+			// start;NxCarplay;NxAndroidAuto
+			QStringList tokens = data.split(";");
+			if (tokens[0].toLower() == "start")
+			{
+				for (int i = 1; i < tokens.size(); ++i)
+				{
+					Execute(tokens[i].trimmed());
+				}
+			}
+
+			f.close();
+
+			f.remove();
+		}
+	}
 }
