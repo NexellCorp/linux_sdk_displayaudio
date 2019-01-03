@@ -212,6 +212,7 @@ int32_t CNX_DAudioStatus::SetSystemVolume(int32_t percentage)
 	snd_mixer_selem_id_t *pSid;
 	const char *pCard = "default";
 	const char *pSelem_name = "DAC1";
+	int32_t iError = 0;
 
 	if (percentage < 0)
 		percentage = 0;
@@ -222,25 +223,40 @@ int32_t CNX_DAudioStatus::SetSystemVolume(int32_t percentage)
 		return -1;
 
 	if (0 != snd_mixer_attach(pHandle, pCard))
-		return -1;
+	{
+		iError = -2;
+		goto loop_finished;
+	}
 
 	if (0 != snd_mixer_selem_register(pHandle, NULL, NULL))
-		return -1;
+	{
+		iError = -2;
+		goto loop_finished;
+	}
 
 	if (0 != snd_mixer_load(pHandle))
-		return -1;
+	{
+		iError = -2;
+		goto loop_finished;
+	}
 
 	snd_mixer_selem_id_alloca(&pSid);
 	snd_mixer_selem_id_set_index(pSid, 0);
 	snd_mixer_selem_id_set_name(pSid, pSelem_name);
 	pElem = snd_mixer_find_selem(pHandle, pSid);
+	if (!pElem)
+	{
+		iError = -2;
+		goto loop_finished;
+	}
 
 	snd_mixer_selem_get_playback_volume_range(pElem, &min, &max);
 	snd_mixer_selem_set_playback_volume_all(pElem, max * percentage / 100);
 
+loop_finished:
 	snd_mixer_close(pHandle);
 
-	return 0;
+	return iError;
 }
 
 int32_t CNX_DAudioStatus::GetVolume()
