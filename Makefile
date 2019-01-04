@@ -1,5 +1,5 @@
 ifndef	JOBS
-JOBJS := 8
+JOBS := 8
 endif
 
 ifeq ($(OE_QMAKE_AR), )
@@ -118,7 +118,6 @@ TOOLS += NxLogcat
 # Build
 all:
 	@echo "===== Displayaudio SDK building ====="
-	mkdir -p $(BIN_TOP)
 	@for dir in $(LIBS); do							\
 	make -C $(LIB_TOP)/$$dir -j$(JOBS) || exit $?;	\
 	make -C $(LIB_TOP)/$$dir install || exit $?;	\
@@ -188,13 +187,6 @@ clean_qt:
 		cd -; 										\
 	fi												\
 	done
-	@for dir in $(QT_PODO); do						\
-	if [ -d $(BUILD_TOP)/build-$$dir ] ; then		\
-		cd $(BUILD_TOP)/build-$$dir || exit $?;		\
-		make clean || exit $?;						\
-		cd -; 										\
-	fi												\
-	done
 
 clean_libs:
 	@for dir in $(OUT_LIB_TOP); do					\
@@ -220,7 +212,6 @@ distclean:
 	make distclean_linux
 	make clean_libs
 	make clean_header
-	rm -rf $(BIN_TOP)
 	rm -rf $(BUILD_TOP)
 	rm -rf $(RESULT_TOP)
 

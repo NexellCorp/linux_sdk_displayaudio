@@ -1,9 +1,9 @@
 CC := gcc
 INCLUDE += -I./
 
-OPTS := -Wall -O2 -Wextra -Wcast-align -Wno-unused-parameter -Wshadow -Wwrite-strings -Wcast-qual -Wno-unused-result -fno-strict-aliasing -fstrict-overflow -fsigned-char -fno-omit-frame-pointer -fno-optimize-sibling-calls
+OPTS := -fPIC -Wall -O2 -Wextra -Wcast-align -Wno-unused-parameter -Wshadow -Wwrite-strings -Wcast-qual -Wno-unused-result -fno-strict-aliasing -fstrict-overflow -fsigned-char -fno-omit-frame-pointer -fno-optimize-sibling-calls
 
-CFLAGS := -g $(INCLUDE) $(OPTS)
+CFLAGS := $(INCLUDE) $(OPTS)
 
 COBJS := list_test.o ./klist.o
 

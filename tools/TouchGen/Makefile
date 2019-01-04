@@ -13,6 +13,8 @@ COBJS	:=
 CXXOBJS	:=
 CXXOBJS += main.o
 
+CXXFLAGS += -fPIC
+
 TARGET	:= touch_gen
 
 ################################################################################
@@ -27,13 +29,11 @@ $(TARGET):	depend $(OBJS)
 install:
 	cp -av $(TARGET) ../../bin/
 
-push:
-	adb push $(TARGET) /home/root
-
 clean:
-	rm -f $(TARGET) *.o .depend
+	rm -rf $(TARGET) *.o .depend
 
 distclean: clean
+	rm -rf ../../bin/$(TARGET)
 
 #########################################################################
 # Dependency

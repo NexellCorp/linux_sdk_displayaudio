@@ -2,7 +2,7 @@ include ../../../env.mk
 
 ######################################################################
 # Build options
-INCLUDE += -I./
+INCLUDE += -I.
 LIBRARY	+= -lstdc++ -lpthread -lm
 
 ######################################################################
@@ -31,11 +31,12 @@ install:
 	cp -av DAudioKeyDef.h ../../include/
 
 clean:
-	rm -f $(TARGET) *.o .depend
+	rm -rf $(TARGET) *.o .depend
 
 distclean: clean
-	rm -f ../../include/NX_KeyReceiver.h
-	rm -f ../../include/DAudioKeyDef.h
+	rm -rf ../../lib/$(TARGET)
+	rm -rf ../../include/NX_KeyReceiver.h
+	rm -rf ../../include/DAudioKeyDef.h
 
 #########################################################################
 # Dependency

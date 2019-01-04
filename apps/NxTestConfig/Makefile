@@ -2,8 +2,8 @@ include ../../env.mk
 
 ######################################################################
 # Build options
-INCLUDE += -I./ -I../../library/include
-LIBRARY += -L./ -L../../library/lib -lnxconfig -lxml2
+INCLUDE += -I. -I../../library/include
+LIBRARY += -L../../library/lib -lnxconfig -lxml2
 
 LIBRARY	+= -lstdc++ -lpthread
 
@@ -14,8 +14,6 @@ CXXOBJS	:=
 CXXOBJS += main.o
 
 TARGET := NxTestConfig
-
-CXXFLAGS += -g
 
 ################################################################################
 # Build
@@ -30,9 +28,10 @@ install:
 	cp -av $(TARGET) ../../bin/
 
 clean:
-	rm -f $(TARGET) *.o .depend
+	rm -rf $(TARGET) *.o .depend
 
 distclean: clean
+	rm -rf ../../bin/$(TARGET)
 
 #########################################################################
 # Dependency

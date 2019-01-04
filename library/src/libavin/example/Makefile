@@ -11,7 +11,7 @@ CPPFLAGS	+= -fPIC
 #																		#
 #########################################################################
 #	Local Application Includes
-INCLUDE		+= -I./ -I../../../include -I../src/
+INCLUDE		+= -I. -I../../../include -I../src
 ifneq ($(SDKTARGETSYSROOT), )
 INCLUDE		+= -I$(SDKTARGETSYSROOT)/usr/include/drm
 endif
@@ -48,12 +48,11 @@ all: $(TARGET)
 
 $(TARGET): depend $(OBJS)
 	$(CC) $(CXXFLAGS) $(OBJS) -o $@ $(LDFLAGS) $(LIBRARY)
-	@echo "done"
 
 install:
 
 clean:
-	rm -f $(TARGET) *.o .depend
+	rm -rf $(TARGET) *.o .depend
 
 distclean: clean
 

@@ -75,8 +75,6 @@ INCLUDEPATH += $$_PRO_FILE_PWD_/../../library/prebuilt/include
 
 linux-oe-g++ {
     LIBS += -L$$_PRO_FILE_PWD_/../../library/lib -lnxkeyreceiver -lnxbaseui -lnxdaudioutils -lsqlite3 -lcrypto
-} else {
-    LIBS += -L$$_PRO_FILE_PWD_/../../library/lib/x64 -lnxkeyreceiver -lnxbaseui -lnxdaudioutils
 }
 
 # dynamic library

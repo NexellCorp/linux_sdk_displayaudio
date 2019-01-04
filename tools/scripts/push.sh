@@ -1,6 +1,11 @@
 #!/bin/bash
+
+echo ""
 echo "===== Displayaudio SDK pushing ====="
-RESULT_DIR="./result"
+echo ""
+RESULT_DIR="result"
 adb push ${RESULT_DIR} /
 adb shell sync
+echo ""
 echo "===== Pushing complete ====="
+echo ""

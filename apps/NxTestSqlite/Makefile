@@ -13,8 +13,6 @@ COBJS	+=
 CXXOBJS	:=
 CXXOBJS += main.o
 
-CFLAGS	+= -g
-
 TARGET := NxTestSqlite
 
 ################################################################################
@@ -30,9 +28,10 @@ install:
 	cp -av $(TARGET) ../../bin/
 
 clean:
-	rm -f $(TARGET) *.o .depend
+	rm -rf $(TARGET) *.o .depend
 
 distclean: clean
+	rm -rf ../../bin/$(TARGET)
 
 #########################################################################
 # Dependency
