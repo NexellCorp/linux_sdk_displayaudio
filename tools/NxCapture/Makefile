@@ -10,7 +10,8 @@ LIBRARY	+= -lstdc++ -lpthread
 # Target
 COBJS	:=
 CPPOBJS	:= NxCapture.cpp
-CXXFLAGS += -g
+
+CXXFLAGS += -fPIC
 
 TARGET := NxCapture
 
@@ -30,6 +31,7 @@ clean:
 	rm -f $(TARGET) *.o .depend
 
 distclean: clean
+	rm -rf ../../bin/$(TARGET)
 
 #########################################################################
 # Dependency

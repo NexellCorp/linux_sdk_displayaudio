@@ -2,13 +2,15 @@ include ../../env.mk
 
 ######################################################################
 # Build options
-INCLUDE	+= -I./
+INCLUDE	+= -I.
 LIBRARY	+= -lstdc++ -lpthread
 
 ######################################################################
 # Target
 COBJS	:=
 CPPOBJS	:= main.o
+
+CXXFLAGS += -fPIC
 
 TARGET	:= key_input
 
@@ -25,9 +27,10 @@ install:
 	cp -av $(TARGET) ../../bin/
 
 clean:
-	rm -f $(TARGET) *.o .depend
+	rm -rf $(TARGET) *.o .depend
 
 distclean: clean
+	rm -rf ../../bin/$(TARGET)
 
 #########################################################################
 # Dependency

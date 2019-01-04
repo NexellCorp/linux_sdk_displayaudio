@@ -14,21 +14,21 @@ TEMPLATE = app
 INCLUDEPATH += $$PWD/../../library/src/KeyReceiver/
 
 SOURCES += main.cpp\
-        CarBtnWindow.cpp \
-        TabSetting.cpp \
-        TabButtons.cpp \
-        CSettings.cpp \
-        ../../library/src/KeyReceiver/DAudioKeyDef.cpp \
-    TabTest.cpp
+	CarBtnWindow.cpp \
+	TabSetting.cpp \
+	TabButtons.cpp \
+	CSettings.cpp \
+	../../library/src/KeyReceiver/DAudioKeyDef.cpp \
+	TabTest.cpp
 
 HEADERS  += CarBtnWindow.h \
-        TabSetting.h \
-        TabButtons.h \
-        CSettings.h \
-        ../../library/src/KeyReceiver/DAudioKeyDef.h \
+	TabSetting.h \
+	TabButtons.h \
+	CSettings.h \
+	../../library/src/KeyReceiver/DAudioKeyDef.h \
     TabTest.h
 
-FORMS    += CarBtnWindow.ui \
-    TabSetting.ui \
-    TabButtons.ui \
-    TabTest.ui
+FORMS += CarBtnWindow.ui \
+	TabSetting.ui \
+	TabButtons.ui \
+	TabTest.ui

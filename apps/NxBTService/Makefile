@@ -2,12 +2,12 @@ include ../../env.mk
 
 ################################################################################
 # Build options
-INCLUDE += -I./
+INCLUDE += -I.
 INCLUDE += -I../../library/include
 INCLUDE += -I../../library/prebuilt/include
 
-LIBRARY += -L../../library/lib/ -lnxdaudioutils
-LIBRARY += -L../../library/prebuilt/lib/
+LIBRARY += -L../../library/lib -lnxdaudioutils
+LIBRARY += -L../../library/prebuilt/lib
 LIBRARY += -lnxbt -lappbt -lnxalsa
 LIBRARY += -lpthread
 
@@ -19,8 +19,7 @@ CXXOBJS	:=
 CXXOBJS += NxBTService.o
 CXXOBJS += DAudioIface_Impl.o
 
-CFLAGS	+= -g
-CXXFLAGS += -g -fPIC -std=c++11 -DCONFIG_A2DP_PROCESS_MANAGEMENT -DCONFIG_HSP_PROCESS_MANAGEMENT
+CXXFLAGS += -fPIC -DCONFIG_A2DP_PROCESS_MANAGEMENT -DCONFIG_HSP_PROCESS_MANAGEMENT
 
 TARGET := libnxbtservice.so
 
@@ -33,13 +32,10 @@ all: $(TARGET)
 $(TARGET):	depend $(OBJS)
 	$(CXX) -shared -Wl,-soname,$(TARGET) -o $@ $(OBJS) $(LDFLAGS) $(LIBRARY)
 
-push:
-	adb push $(TARGET) /nexell/daudio/NxBTService/
-
 install:
 
 clean:
-	rm -f $(TARGET) *.o .depend
+	rm -rf $(TARGET) *.o .depend
 
 distclean: clean
 

@@ -11,8 +11,8 @@ CPPFLAGS	+= -fPIC
 #																		#
 #########################################################################
 #	Local Application Includes
-INCLUDE		+= -I./ -I../../../include
-INCLUDE		+= -I./ -I../../../prebuilt/include
+INCLUDE		+= -I. -I../../../include
+INCLUDE		+= -I. -I../../../prebuilt/include
 ifneq ($(SDKTARGETSYSROOT), )
 INCLUDE		+= -I$(SDKTARGETSYSROOT)/usr/include/drm
 endif
@@ -59,14 +59,15 @@ $(TARGET): depend $(OBJS)
 	@echo "done"
 
 install:
-	cp -a $(TARGET) ../../../lib/
-	cp -a NX_RearCam.h ../../../include/
+	cp -av $(TARGET) ../../../lib/
+	cp -av NX_RearCam.h ../../../include/
 
 clean:
-	rm -f $(TARGET) *.o .depend
+	rm -rf $(TARGET) *.o .depend
 
 distclean: clean
-	rm -f ../../../include/NX_RearCam.h
+	rm -rf ../../../lib/$(TARGET)
+	rm -rf ../../../include/NX_RearCam.h
 
 #########################################################################
 # Dependency

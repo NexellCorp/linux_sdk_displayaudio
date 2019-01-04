@@ -2,8 +2,8 @@ include ../../env.mk
 
 ################################################################################
 # Build options
-INCLUDE	+= -I./ -I../../library/include -I../NxDAudioManager
-LIBRARY	+= -L./ -L../../library/lib
+INCLUDE	+= -I. -I../../library/include
+LIBRARY	+= -L../../library/lib
 
 LIBRARY	+= -lstdc++ -lpthread
 
@@ -31,9 +31,10 @@ install:
 	cp -av $(TARGET) ../../bin/
 
 clean:
-	rm -f $(TARGET) *.o .depend
+	rm -rf $(TARGET) *.o .depend
 
 distclean: clean
+	rm -rf ../../bin/$(TARGET)
 
 #########################################################################
 # Dependency

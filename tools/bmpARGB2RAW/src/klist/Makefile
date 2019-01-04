@@ -1,9 +1,9 @@
 CC := gcc
 INC :=
 LIBS :=
-CFLAGS := -g $(INC) -fpic -Wall -Wextra -O2
+CFLAGS := $(INC) -fPIC -Wall -Wextra -O2
 LDFLAGS := -shared
-RM := rm -f
+RM := rm -rf
 
 TARGET_LIB := libklist.so
 
@@ -18,9 +18,7 @@ $(TARGET_LIB): $(OBJS)
 	$(CC) ${LDFLAGS} -o $@ $^
 
 $(SRCS:.c=.d):%.d:%.c
-	$(CC) $(CFLAGS) -MM $< >$@
-
-include $(SRCS:.c=.d)
+	$(CC) $(CFLAGS) -MM $< > $@
 
 .PHONY: clean
 clean:

@@ -1,49 +1,55 @@
 #!/bin/bash
 
 TOP=`pwd`
-RESULT_DIR="./result"
-PACKAGE_ROOT="nexell/daudio"
+RESULT_DIR="result"
+QT_APP_ROOT="nexell/daudio"
 PACKAGE_DIR="Package"
 USR_BIN="usr/bin"
 USR_LIB="usr/lib"
-BUILD_TOP="qt_build"
-USER_LIB="library/lib"
+QT_BUILD_TOP="qt_build"
+BUILT_LIB="library/lib"
+BUILT_BIN="bin"
 PREBUILT_LIB="library/prebuilt/lib"
 
-function package_sdk_libraries()
+function package_sdk_prebuilt_all()
 {
-	echo "<< Package SDK libraries >>"
-
-	package_sdk_built_libraries
 	package_sdk_prebuilt_libaries
 }
 
-function package_sdk_built_libraries()
+function package_sdk_built_all()
 {
-	echo "<< Package SDK built libraries >>"
-
-	mkdir -p ${RESULT_DIR}/${USR_LIB}
-	cp -apvR ${TOP}/${USER_LIB}/* ${RESULT_DIR}/${USR_LIB}/
+	package_sdk_binaries
+	package_sdk_libraries
+	package_sdk_qtapplications
 }
 
 function package_sdk_prebuilt_libaries()
 {
 	echo "<< Package SDK prebuilt libraries >>"
 
+	mkdir -p ${RESULT_DIR}/${USR_LIB}
 	cp -apvR ${TOP}/${PREBUILT_LIB}/* ${RESULT_DIR}/${USR_LIB}/
 }
 
 function package_sdk_binaries()
 {
-	echo "<< Package SDK built binaries >>"
+	echo "<< Package SDK binaries >>"
 
 	mkdir -p ${RESULT_DIR}/${USR_BIN}
-	cp -apvR ${TOP}/bin/* ${RESULT_DIR}/${USR_BIN}/
+	cp -apvR ${TOP}/${BUILT_BIN}/* ${RESULT_DIR}/${USR_BIN}/
 }
 
-function package_sdk_applications()
+function package_sdk_libraries()
 {
-	echo "<< Package SDK applications >>"
+	echo "<< Package SDK libraries >>"
+
+	mkdir -p ${RESULT_DIR}/${USR_LIB}
+	cp -apvR ${TOP}/${BUILT_LIB}/* ${RESULT_DIR}/${USR_LIB}/
+}
+
+function package_sdk_qtapplications()
+{
+	echo "<< Package SDK Qt applications >>"
 
 	package_luncher_application
 
@@ -76,7 +82,7 @@ function package_luncher_application()
 	local app_name=NxLauncher
 	echo "<< Package ${app_name} >>"
 
-	cp -apvR ${TOP}/${BUILD_TOP}/build-${app_name}/${app_name} ${RESULT_DIR}/${USR_BIN}/
+	cp -apvR ${TOP}/${QT_BUILD_TOP}/build-${app_name}/${app_name} ${RESULT_DIR}/${USR_BIN}/
 }
 
 function package_bt_service_application()
@@ -84,16 +90,16 @@ function package_bt_service_application()
 	local app_name=NxBTService
 	echo "<< Package ${app_name} >>"
 
-	mkdir -p ${RESULT_DIR}/${PACKAGE_ROOT}/${app_name}
-	cp -apvR ${TOP}/apps/${app_name}/*.so ${RESULT_DIR}/${PACKAGE_ROOT}/${app_name}/
-	cp -apvR ${TOP}/apps/${app_name}/${PACKAGE_DIR}/* ${RESULT_DIR}/${PACKAGE_ROOT}/${app_name}/
+	mkdir -p ${RESULT_DIR}/${QT_APP_ROOT}/${app_name}
+	cp -apvR ${TOP}/apps/${app_name}/*.so ${RESULT_DIR}/${QT_APP_ROOT}/${app_name}/
+	cp -apvR ${TOP}/apps/${app_name}/${PACKAGE_DIR}/* ${RESULT_DIR}/${QT_APP_ROOT}/${app_name}/
 }
 
 function unpackage_bt_service_application()
 {
 	local app_name=NxBTService
-	if [ -d ${RESULT_DIR}/${PACKAGE_ROOT}/${app_name} ]; then
-		rm -rfvR ${RESULT_DIR}/${PACKAGE_ROOT}/${app_name}
+	if [ -d ${RESULT_DIR}/${QT_APP_ROOT}/${app_name} ]; then
+		rm -rfvR ${RESULT_DIR}/${QT_APP_ROOT}/${app_name}
 	fi
 }
 
@@ -102,16 +108,16 @@ function package_sdk_qtapplication()
 	local app_name=${1}
 	echo "<< Package ${app_name} >>"
 
-	mkdir -p ${RESULT_DIR}/${PACKAGE_ROOT}/${app_name}
-	cp -apvR ${TOP}/${BUILD_TOP}/build-${app_name}/*.so ${RESULT_DIR}/${PACKAGE_ROOT}/${app_name}/
-	cp -apvR ${TOP}/apps/${app_name}/${PACKAGE_DIR}/* ${RESULT_DIR}/${PACKAGE_ROOT}/${app_name}/
+	mkdir -p ${RESULT_DIR}/${QT_APP_ROOT}/${app_name}
+	cp -apvR ${TOP}/${QT_BUILD_TOP}/build-${app_name}/*.so ${RESULT_DIR}/${QT_APP_ROOT}/${app_name}/
+	cp -apvR ${TOP}/apps/${app_name}/${PACKAGE_DIR}/* ${RESULT_DIR}/${QT_APP_ROOT}/${app_name}/
 }
 
 function unpackage_sdk_qtapplication()
 {
 	local app_name=${1}
-	if [ -d ${RESULT_DIR}/${PACKAGE_ROOT}/${app_name} ]; then
-		rm -rfvR ${RESULT_DIR}/${PACKAGE_ROOT}/${app_name}
+	if [ -d ${RESULT_DIR}/${QT_APP_ROOT}/${app_name} ]; then
+		rm -rfvR ${RESULT_DIR}/${QT_APP_ROOT}/${app_name}
 	fi
 }
 
@@ -120,12 +126,13 @@ echo "===== Displayaudio SDK packaging ====="
 echo ""
 
 if [ -d ${RESULT_DIR} ]; then
-	rm -rf ${RESULT_DIR}
+	rm -rfR ${RESULT_DIR}
 fi
 
-package_sdk_libraries
-package_sdk_binaries
-package_sdk_applications
+mkdir -p ${RESULT_DIR}
+
+package_sdk_prebuilt_all
+package_sdk_built_all
 
 echo ""
 echo "===== Packaging complete ====="

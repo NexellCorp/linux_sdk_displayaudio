@@ -2,13 +2,13 @@ include ../../../env.mk
 
 ######################################################################
 # Build options
-INCLUDE += -I./ -I../../include
-INCLUDE += -I./ -I../../prebuilt/include
+INCLUDE += -I. -I../../include
+INCLUDE += -I. -I../../prebuilt/include
 ifneq ($(SDKTARGETSYSROOT), )
 INCLUDE += -I$(SDKTARGETSYSROOT)/usr/include/libxml2
 endif
 
-LIBRARY += -L./ -lxml2
+LIBRARY += -lxml2
 LIBRARY	+= -lstdc++ -lpthread -lm
 
 ######################################################################
@@ -35,11 +35,11 @@ install:
 	cp -av NX_IConfig.h ../../include/
 
 clean:
-	rm -f $(TARGET) *.o .depend
+	rm -rf $(TARGET) *.o .depend
 
 distclean: clean
-	rm -f ../../lib/$(TARGET)
-	rm -f ../../include/NX_IConfig.h
+	rm -rf ../../lib/$(TARGET)
+	rm -rf ../../include/NX_IConfig.h
 
 #########################################################################
 # Dependency

@@ -12,6 +12,8 @@ LIBRARY	+= -lstdc++
 CXXOBJS	:=
 CXXOBJS	+= main.o
 
+CXXFLAGS += -fPIC
+
 TARGET	= nxlogcat
 
 ################################################################################
@@ -32,6 +34,8 @@ clean:
 	rm -f $(TARGET) *.o .depend logcat
 
 distclean: clean
+	rm -rf ../../bin/$(TARGET)
+	rm -rf ../../bin/logcat
 
 #########################################################################
 # Dependency

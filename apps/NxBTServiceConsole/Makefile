@@ -5,15 +5,15 @@ include ../../env.mk
 #########################################################################
 LIB_DIR	:= ../../library/prebuilt/lib
 INC_DIR	:= ../../library/prebuilt/include
-BIN_DIR	:= ../../bin
 
-CFLAGS	+= -g
-INCLUDE	+= -I./ -I$(INC_DIR)
+INCLUDE	+= -I. -I$(INC_DIR)
 
 LIBRARY	+= -L$(LIB_DIR) -lnxbt -lappbt -lnxalsa
 LIBRARY	+= -lstdc++ -lpthread -lm
 
 CXXOBJS	+= main.o
+
+CXXFLAGS += -fPIC
 
 TARGET	= NxBTServiceConsole
 
@@ -25,12 +25,13 @@ $(TARGET):	depend $(OBJS)
 	$(CC) $(CFLAGS) $(OBJS) -o $@ $(LDFLAGS) $(LIBRARY)
 
 install:
-	cp $(TARGET) $(BIN_DIR)
+	cp -av $(TARGET) ../../bin/
 
 clean:
 	rm -rf $(OBJS) $(TARGET) .depend
 
 distclean: clean
+	rm -rf ../../bin/$(TARGET)
 
 #########################################################################
 # Dependency
