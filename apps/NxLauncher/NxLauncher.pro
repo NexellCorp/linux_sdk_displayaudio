@@ -22,7 +22,15 @@ DEFINES += QT_DEPRECATED_WARNINGS
 # You can also select to disable deprecated APIs only up to a certain version of Qt.
 #DEFINES += QT_DISABLE_DEPRECATED_BEFORE=0x060000    # disables all the APIs deprecated before Qt 6.0.0
 
-QT      += qml quickwidgets
+CONFIG += CONFIG_USE_NO_QML
+
+mode = $$find(CONFIG, CONFIG_USE_NO_QML)
+
+count(mode, 1) {
+    DEFINES += CONFIG_USE_NO_QML
+} else {
+    QT += qml quickwidgets
+}
 
 SOURCES += main.cpp\
     nxappinfo.cpp \
@@ -39,7 +47,11 @@ SOURCES += main.cpp\
     media/CNX_File.cpp \
     media/MediaScanner.cpp \
     media/CNX_VolumeManager.cpp \
-    media/CNX_DiskManager.cpp
+    media/CNX_DiskManager.cpp \
+    page/PageFrame.cpp \
+    page/PageIndicatorFrame.cpp \
+    page/PageItemFrame.cpp \
+    page/PageStackFrame.cpp
 
 HEADERS  += \
     nxappinfo.h \
@@ -59,13 +71,20 @@ HEADERS  += \
     media/MediaScanner.h \
     media/CNX_VolumeManager.h \
     media/MediaConf.h \
-    media/CNX_DiskManager.h
+    media/CNX_DiskManager.h \
+    page/PageFrame.h \
+    page/PageIndicatorFrame.h \
+    page/PageItemFrame.h \
+    page/PageStackFrame.h
 
 FORMS    += \
     NotificationFrame.ui \
     NxLauncher.ui \
     MessageFrame.ui \
-    CNX_VolumeBar.ui
+    CNX_VolumeBar.ui \
+    page/PageFrame.ui \
+    page/PageItemFrame.ui \
+    page/PageStackFrame.ui
 
 RESOURCES += \
     nxlauncher.qrc

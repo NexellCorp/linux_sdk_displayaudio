@@ -2,7 +2,11 @@
 #define NXLAUNCHER_H
 
 #include <QDialog>
+#ifndef CONFIG_USE_NO_QML
 #include <QQuickWidget>
+#else
+#include <page/PageStackFrame.h>
+#endif
 #include <QWidget>
 #include <QListWidgetItem>
 #include <QPushButton>
@@ -22,6 +26,8 @@
 
 #include <QTimer>
 
+
+
 namespace Ui {
 class NxLauncher;
 }
@@ -29,6 +35,9 @@ class NxLauncher;
 class NxLauncher : public QDialog
 {
 	Q_OBJECT
+
+signals:
+	void signalStateChanged(NxPluginInfo*);
 
 private slots:
 	void slotExecute(QString);
@@ -52,6 +61,14 @@ private slots:
 	void slotStartSerivceTimer();
 
 	void slotCommandTimer();
+
+#ifdef CONFIG_USE_NO_QML
+	void onExecute(NxPluginInfo* pInfo);
+
+	void onPrevPageButtonClicked();
+
+	void onNextPageButtonClicked();
+#endif
 
 public:
 	explicit NxLauncher(QWidget *parent = 0);
@@ -161,6 +178,13 @@ private:
 	QTimer m_CommandTimer;
 
 	MediaScanner *m_pMediaScanner;
+#ifdef CONFIG_USE_NO_QML
+	PageStackFrame *m_pPageStackFrame;
+	QPushButton *m_pPrevPageButton;
+	QPushButton *m_pNextPageButton;
+#else
+	QQuickWidget *m_pLauncherWidget;
+#endif
 
 private:
 	Ui::NxLauncher *ui;
