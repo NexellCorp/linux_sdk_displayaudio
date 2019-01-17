@@ -12,7 +12,6 @@
 #include <QImageReader>
 #include <QGraphicsScene>
 #include <QGraphicsPixmapItem>
-#include <QQuickWidget>
 
 // status bar
 #include <CNX_StatusBar.h>
