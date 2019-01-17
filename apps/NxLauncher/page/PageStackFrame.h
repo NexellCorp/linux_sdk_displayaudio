@@ -19,12 +19,12 @@ class PageStackFrame : public QFrame
 	Q_OBJECT
 
 signals:
-	void onButtonClicked(NxAppInfo* pInfo);
+	void onButtonClicked(NxPluginInfo* pInfo);
 
 private slots:
-	void onButtonClickedFromItem(NxAppInfo *pInfo);
+	void onButtonClickedFromItem(NxPluginInfo *pInfo);
 
-	void onButtonStateChnaged(NxAppInfo* pInfo);
+	void onButtonStateChnaged(NxPluginInfo* pInfo);
 
 public:
 	explicit PageStackFrame(QWidget *parent = 0);
@@ -32,7 +32,7 @@ public:
 
 	void pushItem(QString text, QString icon);
 
-	void pushItem(NxAppInfo* pInfo);
+	void pushItem(NxPluginInfo* pInfo);
 
 	void resizeItem();
 

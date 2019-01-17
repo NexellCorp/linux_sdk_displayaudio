@@ -37,12 +37,12 @@ void PageStackFrame::pushItem(QString text, QString icon)
 	m_PageItemList.push_back(item);
 }
 
-void PageStackFrame::pushItem(NxAppInfo* pInfo)
+void PageStackFrame::pushItem(NxPluginInfo* pInfo)
 {
 	PageItemFrame *item = NULL;
 
 	item = new PageItemFrame(this);
-	connect(item, SIGNAL(onButtonClicked(NxAppInfo*)), this, SLOT(onButtonClickedFromItem(NxAppInfo*)));
+	connect(item, SIGNAL(onButtonClicked(NxPluginInfo*)), this, SLOT(onButtonClickedFromItem(NxPluginInfo*)));
 	item->setFixedSize(m_Cell.width(), m_Cell.height());
 	item->setButtonUISize(m_Cell.width()*0.9, m_Cell.height()*0.8);
 	item->setButtonEnabled(pInfo->getEnabled());
@@ -74,8 +74,10 @@ void PageStackFrame::resizeItem()
 			int diff = page - (m_PageList.size()-1);
 			for (int i = 0; i < diff; ++i) {
 				PageFrame *frame = new PageFrame(this);
+				frame->setFrameShadow(QFrame::Plain);
+				frame->setFrameShape(QFrame::NoFrame);
 				frame->setFixedSize(width(), height());
-				m_PageList.push_back(frame);				
+				m_PageList.push_back(frame);
 			}
 		}
 
@@ -152,12 +154,12 @@ void PageStackFrame::setSpacing(int spacing)
 	m_Spacing = spacing;
 }
 
-void PageStackFrame::onButtonClickedFromItem(NxAppInfo *pInfo)
+void PageStackFrame::onButtonClickedFromItem(NxPluginInfo *pInfo)
 {
 	emit onButtonClicked(pInfo);
 }
 
-void PageStackFrame::onButtonStateChnaged(NxAppInfo* pInfo)
+void PageStackFrame::onButtonStateChnaged(NxPluginInfo* pInfo)
 {
 	for (size_t i = 0; i < m_PageItemList.size(); ++i) {
 		if (m_PageItemList[i]->getAppInfo() == pInfo) {

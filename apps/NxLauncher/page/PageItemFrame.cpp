@@ -75,12 +75,12 @@ void PageItemFrame::setIcon(QString normal, QString pressed, QString disabled)
 	ui->BUTTON_IMAGE->setStyleSheet(styleSheetData);
 }
 
-void PageItemFrame::setAppInfo(NxAppInfo* pInfo)
+void PageItemFrame::setAppInfo(NxPluginInfo* pInfo)
 {
 	m_pAppInfo = pInfo;
 }
 
-NxAppInfo* PageItemFrame::getAppInfo()
+NxPluginInfo* PageItemFrame::getAppInfo()
 {
 	return m_pAppInfo;
 }
