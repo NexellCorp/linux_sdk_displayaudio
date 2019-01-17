@@ -4,7 +4,7 @@
 #
 #-------------------------------------------------
 
-QT       += widgets qml quickwidgets
+QT       += widgets
 
 TARGET = nxbaseui
 TEMPLATE = lib
@@ -25,7 +25,6 @@ DEFINES += QT_DEPRECATED_WARNINGS
 SOURCES +=  \
     CNX_StatusBar.cpp \
     CNX_BaseUI.cpp \
-    CNX_MediaController.cpp \
     CNX_MessageBox.cpp \
     CNX_KeyboardFrame.cpp \
     ElideLabel.cpp
@@ -33,7 +32,6 @@ SOURCES +=  \
 HEADERS +=  \
     CNX_StatusBar.h \
     CNX_BaseUI.h \
-    CNX_MediaController.h \
     CNX_BaseUI_global.h \
     CNX_MessageBox.h \
     CNX_KeyboardFrame.h \
@@ -52,7 +50,7 @@ unix {
     INCLUDEPATH += ../../include/
 
     header.path = $$_PRO_FILE_PWD_/../../include
-    header.files = CNX_StatusBar.h CNX_MediaController.h CNX_MessageBox.h CNX_KeyboardFrame.h CNX_BaseDialog.h
+    header.files = CNX_StatusBar.h CNX_MessageBox.h CNX_KeyboardFrame.h CNX_BaseDialog.h
 
     target.path = $$_PRO_FILE_PWD_/../../lib
     INSTALLS += target header

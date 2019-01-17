@@ -5,12 +5,8 @@
 #-------------------------------------------------
 
 QT       += core gui
-QT       += network     \
-            xml         \
-            multimedia  \
+QT       += multimedia  \
             multimediawidgets \
-            widgets \
-            quickwidgets
 
 greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
 

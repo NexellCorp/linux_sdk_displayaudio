@@ -5,7 +5,6 @@
 #-------------------------------------------------
 
 QT       += core gui
-QT       += quickwidgets # for status bar (NxBaseUi library)
 
 greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
 
