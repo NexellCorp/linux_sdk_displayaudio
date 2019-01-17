@@ -1,0 +1,73 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "ee9d9075_4a3e2d04",
+        "filename": "apps/NxLauncher/NxLauncher.cpp",
+        "patchSetId": 1
+      },
+      "lineNbr": 274,
+      "author": {
+        "id": 1015509
+      },
+      "writtenOn": "2019-01-17T06:46:05Z",
+      "side": 1,
+      "message": "if you didn\u0027t use this line, delete lines.",
+      "range": {
+        "startLine": 271,
+        "startChar": 0,
+        "endLine": 274,
+        "endChar": 4
+      },
+      "revId": "5a8c25f2a808fae9a04e2d519b7d28a73398e33e",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "d0ce0683_4fd0da60",
+        "filename": "apps/NxLauncher/NxLauncher.h",
+        "patchSetId": 1
+      },
+      "lineNbr": 30,
+      "author": {
+        "id": 1015509
+      },
+      "writtenOn": "2019-01-17T06:46:05Z",
+      "side": 1,
+      "message": "delete unused dummy line",
+      "range": {
+        "startLine": 29,
+        "startChar": 0,
+        "endLine": 30,
+        "endChar": 0
+      },
+      "revId": "5a8c25f2a808fae9a04e2d519b7d28a73398e33e",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "d9a0a9c1_bc91bd28",
+        "filename": "apps/NxLauncher/page/PageStackFrame.cpp",
+        "patchSetId": 1
+      },
+      "lineNbr": 80,
+      "author": {
+        "id": 1015509
+      },
+      "writtenOn": "2019-01-17T06:46:05Z",
+      "side": 1,
+      "message": "Please delete dummy tabs.",
+      "range": {
+        "startLine": 80,
+        "startChar": 32,
+        "endLine": 80,
+        "endChar": 36
+      },
+      "revId": "5a8c25f2a808fae9a04e2d519b7d28a73398e33e",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
+      "unresolved": false
+    }
+  ]
+}
