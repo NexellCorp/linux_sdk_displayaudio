@@ -13,7 +13,7 @@ class PageItemFrame : public QFrame
 	Q_OBJECT
 
 signals:
-	void onButtonClicked(NxAppInfo* pInfo);
+	void onButtonClicked(NxPluginInfo* pInfo);
 
 public:
 	explicit PageItemFrame(QWidget *parent = 0);
@@ -31,15 +31,15 @@ public:
 
 	void setIcon(QString normal, QString pressed, QString disabled);
 
-	void setAppInfo(NxAppInfo* pInfo);
+	void setAppInfo(NxPluginInfo* pInfo);
 
-	NxAppInfo* getAppInfo();
+	NxPluginInfo* getAppInfo();
 
 private slots:
 	void on_BUTTON_IMAGE_clicked();
 
 private:
-	NxAppInfo* m_pAppInfo;
+	NxPluginInfo* m_pAppInfo;
 
 private:
 	Ui::PageItemFrame *ui;

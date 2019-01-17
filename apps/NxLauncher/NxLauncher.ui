@@ -67,19 +67,6 @@
      <enum>QFrame::Plain</enum>
     </property>
    </widget>
-   <widget class="QQuickWidget" name="launcherWidget">
-    <property name="geometry">
-     <rect>
-      <x>0</x>
-      <y>60</y>
-      <width>1024</width>
-      <height>540</height>
-     </rect>
-    </property>
-    <property name="resizeMode">
-     <enum>QQuickWidget::SizeRootObjectToView</enum>
-    </property>
-   </widget>
   </widget>
   <widget class="CNX_VolumeBar" name="volumeBar">
    <property name="geometry">
@@ -106,11 +93,6 @@
   <zorder>launcher</zorder>
  </widget>
  <customwidgets>
-  <customwidget>
-   <class>QQuickWidget</class>
-   <extends>QWidget</extends>
-   <header>QtQuickWidgets/QQuickWidget</header>
-  </customwidget>
   <customwidget>
    <class>CNX_StatusBar</class>
    <extends>QFrame</extends>

@@ -1,15 +1,18 @@
 #include "NxLauncher.h"
 #include "ui_NxLauncher.h"
 
+#ifndef CONFIG_USE_NO_QML
 #include <QQuickView>
-#include <QObject>
-#include <QWidget>
 #include <QQuickItem>
 #include <QQmlProperty>
-#include <QProcess>
-#include <QDirIterator>
 #include <QQmlContext>
 #include <QQuickWidget>
+#endif
+#include <QObject>
+#include <QWidget>
+#include <QProcess>
+#include <QDirIterator>
+#include <QDebug>
 
 #include <execinfo.h>
 #include <signal.h>
@@ -257,14 +260,51 @@ NxLauncher::NxLauncher(QWidget *parent) :
 
 	connect(ui->volumeBar, SIGNAL(signalSetVolume(int)), this, SLOT(slotSetVolume(int)));
 
+#ifndef CONFIG_USE_NO_QML
 	// binding between qml and widget
-	ui->launcherWidget->setSource(QUrl("qrc:/qml/NxLauncher.qml"));
-	ui->launcherWidget->rootContext()->setContextProperty("gui", this);
-	if (ui->launcherWidget->rootObject())
-	{
-		connect(ui->launcherWidget->rootObject(), SIGNAL(launchProgram(QString)), this, SLOT(slotExecute(QString)));
-	}
+	m_pLauncherWidget = new QQuickWidget(ui->launcher);
+	m_pLauncherWidget->setSource(QUrl("qrc:/qml/NxLauncher.qml"));
+	m_pLauncherWidget->rootContext()->setContextProperty("gui", this);
+	m_pLauncherWidget->move(0, ui->statusBar->height());
+	m_pLauncherWidget->resize(1024, 540);
 
+	if (m_pLauncherWidget->rootObject())
+	{
+		connect(m_pLauncherWidget->rootObject(), SIGNAL(launchProgram(QString)), this, SLOT(slotExecute(QString)));
+	}
+#else
+	m_pPrevPageButton = new QPushButton(ui->launcher);
+	connect(m_pPrevPageButton, SIGNAL(clicked(bool)), this, SLOT(onPrevPageButtonClicked()));
+	m_pPrevPageButton->setFixedSize(50, 100);
+	m_pPrevPageButton->move(0, height()/2-m_pPrevPageButton->height()/2);
+
+	m_pNextPageButton = new QPushButton(ui->launcher);
+	connect(m_pNextPageButton, SIGNAL(clicked(bool)), this, SLOT(onNextPageButtonClicked()));
+	m_pNextPageButton->setFixedSize(50, 100);
+	m_pNextPageButton->move(width()-m_pNextPageButton->width(), height()/2-m_pNextPageButton->height()/2);
+
+	ui->launcher->setStyleSheet("background:rgb(195,195,195);");
+	m_pPageStackFrame = new PageStackFrame(ui->launcher);
+	connect(m_pPageStackFrame, SIGNAL(onButtonClicked(NxPluginInfo*)), this, SLOT(onExecute(NxPluginInfo*)));
+	connect(this, SIGNAL(signalStateChanged(NxPluginInfo*)), m_pPageStackFrame, SLOT(onButtonStateChnaged(NxPluginInfo*)));
+	m_pPageStackFrame->setCellSize(QSize(200, 200));
+	m_pPageStackFrame->setSpacing(25);
+	m_pPageStackFrame->setStyleSheet("background:rgb(195,195,195);");
+	m_pPageStackFrame->move(m_pPrevPageButton->width(), this->size().height() * 1 / 10);
+//	m_pPageStackFrame->move(0, this->size().height() * 1 / 10);
+	m_pPageStackFrame->resize( this->size().width()-m_pPrevPageButton->width()-m_pNextPageButton->width(), this->size().height() * 9 / 10 );
+	m_pPageStackFrame->setFrameShape(QFrame::NoFrame);
+	m_pPageStackFrame->setFrameShadow(QFrame::Plain);
+
+	foreach (NxPluginInfo *psInfo, m_PlugIns) {
+		if (psInfo->getType().toLower() == "service")
+		{
+			continue;
+		}
+
+		m_pPageStackFrame->pushItem(psInfo);
+	}
+#endif
 	connect(ui->messageFrame, SIGNAL(signalOk()), this, SLOT(slotPopupMessageAccept()));
 	connect(ui->messageFrame, SIGNAL(signalCancel()), this, SLOT(slotPopupMessageReject()));
 	connect(ui->notificationBar, SIGNAL(signalOk()), this, SLOT(slotNotificationAccept()));
@@ -1309,7 +1349,14 @@ void NxLauncher::slotPlugInUpdated(QString path)
 		}
 		else
 		{
-			QMetaObject::invokeMethod(ui->launcherWidget->rootObject(), "activeChanged");
+#ifndef CONFIG_USE_NO_QML
+			QMetaObject::invokeMethod(m_pLauncherWidget->rootObject(), "activeChanged");
+#else
+			// fill
+			foreach (NxPluginInfo *pInfo, m_PlugIns) {
+
+			}
+#endif
 		}
 	}
 }
@@ -1588,3 +1635,28 @@ void NxLauncher::slotCommandTimer()
 		}
 	}
 }
+
+#ifdef CONFIG_USE_NO_QML
+void NxLauncher::onExecute(NxPluginInfo* pInfo)
+{
+	QString plugin = pInfo->getPath() + "/" + pInfo->getName();
+	int etx = plugin.lastIndexOf("/");
+	int stx = plugin.lastIndexOf("/", etx-1);
+
+	if (stx > -1 && etx > -1)
+	{
+		QString key = plugin.mid(stx+1, etx-stx-1);
+		Execute(key);
+	}
+}
+
+void NxLauncher::onPrevPageButtonClicked()
+{
+	m_pPageStackFrame->setPage(m_pPageStackFrame->currentPage()-1);
+}
+
+void NxLauncher::onNextPageButtonClicked()
+{
+	m_pPageStackFrame->setPage(m_pPageStackFrame->currentPage()+1);
+}
+#endif
