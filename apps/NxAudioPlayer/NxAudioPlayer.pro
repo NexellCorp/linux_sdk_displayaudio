@@ -9,9 +9,7 @@ QT += core gui
 QT += network \
       xml \
       multimedia \
-      multimediawidgets \
-      widgets \
-      quickwidgets
+      multimediawidgets
 
 greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
 
