@@ -265,6 +265,7 @@ NxLauncher::NxLauncher(QWidget *parent) :
 	m_pLauncherWidget = new QQuickWidget(ui->launcher);
 	m_pLauncherWidget->setSource(QUrl("qrc:/qml/NxLauncher.qml"));
 	m_pLauncherWidget->rootContext()->setContextProperty("gui", this);
+	m_pLauncherWidget->setResizeMode(QQuickWidget::SizeRootObjectToView);
 	m_pLauncherWidget->move(0, ui->statusBar->height());
 	m_pLauncherWidget->resize(1024, 540);
 
