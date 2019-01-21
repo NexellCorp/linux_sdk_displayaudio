@@ -16,11 +16,6 @@ INX_BT* NxBTService::m_pModel = NULL;
 
 #define DAUDIO_STATUS_DATABASE_PATH "/home/root/daudio.status.db"
 
-#define NX_ALSA_DEV_NAME_P		"plughw:0,0"
-#define NX_ALSA_DEV_NAME_C		"plughw:0,0"
-#define NX_ALSA_BT_DEV_NAME_P	"plughw:0,2"
-#define NX_ALSA_BT_DEV_NAME_C	"plughw:0,2"
-
 #define RET_OK 0
 #define RET_FAIL -1
 
