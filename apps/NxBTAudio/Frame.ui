@@ -71,7 +71,7 @@ QPushButton:pressed {
    <property name="geometry">
     <rect>
      <x>740</x>
-     <y>305</y>
+     <y>280</y>
      <width>141</width>
      <height>51</height>
     </rect>
@@ -88,7 +88,7 @@ QPushButton:pressed {
     <string>00:00</string>
    </property>
    <property name="alignment">
-    <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+    <set>Qt::AlignRight|Qt::AlignTop|Qt::AlignTrailing</set>
    </property>
   </widget>
   <widget class="QSlider" name="SLIDER_PLAY_POSITION">
@@ -151,7 +151,7 @@ QSlider::sub-page:horizontal {
    <property name="geometry">
     <rect>
      <x>120</x>
-     <y>305</y>
+     <y>280</y>
      <width>161</width>
      <height>51</height>
     </rect>
@@ -166,6 +166,9 @@ QSlider::sub-page:horizontal {
    </property>
    <property name="text">
     <string>00:00</string>
+   </property>
+   <property name="alignment">
+    <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignTop</set>
    </property>
   </widget>
   <widget class="QPushButton" name="BUTTON_PLAY_START">
@@ -182,12 +185,12 @@ QSlider::sub-page:horizontal {
    </property>
    <property name="styleSheet">
     <string notr="true">QPushButton {
-	background-image: url(:/audio/UI/play_200.png);
+	border-image: url(:/audio/UI/play_200.png);
 	border: none;
 }
 
 QPushButton:pressed {
-	background-image: url(:/audio/UI/play_pressed_200.png);
+	border-image: url(:/audio/UI/play_pressed_200.png);
 }</string>
    </property>
    <property name="text">
@@ -208,12 +211,12 @@ QPushButton:pressed {
    </property>
    <property name="styleSheet">
     <string notr="true">QPushButton {
-	background-image: url(:/audio/UI/previous_150.png);
+	border-image: url(:/audio/UI/previous_150.png);
 	border: none;
 }
 
 QPushButton:pressed {
-	background-image: url(:/audio/UI/previous_pressed_150.png);
+	border-image: url(:/audio/UI/previous_pressed_150.png);
 	border: none;
 }</string>
    </property>
@@ -235,12 +238,12 @@ QPushButton:pressed {
    </property>
    <property name="styleSheet">
     <string notr="true">QPushButton {
-	background-image: url(:/audio/UI/next_150.png);
+	border-image: url(:/audio/UI/next_150.png);
 	border: none;
 }
 
 QPushButton:pressed {
-	background-image: url(:/audio/UI/next_pressed_150.png);
+	border-image: url(:/audio/UI/next_pressed_150.png);
 	border: none;
 }</string>
    </property>
