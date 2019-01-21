@@ -54,6 +54,8 @@ private:
 protected:
 	bool event(QEvent *e);
 
+	void resizeEvent(QResizeEvent *event);
+
 	void StatusHomeEvent(NxStatusHomeEvent *e);
 
 	void StatusBackEvent(NxStatusBackEvent *e);
@@ -94,6 +96,8 @@ public:
 	static void RegisterRequestTerminate(void (*cbFunc)(void));
 
 private:
+	void SetupUI();
+
 	void setUIState(UIState state);
 
 	void updateToUIForMediaElements(QStringList& tokens);

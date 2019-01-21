@@ -1,9 +1,13 @@
 #include "Frame.h"
 #include "ui_Frame.h"
 #include "TimeUtility.hpp"
+#include <QDesktopWidget>
 
 #define LOG_TAG "[NxBTAudio]"
 #include <NX_Log.h>
+
+#define DEFAULT_WIDTH	1024
+#define DEFAULT_HEIGHT	540
 
 Frame* Frame::m_spInstance = NULL;
 
@@ -21,7 +25,13 @@ Frame::Frame(QWidget *parent) :
 
 	m_bInitialized = false;
 
-	move(0, 60);
+	const QRect screen = QApplication::desktop()->screenGeometry();
+	move(0, screen.height() * 0.1);
+
+	if ((width() != screen.width()) || (height() != screen.height()))
+	{
+		setFixedSize(screen.width(), screen.height() * 0.9);
+	}
 
 	setUIState(UIState_Stopped);
 
@@ -106,6 +116,14 @@ bool Frame::event(QEvent *event)
 	return QFrame::event(event);
 }
 
+void Frame::resizeEvent(QResizeEvent *)
+{
+	if ((width() != DEFAULT_WIDTH) || (height() != DEFAULT_HEIGHT))
+	{
+		SetupUI();
+	}
+}
+
 void Frame::StatusBackEvent(NxStatusBackEvent *)
 {
 	if (m_pRequestTerminate)
@@ -158,6 +176,72 @@ void Frame::setUIState(UIState state)
 
 	default: break;
 	}
+}
+
+void Frame::SetupUI()
+{
+	float widthRatio = (float)width() / DEFAULT_WIDTH;
+	float heightRatio = (float)height() / DEFAULT_HEIGHT;
+	int rx, ry, rw, rh;
+
+	rx = widthRatio * ui->LABEL_ICON->x();
+	ry = heightRatio * ui->LABEL_ICON->y();
+	rw = widthRatio * ui->LABEL_ICON->width();
+	rh = heightRatio * ui->LABEL_ICON->height();
+	ui->LABEL_ICON->setGeometry(rx, ry, rw, rh);
+
+	rx = widthRatio * ui->LABEL_MDEDIA_TITLE->x();
+	ry = heightRatio * ui->LABEL_MDEDIA_TITLE->y();
+	rw = widthRatio * ui->LABEL_MDEDIA_TITLE->width();
+	rh = heightRatio * ui->LABEL_MDEDIA_TITLE->height();
+	ui->LABEL_MDEDIA_TITLE->setGeometry(rx, ry, rw, rh);
+
+	ry = heightRatio * ui->LABEL_MDEDIA_ETC->y();
+	rh = heightRatio * ui->LABEL_MDEDIA_ETC->height();
+	ui->LABEL_MDEDIA_ETC->setGeometry(rx, ry, rw, rh);
+
+	// play position - slider
+	rx = widthRatio * ui->SLIDER_PLAY_POSITION->x();
+	ry = heightRatio * ui->SLIDER_PLAY_POSITION->y();
+	rw = widthRatio * ui->SLIDER_PLAY_POSITION->width();
+	rh = heightRatio * ui->SLIDER_PLAY_POSITION->height();
+	ui->SLIDER_PLAY_POSITION->setGeometry(rx, ry, rw, rh);
+
+	// play position - label
+	rx = widthRatio * ui->LABEL_PLAY_POSITION->x();
+	ry = heightRatio * ui->LABEL_PLAY_POSITION->y();
+	rw = widthRatio * ui->LABEL_PLAY_POSITION->width();
+	rh = heightRatio * ui->LABEL_PLAY_POSITION->height();
+	ui->LABEL_PLAY_POSITION->setGeometry(rx, ry, rw, rh);
+
+	// duration - label
+	rx = widthRatio * ui->LABEL_PLAY_DURATION->x();
+	ry = heightRatio * ui->LABEL_PLAY_DURATION->y();
+	rw = widthRatio * ui->LABEL_PLAY_DURATION->width();
+	rh = heightRatio * ui->LABEL_PLAY_DURATION->height();
+	ui->LABEL_PLAY_DURATION->setGeometry(rx, ry, rw, rh);
+
+	// Prev
+	rx = widthRatio * ui->BUTTON_PLAY_PREV->x();
+	ry = heightRatio * ui->BUTTON_PLAY_PREV->y();
+	rw = widthRatio * ui->BUTTON_PLAY_PREV->width();
+	rh = heightRatio * ui->BUTTON_PLAY_PREV->height();
+	ui->BUTTON_PLAY_PREV->setGeometry(rx, ry, rw, rh);
+
+	// Play/Pause
+	rx = widthRatio * ui->BUTTON_PLAY_START->x();
+	ry = heightRatio * ui->BUTTON_PLAY_START->y();
+	rw = widthRatio * ui->BUTTON_PLAY_START->width();
+	rh = heightRatio * ui->BUTTON_PLAY_START->height();
+	ui->BUTTON_PLAY_START->setGeometry(rx, ry, rw, rh);
+	ui->BUTTON_PLAY_PAUSE->setGeometry(rx, ry, rw, rh);
+
+	// Next
+	rx = widthRatio * ui->BUTTON_PLAY_NEXT->x();
+	ry = heightRatio * ui->BUTTON_PLAY_NEXT->y();
+	rw = widthRatio * ui->BUTTON_PLAY_NEXT->width();
+	rh = heightRatio * ui->BUTTON_PLAY_NEXT->height();
+	ui->BUTTON_PLAY_NEXT->setGeometry(rx, ry, rw, rh);
 }
 
 void Frame::on_BUTTON_PLAY_START_clicked()
