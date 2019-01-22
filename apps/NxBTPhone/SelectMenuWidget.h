@@ -19,6 +19,12 @@ public:
     explicit SelectMenuWidget(QWidget *parent = 0);
     ~SelectMenuWidget();
 
+protected:
+	void resizeEvent(QResizeEvent *event);
+
+private:
+	void SetupUI();
+
 private slots:
     void on_BUTTON_ENTER_CALL_MENU_clicked();
 

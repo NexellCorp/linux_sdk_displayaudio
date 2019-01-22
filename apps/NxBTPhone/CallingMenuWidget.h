@@ -31,6 +31,7 @@ private slots:
 
 public:
 	enum UIState {
+		UIState_Init,
 		UIState_IncommingCall,
 		UIState_OutGoingCall,
 		UIState_Calling
@@ -51,7 +52,12 @@ public:
 
 	void ResetUI();
 
+protected:
+	void resizeEvent(QResizeEvent *event);
+
 private:
+	void SetupUI();
+
 	void updateCallStatus(QStringList& tokens);
 
 	void updateAudioMuteStatus(QStringList& tokens);

@@ -1,5 +1,9 @@
 #include "MainFrame.h"
 #include "ui_MainFrame.h"
+#include <QDesktopWidget>
+
+#define DEFAULT_WIDTH	1024
+#define DEFAULT_HEIGHT	540
 
 #define LOG_TAG "[NxBTPhone]"
 #include <NX_Log.h>
@@ -41,7 +45,13 @@ MainFrame::MainFrame(QWidget *parent) :
 {
 	ui->setupUi(this);
 
-	move(0, 60);
+	const QRect screen = QApplication::desktop()->screenGeometry();
+	move(0, screen.height() * 0.1);
+
+	if ((width() != screen.width()) || (height() != screen.height()))
+	{
+		setFixedSize(screen.width(), screen.height() * 0.9);
+	}
 
 	m_bHasVideoFocus = false;
 	m_bHasVideoFocusTransient = false;

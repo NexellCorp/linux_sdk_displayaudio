@@ -5,6 +5,11 @@
 #include <gui/phonebook/PhoneBookItem.h>
 #include <gui/CallLog/CallLogItem.h>
 
+#include <QDesktopWidget>
+
+#define DEFAULT_WIDTH	1024
+#define DEFAULT_HEIGHT	540
+
 CallMenuWidget::CallMenuWidget(QWidget *parent) :
 	QWidget(parent, Qt::FramelessWindowHint),
 	ui(new Ui::CallMenuWidget)
@@ -21,6 +26,12 @@ CallMenuWidget::CallMenuWidget(QWidget *parent) :
 	setCurrentMenu(CurrentMenu_Keypad);
 	setUIState(UIState_DownloadCompleted);
 	setUIState(UIState_BluetoothDisabled);
+
+	const QRect screen = QApplication::desktop()->screenGeometry();
+	if ((width() != screen.width()) || (height() != screen.height()))
+	{
+		setFixedSize(screen.width(), screen.height() * 0.9);
+	}
 }
 
 CallMenuWidget::~CallMenuWidget()
@@ -549,4 +560,176 @@ void CallMenuWidget::on_LISTWIDGET_CALL_LOG_itemDoubleClicked(QListWidgetItem *i
 			commandToServer("$HS#DIAL " + phonenumber + "\n");
 		}
 	}
+}
+
+void CallMenuWidget::resizeEvent(QResizeEvent *)
+{
+	if ((width() != DEFAULT_WIDTH) || (height() != DEFAULT_HEIGHT))
+	{
+		SetupUI();
+	}
+}
+
+void CallMenuWidget::SetupUI()
+{
+	float widthRatio = (float)width() / DEFAULT_WIDTH;
+	float heightRatio = (float)height() / DEFAULT_HEIGHT;
+	int rx, ry, rw, rh;
+
+	// sync
+	rx = widthRatio * ui->BUTTON_SYNC->x();
+	ry = heightRatio * ui->BUTTON_SYNC->y();
+	rw = widthRatio * ui->BUTTON_SYNC->width();
+	rh = heightRatio * ui->BUTTON_SYNC->height();
+	ui->BUTTON_SYNC->setGeometry(rx, ry, rw, rh);
+
+	rx = widthRatio * ui->LABEL_LOADING->x();
+	ry = heightRatio * ui->LABEL_LOADING->y();
+	rw = widthRatio * ui->LABEL_LOADING->width();
+	rh = heightRatio * ui->LABEL_LOADING->height();
+	ui->LABEL_LOADING->setGeometry(rx, ry, rw, rh);
+
+	// phonebook
+	rx = widthRatio * ui->BUTTON_PHONEBOOK_MENU->x();
+	ry = heightRatio * ui->BUTTON_PHONEBOOK_MENU->y();
+	rw = widthRatio * ui->BUTTON_PHONEBOOK_MENU->width();
+	rh = heightRatio * ui->BUTTON_PHONEBOOK_MENU->height();
+	ui->BUTTON_PHONEBOOK_MENU->setGeometry(rx, ry, rw, rh);
+
+	// keypad
+	rx = widthRatio * ui->BUTTON_KEYPAD_MENU->x();
+	ry = heightRatio * ui->BUTTON_KEYPAD_MENU->y();
+	rw = widthRatio * ui->BUTTON_KEYPAD_MENU->width();
+	rh = heightRatio * ui->BUTTON_KEYPAD_MENU->height();
+	ui->BUTTON_KEYPAD_MENU->setGeometry(rx, ry, rw, rh);
+
+	// call log
+	rx = widthRatio * ui->BUTTON_LOG_MENU->x();
+	ry = heightRatio * ui->BUTTON_LOG_MENU->y();
+	rw = widthRatio * ui->BUTTON_LOG_MENU->width();
+	rh = heightRatio * ui->BUTTON_LOG_MENU->height();
+	ui->BUTTON_LOG_MENU->setGeometry(rx, ry, rw, rh);
+
+	// key pad menu
+	rx = widthRatio * ui->WIDGET_KEYPAD->x();
+	ry = heightRatio * ui->WIDGET_KEYPAD->y();
+	rw = widthRatio * ui->WIDGET_KEYPAD->width();
+	rh = heightRatio * ui->WIDGET_KEYPAD->height();
+	ui->WIDGET_KEYPAD->setGeometry(rx, ry, rw, rh);
+
+	rx = widthRatio * ui->EDIT_INPUT->x();
+	ry = heightRatio * ui->EDIT_INPUT->y();
+	rw = widthRatio * ui->EDIT_INPUT->width();
+	rh = heightRatio * ui->EDIT_INPUT->height();
+	ui->EDIT_INPUT->setGeometry(rx, ry, rw, rh);
+
+	rx = widthRatio * ui->BUTTON_KEY_1->x();
+	ry = heightRatio * ui->BUTTON_KEY_1->y();
+	rw = widthRatio * ui->BUTTON_KEY_1->width();
+	rh = heightRatio * ui->BUTTON_KEY_1->height();
+	ui->BUTTON_KEY_1->setGeometry(rx, ry, rw, rh);
+
+	rx = widthRatio * ui->BUTTON_KEY_2->x();
+	ry = heightRatio * ui->BUTTON_KEY_2->y();
+	rw = widthRatio * ui->BUTTON_KEY_2->width();
+	rh = heightRatio * ui->BUTTON_KEY_2->height();
+	ui->BUTTON_KEY_2->setGeometry(rx, ry, rw, rh);
+
+	rx = widthRatio * ui->BUTTON_KEY_3->x();
+	ry = heightRatio * ui->BUTTON_KEY_3->y();
+	rw = widthRatio * ui->BUTTON_KEY_3->width();
+	rh = heightRatio * ui->BUTTON_KEY_3->height();
+	ui->BUTTON_KEY_3->setGeometry(rx, ry, rw, rh);
+
+	rx = widthRatio * ui->BUTTON_KEY_4->x();
+	ry = heightRatio * ui->BUTTON_KEY_4->y();
+	rw = widthRatio * ui->BUTTON_KEY_4->width();
+	rh = heightRatio * ui->BUTTON_KEY_4->height();
+	ui->BUTTON_KEY_4->setGeometry(rx, ry, rw, rh);
+
+	rx = widthRatio * ui->BUTTON_KEY_5->x();
+	ry = heightRatio * ui->BUTTON_KEY_5->y();
+	rw = widthRatio * ui->BUTTON_KEY_5->width();
+	rh = heightRatio * ui->BUTTON_KEY_5->height();
+	ui->BUTTON_KEY_5->setGeometry(rx, ry, rw, rh);
+
+	rx = widthRatio * ui->BUTTON_KEY_6->x();
+	ry = heightRatio * ui->BUTTON_KEY_6->y();
+	rw = widthRatio * ui->BUTTON_KEY_6->width();
+	rh = heightRatio * ui->BUTTON_KEY_6->height();
+	ui->BUTTON_KEY_6->setGeometry(rx, ry, rw, rh);
+
+	rx = widthRatio * ui->BUTTON_KEY_7->x();
+	ry = heightRatio * ui->BUTTON_KEY_7->y();
+	rw = widthRatio * ui->BUTTON_KEY_7->width();
+	rh = heightRatio * ui->BUTTON_KEY_7->height();
+	ui->BUTTON_KEY_7->setGeometry(rx, ry, rw, rh);
+
+	rx = widthRatio * ui->BUTTON_KEY_8->x();
+	ry = heightRatio * ui->BUTTON_KEY_8->y();
+	rw = widthRatio * ui->BUTTON_KEY_8->width();
+	rh = heightRatio * ui->BUTTON_KEY_8->height();
+	ui->BUTTON_KEY_8->setGeometry(rx, ry, rw, rh);
+
+	rx = widthRatio * ui->BUTTON_KEY_9->x();
+	ry = heightRatio * ui->BUTTON_KEY_9->y();
+	rw = widthRatio * ui->BUTTON_KEY_9->width();
+	rh = heightRatio * ui->BUTTON_KEY_9->height();
+	ui->BUTTON_KEY_9->setGeometry(rx, ry, rw, rh);
+
+	rx = widthRatio * ui->BUTTON_KEY_0->x();
+	ry = heightRatio * ui->BUTTON_KEY_0->y();
+	rw = widthRatio * ui->BUTTON_KEY_0->width();
+	rh = heightRatio * ui->BUTTON_KEY_0->height();
+	ui->BUTTON_KEY_0->setGeometry(rx, ry, rw, rh);
+
+	rx = widthRatio * ui->BUTTON_KEY_BACKSPACE->x();
+	ry = heightRatio * ui->BUTTON_KEY_BACKSPACE->y();
+	rw = widthRatio * ui->BUTTON_KEY_BACKSPACE->width();
+	rh = heightRatio * ui->BUTTON_KEY_BACKSPACE->height();
+	ui->BUTTON_KEY_BACKSPACE->setGeometry(rx, ry, rw, rh);
+
+	rx = widthRatio * ui->BUTTON_DIAL->x();
+	ry = heightRatio * ui->BUTTON_DIAL->y();
+	rw = widthRatio * ui->BUTTON_DIAL->width();
+	rh = heightRatio * ui->BUTTON_DIAL->height();
+	ui->BUTTON_DIAL->setGeometry(rx, ry, rw, rh);
+
+	rx = widthRatio * ui->BUTTON_RE_DIAL->x();
+	ry = heightRatio * ui->BUTTON_RE_DIAL->y();
+	rw = widthRatio * ui->BUTTON_RE_DIAL->width();
+	rh = heightRatio * ui->BUTTON_RE_DIAL->height();
+	ui->BUTTON_RE_DIAL->setGeometry(rx, ry, rw, rh);
+
+	// phonebook menu
+	rx = widthRatio * ui->WIDGET_PHONEBOOK->x();
+	ry = heightRatio * ui->WIDGET_PHONEBOOK->y();
+	rw = widthRatio * ui->WIDGET_PHONEBOOK->width();
+	rh = heightRatio * ui->WIDGET_PHONEBOOK->height();
+	ui->WIDGET_PHONEBOOK->setGeometry(rx, ry, rw, rh);
+
+	rx = widthRatio * ui->LISTWIDGET_PHONEBOOK->x();
+	ry = heightRatio * ui->LISTWIDGET_PHONEBOOK->y();
+	rw = widthRatio * ui->LISTWIDGET_PHONEBOOK->width();
+	rh = heightRatio * ui->LISTWIDGET_PHONEBOOK->height();
+	ui->LISTWIDGET_PHONEBOOK->setGeometry(rx, ry, rw, rh);
+
+	rx = widthRatio * ui->LISTWIDGET_PHONEBOOK_DETAIL->x();
+	ry = heightRatio * ui->LISTWIDGET_PHONEBOOK_DETAIL->y();
+	rw = widthRatio * ui->LISTWIDGET_PHONEBOOK_DETAIL->width();
+	rh = heightRatio * ui->LISTWIDGET_PHONEBOOK_DETAIL->height();
+	ui->LISTWIDGET_PHONEBOOK_DETAIL->setGeometry(rx, ry, rw, rh);
+
+	// call log menu
+	rx = widthRatio * ui->WIDGET_LOG->x();
+	ry = heightRatio * ui->WIDGET_LOG->y();
+	rw = widthRatio * ui->WIDGET_LOG->width();
+	rh = heightRatio * ui->WIDGET_LOG->height();
+	ui->WIDGET_LOG->setGeometry(rx, ry, rw, rh);
+
+	rx = widthRatio * ui->LISTWIDGET_CALL_LOG->x();
+	ry = heightRatio * ui->LISTWIDGET_CALL_LOG->y();
+	rw = widthRatio * ui->LISTWIDGET_CALL_LOG->width();
+	rh = heightRatio * ui->LISTWIDGET_CALL_LOG->height();
+	ui->LISTWIDGET_CALL_LOG->setGeometry(rx, ry, rw, rh);
 }

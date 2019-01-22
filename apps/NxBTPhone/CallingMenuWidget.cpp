@@ -3,6 +3,9 @@
 
 #include <QDesktopWidget>
 
+#define DEFAULT_WIDTH	1024
+#define DEFAULT_HEIGHT	540
+
 CallingMenuWidget::CallingMenuWidget(QWidget *parent) :
 	QWidget(parent),
 	ui(new Ui::CallingMenuWidget)
@@ -10,6 +13,12 @@ CallingMenuWidget::CallingMenuWidget(QWidget *parent) :
 	ui->setupUi(this);
 
 	ResetUI();
+
+	const QRect screen = QApplication::desktop()->screenGeometry();
+	if ((width() != screen.width()) || (height() != screen.height()))
+	{
+		setFixedSize(screen.width(), screen.height() * 0.9);
+	}
 }
 
 CallingMenuWidget::~CallingMenuWidget()
@@ -70,7 +79,7 @@ void CallingMenuWidget::slotCommandFromServer(QString command)
 
 void CallingMenuWidget::ResetUI()
 {
-	setUIState(UIState_IncommingCall);
+	setUIState(UIState_Init);
 
 	setAudioDeviceState(AudioDeviceState_Closed, m_UIState == UIState_Calling);
 	setMicrophoneDeviceState(MicrophoneDeviceState_MuteOn, m_UIState == UIState_Calling);
@@ -174,8 +183,8 @@ void CallingMenuWidget::setUIState(UIState state)
 		ui->BUTTON_HANG_UP_CALL->setText("Reject");
 		ui->BUTTON_PICK_UP_CALL->setText("Accept");
 
-		ui->BUTTON_HANG_UP_CALL->move(270, 330);
-		ui->BUTTON_PICK_UP_CALL->move(590, 300);
+		ui->BUTTON_PICK_UP_CALL->move(ui->BUTTON_AUDIO_OPEN->x() + ui->BUTTON_AUDIO_OPEN->width()/2-ui->BUTTON_HANG_UP_CALL->width()/2, ui->BUTTON_HANG_UP_CALL->y());
+		ui->BUTTON_HANG_UP_CALL->move(ui->BUTTON_MICROPHONE_MUTE_ON->x() + ui->BUTTON_MICROPHONE_MUTE_ON->width()/2-ui->BUTTON_PICK_UP_CALL->width()/2, ui->BUTTON_PICK_UP_CALL->y());
 
 		ui->BUTTON_MICROPHONE_MUTE_OFF->hide();
 		ui->BUTTON_MICROPHONE_MUTE_ON->hide();
@@ -269,4 +278,52 @@ void CallingMenuWidget::on_BUTTON_AUDIO_CLOSE_clicked()
 void CallingMenuWidget::on_BUTTON_AUDIO_OPEN_clicked()
 {
 	emit signalCommandToServer("$HS#AUDIO OPEN\n");
+}
+
+void CallingMenuWidget::resizeEvent(QResizeEvent *)
+{
+	if ((width() != DEFAULT_WIDTH) || (height() != DEFAULT_HEIGHT))
+	{
+		SetupUI();
+	}
+}
+
+void CallingMenuWidget::SetupUI()
+{
+	float widthRatio = (float)width() / DEFAULT_WIDTH;
+	float heightRatio = (float)height() / DEFAULT_HEIGHT;
+	int rx, ry, rw, rh;
+
+	rx = widthRatio * ui->LABEL_CALL_NUMBER->x();
+	ry = heightRatio * ui->LABEL_CALL_NUMBER->y();
+	rw = widthRatio * ui->LABEL_CALL_NUMBER->width();
+	rh = heightRatio * ui->LABEL_CALL_NUMBER->height();
+	ui->LABEL_CALL_NUMBER->setGeometry(rx, ry, rw, rh);
+
+	// sync
+	rx = widthRatio * ui->BUTTON_AUDIO_CLOSE->x();
+	ry = heightRatio * ui->BUTTON_AUDIO_CLOSE->y();
+	rw = widthRatio * ui->BUTTON_AUDIO_CLOSE->width();
+	rh = heightRatio * ui->BUTTON_AUDIO_CLOSE->height();
+	ui->BUTTON_AUDIO_CLOSE->setGeometry(rx, ry, rw, rh);
+	ui->BUTTON_AUDIO_OPEN->setGeometry(rx, ry, rw, rh);
+
+	rx = widthRatio * ui->BUTTON_MICROPHONE_MUTE_OFF->x();
+	ry = heightRatio * ui->BUTTON_MICROPHONE_MUTE_OFF->y();
+	rw = widthRatio * ui->BUTTON_MICROPHONE_MUTE_OFF->width();
+	rh = heightRatio * ui->BUTTON_MICROPHONE_MUTE_OFF->height();
+	ui->BUTTON_MICROPHONE_MUTE_OFF->setGeometry(rx, ry, rw, rh);
+	ui->BUTTON_MICROPHONE_MUTE_ON->setGeometry(rx, ry, rw, rh);
+
+	rx = widthRatio * ui->BUTTON_PICK_UP_CALL->x();
+	ry = heightRatio * ui->BUTTON_PICK_UP_CALL->y();
+	rw = widthRatio * ui->BUTTON_PICK_UP_CALL->width();
+	rh = heightRatio * ui->BUTTON_PICK_UP_CALL->height();
+	ui->BUTTON_PICK_UP_CALL->setGeometry(rx, ry, rw, rh);
+
+	rx = widthRatio * ui->BUTTON_HANG_UP_CALL->x();
+	ry = heightRatio * ui->BUTTON_HANG_UP_CALL->y();
+	rw = widthRatio * ui->BUTTON_HANG_UP_CALL->width();
+	rh = heightRatio * ui->BUTTON_HANG_UP_CALL->height();
+	ui->BUTTON_HANG_UP_CALL->setGeometry(rx, ry, rw, rh);
 }

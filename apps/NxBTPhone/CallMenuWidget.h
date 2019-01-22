@@ -55,6 +55,9 @@ public:
 
 	void Initialize();
 
+protected:
+	void resizeEvent(QResizeEvent *event);
+
 private slots:
     void on_BUTTON_PHONEBOOK_MENU_clicked();
 
@@ -99,6 +102,8 @@ private slots:
     void on_LISTWIDGET_CALL_LOG_itemDoubleClicked(QListWidgetItem *item);
 
 private:
+	void SetupUI();
+
     void setCurrentMenu(CurrentMenu menu);
 
     void setUIState(UIState state);
