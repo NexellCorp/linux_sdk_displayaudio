@@ -1,6 +1,5 @@
 #include "PageStackFrame.h"
 #include "ui_PageStackFrame.h"
-#include <QDebug>
 #include <NX_Log.h>
 
 PageStackFrame::PageStackFrame(QWidget *parent) :
@@ -147,6 +146,11 @@ void PageStackFrame::setPage(int page)
 int PageStackFrame::currentPage()
 {
 	return m_CurrentPage;
+}
+
+int PageStackFrame::GetPageCount()
+{
+	return (int)m_PageList.size();
 }
 
 void PageStackFrame::setSpacing(int spacing)

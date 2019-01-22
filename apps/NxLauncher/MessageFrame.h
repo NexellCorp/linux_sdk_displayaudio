@@ -43,6 +43,12 @@ public:
 
 	void Lower();
 
+protected:
+	void resizeEvent(QResizeEvent *event);
+
+private:
+	void SetupUI();
+
 private slots:
 	void on_BUTTON_OK_clicked();
 

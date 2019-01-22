@@ -46,6 +46,8 @@ public:
 
 	int currentPage();
 
+	int GetPageCount();
+
 private:
 	void calculateMatrix();
 

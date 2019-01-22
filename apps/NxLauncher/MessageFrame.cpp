@@ -1,6 +1,10 @@
 #include "MessageFrame.h"
 #include "ui_MessageFrame.h"
 #include "ShadowEffect.h"
+#include <QDesktopWidget>
+
+#define DEFAULT_WIDTH	1024
+#define DEFAULT_HEIGHT	600
 
 MessageFrame::MessageFrame(QWidget *parent) :
 	QFrame(parent),
@@ -17,6 +21,12 @@ MessageFrame::MessageFrame(QWidget *parent) :
 	m_uiTimeout = 0;
 
 	connect(&m_Timer, SIGNAL(timeout()), this, SLOT(slotTimer()));
+
+	const QRect screen = QApplication::desktop()->screenGeometry();
+	if ((width() != screen.width()) || (height() != screen.height()))
+	{
+		setFixedSize(screen.width(), screen.height());
+	}
 }
 
 MessageFrame::~MessageFrame()
@@ -136,4 +146,21 @@ void MessageFrame::slotTimer()
 	lower();
 
 	emit signalCancel();
+}
+
+void MessageFrame::resizeEvent(QResizeEvent *)
+{
+	if ((width() != DEFAULT_WIDTH) || (height() != DEFAULT_HEIGHT))
+	{
+		SetupUI();
+	}
+}
+
+void MessageFrame::SetupUI()
+{
+	int rx, ry;
+
+	rx = width()/2 - ui->frame->width()/2;
+	ry = height()/2 - ui->frame->height()/2;
+	ui->frame->move(rx, ry);
 }

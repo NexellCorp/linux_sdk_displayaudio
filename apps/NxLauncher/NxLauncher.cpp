@@ -312,6 +312,12 @@ NxLauncher::NxLauncher(QWidget *parent) :
 
 		m_pPageStackFrame->pushItem(psInfo);
 	}
+
+	if (m_pPageStackFrame->GetPageCount() <= 1)
+	{
+		m_pPrevPageButton->hide();
+		m_pNextPageButton->hide();
+	}
 #endif
 	connect(ui->messageFrame, SIGNAL(signalOk()), this, SLOT(slotPopupMessageAccept()));
 	connect(ui->messageFrame, SIGNAL(signalCancel()), this, SLOT(slotPopupMessageReject()));
@@ -1675,8 +1681,8 @@ void NxLauncher::resizeEvent(QResizeEvent *)
 	int h = height();
 	ui->launcher->setFixedSize(w, h);
 	ui->statusBar->setFixedSize(w, h * 0.1);
+	ui->notificationBar->setFixedSize(w, h * 0.1);
 #ifndef CONFIG_USE_NO_QML
 	m_pLauncherWidget->setGeometry(0, ui->statusBar->height(), w, h * 0.9);
-#else
 #endif
 }
