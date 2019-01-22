@@ -70,8 +70,12 @@ private:
 
 	static void cbStatusBack(void *);
 
+	void SetupUI();
+
 protected:
 	bool event(QEvent *e);
+
+	void resizeEvent(QResizeEvent *event);
 
 	void StatusHomeEvent(NxStatusHomeEvent *e);
 

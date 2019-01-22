@@ -46,7 +46,12 @@ public:
 	explicit AdvancedOptionFrame(QWidget *parent = 0);
 	~AdvancedOptionFrame();
 
+protected:
+	void resizeEvent(QResizeEvent *event);
+
 private:
+	void SetupUI();
+
 	void setUIState(UIState state);
 
 	void setUIStateForAutoSettings(AutoSettingsList type, AutoSettingsState state);

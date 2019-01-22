@@ -1,5 +1,9 @@
 #include "ConnectionMenuFrame.h"
 #include "ui_ConnectionMenuFrame.h"
+#include <QDesktopWidget>
+
+#define DEFAULT_WIDTH	1024
+#define DEFAULT_HEIGHT	540
 
 ConnectionMenuFrame::ConnectionMenuFrame(QWidget *parent) :
 	QFrame(parent),
@@ -20,6 +24,12 @@ ConnectionMenuFrame::ConnectionMenuFrame(QWidget *parent) :
 	ui->BUTTON_UNPAIR->installEventFilter(this);
 	ui->BUTTON_UNPAIR_ALL->installEventFilter(this);
 	ui->LISTWIDGET_PAIRED_DEVICE->viewport()->installEventFilter(this);
+
+	const QRect screen = QApplication::desktop()->screenGeometry();
+	if ((width() != screen.width()) || (height() != screen.height()))
+	{
+		setFixedSize(screen.width(), screen.height() * 0.9);
+	}
 }
 
 ConnectionMenuFrame::~ConnectionMenuFrame()
@@ -46,6 +56,70 @@ void ConnectionMenuFrame::mousePressEvent(QMouseEvent *e)
 	{
 		ui->keyboardFrame->hide();
 	}
+}
+
+void ConnectionMenuFrame::resizeEvent(QResizeEvent *)
+{
+	if ((width() != DEFAULT_WIDTH) || (height() != DEFAULT_HEIGHT))
+	{
+		SetupUI();
+	}
+}
+
+void ConnectionMenuFrame::SetupUI()
+{
+	float widthRatio = (float)width() / DEFAULT_WIDTH;
+	float heightRatio = (float)height() / DEFAULT_HEIGHT;
+	int rx, ry, rw, rh;
+
+	// icon
+	rx = widthRatio * ui->LABEL_BT_DEVICE_ICON->x();
+	ry = heightRatio * ui->LABEL_BT_DEVICE_ICON->y();
+	rw = widthRatio * ui->LABEL_BT_DEVICE_ICON->width();
+	rh = heightRatio * ui->LABEL_BT_DEVICE_ICON->height();
+	ui->LABEL_BT_DEVICE_ICON->setGeometry(rx, ry, rw, rh);
+
+	// local bt name
+	rx = widthRatio * ui->LABEL_BT_DEVICE_NAME->x();
+	ry = heightRatio * ui->LABEL_BT_DEVICE_NAME->y();
+	rw = widthRatio * ui->LABEL_BT_DEVICE_NAME->width();
+	rh = heightRatio * ui->LABEL_BT_DEVICE_NAME->height();
+	ui->LABEL_BT_DEVICE_NAME->setGeometry(rx, ry, rw, rh);
+
+	// local bt mac id
+	rx = widthRatio * ui->LABEL_BT_DEVICE_MAC_ADDRESS->x();
+	ry = heightRatio * ui->LABEL_BT_DEVICE_MAC_ADDRESS->y();
+	rw = widthRatio * ui->LABEL_BT_DEVICE_MAC_ADDRESS->width();
+	rh = heightRatio * ui->LABEL_BT_DEVICE_MAC_ADDRESS->height();
+	ui->LABEL_BT_DEVICE_MAC_ADDRESS->setGeometry(rx, ry, rw, rh);
+
+	// paired device list
+	rx = widthRatio * ui->LISTWIDGET_PAIRED_DEVICE->x();
+	ry = heightRatio * ui->LISTWIDGET_PAIRED_DEVICE->y();
+	rw = widthRatio * ui->LISTWIDGET_PAIRED_DEVICE->width();
+	rh = heightRatio * ui->LISTWIDGET_PAIRED_DEVICE->height();
+	ui->LISTWIDGET_PAIRED_DEVICE->setGeometry(rx, ry, rw, rh);
+
+	// rename button
+	rx = widthRatio * ui->BUTTON_RENAME_BT_DEVICE->x();
+	ry = heightRatio * ui->BUTTON_RENAME_BT_DEVICE->y();
+	rw = widthRatio * ui->BUTTON_RENAME_BT_DEVICE->width();
+	rh = heightRatio * ui->BUTTON_RENAME_BT_DEVICE->height();
+	ui->BUTTON_RENAME_BT_DEVICE->setGeometry(rx, ry, rw, rh);
+
+	// unpair button
+	rx = widthRatio * ui->BUTTON_UNPAIR->x();
+	ry = heightRatio * ui->BUTTON_UNPAIR->y();
+	rw = widthRatio * ui->BUTTON_UNPAIR->width();
+	rh = heightRatio * ui->BUTTON_UNPAIR->height();
+	ui->BUTTON_UNPAIR->setGeometry(rx, ry, rw, rh);
+
+	// unpaired all button
+	rx = widthRatio * ui->BUTTON_UNPAIR_ALL->x();
+	ry = heightRatio * ui->BUTTON_UNPAIR_ALL->y();
+	rw = widthRatio * ui->BUTTON_UNPAIR_ALL->width();
+	rh = heightRatio * ui->BUTTON_UNPAIR_ALL->height();
+	ui->BUTTON_UNPAIR_ALL->setGeometry(rx, ry, rw, rh);
 }
 
 void ConnectionMenuFrame::on_BUTTON_RENAME_BT_DEVICE_clicked()

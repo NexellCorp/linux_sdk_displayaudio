@@ -1,5 +1,9 @@
 #include "AdvancedOptionFrame.h"
 #include "ui_AdvancedOptionFrame.h"
+#include <QDesktopWidget>
+
+#define DEFAULT_WIDTH	1024
+#define DEFAULT_HEIGHT	540
 
 AdvancedOptionFrame::AdvancedOptionFrame(QWidget *parent) :
 	QFrame(parent),
@@ -8,6 +12,12 @@ AdvancedOptionFrame::AdvancedOptionFrame(QWidget *parent) :
 	ui->setupUi(this);
 
 	setUIState(UIState_Initializing);
+
+	const QRect screen = QApplication::desktop()->screenGeometry();
+	if ((width() != screen.width()) || (height() != screen.height()))
+	{
+		setFixedSize(screen.width(), screen.height() * 0.9);
+	}
 }
 
 AdvancedOptionFrame::~AdvancedOptionFrame()
@@ -158,4 +168,33 @@ void AdvancedOptionFrame::on_BUTTON_AUTO_PAIRING_ON_clicked()
 void AdvancedOptionFrame::on_BUTTON_AUTO_PAIRING_OFF_clicked()
 {
 	emit signalCommandToServer("$MGT#ENABLE AUTO PAIRING ON\n");
+}
+
+void AdvancedOptionFrame::resizeEvent(QResizeEvent *)
+{
+	if ((width() != DEFAULT_WIDTH) || (height() != DEFAULT_HEIGHT))
+	{
+		SetupUI();
+	}
+}
+
+void AdvancedOptionFrame::SetupUI()
+{
+	float widthRatio = (float)width() / DEFAULT_WIDTH;
+	float heightRatio = (float)height() / DEFAULT_HEIGHT;
+	int rx, ry, rw, rh;
+
+	rx = widthRatio * ui->BUTTON_AUTO_CONNECTION_OFF->x();
+	ry = heightRatio * ui->BUTTON_AUTO_CONNECTION_OFF->y();
+	rw = widthRatio * ui->BUTTON_AUTO_CONNECTION_OFF->width();
+	rh = heightRatio * ui->BUTTON_AUTO_CONNECTION_OFF->height();
+	ui->BUTTON_AUTO_CONNECTION_OFF->setGeometry(rx, ry, rw, rh);
+	ui->BUTTON_AUTO_CONNECTION_ON->setGeometry(rx, ry, rw, rh);
+
+	rx = widthRatio * ui->BUTTON_AUTO_PAIRING_OFF->x();
+	ry = heightRatio * ui->BUTTON_AUTO_PAIRING_OFF->y();
+	rw = widthRatio * ui->BUTTON_AUTO_PAIRING_OFF->width();
+	rh = heightRatio * ui->BUTTON_AUTO_PAIRING_OFF->height();
+	ui->BUTTON_AUTO_PAIRING_OFF->setGeometry(rx, ry, rw, rh);
+	ui->BUTTON_AUTO_PAIRING_ON->setGeometry(rx, ry, rw, rh);
 }
