@@ -77,6 +77,8 @@ public:
 protected:
 	bool event(QEvent *event);
 
+	void resizeEvent(QResizeEvent *);
+
 private:
 	// callback functions
 	static void RequestLauncherShow(bool *bOk);
