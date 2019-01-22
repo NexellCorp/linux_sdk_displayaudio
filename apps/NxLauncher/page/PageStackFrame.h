@@ -21,6 +21,8 @@ class PageStackFrame : public QFrame
 signals:
 	void onButtonClicked(NxPluginInfo* pInfo);
 
+	void signalResizeItemDone();
+
 private slots:
 	void onButtonClickedFromItem(NxPluginInfo *pInfo);
 

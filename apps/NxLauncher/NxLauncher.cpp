@@ -13,7 +13,6 @@
 #include <QProcess>
 #include <QDirIterator>
 #include <QDesktopWidget>
-#include <QDebug>
 
 #include <execinfo.h>
 #include <signal.h>
@@ -37,6 +36,9 @@
 #include <NX_Log.h>
 
 #define TEST_COMMAND_PATH "/home/root/cmd"
+
+#define DEFAULT_WIDTH	1024
+#define DEFAULT_HEIGHT	600
 
 NxLauncher* NxLauncher::m_spInstance = NULL;
 QQueue<QString> NxLauncher::m_AudioFocusQueue = QQueue<QString>();
@@ -285,21 +287,23 @@ NxLauncher::NxLauncher(QWidget *parent) :
 	connect(m_pPrevPageButton, SIGNAL(clicked(bool)), this, SLOT(onPrevPageButtonClicked()));
 	m_pPrevPageButton->setFixedSize(50, 100);
 	m_pPrevPageButton->move(0, height()/2-m_pPrevPageButton->height()/2);
+	m_pPrevPageButton->hide();
 
 	m_pNextPageButton = new QPushButton(ui->launcher);
 	connect(m_pNextPageButton, SIGNAL(clicked(bool)), this, SLOT(onNextPageButtonClicked()));
 	m_pNextPageButton->setFixedSize(50, 100);
 	m_pNextPageButton->move(width()-m_pNextPageButton->width(), height()/2-m_pNextPageButton->height()/2);
+	m_pNextPageButton->hide();
 
 	ui->launcher->setStyleSheet("background:rgb(195,195,195);");
 	m_pPageStackFrame = new PageStackFrame(ui->launcher);
+	connect(m_pPageStackFrame, SIGNAL(signalResizeItemDone()), this, SLOT(slotResizeItemDone()));
 	connect(m_pPageStackFrame, SIGNAL(onButtonClicked(NxPluginInfo*)), this, SLOT(onExecute(NxPluginInfo*)));
 	connect(this, SIGNAL(signalStateChanged(NxPluginInfo*)), m_pPageStackFrame, SLOT(onButtonStateChnaged(NxPluginInfo*)));
 	m_pPageStackFrame->setCellSize(QSize(200, 200));
 	m_pPageStackFrame->setSpacing(25);
 	m_pPageStackFrame->setStyleSheet("background:rgb(195,195,195);");
 	m_pPageStackFrame->move(m_pPrevPageButton->width(), this->size().height() * 1 / 10);
-//	m_pPageStackFrame->move(0, this->size().height() * 1 / 10);
 	m_pPageStackFrame->resize( this->size().width()-m_pPrevPageButton->width()-m_pNextPageButton->width(), this->size().height() * 9 / 10 );
 	m_pPageStackFrame->setFrameShape(QFrame::NoFrame);
 	m_pPageStackFrame->setFrameShadow(QFrame::Plain);
@@ -311,12 +315,6 @@ NxLauncher::NxLauncher(QWidget *parent) :
 		}
 
 		m_pPageStackFrame->pushItem(psInfo);
-	}
-
-	if (m_pPageStackFrame->GetPageCount() <= 1)
-	{
-		m_pPrevPageButton->hide();
-		m_pNextPageButton->hide();
 	}
 #endif
 	connect(ui->messageFrame, SIGNAL(signalOk()), this, SLOT(slotPopupMessageAccept()));
@@ -1679,10 +1677,25 @@ void NxLauncher::resizeEvent(QResizeEvent *)
 {
 	int w = width();
 	int h = height();
+
+	if (w == DEFAULT_WIDTH && h == DEFAULT_HEIGHT)
+	{
+		return;
+	}
+
 	ui->launcher->setFixedSize(w, h);
 	ui->statusBar->setFixedSize(w, h * 0.1);
 	ui->notificationBar->setFixedSize(w, h * 0.1);
 #ifndef CONFIG_USE_NO_QML
 	m_pLauncherWidget->setGeometry(0, ui->statusBar->height(), w, h * 0.9);
 #endif
+}
+
+void NxLauncher::slotResizeItemDone()
+{
+	if (m_pPageStackFrame->GetPageCount() > 1)
+	{
+		m_pPrevPageButton->show();
+		m_pNextPageButton->show();
+	}
 }
