@@ -32,10 +32,15 @@ public:
     explicit MessageMenuWidget(QWidget *parent = 0);
     ~MessageMenuWidget();
 
+protected:
+	void resizeEvent(QResizeEvent *event);
+
 private slots:
     void on_BUTTON_SYNC_clicked();
 
 private:
+	void SetupUI();
+
     void setUIState(UIState state);
 
     bool updateForBluetoothEnable(QStringList& tokens);

@@ -465,7 +465,7 @@ QPushButton:pressed {
     <property name="styleSheet">
      <string notr="true">QPushButton {
 	border: none;
-	background-image: url(:/Keyboard/bs.png);
+	border-image: url(:/Keyboard/bs.png);
 }</string>
     </property>
     <property name="text">
