@@ -36,12 +36,12 @@
    </property>
    <property name="styleSheet">
     <string notr="true">QPushButton {
-	background-image: url(:/audio/UI/pause_200.png);
+	border-image: url(:/audio/UI/pause_200.png);
 	border: none;
 }
 
 QPushButton:pressed {
-	background-image: url(:/audio/UI/pause_pressed_200.png);
+	border-image: url(:/audio/UI/pause_pressed_200.png);
 	border: none;
 }</string>
    </property>
