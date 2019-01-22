@@ -25,6 +25,10 @@ Frame::Frame(QWidget *parent) :
 
 	m_bInitialized = false;
 
+	QPixmap icon = QPixmap(":/audio/UI/default.jpg");
+	ui->LABEL_ICON->setAlignment(Qt::AlignCenter);
+	ui->LABEL_ICON->setPixmap(icon.scaled(ui->LABEL_ICON->width(), ui->LABEL_ICON->height(), Qt::KeepAspectRatio));
+
 	const QRect screen = QApplication::desktop()->screenGeometry();
 	move(0, screen.height() * 0.1);
 
@@ -184,28 +188,35 @@ void Frame::SetupUI()
 	float heightRatio = (float)height() / DEFAULT_HEIGHT;
 	int rx, ry, rw, rh;
 
-	rx = widthRatio * ui->LABEL_ICON->x();
-	ry = heightRatio * ui->LABEL_ICON->y();
-	rw = widthRatio * ui->LABEL_ICON->width();
-	rh = heightRatio * ui->LABEL_ICON->height();
-	ui->LABEL_ICON->setGeometry(rx, ry, rw, rh);
-
-	rx = widthRatio * ui->LABEL_MDEDIA_TITLE->x();
-	ry = heightRatio * ui->LABEL_MDEDIA_TITLE->y();
-	rw = widthRatio * ui->LABEL_MDEDIA_TITLE->width();
-	rh = heightRatio * ui->LABEL_MDEDIA_TITLE->height();
-	ui->LABEL_MDEDIA_TITLE->setGeometry(rx, ry, rw, rh);
-
-	ry = heightRatio * ui->LABEL_MDEDIA_ETC->y();
-	rh = heightRatio * ui->LABEL_MDEDIA_ETC->height();
-	ui->LABEL_MDEDIA_ETC->setGeometry(rx, ry, rw, rh);
-
 	// play position - slider
 	rx = widthRatio * ui->SLIDER_PLAY_POSITION->x();
 	ry = heightRatio * ui->SLIDER_PLAY_POSITION->y();
 	rw = widthRatio * ui->SLIDER_PLAY_POSITION->width();
 	rh = heightRatio * ui->SLIDER_PLAY_POSITION->height();
 	ui->SLIDER_PLAY_POSITION->setGeometry(rx, ry, rw, rh);
+
+	// icon
+	ry = heightRatio * ui->LABEL_ICON->y();
+	rw = widthRatio * ui->LABEL_ICON->width();
+	rh = heightRatio * ui->LABEL_ICON->height();
+	ui->LABEL_ICON->setGeometry(rx, ry, rw, rh);
+	QPixmap icon = QPixmap(":/audio/UI/default.jpg");
+	icon = icon.scaled(ui->LABEL_ICON->width(), ui->LABEL_ICON->height(), Qt::KeepAspectRatio);
+	ui->LABEL_ICON->setFixedSize(icon.width(), icon.height());
+	ui->LABEL_ICON->setAlignment(Qt::AlignCenter);
+	ui->LABEL_ICON->setPixmap(icon);
+
+	// title
+	rx = ui->LABEL_ICON->x() + ui->LABEL_ICON->width() + 19 * widthRatio;
+	ry = heightRatio * ui->LABEL_MDEDIA_TITLE->y();
+	rw = widthRatio * ui->LABEL_MDEDIA_TITLE->width();
+	rh = heightRatio * ui->LABEL_MDEDIA_TITLE->height();
+	ui->LABEL_MDEDIA_TITLE->setGeometry(rx, ry, rw, rh);
+
+	// etc - albums, artists, genres
+	ry = heightRatio * ui->LABEL_MDEDIA_ETC->y();
+	rh = heightRatio * ui->LABEL_MDEDIA_ETC->height();
+	ui->LABEL_MDEDIA_ETC->setGeometry(rx, ry, rw, rh);
 
 	// play position - label
 	rx = widthRatio * ui->LABEL_PLAY_POSITION->x();
