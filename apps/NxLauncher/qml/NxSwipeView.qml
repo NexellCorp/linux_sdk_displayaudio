@@ -72,7 +72,7 @@ Rectangle {
     Rectangle {
         id          : page
         anchors.fill: parent
-        anchors.leftMargin: parent.width % iconCellWidth
+        anchors.leftMargin: parent.width % iconCellWidth/2
         color: "transparent"
 
         Repeater {

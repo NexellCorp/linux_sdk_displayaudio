@@ -12,6 +12,7 @@
 #include <QWidget>
 #include <QProcess>
 #include <QDirIterator>
+#include <QDesktopWidget>
 #include <QDebug>
 
 #include <execinfo.h>
@@ -259,6 +260,12 @@ NxLauncher::NxLauncher(QWidget *parent) :
 	ui->statusBar->RegOnClickedVolume(cbStatusVolume);
 
 	connect(ui->volumeBar, SIGNAL(signalSetVolume(int)), this, SLOT(slotSetVolume(int)));
+
+	const QRect screen = QApplication::desktop()->screenGeometry();
+	if ((width() != screen.width()) || (height() != screen.height()))
+	{
+		setFixedSize(screen.width(), screen.height());
+	}
 
 #ifndef CONFIG_USE_NO_QML
 	// binding between qml and widget
@@ -1661,3 +1668,15 @@ void NxLauncher::onNextPageButtonClicked()
 	m_pPageStackFrame->setPage(m_pPageStackFrame->currentPage()+1);
 }
 #endif
+
+void NxLauncher::resizeEvent(QResizeEvent *)
+{
+	int w = width();
+	int h = height();
+	ui->launcher->setFixedSize(w, h);
+	ui->statusBar->setFixedSize(w, h * 0.1);
+#ifndef CONFIG_USE_NO_QML
+	m_pLauncherWidget->setGeometry(0, ui->statusBar->height(), w, h * 0.9);
+#else
+#endif
+}
