@@ -123,6 +123,8 @@ void PageStackFrame::calculateMatrix()
 void PageStackFrame::resizeEvent(QResizeEvent *)
 {
 	resizeItem();
+
+	emit signalResizeItemDone();
 }
 
 void PageStackFrame::setPage(int page)

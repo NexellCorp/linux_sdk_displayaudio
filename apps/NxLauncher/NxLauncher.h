@@ -32,6 +32,8 @@ signals:
 	void signalStateChanged(NxPluginInfo*);
 
 private slots:
+	void slotResizeItemDone();
+
 	void slotExecute(QString);
 
 	void slotPopupMessageAccept();
