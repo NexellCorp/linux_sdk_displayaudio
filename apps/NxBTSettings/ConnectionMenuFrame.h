@@ -43,6 +43,8 @@ protected:
 
 	void mousePressEvent(QMouseEvent *);
 
+	void resizeEvent(QResizeEvent *event);
+
 private slots:
 	void on_BUTTON_RENAME_BT_DEVICE_clicked();
 
@@ -51,6 +53,8 @@ private slots:
 	void on_BUTTON_UNPAIR_ALL_clicked();
 
 private:
+	void SetupUI();
+
 	void setUIState(UIState state);
 
 	void updateToUIForLocalDeviceName(QStringList& tokens);

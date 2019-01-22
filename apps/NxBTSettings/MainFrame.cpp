@@ -1,5 +1,9 @@
 #include "MainFrame.h"
 #include "ui_MainFrame.h"
+#include <QDesktopWidget>
+
+#define DEFAULT_WIDTH	1024
+#define DEFAULT_HEIGHT	540
 
 MainFrame* MainFrame::m_spInstance = NULL;
 
@@ -27,7 +31,13 @@ MainFrame::MainFrame(QWidget *parent) :
 {
 	ui->setupUi(this);
 
-	move(0, 60);
+	const QRect screen = QApplication::desktop()->screenGeometry();
+	move(0, screen.height() * 0.1);
+
+	if ((width() != screen.width()) || (height() != screen.height()))
+	{
+		setFixedSize(screen.width(), screen.height() * 0.9);
+	}
 
 	m_bInitialized = false;
 
@@ -127,6 +137,21 @@ bool MainFrame::event(QEvent *event)
 	}
 
 	return QFrame::event(event);
+}
+
+void MainFrame::resizeEvent(QResizeEvent *)
+{
+	if ((width() != DEFAULT_WIDTH) || (height() != DEFAULT_HEIGHT))
+	{
+		SetupUI();
+	}
+}
+
+void MainFrame::SetupUI()
+{
+	ui->LABEL_LOADING_IMAGE->move(width()/2-ui->LABEL_LOADING_IMAGE->width()/2, height()/2-ui->LABEL_LOADING_IMAGE->height()/2);
+
+	qDebug() << ui->LABEL_LOADING_IMAGE->geometry();
 }
 
 void MainFrame::StatusHomeEvent(NxStatusHomeEvent *)

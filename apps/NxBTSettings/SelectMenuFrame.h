@@ -19,10 +19,16 @@ public:
 	explicit SelectMenuFrame(QWidget *parent = 0);
 	~SelectMenuFrame();
 
+protected:
+	void resizeEvent(QResizeEvent *event);
+
 private slots:
 	void on_BUTTON_ENTER_CONNECTION_MENU_clicked();
 
 	void on_BUTTON_ENTER_ADVANCED_MENU_clicked();
+
+private:
+	void SetupUI();
 
 private:
 	Ui::SelectMenuFrame *ui;
