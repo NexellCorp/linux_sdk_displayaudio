@@ -24,10 +24,10 @@ CXXFLAGS += -fPIC -DCONFIG_A2DP_PROCESS_MANAGEMENT -DCONFIG_HSP_PROCESS_MANAGEME
 TARGET := libnxbtservice.so
 
 # ALSA default audio path
-alsa_playback       ?= "plughw:0,0"
-alsa_capture        ?= "plughw:0,0"
-alsa_sco_playback   ?= "plughw:0,2"
-alsa_sco_capture    ?= "plughw:0,2"
+alsa_playback       ?= 'plughw:0,0'
+alsa_capture        ?= 'plughw:0,0'
+alsa_sco_playback   ?= 'plughw:0,2'
+alsa_sco_capture    ?= 'plughw:0,2'
 
 CXXFLAGS += -DNX_ALSA_DEV_NAME_P='"$(alsa_playback)"'
 CXXFLAGS += -DNX_ALSA_DEV_NAME_C='"$(alsa_capture)"'
