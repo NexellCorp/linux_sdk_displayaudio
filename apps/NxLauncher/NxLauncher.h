@@ -32,7 +32,9 @@ signals:
 	void signalStateChanged(NxPluginInfo*);
 
 private slots:
+#ifdef CONFIG_USE_NO_QML
 	void slotResizeItemDone();
+#endif
 
 	void slotExecute(QString);
 

@@ -1689,7 +1689,7 @@ void NxLauncher::resizeEvent(QResizeEvent *)
 	m_pLauncherWidget->setGeometry(0, ui->statusBar->height(), w, h * 0.9);
 #endif
 }
-
+#ifdef CONFIG_USE_NO_QML
 void NxLauncher::slotResizeItemDone()
 {
 	if (m_pPageStackFrame->GetPageCount() > 1)
@@ -1698,3 +1698,4 @@ void NxLauncher::slotResizeItemDone()
 		m_pNextPageButton->show();
 	}
 }
+#endif
