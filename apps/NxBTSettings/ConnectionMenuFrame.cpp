@@ -13,6 +13,7 @@ ConnectionMenuFrame::ConnectionMenuFrame(QWidget *parent) :
 
 	setUIState(UIState_Initializing);
 
+	m_bBTServiceConnected = false;
 	m_bAutoPairing = false;
 
 	connect(ui->keyboardFrame, SIGNAL(signalAccepted()), this, SLOT(slotEnterFromKeyboard()));
@@ -63,6 +64,19 @@ void ConnectionMenuFrame::resizeEvent(QResizeEvent *)
 	if ((width() != DEFAULT_WIDTH) || (height() != DEFAULT_HEIGHT))
 	{
 		SetupUI();
+	}
+
+	if (m_bBTServiceConnected)
+	{
+		// 1. initialize
+		// 1.1. current system BT device name
+		emit signalCommandToServer("$MGT#LOCAL DEVICE NAME\n");
+		// 1.2. current system BT device MAC address
+		emit signalCommandToServer("$MGT#LOCAL DEVICE ADDRESS\n");
+		// 1.3. paired devices infomation
+		emit signalCommandToServer("$MGT#PAIRED DEVICE INFO ALL LIST\n");
+
+		setUIState(UIState_Initialized);
 	}
 }
 
@@ -200,15 +214,7 @@ void ConnectionMenuFrame::slotCommandFromServer(QString command)
 
 	// valid commands
 	if (tokens[2] == "PING" && m_UIState == UIState_Initializing) {
-		// 1. initialize
-		// 1.1. current system BT device name
-		emit signalCommandToServer("$MGT#LOCAL DEVICE NAME\n");
-		// 1.2. current system BT device MAC address
-		emit signalCommandToServer("$MGT#LOCAL DEVICE ADDRESS\n");
-		// 1.3. paired devices infomation
-		emit signalCommandToServer("$MGT#PAIRED DEVICE INFO ALL LIST\n");
-
-		setUIState(UIState_Initialized);
+		m_bBTServiceConnected = true;
 	} else if (tokens[2] == "LOCAL DEVICE NAME") {
 		updateToUIForLocalDeviceName(tokens);
 	} else if (tokens[2].indexOf("RENAME LOCAL DEVICE") == 0) {
