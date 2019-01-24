@@ -76,6 +76,8 @@ private:
 private:
 	UIState m_UIState;
 
+	bool m_bBTServiceConnected;
+
 	bool m_bAutoPairing;
 
 private:
