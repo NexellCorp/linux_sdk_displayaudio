@@ -24,13 +24,13 @@ DEFINES += QT_DEPRECATED_WARNINGS
 
 CONFIG -= CONFIG_USE_NO_QML
 
-machine = $$getenv(NEXELL_MACHINE_TYPE)
+socname = $$getenv(OECORE_SOCNAME)
 equals(machine, "") {
-    message("NEXELL_MACHINE_TYPE is empty")
+    message("OECORE_SOCNAME is empty")
 } else {
-    message($$machine)
+    message($$socname)
 
-    equals(machine, NXP3220) {
+    equals(socname, nxp3220) {
         CONFIG += CONFIG_USE_NO_QML
     }
 }
