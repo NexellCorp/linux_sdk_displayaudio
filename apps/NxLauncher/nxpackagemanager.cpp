@@ -57,6 +57,8 @@ void NxPackageScanner::FillPluginInfo(const QFileInfo& szInfo, bool bInitialized
 
 	psInfo->setPath(szInfo.absolutePath());
 	psInfo->setEnabled(true);
+	psInfo->setVisible(true);
+	psInfo->setAutoStart(false);
 
 	for( int idx = 0; idx < keys.size(); idx++ )
 	{
@@ -115,6 +117,14 @@ void NxPackageScanner::FillPluginInfo(const QFileInfo& szInfo, bool bInitialized
 		else if (lowerKey == "title")
 		{
 			psInfo->setTitle(settings.value(key).toString());
+		}
+		else if (lowerKey == "autostart")
+		{
+			psInfo->setAutoStart(settings.value(key, "no").toString().toLower() == "yes");
+		}
+		else if (lowerKey == "visible")
+		{
+			psInfo->setVisible(settings.value(key, "yes").toString().toLower() == "yes");
 		}
 	}
 

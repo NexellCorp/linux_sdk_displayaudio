@@ -245,7 +245,7 @@ NxLauncher::NxLauncher(QWidget *parent) :
 	}
 
 	foreach (NxPluginInfo *psInfo, m_PlugIns) {
-		if (psInfo->getType().toLower() == "service" && psInfo->getEnabled())
+		if (psInfo->getAutoStart())
 		{
 			if (psInfo->m_pInit)
 				psInfo->m_pInit(this, "");
@@ -308,7 +308,7 @@ NxLauncher::NxLauncher(QWidget *parent) :
 	m_pPageStackFrame->setFrameShadow(QFrame::Plain);
 
 	foreach (NxPluginInfo *psInfo, m_PlugIns) {
-		if (psInfo->getType().toLower() == "service")
+		if (!psInfo->getVisible())
 		{
 			continue;
 		}

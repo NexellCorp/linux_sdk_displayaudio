@@ -161,3 +161,23 @@ void NxPluginInfo::setTitle(QString szTitle)
 {
 	m_szTitle = szTitle;
 }
+
+bool NxPluginInfo::getAutoStart()
+{
+	return m_bAutoStart;
+}
+
+void NxPluginInfo::setAutoStart(bool on)
+{
+	m_bAutoStart = on;
+}
+
+bool NxPluginInfo::getVisible()
+{
+	return m_bVisible;
+}
+
+void NxPluginInfo::setVisible(bool visible)
+{
+	m_bVisible = visible;
+}

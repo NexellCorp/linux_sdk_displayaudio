@@ -18,6 +18,7 @@ public:
 	Q_PROPERTY(QString exec READ getExec WRITE setExec)
 	Q_PROPERTY(QString path READ getPath WRITE setPath)
 	Q_PROPERTY(bool active READ getEnabled WRITE setEnabled)
+	Q_PROPERTY(bool visible READ getVisible WRITE setVisible)
 
 public:
 	explicit NxPluginInfo();
@@ -118,6 +119,12 @@ public:
 	QString getTitle();
 	void setTitle(QString szTitle);
 
+	bool getAutoStart();
+	void setAutoStart(bool on);
+
+	bool getVisible();
+	void setVisible(bool visible);
+
 private:
 	// https://specifications.freedesktop.org/desktop-entry-spec/latest/ar01s05.html
 	QString m_szType;
@@ -131,6 +138,8 @@ private:
 	QString m_szPath;
 	QString m_szTitle;
 	bool m_bEnabled;
+	bool m_bAutoStart;
+	bool m_bVisible;
 };
 
 #endif // NXAPPINFO_H

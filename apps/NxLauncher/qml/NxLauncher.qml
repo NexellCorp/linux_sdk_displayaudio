@@ -73,7 +73,7 @@ Item {
         for(var idx =0 ; idx < info.length; idx++) {
             var i = idx % info.length
 
-            if (info[i].type !== "Application")
+            if (!info[i].visible)
                 continue
 
             appListModel.append({
