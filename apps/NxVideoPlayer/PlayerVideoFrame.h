@@ -76,6 +76,7 @@ public:
 
 protected:
     bool event(QEvent *e);
+    void resizeEvent(QResizeEvent *event);
 
 private:
     void TerminateEvent(NxTerminateEvent *e);
@@ -129,8 +130,6 @@ private:
     CNX_MoviePlayer	*m_pNxPlayer;
     QTextCodec*		m_pCodec;
     bool			m_bSubThreadFlag;
-    int				m_iScrWidth;
-    int				m_iScrHeight;
     int				m_iVolValue;
     qint64			m_iDuration;
     QTimer			m_PosUpdateTimer;
@@ -147,6 +146,7 @@ private:
     bool eventFilter(QObject *watched, QEvent *event);
 
 private:
+    void SetupUI();
     void UpdateDurationInfo(int64_t position, int64_t duration);
 
     //  Update Progress Bar

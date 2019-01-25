@@ -2,6 +2,10 @@
 #include "ui_PlayListVideoFrame.h"
 
 #include <QScrollBar>
+#include <QDesktopWidget>
+
+#define DEFAULT_DSP_WIDTH	1024
+#define DEFAULT_DSP_HEIGHT	600
 
 static void cbStatusHome( void *pObj )
 {
@@ -24,7 +28,6 @@ static void cbStatusVolume( void *pObj )
     QApplication::postEvent(pW, new NxStatusVolumeEvent());
 }
 
-
 PlayListVideoFrame::PlayListVideoFrame(QWidget *parent)
     : QFrame(parent)
     , m_pretIdx(-1)
@@ -35,6 +38,13 @@ PlayListVideoFrame::PlayListVideoFrame(QWidget *parent)
     , ui(new Ui::PlayListVideoFrame)
 {
     ui->setupUi(this);
+
+    const QRect screen = QApplication::desktop()->screenGeometry();
+
+    if ((width() != screen.width()) || (height() != screen.height()))
+    {
+        setFixedSize(screen.width(), screen.height());
+    }
 
     memset(&m_selectIdx,0,sizeof(QModelIndex) );
 
@@ -158,6 +168,46 @@ bool PlayListVideoFrame::event(QEvent *e)
 
     return QFrame::event(e);
 }
+
+void PlayListVideoFrame::resizeEvent(QResizeEvent *)
+{
+    if ((width() != DEFAULT_DSP_WIDTH) || (height() != DEFAULT_DSP_HEIGHT))
+    {
+        SetupUI();
+    }
+}
+
+void PlayListVideoFrame::SetupUI()
+{
+    float widthRatio = (float)width() / DEFAULT_DSP_WIDTH;
+    float heightRatio = (float)height() / DEFAULT_DSP_HEIGHT;
+    int rx, ry, rw, rh;
+
+    rx = widthRatio * ui->diskListCombo->x();
+    ry = heightRatio * ui->diskListCombo->y();
+    rw = widthRatio * ui->diskListCombo->width();
+    rh = heightRatio * ui->diskListCombo->height();
+    ui->diskListCombo->setGeometry(rx, ry, rw, rh);
+
+    rx = widthRatio * ui->btnCancel->x();
+    ry = heightRatio * ui->btnCancel->y();
+    rw = widthRatio * ui->btnCancel->width();
+    rh = heightRatio * ui->btnCancel->height();
+    ui->btnCancel->setGeometry(rx, ry, rw, rh);
+
+    rx = widthRatio * ui->btnOk->x();
+    ry = heightRatio * ui->btnOk->y();
+    rw = widthRatio * ui->btnOk->width();
+    rh = heightRatio * ui->btnOk->height();
+    ui->btnOk->setGeometry(rx, ry, rw, rh);
+
+    rx = widthRatio * ui->listWidget->x();
+    ry = heightRatio * ui->listWidget->y();
+    rw = widthRatio * ui->listWidget->width();
+    rh = heightRatio * ui->listWidget->height();
+    ui->listWidget->setGeometry(rx, ry, rw, rh);
+}
+
 
 void PlayListVideoFrame::RegisterRequestVolume(void (*cbFunc)(void))
 {
