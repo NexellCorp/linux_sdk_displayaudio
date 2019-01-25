@@ -36,8 +36,8 @@
    </property>
    <property name="maximumSize">
     <size>
-     <width>1024</width>
-     <height>1600</height>
+     <width>16777215</width>
+     <height>16777215</height>
     </size>
    </property>
    <property name="palette">
@@ -159,7 +159,6 @@
     </palette>
    </property>
   </widget>
-  <zorder>graphicsView</zorder>
  </widget>
  <resources/>
  <connections/>

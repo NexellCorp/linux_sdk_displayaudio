@@ -1,12 +1,15 @@
 #include "AVInFrame.h"
 #include "ui_AVInFrame.h"
 #include <QTextCodec>
+#include <QDesktopWidget>
 
 #include <NX_DAudioUtils.h>
 
 #define LOG_TAG "[AVIn|Frame]"
 #include <NX_Log.h>
 
+#define DEFAULT_DSP_WIDTH	1024
+#define DEFAULT_DSP_HEIGHT	600
 
 //------------------------------------------
 #define NX_CUSTOM_BASE QEvent::User
@@ -75,6 +78,13 @@ AVInFrame::AVInFrame(QWidget *parent)
 {
 	//UI Setting
 	ui->setupUi(this);
+
+    const QRect screen = QApplication::desktop()->screenGeometry();
+
+    if ((width() != screen.width()) || (height() != screen.height()))
+    {
+        setFixedSize(screen.width(), screen.height());
+    }
 
 	pFrame = this;
 
@@ -168,6 +178,19 @@ bool AVInFrame::event(QEvent *event)
 	}
 
 	return QFrame::event(event);
+}
+
+void AVInFrame::resizeEvent(QResizeEvent *)
+{
+    if ((width() != DEFAULT_DSP_WIDTH) || (height() != DEFAULT_DSP_HEIGHT))
+    {
+        SetupUI();
+    }
+}
+
+void AVInFrame::SetupUI()
+{
+    ui->graphicsView->setGeometry(0,0,width(),height());
 }
 
 void AVInFrame::StatusHomeEvent(NxStatusHomeEvent *)

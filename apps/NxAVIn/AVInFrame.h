@@ -63,8 +63,10 @@ public:
 
 protected:
 	bool event(QEvent *e);
+    void resizeEvent(QResizeEvent *event);
 
 private:
+    void SetupUI();
 	void TerminateEvent(NxTerminateEvent *e);
 	void StatusHomeEvent(NxStatusHomeEvent *e);
 	void StatusBackEvent(NxStatusBackEvent *e);
