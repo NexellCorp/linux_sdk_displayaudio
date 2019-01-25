@@ -8,3 +8,5 @@ Comment[ko]=Nexell BT Service Daemon
 Icon=
 TryExec=NxBTService
 Exec=NxBTService
+AutoStart=yes
+Visible=no
