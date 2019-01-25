@@ -1,6 +1,7 @@
 #include "PlayerVideoFrame.h"
 #include "ui_PlayerVideoFrame.h"
 #include <QTextCodec>
+#include <QDesktopWidget>
 
 //Display Mode
 #define DSP_FULL   0
@@ -23,6 +24,9 @@
 
 #define LOG_TAG "[VideoPlayer|Frame]"
 #include <NX_Log.h>
+
+#define DEFAULT_DSP_WIDTH	1024
+#define DEFAULT_DSP_HEIGHT	600
 
 //------------------------------------------
 #define NX_CUSTOM_BASE QEvent::User
@@ -117,8 +121,6 @@ PlayerVideoFrame::PlayerVideoFrame(QWidget *parent)
     : QFrame(parent)
     , m_pNxPlayer(NULL)
     , m_bSubThreadFlag(false)
-    , m_iScrWidth(DSP_FULL_WIDTH)
-    , m_iScrHeight(DSP_FULL_HEIGHT)
     , m_iVolValue(30)
     , m_iDuration(0)
     , m_bIsInitialized(false)
@@ -138,6 +140,13 @@ PlayerVideoFrame::PlayerVideoFrame(QWidget *parent)
 {
     //UI Setting
     ui->setupUi(this);
+
+    const QRect screen = QApplication::desktop()->screenGeometry();
+    if ((width() != screen.width()) || (height() != screen.height()))
+    {
+        setFixedSize(screen.width(), screen.height());
+    }
+
 
     m_pNxPlayer = new CNX_MoviePlayer();
     UpdateFileList();
@@ -791,6 +800,8 @@ bool PlayerVideoFrame::PlayVideo()
                                                         NULL,
                                                         m_FileList.GetList(m_iCurFileListIdx).toStdString().c_str(),
                                                         MP_TRACK_VIDEO,
+                                                        width(),
+                                                        height(),
                                                         //&cbUpdateRender
                                                         NULL
                                                         );
@@ -799,10 +810,6 @@ bool PlayerVideoFrame::PlayVideo()
                 {
                     NXLOGI("\n\n********************media init done!\n");
                     m_bIsInitialized = true;
-
-                    int dspWidth = 0;
-                    int dspHeight = 0;
-                    getAspectRatio(m_pNxPlayer->GetVideoWidth(0), m_pNxPlayer->GetVideoHeight(0),m_iScrWidth, m_iScrHeight, &dspWidth, &dspHeight);
 
                     if( 0 == OpenSubTitle() )
                     {
@@ -1107,6 +1114,83 @@ bool PlayerVideoFrame::event(QEvent *event)
     }
 
     return QFrame::event(event);
+}
+
+void PlayerVideoFrame::resizeEvent(QResizeEvent *)
+{
+    if ((width() != DEFAULT_DSP_WIDTH) || (height() != DEFAULT_DSP_HEIGHT))
+    {
+        SetupUI();
+    }
+}
+
+void PlayerVideoFrame::SetupUI()
+{
+    ui->graphicsView->setGeometry(0,0,width(),height());
+
+    float widthRatio = (float)width() / DEFAULT_DSP_WIDTH;
+    float heightRatio = (float)height() / DEFAULT_DSP_HEIGHT;
+    int rx, ry, rw, rh;
+
+    rx = widthRatio * ui->progressBar->x();
+    ry = heightRatio * ui->progressBar->y();
+    rw = widthRatio * ui->progressBar->width();
+    rh = heightRatio * ui->progressBar->height();
+    ui->progressBar->setGeometry(rx, ry, rw, rh);
+
+    rx = widthRatio * ui->prevButton->x();
+    ry = heightRatio * ui->prevButton->y();
+    rw = widthRatio * ui->prevButton->width();
+    rh = heightRatio * ui->prevButton->height();
+    ui->prevButton->setGeometry(rx, ry, rw, rh);
+
+    rx = widthRatio * ui->playButton->x();
+    ry = heightRatio * ui->playButton->y();
+    rw = widthRatio * ui->playButton->width();
+    rh = heightRatio * ui->playButton->height();
+    ui->playButton->setGeometry(rx, ry, rw, rh);
+
+    rx = widthRatio * ui->pauseButton->x();
+    ry = heightRatio * ui->pauseButton->y();
+    rw = widthRatio * ui->pauseButton->width();
+    rh = heightRatio * ui->pauseButton->height();
+    ui->pauseButton->setGeometry(rx, ry, rw, rh);
+
+    rx = widthRatio * ui->nextButton->x();
+    ry = heightRatio * ui->nextButton->y();
+    rw = widthRatio * ui->nextButton->width();
+    rh = heightRatio * ui->nextButton->height();
+    ui->nextButton->setGeometry(rx, ry, rw, rh);
+
+    rx = widthRatio * ui->stopButton->x();
+    ry = heightRatio * ui->stopButton->y();
+    rw = widthRatio * ui->stopButton->width();
+    rh = heightRatio * ui->stopButton->height();
+    ui->stopButton->setGeometry(rx, ry, rw, rh);
+
+    rx = widthRatio * ui->playListButton->x();
+    ry = heightRatio * ui->playListButton->y();
+    rw = widthRatio * ui->playListButton->width();
+    rh = heightRatio * ui->playListButton->height();
+    ui->playListButton->setGeometry(rx, ry, rw, rh);
+
+    rx = widthRatio * ui->durationlabel->x();
+    ry = heightRatio * ui->durationlabel->y();
+    rw = widthRatio * ui->durationlabel->width();
+    rh = heightRatio * ui->durationlabel->height();
+    ui->durationlabel->setGeometry(rx, ry, rw, rh);
+
+    rx = widthRatio * ui->subTitleLabel->x();
+    ry = heightRatio * ui->subTitleLabel->y();
+    rw = widthRatio * ui->subTitleLabel->width();
+    rh = heightRatio * ui->subTitleLabel->height();
+    ui->subTitleLabel->setGeometry(rx, ry, rw, rh);
+
+    rx = widthRatio * ui->subTitleLabel2->x();
+    ry = heightRatio * ui->subTitleLabel2->y();
+    rw = widthRatio * ui->subTitleLabel2->width();
+    rh = heightRatio * ui->subTitleLabel2->height();
+    ui->subTitleLabel2->setGeometry(rx, ry, rw, rh);
 }
 
 void PlayerVideoFrame::StatusHomeEvent(NxStatusHomeEvent *)
