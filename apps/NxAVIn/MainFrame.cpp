@@ -1,9 +1,13 @@
 #include "MainFrame.h"
 #include "ui_MainFrame.h"
 #include <QDebug>
+#include <QDesktopWidget>
 
 #define LOG_TAG "[NxAVInMainFrame]"
 #include <NX_Log.h>
+
+#define DEFAULT_DSP_WIDTH	1024
+#define DEFAULT_DSP_HEIGHT	600
 
 #define NX_CUSTOM_BASE_MAIN QEvent::User
 enum
@@ -43,6 +47,13 @@ MainFrame::MainFrame(QWidget *parent) :
 	ui(new Ui::MainFrame)
 {
 	ui->setupUi(this);
+
+    const QRect screen = QApplication::desktop()->screenGeometry();
+
+    if ((width() != screen.width()) || (height() != screen.height()))
+    {
+        setFixedSize(screen.width(), screen.height());
+    }
 
 	//  Initialize
 	m_bInitialized = false;
