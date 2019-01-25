@@ -73,6 +73,8 @@ int CNX_MoviePlayer::InitMediaPlayer(	void (*pCbEventCallback)( void *privateDes
                                         void *pCbPrivate,
                                         const char *pUri,
                                         int mediaType,
+                                        int DspWidth,
+                                        int DspHeight,
                                         void (*pCbQtUpdateImg)(void *pImg)
                                         )
 {
@@ -81,6 +83,37 @@ int CNX_MoviePlayer::InitMediaPlayer(	void (*pCbEventCallback)( void *privateDes
     if(0 > OpenHandle(pCbEventCallback, pCbPrivate) )		return -1;
     if(0 > SetUri(pUri) )									return -1;
     if(0 > GetMediaInfo() )									return -1;
+    memset(&m_dstDspRect, 0, sizeof(MP_DSP_RECT));
+    if(DspWidth!=0 && DspHeight!=0 )
+    {
+        int track=0, trackOrder=0, imagWidth=0,imagHeight=0;
+        if( track >= m_MediaInfo.iVideoTrackNum )
+        {
+            NXLOGE( "%s(): Error! Track Number. (track = %d / videoTrack = %d)\n", __FUNCTION__, track, m_MediaInfo.iVideoTrackNum );
+            return -1;
+        }
+
+        for( int i = 0; i < m_MediaInfo.iProgramNum; i++ )
+        {
+            for( int j = 0; j < m_MediaInfo.ProgramInfo[i].iVideoNum + m_MediaInfo.ProgramInfo[i].iAudioNum; j++ )
+            {
+                if( MP_TRACK_VIDEO == m_MediaInfo.ProgramInfo[i].TrackInfo[j].iTrackType )
+                {
+                    if( track == trackOrder )
+                    {
+                        imagWidth = m_MediaInfo.ProgramInfo[i].TrackInfo[j].iWidth;
+                        imagHeight = m_MediaInfo.ProgramInfo[i].TrackInfo[j].iHeight;
+                    }
+                    trackOrder++;
+                }
+            }
+        }
+
+        GetAspectRatio(imagWidth,imagHeight,
+                       DspWidth,DspHeight,
+                       &m_dstDspRect);
+    }
+
     if(0 > AddTrack(mediaType) )							return -1;
     if(0 > SetRenderCallBack(pCbQtUpdateImg) )				return -1;
 
@@ -551,8 +584,7 @@ int CNX_MoviePlayer::AddTrackForVideo()
         }
         else
         {
-            dstRect.iWidth   = DSP_LCD_WIDTH;
-            dstRect.iHeight  = DSP_LCD_HEIGHT;
+            dstRect = m_dstDspRect;
 
             if( 0 > AddVideoConfig( 0, m_idPrimaryDisplay.iPlaneId, m_idPrimaryDisplay.iCrtcId, srcRect, dstRect ) )
             {
@@ -937,4 +969,44 @@ int CNX_MoviePlayer::GetVideoPlane( int crtcIdx, int layerIdx, int findRgb, MP_D
     ret = NX_MPGetPlaneForDisplay( crtcIdx, layerIdx, findRgb, pDrmPlaneInfo );
 
     return ret;
+}
+
+//================================================================================================================
+void CNX_MoviePlayer::GetAspectRatio(int srcWidth, int srcHeight,
+                                     int dspWidth, int dspHeight,
+                                     MP_DSP_RECT *pDspDstRect)
+{
+    qDebug("@@@@ srcWidth(%d), srcHeight(%d), dspWidth(%d), dspHeight(%d)\n",srcWidth, srcHeight, dspWidth, dspHeight);
+    // Calculate Video Aspect Ratio
+    double xRatio = (double)dspWidth / (double)srcWidth;
+    double yRatio = (double)dspHeight / (double)srcHeight;
+
+    if( xRatio > yRatio )
+    {
+        pDspDstRect->iWidth    = (int)((double)srcWidth * yRatio);
+        pDspDstRect->iHeight   = dspHeight;
+    }
+    else
+    {
+        pDspDstRect->iWidth    = dspWidth;
+        pDspDstRect->iHeight   = (int)((double)srcHeight * xRatio);
+    }
+
+    if(dspWidth != pDspDstRect->iWidth)
+    {
+        if(dspWidth > pDspDstRect->iWidth)
+        {
+            pDspDstRect->iX = (dspWidth - pDspDstRect->iWidth)/2;
+        }
+    }
+
+    if(dspHeight != pDspDstRect->iHeight)
+    {
+        if(dspHeight > pDspDstRect->iHeight)
+        {
+            pDspDstRect->iY = (dspHeight - pDspDstRect->iHeight)/2;
+        }
+    }
+
+    qDebug("@@@@ DspDstRect(%d,%d,%d,%d)\n",pDspDstRect->iX,pDspDstRect->iY,pDspDstRect->iWidth,pDspDstRect->iHeight);
 }

@@ -98,6 +98,8 @@ public:
                             void *pCbPrivate,
                             const char *pUri,
                             int mediaType,
+                            int DspWidth,
+                            int DspHeight,
                             void (*pCbQtUpdateImg)(void *pImg)
                             );
 
@@ -147,7 +149,9 @@ private:
     int AddVideoTrack( int track );
     int AddAudioTrack( int track );
     int GetTrackIndex( int trackType, int track );
-
+    void GetAspectRatio(int srcWidth, int srcHeight,
+                        int dspWidth, int dspHeight,
+                        MP_DSP_RECT *pDspDstRect);
     //
     //vars
     pthread_mutex_t	m_hLock;
@@ -165,6 +169,7 @@ private:
     int 			m_bIsCbQtUpdateImg;
     MP_DRM_PLANE_INFO m_idPrimaryDisplay;
     MP_DRM_PLANE_INFO m_idSecondDisplay;
+    MP_DSP_RECT m_dstDspRect;
 
 public:
     int IsCbQtUpdateImg();
