@@ -3,6 +3,7 @@
 #include <QThread>
 #include <QTextCodec>
 #include <QTimer>
+#include <QDesktopWidget>
 
 #include "PlayerAudioFrame.h"
 #include "ui_PlayerAudioFrame.h"
@@ -20,6 +21,9 @@
 
 #define AUDIO_DEFAULT_DEVICE "plughw:0,0"
 #define AUDIO_HDMI_DEVICE    "plughw:0,3"
+
+#define DEFAULT_DSP_WIDTH	1024
+#define DEFAULT_DSP_HEIGHT	600
 
 //------------------------------------------
 #define NX_CUSTOM_BASE QEvent::User
@@ -118,6 +122,12 @@ PlayerAudioFrame::PlayerAudioFrame(QWidget *parent)
     , ui(new Ui::PlayerAudioFrame)
 {
     ui->setupUi(this);
+
+    const QRect screen = QApplication::desktop()->screenGeometry();
+    if ((width() != screen.width()) || (height() != screen.height()))
+    {
+        setFixedSize(screen.width(), screen.height());
+    }
 
     pthread_mutex_init(&m_listMutex, NULL);
     m_pNxPlayer = new CNX_AudioPlayer();
@@ -916,6 +926,107 @@ bool PlayerAudioFrame::event(QEvent *event)
     }
 
     return QFrame::event(event);
+}
+
+void PlayerAudioFrame::resizeEvent(QResizeEvent *)
+{
+    if ((width() != DEFAULT_DSP_WIDTH) || (height() != DEFAULT_DSP_HEIGHT))
+    {
+        SetupUI();
+    }
+}
+
+void PlayerAudioFrame::SetupUI()
+{
+    float widthRatio = (float)width() / DEFAULT_DSP_WIDTH;
+    float heightRatio = (float)height() / DEFAULT_DSP_HEIGHT;
+    int rx, ry, rw, rh;
+
+    rx = widthRatio * ui->progressBar->x();
+    ry = heightRatio * ui->progressBar->y();
+    rw = widthRatio * ui->progressBar->width();
+    rh = heightRatio * ui->progressBar->height();
+    ui->progressBar->setGeometry(rx, ry, rw, rh);
+
+    rx = widthRatio * ui->prevButton->x();
+    ry = heightRatio * ui->prevButton->y();
+    rw = widthRatio * ui->prevButton->width();
+    rh = heightRatio * ui->prevButton->height();
+    ui->prevButton->setGeometry(rx, ry, rw, rh);
+
+    rx = widthRatio * ui->playButton->x();
+    ry = heightRatio * ui->playButton->y();
+    rw = widthRatio * ui->playButton->width();
+    rh = heightRatio * ui->playButton->height();
+    ui->playButton->setGeometry(rx, ry, rw, rh);
+
+    rx = widthRatio * ui->pauseButton->x();
+    ry = heightRatio * ui->pauseButton->y();
+    rw = widthRatio * ui->pauseButton->width();
+    rh = heightRatio * ui->pauseButton->height();
+    ui->pauseButton->setGeometry(rx, ry, rw, rh);
+
+    rx = widthRatio * ui->nextButton->x();
+    ry = heightRatio * ui->nextButton->y();
+    rw = widthRatio * ui->nextButton->width();
+    rh = heightRatio * ui->nextButton->height();
+    ui->nextButton->setGeometry(rx, ry, rw, rh);
+
+    rx = widthRatio * ui->stopButton->x();
+    ry = heightRatio * ui->stopButton->y();
+    rw = widthRatio * ui->stopButton->width();
+    rh = heightRatio * ui->stopButton->height();
+    ui->stopButton->setGeometry(rx, ry, rw, rh);
+
+    rx = widthRatio * ui->playListButton->x();
+    ry = heightRatio * ui->playListButton->y();
+    rw = widthRatio * ui->playListButton->width();
+    rh = heightRatio * ui->playListButton->height();
+    ui->playListButton->setGeometry(rx, ry, rw, rh);
+
+    rx = widthRatio * ui->durationlabel->x();
+    ry = heightRatio * ui->durationlabel->y();
+    rw = widthRatio * ui->durationlabel->width();
+    rh = heightRatio * ui->durationlabel->height();
+    ui->durationlabel->setGeometry(rx, ry, rw, rh);
+
+    //
+    rx = widthRatio * ui->albumArtView->x();
+    ry = heightRatio * ui->albumArtView->y();
+    rw = widthRatio * ui->albumArtView->width();
+    rh = heightRatio * ui->albumArtView->height();
+    ui->albumArtView->setGeometry(rx, ry, rw, rh);
+
+    rx = widthRatio * ui->labelAlbum->x();
+    ry = heightRatio * ui->labelAlbum->y();
+    rw = widthRatio * ui->labelAlbum->width();
+    rh = heightRatio * ui->labelAlbum->height();
+    ui->labelAlbum->setGeometry(rx, ry, rw, rh);
+
+
+    rx = widthRatio * ui->labelArtist->x();
+    ry = heightRatio * ui->labelArtist->y();
+    rw = widthRatio * ui->labelArtist->width();
+    rh = heightRatio * ui->labelArtist->height();
+    ui->labelArtist->setGeometry(rx, ry, rw, rh);
+
+    rx = widthRatio * ui->labelGenre->x();
+    ry = heightRatio * ui->labelGenre->y();
+    rw = widthRatio * ui->labelGenre->width();
+    rh = heightRatio * ui->labelGenre->height();
+    ui->labelGenre->setGeometry(rx, ry, rw, rh);
+
+    rx = widthRatio * ui->labelTitle->x();
+    ry = heightRatio * ui->labelTitle->y();
+    rw = widthRatio * ui->labelTitle->width();
+    rh = heightRatio * ui->labelTitle->height();
+    ui->labelTitle->setGeometry(rx, ry, rw, rh);
+
+    rx = widthRatio * ui->labelTrackNumber->x();
+    ry = heightRatio * ui->labelTrackNumber->y();
+    rw = widthRatio * ui->labelTrackNumber->width();
+    rh = heightRatio * ui->labelTrackNumber->height();
+    ui->labelTrackNumber->setGeometry(rx, ry, rw, rh);
 }
 
 void PlayerAudioFrame::StatusHomeEvent(NxStatusHomeEvent *)

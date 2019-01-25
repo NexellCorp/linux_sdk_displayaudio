@@ -28,6 +28,7 @@ public:
 
 public:
     bool event(QEvent *e);
+    void resizeEvent(QResizeEvent *event);
     void RegisterRequestLauncherShow(void (*cbFunc)(bool *bOk));
     void RegisterRequestVolume(void (*cbFunc)(void));
 
@@ -53,6 +54,8 @@ private:
     // Terminate
     void (*m_pRequestLauncherShow)(bool *bOk);
     void (*m_pRequestVolume)(void);
+
+    void SetupUI();
 
 private:
     Ui::PlayListAudioFrame *ui;
