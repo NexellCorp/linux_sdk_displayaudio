@@ -47,6 +47,7 @@ public:
 
 protected:
     bool event(QEvent *e);
+    void resizeEvent(QResizeEvent *event);
 
 private:
     void TerminateEvent(NxTerminateEvent *e);
@@ -122,6 +123,7 @@ private:
     bool	m_bSeekReady;
 
 private:
+    void SetupUI();
     void UpdateDurationInfo(int64_t position, int64_t duration);
     //	Update Progress Bar
     void updateProgressBar(QMouseEvent *event, bool bReleased);
