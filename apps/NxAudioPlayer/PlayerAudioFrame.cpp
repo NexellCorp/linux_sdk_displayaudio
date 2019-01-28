@@ -119,6 +119,7 @@ PlayerAudioFrame::PlayerAudioFrame(QWidget *parent)
     , m_pRequestTerminate(NULL)
     , m_pRequestLauncherShow(NULL)
     , m_pRequestVolume(NULL)
+    , m_bIsAudioFocus(true)
     , ui(new Ui::PlayerAudioFrame)
 {
     ui->setupUi(this);
@@ -812,29 +813,58 @@ void PlayerAudioFrame::updateProgressBar(QMouseEvent *event, bool bReleased)
     }
 }
 
+void PlayerAudioFrame::setAudioFocus(bool bAudioFocus)
+{
+    m_bIsAudioFocus = bAudioFocus;
+}
 
 void PlayerAudioFrame::on_prevButton_released()
 {
+    if(m_bIsAudioFocus == false)
+    {
+        return;
+    }
+
     PlayPreviousAudio();
 }
 
 void PlayerAudioFrame::on_playButton_released()
 {
+    if(m_bIsAudioFocus == false)
+    {
+        return;
+    }
+
     PlayAudio();
 }
 
 void PlayerAudioFrame::on_pauseButton_released()
 {
+    if(m_bIsAudioFocus == false)
+    {
+        return;
+    }
+
     PauseAudio();
 }
 
 void PlayerAudioFrame::on_nextButton_released()
 {
+    if(m_bIsAudioFocus == false)
+    {
+        return;
+    }
+
     PlayNextAudio();
 }
 
 void PlayerAudioFrame::on_stopButton_released()
 {
+    if(m_bIsAudioFocus == false)
+    {
+        return;
+    }
+
     StopAudio();
 }
 
@@ -843,6 +873,11 @@ void PlayerAudioFrame::on_stopButton_released()
 //
 void PlayerAudioFrame::on_playListButton_released()
 {
+    if(m_bIsAudioFocus == false)
+    {
+        return;
+    }
+
     if(NULL == m_pPlayListFrame)
     {
         m_pPlayListFrame = new PlayListAudioFrame(this);
