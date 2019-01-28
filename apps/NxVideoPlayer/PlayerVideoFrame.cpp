@@ -132,7 +132,8 @@ PlayerVideoFrame::PlayerVideoFrame(QWidget *parent)
     , m_bStopRenderingFlag(false)
     , m_bTryFlag(false)
     , m_pPlayListFrame(NULL)
-    , m_bIsVideoFocus(false)
+    , m_bIsVideoFocus(true)
+    , m_bIsAudioFocus(true)
     , m_pRequestTerminate(NULL)
     , m_pRequestLauncherShow(NULL)
     , m_pRequestVolume(NULL)
@@ -184,6 +185,8 @@ PlayerVideoFrame::PlayerVideoFrame(QWidget *parent)
     ui->appNameLabel->setStyleSheet("QLabel { color : white; }");
     ui->subTitleLabel->setStyleSheet("QLabel { color : white; }");
     ui->subTitleLabel2->setStyleSheet("QLabel { color : white; }");
+
+    PlaySeek();
 }
 
 PlayerVideoFrame::~PlayerVideoFrame()
@@ -539,28 +542,58 @@ void PlayerVideoFrame::setVideoFocus(bool bVideoFocus)
     m_bIsVideoFocus = bVideoFocus;
 }
 
+void PlayerVideoFrame::setAudioFocus(bool bAudioFocus)
+{
+    m_bIsAudioFocus = bAudioFocus;
+}
+
 void PlayerVideoFrame::on_prevButton_released()
 {
+    if(m_bIsAudioFocus == false)
+    {
+        return;
+    }
+
     PlayPreviousVideo();
 }
 
 void PlayerVideoFrame::on_playButton_released()
 {
+    if(m_bIsAudioFocus == false)
+    {
+        return;
+    }
+
     PlayVideo();
 }
 
 void PlayerVideoFrame::on_pauseButton_released()
 {
+    if(m_bIsAudioFocus == false)
+    {
+        return;
+    }
+
     PauseVideo();
 }
 
 void PlayerVideoFrame::on_nextButton_released()
 {
+    if(m_bIsAudioFocus == false)
+    {
+        return;
+    }
+
     PlayNextVideo();
 }
 
 void PlayerVideoFrame::on_stopButton_released()
 {
+    if(m_bIsAudioFocus == false)
+    {
+        return;
+    }
+
     StopVideo();
 }
 
@@ -744,6 +777,13 @@ void PlayerVideoFrame::PlaySeek()
 {
     bool seekflag = false;
     int iSavedPosition = 0;
+
+    if(NULL == m_pNxPlayer)
+    {
+        NXLOGW("%s(), line: %d, m_pNxPlayer is NULL \n", __FUNCTION__, __LINE__);
+        return;
+    }
+
     seekflag = SeekToPrev(&iSavedPosition, &m_iCurFileListIdx);
 
     PlayVideo();
@@ -1031,6 +1071,11 @@ void PlayerVideoFrame::getAspectRatio(int srcWidth, int srcHeight,
 //
 void PlayerVideoFrame::on_playListButton_released()
 {
+    if(m_bIsAudioFocus == false)
+    {
+        return;
+    }
+
     if(NULL == m_pPlayListFrame)
     {
         m_pPlayListFrame = new PlayListVideoFrame(this);

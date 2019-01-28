@@ -155,6 +155,7 @@ private:
 
 public:
     void setVideoFocus(bool bVideoFocus);
+    void setAudioFocus(bool bAudioFocus);
 
 private:
     int		m_iCurFileListIdx;	//index of media list
@@ -166,6 +167,7 @@ private:
     NX_CMutex	m_listMutex;	//for storage event
     PlayListVideoFrame* m_pPlayListFrame;
     bool 	m_bIsVideoFocus;
+    bool 	m_bIsAudioFocus;
 
     // Terminate
     void (*m_pRequestTerminate)(void);
