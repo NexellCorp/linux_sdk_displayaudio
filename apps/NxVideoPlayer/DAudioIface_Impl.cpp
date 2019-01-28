@@ -18,7 +18,7 @@ void Init(void *pObj, const char *pArgs)
     if (!p->Initialize())
     {
         NXLOGE("[%s] Initialize().", __FUNCTION__);
-        return;
+        deInit();
     }
 }
 
