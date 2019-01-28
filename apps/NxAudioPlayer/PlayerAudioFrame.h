@@ -128,6 +128,9 @@ private:
     //	Update Progress Bar
     void updateProgressBar(QMouseEvent *event, bool bReleased);
 
+public:
+    void setAudioFocus(bool bAudioFocus);
+
 private slots:
     //
     //	QMediaPlayer's Slots
@@ -158,6 +161,8 @@ private:
     bool	m_bTryFlag;             //try playing back last status
     pthread_mutex_t	m_listMutex;    //for storage event
     PlayListAudioFrame* m_pPlayListFrame;
+
+    bool m_bIsAudioFocus;
 
     // Terminate
     void (*m_pRequestTerminate)(void);

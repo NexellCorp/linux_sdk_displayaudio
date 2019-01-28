@@ -206,6 +206,8 @@ void MainFrame::RequestAudioFocus(FocusType eType, FocusPriority ePriority, bool
     }
     else
     {
+        ui->m_PlayerFrame->setAudioFocus(true);
+        ui->m_PlayerFrame->PlaySeek();
         m_bHasAudioFocus = true;
     }
 }
@@ -228,6 +230,10 @@ void MainFrame::RequestAudioFocusTransient(FocusPriority ePriority, bool *bOk)
     }
     else
     {
+        ui->m_PlayerFrame->SaveInfo();
+        ui->m_PlayerFrame->StopAudio();
+        ui->m_PlayerFrame->CloseAudio();
+        ui->m_PlayerFrame->setAudioFocus(false);
         *bOk = true;
     }
 
