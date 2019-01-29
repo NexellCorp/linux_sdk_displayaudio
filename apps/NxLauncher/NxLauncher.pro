@@ -25,7 +25,7 @@ DEFINES += QT_DEPRECATED_WARNINGS
 CONFIG -= CONFIG_USE_NO_QML
 
 socname = $$getenv(OECORE_SOCNAME)
-equals(machine, "") {
+equals(socname, "") {
     message("OECORE_SOCNAME is empty")
 } else {
     message($$socname)
