@@ -1,6 +1,6 @@
 //------------------------------------------------------------------------------
 //
-//	Copyright (C) 2016 Nexell Co. All Rights Reserved
+//	Copyright (C) 2018 Nexell Co. All Rights Reserved
 //	Nexell Co. Proprietary & Confidential
 //
 //	NEXELL INFORMS THAT THIS CODE AND INFORMATION IS PROVIDED "AS IS" BASE
@@ -27,7 +27,7 @@
 
 #include <nx_video_api.h>
 #include <nx-v4l2.h>
-#include <nx-drm-allocator.h>
+//#include <nx-drm-allocator.h>
 
 #ifndef NX_MAX_PLANES
 #define	NX_MAX_PLANES	4
@@ -76,6 +76,9 @@ public:
 	int32_t SetVideoMemory( NX_VID_MEMORY_INFO *pVidMem );
 	int32_t AddVideoMemory( NX_VID_MEMORY_INFO *pVidMem );
 
+	int32_t V4l2SensorGetStatus();
+	int32_t	V4l2SensorSetMux(int value);
+
 private:
 	int32_t	V4l2CameraInit();
 	int32_t	V4l2OpenDevices();
@@ -122,12 +125,23 @@ private:
 	int32_t					m_iRegBufSize;
 	pthread_mutex_t			m_hLock;
 
+
+#ifndef USE_ION_ALLOCATOR
 	int32_t					m_iDrmFd;
 	int32_t					m_iDmaFds[MAX_BUF_NUM][NX_MAX_PLANES];
 	int32_t					m_iGemFds[MAX_BUF_NUM][NX_MAX_PLANES];
+#else
+	int32_t					sharedFd[MAX_BUF_NUM][NX_MAX_PLANES];
+#endif
 	int32_t					m_iBufferSize[MAX_BUF_NUM][NX_MAX_PLANES];
 	int32_t					m_iStride[MAX_BUF_NUM][NX_MAX_PLANES];
+
+
 	void*					m_pVirAddr[MAX_BUF_NUM][NX_MAX_PLANES];
+
+
+
+
 
 private:
 	NX_CV4l2Camera (NX_CV4l2Camera &Ref);

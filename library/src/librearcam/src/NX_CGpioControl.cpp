@@ -34,6 +34,7 @@
 #endif
 #define NX_DTAG "[NX_CGpioControl]"
 #include <NX_DbgMsg.h>
+//#include "../../../platform/common.h"
 
 //------------------------------------------------------------------------------
 //
@@ -90,12 +91,12 @@ NX_CGpioControl::~NX_CGpioControl()
 //------------------------------------------------------------------------------
 int32_t NX_CGpioControl::Init( int32_t iGpio )
 {
-	NxDbgMsg( NX_DBG_VBS, "%s()++\n", __FUNCTION__ );
+	//NxMsg( "%s()++\n", __FUNCTION__ );
 
 	if( iGpio <= GPIO_ERROR || iGpio >= GPIO_MAX )
 	{
-		NxDbgMsg( NX_DBG_ERR, "Fail, Check GPIO Number. ( %d )\n", iGpio );
-		NxDbgMsg( NX_DBG_VBS, "%s()--\n", __FUNCTION__ );
+		NxDbgMsg(NX_DBG_ERR, "Fail, Check GPIO Number. ( %d )\n", iGpio );
+		//NxMsg( "%s()--\n", __FUNCTION__ );
 		return -1;
 	}
 
@@ -104,7 +105,7 @@ int32_t NX_CGpioControl::Init( int32_t iGpio )
 
 	if( !access(buf, F_OK) )
 	{
-		NxDbgMsg( NX_DBG_WARN, "Fail, Already Initialize.\n" );
+		//NxDbgMsg(NX_DBG_ERR, "Fail, Already Initialize.\n" );
 	}
 	else
 	{
@@ -112,8 +113,8 @@ int32_t NX_CGpioControl::Init( int32_t iGpio )
 
 		if( 0 > fd )
 		{
-			NxDbgMsg( NX_DBG_ERR, "Fail, Open GPIO.\n" );
-			NxDbgMsg( NX_DBG_VBS, "%s()--\n", __FUNCTION__ );
+			NxDbgMsg(NX_DBG_ERR, "Fail, Open GPIO.\n" );
+			//NxMsg( "%s()--\n", __FUNCTION__ );
 			return -1;
 		}
 
@@ -121,8 +122,8 @@ int32_t NX_CGpioControl::Init( int32_t iGpio )
 
 		if( 0 > write(fd, buf, len) )
 		{
-			NxDbgMsg( NX_DBG_ERR, "Fail, Write GPIO.\n" );
-			NxDbgMsg( NX_DBG_VBS, "%s()--\n", __FUNCTION__ );
+			NxDbgMsg(NX_DBG_ERR, "Fail, Write GPIO.\n" );
+
 			close( fd );
 			return -1;
 		}
@@ -136,18 +137,16 @@ int32_t NX_CGpioControl::Init( int32_t iGpio )
 
 	pthread_mutex_init( &m_hLock, NULL );
 
-	NxDbgMsg( NX_DBG_VBS, "%s()--\n", __FUNCTION__ );
+
 	return 0;
 }
 
 //------------------------------------------------------------------------------
 int32_t NX_CGpioControl::Deinit( void )
 {
-	NxDbgMsg( NX_DBG_VBS, "%s()++\n", __FUNCTION__ );
 
 	if( false == m_bInit )
 	{
-		NxDbgMsg( NX_DBG_VBS, "%s()--\n", __FUNCTION__ );
 		return -1;
 	}
 
@@ -155,8 +154,8 @@ int32_t NX_CGpioControl::Deinit( void )
 
 	if( 0 > fd )
 	{
-		NxDbgMsg( NX_DBG_ERR, "Fail, Open GPIO.\n" );
-		NxDbgMsg( NX_DBG_VBS, "%s()--\n", __FUNCTION__ );
+		NxDbgMsg(NX_DBG_ERR, "Fail, Open GPIO.\n" );
+
 		return -1;
 	}
 
@@ -167,8 +166,8 @@ int32_t NX_CGpioControl::Deinit( void )
 	{
 		close( fd );
 
-		NxDbgMsg( NX_DBG_ERR, "Fail, Write GPIO.\n" );
-		NxDbgMsg( NX_DBG_VBS, "%s()--\n", __FUNCTION__ );
+		NxDbgMsg(NX_DBG_ERR, "Fail, Write GPIO.\n" );
+
 		return -1;
 	}
 
@@ -181,25 +180,23 @@ int32_t NX_CGpioControl::Deinit( void )
 
 	pthread_mutex_destroy( &m_hLock );
 
-	NxDbgMsg( NX_DBG_VBS, "%s()--\n", __FUNCTION__ );
+	NxDbgMsg(NX_DBG_ERR, "%s()--\n", __FUNCTION__ );
 	return 0;
 }
 
 //------------------------------------------------------------------------------
 int32_t NX_CGpioControl::SetDirection( int32_t iDirection )
 {
-	NxDbgMsg( NX_DBG_VBS, "%s()++\n", __FUNCTION__ );
 
 	if( false == m_bInit )
 	{
-		NxDbgMsg( NX_DBG_VBS, "%s()--\n", __FUNCTION__ );
 		return -1;
 	}
 
 	if( iDirection < GPIO_DIRECTION_IN || iDirection > GPIO_DIRECTION_OUT )
 	{
-		NxDbgMsg( NX_DBG_ERR, "Fail, Check Direction. ( %d )\n", iDirection );
-		NxDbgMsg( NX_DBG_VBS, "%s()--\n", __FUNCTION__ );
+		NxDbgMsg(NX_DBG_ERR, "Fail, Check Direction. ( %d )\n", iDirection );
+
 		return -1;
 	}
 
@@ -209,8 +206,8 @@ int32_t NX_CGpioControl::SetDirection( int32_t iDirection )
 	int32_t fd = open( buf, O_WRONLY );
 	if( 0 > fd )
 	{
-		NxDbgMsg( NX_DBG_ERR, "Fail, Open GPIO.\n" );
-		NxDbgMsg( NX_DBG_VBS, "%s()--\n", __FUNCTION__ );
+		NxDbgMsg(NX_DBG_ERR, "Fail, Open GPIO.\n" );
+
 		return -1;
 	}
 
@@ -219,32 +216,31 @@ int32_t NX_CGpioControl::SetDirection( int32_t iDirection )
 	if( 0 > write( fd, buf, len ) ) {
 		close(fd);
 
-		NxDbgMsg( NX_DBG_ERR, "Fail, Write GPIO.\n" );
-		NxDbgMsg( NX_DBG_VBS, "%s()--\n", __FUNCTION__ );
+		NxDbgMsg(NX_DBG_ERR, "Fail, Write GPIO.\n" );
+
 		return -1;
 	}
 
 	close( fd );
 
-	NxDbgMsg( NX_DBG_VBS, "%s()--\n", __FUNCTION__ );
+
 	return 0;
 }
 
 //------------------------------------------------------------------------------
 int32_t NX_CGpioControl::SetValue( int32_t bValue )
 {
-	NxDbgMsg( NX_DBG_VBS, "%s()++\n", __FUNCTION__ );
+
 
 	if( false == m_bInit )
 	{
-		NxDbgMsg( NX_DBG_VBS, "%s()--\n", __FUNCTION__ );
 		return -1;
 	}
 
 	if( bValue < 0 || bValue > 1 )
 	{
-		NxDbgMsg( NX_DBG_ERR, "Fail, Check Value. ( %d )\n", bValue );
-		NxDbgMsg( NX_DBG_VBS, "%s()--\n", __FUNCTION__ );
+		NxDbgMsg(NX_DBG_ERR, "Fail, Check Value. ( %d )\n", bValue );
+
 		return -1;
 	}
 
@@ -254,8 +250,8 @@ int32_t NX_CGpioControl::SetValue( int32_t bValue )
 	int32_t fd = open(buf, O_RDWR);
 	if( 0 > fd )
 	{
-		NxDbgMsg( NX_DBG_ERR, "Fail, Open GPIO.\n" );
-		NxDbgMsg( NX_DBG_VBS, "%s()--\n", __FUNCTION__ );
+		NxDbgMsg(NX_DBG_ERR, "Fail, Open GPIO.\n" );
+
 		return -1;
 	}
 
@@ -265,25 +261,24 @@ int32_t NX_CGpioControl::SetValue( int32_t bValue )
 	{
 		close(fd);
 
-		NxDbgMsg( NX_DBG_ERR, "Fail, Write GPIO.\n" );
-		NxDbgMsg( NX_DBG_VBS, "%s()--\n", __FUNCTION__ );
+		NxDbgMsg(NX_DBG_ERR, "Fail, Write GPIO.\n" );
+
 		return -1;
 	}
 
 	close( fd );
 
-	NxDbgMsg( NX_DBG_VBS, "%s()--\n", __FUNCTION__ );
+
 	return 0;
 }
 
 //------------------------------------------------------------------------------
 int32_t NX_CGpioControl::GetValue( void )
 {
-	NxDbgMsg( NX_DBG_VBS, "%s()++\n", __FUNCTION__ );
+
 
 	if( false == m_bInit )
 	{
-		NxDbgMsg( NX_DBG_VBS, "%s()--\n", __FUNCTION__ );
 		return -1;
 	}
 
@@ -293,8 +288,8 @@ int32_t NX_CGpioControl::GetValue( void )
 	int32_t fd = open(buf, O_RDWR);
 	if( 0 > fd )
 	{
-		NxDbgMsg( NX_DBG_ERR, "Fail, Open GPIO.\n" );
-		NxDbgMsg( NX_DBG_VBS, "%s()--\n", __FUNCTION__ );
+		NxDbgMsg(NX_DBG_ERR, "Fail, Open GPIO.\n" );
+
 		return -1;
 	}
 
@@ -302,31 +297,31 @@ int32_t NX_CGpioControl::GetValue( void )
 	{
 		close(fd);
 
-		NxDbgMsg( NX_DBG_ERR, "Fail, Read GPIO.\n" );
-		NxDbgMsg( NX_DBG_VBS, "%s()--\n", __FUNCTION__ );
+		NxDbgMsg(NX_DBG_ERR, "Fail, Read GPIO.\n" );
+
 		return -1;
 	}
 
 	close(fd);
 
-	NxDbgMsg( NX_DBG_VBS, "%s()--\n", __FUNCTION__ );
+
 	return atoi(buf);
 }
 
 //------------------------------------------------------------------------------
 int32_t NX_CGpioControl::SetEdge( int32_t iEdge )
 {
-	NxDbgMsg( NX_DBG_VBS, "%s()++\n", __FUNCTION__ );
+	NxDbgMsg(NX_DBG_INFO, "%s()++\n", __FUNCTION__ );
 
 	if( false == m_bInit )
 	{
-		NxDbgMsg( NX_DBG_VBS, "%s()--\n", __FUNCTION__ );
+		NxDbgMsg(NX_DBG_ERR, "%s()--\n", __FUNCTION__ );
 		return -1;
 	}
 
 	if( iEdge < GPIO_EDGE_NONE || iEdge > GPIO_EDGE_BOTH ) {
-		NxDbgMsg( NX_DBG_ERR, "Fail, Check Edge.\n" );
-		NxDbgMsg( NX_DBG_VBS, "%s()--\n", __FUNCTION__ );
+		NxDbgMsg(NX_DBG_ERR, "Fail, Check Edge.\n" );
+		NxDbgMsg(NX_DBG_ERR, "%s()--\n", __FUNCTION__ );
 		return -1;
 	}
 
@@ -336,8 +331,8 @@ int32_t NX_CGpioControl::SetEdge( int32_t iEdge )
 	int32_t fd = open( buf, O_RDWR );
 	if( 0 > fd )
 	{
-		NxDbgMsg( NX_DBG_ERR, "Fail, Open GPIO.\n" );
-		NxDbgMsg( NX_DBG_VBS, "%s()--\n", __FUNCTION__ );
+		NxDbgMsg(NX_DBG_ERR, "Fail, Open GPIO.\n" );
+		NxDbgMsg(NX_DBG_ERR, "%s()--\n", __FUNCTION__ );
 		return -1;
 	}
 
@@ -351,8 +346,8 @@ int32_t NX_CGpioControl::SetEdge( int32_t iEdge )
 	{
 		close(fd);
 
-		NxDbgMsg( NX_DBG_ERR, "Fail, Write GPIO.\n" );
-		NxDbgMsg( NX_DBG_VBS, "%s()--\n", __FUNCTION__ );
+		NxDbgMsg(NX_DBG_ERR, "Fail, Write GPIO.\n" );
+		NxDbgMsg(NX_DBG_ERR, "%s()--\n", __FUNCTION__ );
 		return -1;
 	}
 
@@ -360,7 +355,7 @@ int32_t NX_CGpioControl::SetEdge( int32_t iEdge )
 
 	m_iEdge = iEdge;
 
-	NxDbgMsg( NX_DBG_VBS, "%s()--\n", __FUNCTION__ );
+	NxDbgMsg(NX_DBG_INFO, "%s()--\n", __FUNCTION__ );
 	return 0;
 }
 
@@ -378,14 +373,14 @@ int32_t NX_CGpioControl::WaitInterrupt( void )
 	pthread_mutex_unlock( &m_hLock );
 
 	if( m_iDirection == GPIO_DIRECTION_OUT ) {
-		NxDbgMsg( NX_DBG_ERR, "Fail, Check Direction.\n" );
-		NxDbgMsg( NX_DBG_VBS, "%s()--\n", __FUNCTION__ );
+		NxDbgMsg(NX_DBG_ERR, "Fail, Check Direction.\n" );
+		NxDbgMsg(NX_DBG_ERR, "%s()--\n", __FUNCTION__ );
 		return -1;
 	}
 
 	if( m_iEdge == GPIO_EDGE_NONE ) {
-		NxDbgMsg( NX_DBG_ERR, "Fail, Check Edge.\n");
-		NxDbgMsg( NX_DBG_VBS, "%s()--\n", __FUNCTION__ );
+		NxDbgMsg(NX_DBG_ERR, "Fail, Check Edge.\n");
+		NxDbgMsg(NX_DBG_ERR, "%s()--\n", __FUNCTION__ );
 		return -1;
 	}
 
@@ -393,8 +388,8 @@ int32_t NX_CGpioControl::WaitInterrupt( void )
 
 	if( 0 > (fd = open(buf, O_RDWR)) )
 	{
-		NxDbgMsg( NX_DBG_ERR, "Fail, Open GPIO.\n" );
-		NxDbgMsg( NX_DBG_VBS, "%s()--\n", __FUNCTION__ );
+		NxDbgMsg(NX_DBG_ERR, "Fail, Open GPIO.\n" );
+		NxDbgMsg(NX_DBG_INFO, "%s()--\n", __FUNCTION__ );
 		return -1;
 	}
 
@@ -403,8 +398,8 @@ int32_t NX_CGpioControl::WaitInterrupt( void )
 	if( 0 > read(fd, buf, sizeof(buf)) ) {
 		close(fd);
 
-		NxDbgMsg( NX_DBG_ERR, "Fail, Read GPIO.\n" );
-		NxDbgMsg( NX_DBG_VBS, "%s()--\n", __FUNCTION__ );
+		NxDbgMsg(NX_DBG_ERR, "Fail, Read GPIO.\n" );
+		NxDbgMsg(NX_DBG_INFO, "%s()--\n", __FUNCTION__ );
 		return -1;
 	}
 
@@ -420,8 +415,8 @@ int32_t NX_CGpioControl::WaitInterrupt( void )
 		{
 			close(fd);
 
-			NxDbgMsg( NX_DBG_ERR, "Fail, poll().\n" );
-			NxDbgMsg( NX_DBG_VBS, "%s()--\n", __FUNCTION__ );
+			NxDbgMsg(NX_DBG_ERR, "Fail, poll().\n" );
+			NxDbgMsg(NX_DBG_INFO, "%s()--\n", __FUNCTION__ );
 			return -1;
 		}
 		else if( hPoll > 0 )
@@ -430,7 +425,7 @@ int32_t NX_CGpioControl::WaitInterrupt( void )
 			{
 				close(fd);
 
-				NxDbgMsg( NX_DBG_VBS, "%s()--\n", __FUNCTION__ );
+				NxDbgMsg(NX_DBG_INFO, "%s()--\n", __FUNCTION__ );
 				return 0;
 			}
 		}
@@ -442,19 +437,19 @@ int32_t NX_CGpioControl::WaitInterrupt( void )
 
 	close(fd);
 
-	NxDbgMsg( NX_DBG_VBS, "%s()--\n", __FUNCTION__ );
+	NxDbgMsg(NX_DBG_INFO, "%s()--\n", __FUNCTION__ );
 	return -1;
 }
 
 //------------------------------------------------------------------------------
 int32_t NX_CGpioControl::ResetInterrupt( void )
 {
-	NxDbgMsg( NX_DBG_VBS, "%s()++\n", __FUNCTION__ );
+	NxDbgMsg(NX_DBG_INFO, "%s()++\n", __FUNCTION__ );
 
 	pthread_mutex_lock( &m_hLock );
 	m_bReset = true;
 	pthread_mutex_unlock( &m_hLock );
 
-	NxDbgMsg( NX_DBG_VBS, "%s()--\n", __FUNCTION__ );
+	NxDbgMsg(NX_DBG_INFO, "%s()--\n", __FUNCTION__ );
 	return 0;
 }

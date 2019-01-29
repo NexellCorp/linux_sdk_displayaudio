@@ -1,6 +1,6 @@
 //------------------------------------------------------------------------------
 //
-//	Copyright (C) 2016 Nexell Co. All Rights Reserved
+//	Copyright (C) 2018 Nexell Co. All Rights Reserved
 //	Nexell Co. Proprietary & Confidential
 //
 //	NEXELL INFORMS THAT THIS CODE AND INFORMATION IS PROVIDED "AS IS" BASE
@@ -17,22 +17,21 @@
 //
 //------------------------------------------------------------------------------
 
-#include "NX_CV4l2Camera.h"
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <unistd.h>
+#include <media-bus-format.h>
 #include <linux/videodev2.h>
 #include <videodev2_nxp_media.h>
-#include <media-bus-format.h>
-#include <nx-drm-allocator.h>
-#include <unistd.h>
+//#include <nx-drm-allocator.h>
+#include "NX_CV4l2Camera.h"
 
 #ifdef NX_DTAG
 #undef NX_DTAG
 #endif
 #define NX_DTAG		"[NX_CV4l2Camera]"
 #include "NX_DbgMsg.h"
-
 
 #ifndef ALIGN
 #define ALIGN(x, a) (((x) + (a) - 1) & ~((a) - 1))
@@ -42,8 +41,6 @@
 NX_CV4l2Camera::NX_CV4l2Camera()
 	: m_bInit(0)
 	, m_bInterlaced(false)
-
-	//	File Descriptor
 	, m_iSensorFd(-1)
 	, m_iClipperSubdevFd(-1)
 	, m_iDecimatorSubdevFd(-1)
@@ -64,6 +61,7 @@ NX_CV4l2Camera::NX_CV4l2Camera()
 //------------------------------------------------------------------------------
 NX_CV4l2Camera::~NX_CV4l2Camera()
 {
+	NxDbgMsg( NX_DBG_VBS, "%s().\n", __func__ );
 	Deinit();
 	pthread_mutex_destroy( &m_hLock );
 }
@@ -103,8 +101,9 @@ int32_t NX_CV4l2Camera::V4l2CameraInit()
 
 	for (i = 0; i < m_iRegBufSize; i++)
 	{
-		NxDbgMsg( NX_DBG_VBS, "nx_v4l2_qbuf[%d], DmaFd[%d], BufferSize[%d]\n",
-					i, m_iDmaFds[i][0], m_iBufferSize[i][0]);
+#ifndef USE_ION_ALLOCATOR
+		//NxDbgMsg( NX_DBG_VBS, "nx_v4l2_qbuf[%d], DmaFd[%d], BufferSize[%d]\n",
+		//			i, m_iDmaFds[i][0], m_iBufferSize[i][0]);
 		ret = nx_v4l2_qbuf(m_iClipperVideoFd,
 							nx_clipper_video, m_iNumPlane, i,
 							(int32_t*)&m_iDmaFds[i],
@@ -114,6 +113,19 @@ int32_t NX_CV4l2Camera::V4l2CameraInit()
 			NxDbgMsg( NX_DBG_ERR, "failed to qbuf: index %d\n", i);
 			return -1;
 		}
+#else
+		//NxDbgMsg( NX_DBG_VBS, "nx_v4l2_qbuf[%d], sharedFd[%d], BufferSize[%d]\n",
+		//			i, sharedFd[i][0], m_iBufferSize[i][0]);
+		ret = nx_v4l2_qbuf(m_iClipperVideoFd,
+							nx_clipper_video, m_iNumPlane, i,
+							(int32_t*)&sharedFd[i],
+							(int32_t *)&m_iBufferSize[i]);
+		if (ret)
+		{
+			NxDbgMsg( NX_DBG_ERR, "failed to qbuf: index %d\n", i);
+			return -1;
+		}
+#endif
 	}
 
 	ret = nx_v4l2_streamon(m_iClipperVideoFd, nx_clipper_video);
@@ -138,14 +150,15 @@ int32_t NX_CV4l2Camera::V4l2OpenDevices()
 	}
 
 	m_iClipperSubdevFd = nx_v4l2_open_device(nx_clipper_subdev, m_iModule);
-	if (m_iDecimatorSubdevFd < 0)
+	if (m_iClipperSubdevFd < 0)
 	{
 		NxDbgMsg( NX_DBG_ERR, "Fail, nx_v4l2_open_device(nx_clipper_subdev).\n" );
 		return -1;
 	}
 
 	m_iClipperVideoFd = nx_v4l2_open_device(nx_clipper_video, m_iModule);
-	if (m_iClipperSubdevFd < 0)
+
+	if (m_iClipperVideoFd < 0)
 	{
 		NxDbgMsg( NX_DBG_ERR, "Fail, nx_v4l2_open_device(clipper_video).\n" );
 		return -1;
@@ -162,8 +175,8 @@ int32_t NX_CV4l2Camera::V4l2OpenDevices()
 		}
 	}
 
-	NxDbgMsg( NX_DBG_INFO, "[%d] m_iSensorFd = %d, m_iDecimatorSubdevFd = %d, m_iClipperVideoFd=%d\n",
-		m_iModule, m_iSensorFd, m_iDecimatorSubdevFd, m_iClipperVideoFd);
+	NxDbgMsg( NX_DBG_INFO, "[%d] m_iSensorFd = %d, m_iClipperSubdevFd = %d, m_iClipperVideoFd=%d\n",
+		m_iModule, m_iSensorFd, m_iClipperSubdevFd, m_iClipperVideoFd);
 
 	return 0;
 }
@@ -287,10 +300,12 @@ int32_t NX_CV4l2Camera::V4l2SetFormat()
 	return 0;
 }
 
+
 //------------------------------------------------------------------------------
 int32_t NX_CV4l2Camera::Init( NX_VIP_INFO *pInfo )
 {
 	int32_t ret = 0;
+
 	//
 	m_iModule				= pInfo->iModule;
 	m_iSensorId				= pInfo->iSensorId;
@@ -303,7 +318,7 @@ int32_t NX_CV4l2Camera::Init( NX_VIP_INFO *pInfo )
 	m_iCropWidth			= pInfo->iCropWidth;
 	m_iCropHeight			= pInfo->iCropHeight;
 	//
-	m_iNumPlane				= pInfo->iNumPlane;
+	m_iNumPlane				= pInfo->iNumPlane;					// FIX ME!!!!!!!!!!!
 	m_iPixelFormat			= V4L2_PIX_FMT_YUV420;
 	m_iBusFormat			= MEDIA_BUS_FMT_UYVY8_2X8;  //navi 4418
 
@@ -333,13 +348,16 @@ void NX_CV4l2Camera::Deinit( void )
 {
 	if( m_bInit )
 	{
+		NxDbgMsg( NX_DBG_VBS, "%s().\n", __func__ );
 		V4l2Deinit();
 		m_iCurQueuedSize= 0;
 		for(int32_t i = 0; i < MAX_BUF_NUM; i++ )
 		{
 			m_pMemSlot[i] = NULL;
+#ifndef USE_ION_ALLOCATOR
 			memset(m_iDmaFds, 0, sizeof(m_iDmaFds));
 			memset(m_iGemFds, 0, sizeof(m_iGemFds));
+#endif
 			memset(m_iBufferSize, 0, sizeof(m_iBufferSize));
 			memset(m_pVirAddr, 0, sizeof(m_pVirAddr));
 		}
@@ -401,10 +419,15 @@ int32_t NX_CV4l2Camera::QueueBuffer( int32_t bufferIndex )
 	m_iCurQueuedSize++;
 	pthread_mutex_unlock( &m_hLock );
 
+
 	iRet = nx_v4l2_qbuf( m_iClipperVideoFd, nx_clipper_video,
 						m_iNumPlane,
 						bufferIndex,
+						#ifndef USE_ION_ALLOCATOR
 						(int32_t *)&m_iDmaFds[bufferIndex],
+						#else
+						(int32_t *)&sharedFd[bufferIndex],
+						#endif
 						(int32_t *)&m_iBufferSize[bufferIndex]);
 
 	if( 0 > iRet )
@@ -432,7 +455,10 @@ int32_t NX_CV4l2Camera::DequeueBuffer( int32_t *pBufferIndex )
 	}
 	pthread_mutex_unlock( &m_hLock );
 
+
 	iRet = nx_v4l2_dqbuf(m_iClipperVideoFd, nx_clipper_video, m_iNumPlane, &iSlotIndex);
+
+
 
 	if( 0 > iRet )
 	{
@@ -466,7 +492,7 @@ int32_t NX_CV4l2Camera::AddVideoMemory( NX_VID_MEMORY_INFO *pVidMem )
 		if( m_pMemSlot[i] == NULL )
 		{
 			m_pMemSlot[i] = pVidMem;
-
+#ifndef USE_ION_ALLOCATOR
 			for( int32_t j=0 ; j<NX_MAX_PLANES ; j++ )
 			{
 				m_iDmaFds[i][j] 	= pVidMem->dmaFd[j];
@@ -475,6 +501,16 @@ int32_t NX_CV4l2Camera::AddVideoMemory( NX_VID_MEMORY_INFO *pVidMem )
 				m_iStride[i][j]		= pVidMem->stride[j];
 				m_pVirAddr[i][j]	= pVidMem->pBuffer[j];
 			}
+#else
+
+			for( int32_t j=0 ; j<NX_MAX_PLANES ; j++ )
+			{
+				sharedFd[i][j] 	= pVidMem->sharedFd[j];
+				m_iBufferSize[i][j]	= pVidMem->size[j];
+				m_iStride[i][j] = pVidMem->stride[j];
+				m_pVirAddr[i][j]	= pVidMem->pBuffer[j];
+			}
+#endif
 			break;
 		}
 	}
@@ -485,9 +521,12 @@ int32_t NX_CV4l2Camera::AddVideoMemory( NX_VID_MEMORY_INFO *pVidMem )
 		pthread_mutex_unlock( &m_hLock );
 		return -1;
 	}
+
 	m_iRegBufSize++;
 	m_iCurQueuedSize ++;
+
 	pthread_mutex_unlock( &m_hLock );
 
 	return 0;
 }
+

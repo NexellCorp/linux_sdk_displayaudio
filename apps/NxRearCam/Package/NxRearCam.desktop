@@ -1,0 +1,12 @@
+[Desktop Entry]
+Type=Application
+Version=0.5.0
+Name=NxRearCam
+Name[ko]=NxRearCam
+Comment=Nexell Rear Camera for Qt
+Comment[ko]=Nexell Rear Camera for Qt
+Icon=rearcam.png
+TryExec=NxRearCam
+Exec=NxRearCam
+AutoStart=yes
+Visible=no
