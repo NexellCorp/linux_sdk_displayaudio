@@ -1,53 +1,65 @@
-#ifndef __NX_REARCAM_H__
-#define __NX_REARCAM_H__
+//------------------------------------------------------------------------------
+//
+//	Copyright (C) 2018 Nexell Co. All Rights Reserved
+//	Nexell Co. Proprietary & Confidential
+//
+//	NEXELL INFORMS THAT THIS CODE AND INFORMATION IS PROVIDED "AS IS" BASE
+//  AND	WITHOUT WARRANTY OF ANY KIND, EITHER EXPRESSED OR IMPLIED, INCLUDING
+//  BUT NOT LIMITED TO THE IMPLIED WARRANTIES OF MERCHANTABILITY AND/OR FITNESS
+//  FOR A PARTICULAR PURPOSE.
+//
+//	Module		:
+//	File		:
+//	Description	:
+//	Author		:
+//	Export		:
+//	History		:
+//
+//------------------------------------------------------------------------------
+
+#ifndef __NX_REAR_CAM_H__
+#define __NX_REAR_CAM_H__
+
+#ifdef __cplusplus
 
 #include <stdint.h>
 
-#ifdef __cplusplus
-extern "C" {
+#ifdef ANDROID
+#include <android/native_window.h>
+#include <android/native_window_jni.h>
 #endif
 
-/*
-	Display method enumerate
+typedef struct _NX_REARCAM_INFO {
+	int32_t iType;
+    int32_t iModule;
+    int32_t iSensor;
+	int32_t iClipper;
+	int32_t bUseMipi;
+	int32_t bUseInterCam;
 
-	@ DSP_MODULE_DRM
-	 : Display on DRM video layer.
+    int32_t iFpsNum;
+    int32_t iFpsDen;
+    int32_t iNumPlane;
 
-	@ DSP_MOUDLE_QT
-	 : Display on QT windows.(N/A)
-*/
-enum{
-	DSP_MODULE_DRM,
-	DSP_MODULE_QT,
-};
+	int32_t iWidth;
+	int32_t iHeight;
 
-enum {
-	CB_TYPE_BUFFER,
-	CB_TYPE_CMD_HIDE,
-	CB_TYPE_CMD_SHOW,
-};
+    int32_t		iCropX;			//	Cliper x
+	int32_t		iCropY;			//	Cliper y
+	int32_t		iCropWidth;		//	Cliper width
+	int32_t		iCropHeight;	//	Cliper height
 
-typedef struct tagCAMERA_INFO{
-	int32_t		iModule;
-	int32_t		iSensorId;
+	int32_t		iOutWidth;		//	Decimator width
+	int32_t		iOutHeight;		//	Decimator height
 
-	int32_t		bInterlace;
 
-	int32_t		iWidth;
-	int32_t		iHeight;
+} NX_REARCAM_INFO;
 
-	int32_t		iCropX;
-	int32_t		iCropY;
-	int32_t		iCropWidth;
-	int32_t		iCropHeight;
-	int32_t		iOutWidth;
-	int32_t		iOutHeight;
-}CAMERA_INFO;
 
 typedef struct tagDISPLAY_INFO{
-	int32_t		iConnectorID;    //  Dsp Connector ID
-	int32_t		iPlaneId;       //  DRM Plane ID
-	int32_t		iCrtcId;        //  DRM CRTC ID
+	uint32_t    iConnectorIdx;	//  DRM Connector index
+	int32_t		iPlaneIdx;       //  DRM Plane index
+	int32_t		iCrtcIdx;        //  DRM CRTC index
 	uint32_t	uDrmFormat;		//	DRM Data Format
 	int32_t		iSrcWidth;      //  Input Image's Width
 	int32_t		iSrcHeight;     //  Input Image's Height
@@ -59,71 +71,57 @@ typedef struct tagDISPLAY_INFO{
 	int32_t		iDspY;
 	int32_t		iDspWidth;
 	int32_t		iDspHeight;
-	int32_t 	iDspCrtcIdx;
-	int32_t		iDspLayerIdx;
+
+	int32_t 	iPlaneIdx_PGL;   // parking line rendering plane index
+	int32_t     uDrmFormat_PGL;  // parking line drm data format
+
+	void*    m_pNativeWindow;
+
 }DISPLAY_INFO;
 
 
-/*
-	Sart RearCam Service
-*/
+typedef struct tagDEINTERLACE_INFO{
+	int32_t 	iWidth;
+	int32_t		iHeight;
+	int32_t		iEngineSel;
+	int32_t		iCorr;
+}DEINTERLACE_INFO;
 
-int32_t NXDA_ShowRearCam(CAMERA_INFO *, DISPLAY_INFO *);
-int32_t NXDA_HideRearCam();
+typedef struct NX_DISPLAY_INFO	*NX_DISPLAY_HANDLE;
 
-//
-// Callback Function Format
-//  : int32_t callback( void *pApp, int32_t type, void *data, int32_t dataSize );
-//  Parameters :
-//		void *pApp     :
-//			This is the pApp pointer data used in the NXDA_RegRenderCallback( void *pApp ).
-//			This parameter is used when you want to use a class object in c ++ or
-//			a specific pointer managed by an application at the callback return point.
-//		int32_t type  :
-//			Callback function type. See CB_TYPE_XXXX parameter.
-//		void *data     :
-//			This parameter is used to send data through the Callback function.
-//		void *dataSize :
-//			This is the size of data.
-//
-//	Callback for Rendering
-//	if callback is not set, use drm video layer.
-void NXDA_RegRenderCallback( void *pApp, int32_t (callback)(void *, int32_t, void *, int32_t) );
-//	Callback for Control
-void NXDA_RegControlCallback( void *pApp, int32_t (callback)(void *, int32_t, void *, int32_t) );
-
-
-
-//
-//
-//	Back Gear Detect
-//
-//
 enum {
-	BACKGEAR_UNKNOWN = -1,
-	BACKGEAR_ON = 0,
-	BACKGEAR_OFF = 1
+	CAM_TYPE_NONE = 0,
+	CAM_TYPE_VIP,
 };
 
-/*
-	@ nGpio : GPIO Port Number
-		GPIOA0 - GPIOA31 (   0 -  31 )
-		GPIOB0 - GPIOB31 (  32 -  63 )
-		GPIOC0 - GPIOC31 (  64 -  95 )
-		GPIOD0 - GPIOD31 (  96 - 127 )
-		GPIOE0 - GPIOE31 ( 128 - 159 )
-		ALIVE0 - ALIVE7  ( 160 - 167 )
 
-	@ nChkDelay : GPIO check delay (milli-seconds)
-*/
-int32_t NXDA_StartBackGearDetectService( int32_t nGpio, int32_t nChkDelay );
-void NXDA_StopBackGearDectectService();
-void NXDA_RegisterBackGearEventCallBack(void *, void (*callback)(void *, int32_t));
+enum deinter_engine_sel {
+	NON_DEINTERLACER = 0,
+	NEXELL_DEINTERLACER,
+	THUNDER_DEINTERLACER,
+	DEINTERLACER_MAX
+};
 
-const char* NXDA_RearCamGetVersion();
 
-#ifdef __cplusplus
-}
-#endif
+enum {
+    NX_BACKGEAR_NOTDETECTED = 0x0,
+    NX_BACKGEAR_DETECTED = 0x1,
+};
 
-#endif
+int32_t NX_RearCamInit(NX_REARCAM_INFO *p_vipInfo, DISPLAY_INFO* p_dspInfo, DEINTERLACE_INFO* p_deinterInfo);
+int32_t NX_RearCamDeInit();
+int32_t NX_RearCamStart();
+int32_t NX_RearCamPause(int32_t m_bPause);
+int32_t NX_RearCamGetStatus();
+int32_t NX_RearCamGetVersion();
+int32_t NX_RearCamSetDisplayPosition(int32_t x, int32_t y, int32_t w, int32_t h);
+
+int32_t NX_StartBackGearDetectService( int32_t nGpio, int32_t nChkDelay );
+void NX_StopBackGearDetectService();
+void NX_RegisterBackGearEventCallBack(void *, void (*callback)(void*, int32_t));
+
+
+
+#endif	// __cplusplus
+
+#endif	// __NX_REAR_CAM_H__

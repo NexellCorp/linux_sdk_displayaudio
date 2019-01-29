@@ -1,6 +1,6 @@
 //------------------------------------------------------------------------------
 //
-//	Copyright (C) 2016 Nexell Co. All Rights Reserved
+//	Copyright (C) 2018 Nexell Co. All Rights Reserved
 //	Nexell Co. Proprietary & Confidential
 //
 //	NEXELL INFORMS THAT THIS CODE AND INFORMATION IS PROVIDED "AS IS" BASE
@@ -28,16 +28,18 @@
 #include <pthread.h>
 #include <unistd.h>
 
+//#include <NX_BackGearDetect.h>
 #include <NX_RearCam.h>
 
 #include "NX_CGpioControl.h"
 #include "CNX_BaseClass.h"
-#include "NX_DbgMsg.h"
+#include <NX_DbgMsg.h>
+//#include "../../../platform/common.h"
 
 class NX_CBackgearDetect : protected CNX_Thread
 {
 public:
-	void RegEventCallback( void *, void (*cbFunc)(void *, int32_t) );
+	void RegEventCallback(void *,  void (*cbFunc)(void*,  int32_t) );
 	void StartService( int32_t nGpio, int32_t nChkDelay, int32_t iDetectDelay );
 	void StopService();
 
@@ -54,7 +56,6 @@ private:
 	//
 	// Hardware Depend Parameter
 	//
-	enum { BACKGEAR_GPIO_PORT = ALIVE3 };
 
 	static NX_CBackgearDetect* m_pBackgearDetect;
 
@@ -154,7 +155,8 @@ void  NX_CBackgearDetect::ThreadProc()
 			{
 				m_EventCallBack(m_pCbAppData, readStatus );
 			}
-			NxDbgMsg( NX_DBG_DEBUG, "Backgear status changed (%d-->%d)\n", m_iCurGearStatus, readStatus );
+
+			NxDbgMsg(NX_DBG_INFO, "Backgear status changed (gpio value : %d-->%d)\n", m_iCurGearStatus, readStatus );
 		}
 		m_iCurGearStatus = readStatus;
 		usleep( m_CheckDealy * 1000 );
@@ -185,20 +187,20 @@ NX_CBackgearDetect *NX_CBackgearDetect::GetInstance()
 //
 //		External Interface
 //
-int32_t NXDA_StartBackGearDetectService( int32_t nGpio, int32_t nChkDelay )
+int32_t NX_StartBackGearDetectService( int32_t nGpio, int32_t nChkDelay )
 {
 	NX_CBackgearDetect *pInst = (NX_CBackgearDetect *)NX_CBackgearDetect::GetInstance();
 	pInst->StartService(nGpio, nChkDelay, 0);
 	return 0;
 }
 
-void NXDA_StopBackGearDectectService()
+void NX_StopBackGearDetectService()
 {
 	NX_CBackgearDetect *pInst = (NX_CBackgearDetect *)NX_CBackgearDetect::GetInstance();
 	pInst->StopService();
 }
 
-void NXDA_RegisterBackGearEventCallBack(void *pAppData, void (*callback)(void *, int32_t))
+void NX_RegisterBackGearEventCallBack(void *pAppData, void (*callback)(void *,  int32_t))
 {
 	NX_CBackgearDetect *pInst = (NX_CBackgearDetect *)NX_CBackgearDetect::GetInstance();
 	pInst->RegEventCallback( pAppData, callback );

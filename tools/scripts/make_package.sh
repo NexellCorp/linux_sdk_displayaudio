@@ -67,10 +67,10 @@ function package_sdk_qtapplications()
 
 	if [ ${SDK_ENABLE_CAM} == "yes" ]; then
 		package_sdk_qtapplication NxAVIn
-		package_sdk_qtapplication NxQuickRearCam
+		package_sdk_qtapplication NxRearCam
 	elif [ ${SDK_ENABLE_CAM} == "no" ]; then
 		unpackage_sdk_qtapplication NxAVIn
-		unpackage_sdk_qtapplication NxQuickRearCam
+		unpackage_sdk_qtapplication NxRearCam
 	fi
 
 	package_sdk_qtapplication NxAudioPlayer

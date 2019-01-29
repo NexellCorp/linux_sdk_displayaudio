@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<map>
+    <string name="module">1</string>
+    <string name="use_intercam">1</string>
+    <string name="cam_width">704</string>
+    <string name="cam_height">480</string>
+    <string name="video_layer_idx">0</string>
+    <string name="crtc_idx">0</string>
+    <string name="cam_display_x">0</string>
+    <string name="cam_display_y">0</string>
+    <string name="cam_display_width">1024</string>
+    <string name="cam_display_height">600</string>
+    <string name="deinterlace_engine">1</string>
+    <string name="deinter_param">3</string>
+    <string name="lcd_width">1024</string>
+    <string name="lcd_height">600</string>
+    <string name="pgl_enable">1</string>
+    <string name="backgear_enable">1</string>
+    <string name="gpioIdx">163</string>
+    <string name="quick_running">1</string>
+</map>

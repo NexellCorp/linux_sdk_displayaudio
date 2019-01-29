@@ -26,7 +26,7 @@
 #define NX_DTAG	"[NX_DbgMsg]"
 #include "NX_DbgMsg.h"
 
-uint32_t gNxFilterDebugLevel = NX_DBG_INFO;
+uint32_t gNxFilterDebugLevel = NX_DBG_ERR;
 
 //------------------------------------------------------------------------------
 void NxChgFilterDebugLevel( uint32_t level )

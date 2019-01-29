@@ -107,7 +107,7 @@ QT_APPS += NxBTAudio
 QT_APPS += NxBTPhone
 QT_APPS += NxBTSettings
 QT_APPS += NxLauncher
-QT_APPS += NxQuickRearCam
+QT_APPS += NxRearCam
 QT_APPS += NxVideoPlayer
 
 TOOLS :=
