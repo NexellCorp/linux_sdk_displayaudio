@@ -1676,15 +1676,21 @@ void NxLauncher::resizeEvent(QResizeEvent *)
 {
 	int w = width();
 	int h = height();
+	float rw = 1.f;
+	float rh = 1.f;
 
 	if (w == DEFAULT_WIDTH && h == DEFAULT_HEIGHT)
 	{
 		return;
 	}
 
+	rw = (float)w/DEFAULT_WIDTH;
+	rh = (float)h/DEFAULT_HEIGHT;
+
 	ui->launcher->setFixedSize(w, h);
 	ui->statusBar->setFixedSize(w, h * 0.1);
 	ui->notificationBar->setFixedSize(w, h * 0.1);
+	ui->volumeBar->move(width()/2-ui->volumeBar->width()/2, rh*ui->volumeBar->y());
 #ifndef CONFIG_USE_NO_QML
 	m_pLauncherWidget->setGeometry(0, ui->statusBar->height(), w, h * 0.9);
 #endif
