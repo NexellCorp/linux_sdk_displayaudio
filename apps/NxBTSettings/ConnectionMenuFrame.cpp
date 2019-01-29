@@ -19,6 +19,8 @@ ConnectionMenuFrame::ConnectionMenuFrame(QWidget *parent) :
 	connect(ui->keyboardFrame, SIGNAL(signalAccepted()), this, SLOT(slotEnterFromKeyboard()));
 	connect(ui->keyboardFrame, SIGNAL(signalRejected()), this, SLOT(slotExitFromKeyboard()));
 
+	m_KeyboardPt.setX(ui->keyboardFrame->x());
+	m_KeyboardPt.setY(ui->keyboardFrame->y());
 	ui->keyboardFrame->hide();
 
 	ui->BUTTON_RENAME_BT_DEVICE->installEventFilter(this);
@@ -134,11 +136,17 @@ void ConnectionMenuFrame::SetupUI()
 	rw = widthRatio * ui->BUTTON_UNPAIR_ALL->width();
 	rh = heightRatio * ui->BUTTON_UNPAIR_ALL->height();
 	ui->BUTTON_UNPAIR_ALL->setGeometry(rx, ry, rw, rh);
+
+	// keyboard
+	rx = width()/2 - ui->keyboardFrame->width()/2;
+	ry = heightRatio * ui->keyboardFrame->y();
+	m_KeyboardPt.setX(rx);
+	m_KeyboardPt.setY(ry);
 }
 
 void ConnectionMenuFrame::on_BUTTON_RENAME_BT_DEVICE_clicked()
 {
-	ui->keyboardFrame->move(52, 38);
+	ui->keyboardFrame->move(m_KeyboardPt);
 	ui->keyboardFrame->setText(ui->LABEL_BT_DEVICE_NAME->text());
 	ui->keyboardFrame->show();
 	ui->keyboardFrame->raise();

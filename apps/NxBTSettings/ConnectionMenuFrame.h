@@ -80,6 +80,8 @@ private:
 
 	bool m_bAutoPairing;
 
+	QPoint m_KeyboardPt;
+
 private:
 	Ui::ConnectionMenuFrame *ui;
 };
