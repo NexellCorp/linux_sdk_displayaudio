@@ -111,6 +111,14 @@ function package_sdk_qtapplication()
 	mkdir -p ${RESULT_DIR}/${QT_APP_ROOT}/${app_name}
 	cp -apvR ${TOP}/${QT_BUILD_TOP}/build-${app_name}/*.so ${RESULT_DIR}/${QT_APP_ROOT}/${app_name}/
 	cp -apvR ${TOP}/apps/${app_name}/${PACKAGE_DIR}/* ${RESULT_DIR}/${QT_APP_ROOT}/${app_name}/
+	if [ ${app_name} == "NxRearCam" ]; then
+		if [ ${TARGET_MACHINE} == "s5p4418-daudio-ref" ]; then
+			cp -apvR ${RESULT_DIR}/${QT_APP_ROOT}/${app_name}/rearcam_config_navi_ref.xml ${RESULT_DIR}/${QT_APP_ROOT}/${app_name}/rearcam_config.xml
+		else
+			cp -apvR ${RESULT_DIR}/${QT_APP_ROOT}/${app_name}/rearcam_config_convergence.xml ${RESULT_DIR}/${QT_APP_ROOT}/${app_name}/rearcam_config.xml
+		fi
+		
+	fi
 }
 
 function unpackage_sdk_qtapplication()
