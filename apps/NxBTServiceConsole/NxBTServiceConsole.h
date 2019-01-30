@@ -1,11 +1,6 @@
 #ifndef __NXBTSERVICECONSOLE_H__
 #define __NXBTSERVICECONSOLE_H__
 
-#define NX_ALSA_DEV_NAME_P		"plughw:0,0"
-#define NX_ALSA_DEV_NAME_C		"plughw:0,0"
-#define NX_ALSA_BT_DEV_NAME_P	"plughw:0,2"
-#define NX_ALSA_BT_DEV_NAME_C	"plughw:0,2"
-
 enum {
 	APP_MGT_MENU_GET_PAIRED_DEV_LIST,
 	APP_MGT_MENU_ENABLE_AUTOCONN,

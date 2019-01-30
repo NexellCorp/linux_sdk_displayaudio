@@ -17,6 +17,17 @@ CXXFLAGS += -fPIC
 
 TARGET	= NxBTServiceConsole
 
+# ALSA default audio path
+alsa_playback       ?= 'plughw:0,0'
+alsa_capture        ?= 'plughw:0,0'
+alsa_sco_playback   ?= 'plughw:0,2'
+alsa_sco_capture    ?= 'plughw:0,2'
+
+CXXFLAGS += -DNX_ALSA_DEV_NAME_P='"$(alsa_playback)"'
+CXXFLAGS += -DNX_ALSA_DEV_NAME_C='"$(alsa_capture)"'
+CXXFLAGS += -DNX_ALSA_BT_DEV_NAME_P='"$(alsa_sco_playback)"'
+CXXFLAGS += -DNX_ALSA_BT_DEV_NAME_C='"$(alsa_sco_capture)"'
+
 OBJS	:= $(COBJS) $(CXXOBJS)
 
 all: $(TARGET)
