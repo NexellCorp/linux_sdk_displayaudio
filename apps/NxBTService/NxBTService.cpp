@@ -204,8 +204,8 @@ void NxBTService::sendPairingRequest_stub(void *pObj_, bool auto_mode_, char *na
 		sData.pMsgTitle = new char[1024];
 		sData.pMsgBody = new char[1024];
 
-		sprintf(sData.pMsgTitle, "<b>Bluetooth pairing request<b/>");
-		sprintf(sData.pMsgBody, "<p align=\"left\">Please check your authorization number to connect with the '%s' device.<br>Device address : %s<br><p align=\"center\"><font size=\"12\" color=\"blue\">%d</font></p>", name, s_bd_addr.c_str(), pairing_code_);
+		sprintf(sData.pMsgTitle, "<b><font color=\"#010101\">Bluetooth pairing request</font><b/>");
+		sprintf(sData.pMsgBody, "<p align=\"left\"><font color=\"#010101\">Please check your authorization number to connect with the '%s' device.<br>Device address : %s</font><br><p align=\"center\"><font size=\"12\" color=\"blue\">%06d</font></p>", name, s_bd_addr.c_str(), pairing_code_);
 
 		sData.eVisibility = auto_mode_ ? ButtonVisibility_Ok : ButtonVisibility_Default;
 		sData.uiTimeout = 0;
