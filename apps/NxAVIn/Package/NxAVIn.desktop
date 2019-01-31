@@ -8,3 +8,4 @@ Comment[ko]=Nexell Audio/Video In Player for QT
 Icon=icon_auxin.png
 TryExec=NxAVIn
 Exec=NxAVIn
+Visible=no
