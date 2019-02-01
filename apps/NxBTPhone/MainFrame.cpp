@@ -133,8 +133,6 @@ bool MainFrame::Initialize(QString args)
 		return false;
 	}
 
-	ui->callMenu->Initialize();
-
 	m_bHasVideoFocus = true;
 
 	if (isHidden())
