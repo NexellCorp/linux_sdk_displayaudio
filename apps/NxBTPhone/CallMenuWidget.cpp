@@ -564,6 +564,8 @@ void CallMenuWidget::on_LISTWIDGET_CALL_LOG_itemDoubleClicked(QListWidgetItem *i
 
 void CallMenuWidget::resizeEvent(QResizeEvent *)
 {
+	Initialize();
+
 	if ((width() != DEFAULT_WIDTH) || (height() != DEFAULT_HEIGHT))
 	{
 		SetupUI();
