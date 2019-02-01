@@ -17,5 +17,5 @@
     <string name="pgl_enable">1</string>
     <string name="backgear_enable">1</string>
     <string name="gpioIdx">163</string>
-    <string name="quick_running">1</string>
+    <string name="quick_running">0</string>
 </map>
