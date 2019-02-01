@@ -244,14 +244,6 @@ NxLauncher::NxLauncher(QWidget *parent) :
 			psInfo->m_pRegisterRequestVolume(RequestVolume);
 	}
 
-	foreach (NxPluginInfo *psInfo, m_PlugIns) {
-		if (psInfo->getAutoStart())
-		{
-			if (psInfo->m_pInit)
-				psInfo->m_pInit(this, "");
-		}
-	}
-
 	m_VideoFocusQueue.push_front(NX_LAUNCHER);
 
 	// set application name
@@ -1171,6 +1163,14 @@ bool NxLauncher::event(QEvent *event)
 	case QEvent::WindowActivate:
 	{
 		printf("NX_LAUNCHER SHOWN\n");
+
+		foreach (NxPluginInfo *psInfo, m_PlugIns) {
+			if (psInfo->getAutoStart())
+			{
+				if (psInfo->m_pInit)
+					psInfo->m_pInit(this, "");
+			}
+		}
 		break;
 	}
 

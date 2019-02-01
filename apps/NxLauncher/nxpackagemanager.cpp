@@ -1,7 +1,7 @@
 #include "nxpackagemanager.h"
 #include <QDir>
 #include <QSettings>
-#include <QDebug>
+#include <QLocale>
 
 #define LOG_TAG "[NxLauncher]"
 #include <NX_Log.h>
@@ -127,8 +127,6 @@ void NxPackageScanner::FillPluginInfo(const QFileInfo& szInfo, bool bInitialized
 			psInfo->setVisible(settings.value(key, "yes").toString().toLower() == "yes");
 		}
 	}
-
-	qDebug() << psInfo->getName() << psInfo->getEnabled();
 
 	m_pPlugins->insert(szInfo.dir().dirName(), psInfo);
 }
