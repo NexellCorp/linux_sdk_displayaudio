@@ -274,10 +274,9 @@ void Frame::on_BUTTON_PLAY_NEXT_clicked()
 {
 	emit signalCommandToServer("$AVK#PLAY NEXT\n");
 }
-#include <QDebug>
+
 void Frame::slotCommandFromServer(QString command)
 {
-	NXLOGI("Receive Command = %s", command.toStdString().c_str());
 	int stx = command.indexOf("$");
 	int etx = command.indexOf("\n");
 
@@ -300,7 +299,7 @@ void Frame::slotCommandFromServer(QString command)
 		return;
 	} else if (tokens[0] == "NG") {
 		return;
-	} else if (tokens[1] != "AVK") {
+	} else if (!(tokens[1] == "AVK" || tokens[1] == "MGT")) {
 		return;
 	}
 
@@ -327,6 +326,9 @@ void Frame::slotCommandFromServer(QString command)
 		if (tokens.size() >= 4 && tokens[3] == "CONNECTED") {
 			emit signalCommandToServer("$AVK#PLAY START\n");
 		}
+	} else if (tokens[2] == "BSA SERVER KILLED")
+	{
+		updateForUIReset();
 	}
 }
 
@@ -416,6 +418,16 @@ void Frame::updateToUIForPlayInformation(QStringList& tokens)
 		ui->LABEL_PLAY_POSITION->setText(QString::fromStdString(s_value));
 		ui->SLIDER_PLAY_POSITION->setValue(value);
 	}
+}
+
+void Frame::updateForUIReset()
+{
+	ui->LABEL_MDEDIA_TITLE->clear();
+	ui->LABEL_MDEDIA_ETC->clear();
+	ui->LABEL_PLAY_POSITION->setText("00:00");
+	ui->LABEL_PLAY_DURATION->setText("00:00");
+	ui->SLIDER_PLAY_POSITION->setValue(0);
+	setUIState(UIState_Stopped);
 }
 
 /************************************************************************************\
@@ -524,7 +536,6 @@ void Frame::RegisterRequestSendMessage(void (*cbFunc)(const char *pDst, const ch
  ************************************************************************************/
 void Frame::SendMessage(QString msg)
 {
-	NXLOGI("[%s] %s", __FUNCTION__, msg.toStdString().c_str());
 	m_pCommandProcessor->Push(msg);
 }
 
