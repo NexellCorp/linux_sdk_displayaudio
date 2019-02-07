@@ -108,6 +108,8 @@ private:
 
 	void updateToUIForPlayInformation(QStringList& tokens);
 
+	void updateForUIReset();
+
 private:
 	static Frame *m_spInstance;
 
