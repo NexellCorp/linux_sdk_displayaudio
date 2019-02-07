@@ -220,6 +220,8 @@ void CallMenuWidget::slotCommandFromServer(QString command)
 		return;
 	}
 
+	m_ResponseTimer.stop();
+
 	temp = "$" + tokens[1] + "#" + tokens[2] + "\n";
 
 	for (int i = 0; i < m_CommandQueue.count(); i++) {
@@ -544,10 +546,6 @@ void CallMenuWidget::slotCommandResponseTimer()
 {
 	if (m_CommandQueue.count()) {
 		m_ResponseTimer.stop();
-
-		// restore ui state
-		if (m_UIState == UIState_Downloading)
-			setUIState(UIState_DownloadCompleted);
 	}
 }
 
