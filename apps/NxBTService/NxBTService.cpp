@@ -89,7 +89,32 @@ void NxBTService::sendMGTDisconnected_stub(void *pObj) {
 	char buffer[BUFFER_SIZE];
 
 	sprintf(buffer, "$OK#MGT#BSA SERVER KILLED\n");
-	(void)self;
+	self->Broadcast(buffer);
+
+	// Reset AVK info.
+	//  Reset AVK connection info.
+	self->m_AVK.connection.on = false;
+	self->m_AVK.connection.index = -1;
+	memset(self->m_AVK.connection.name, 0, DEVICE_NAME_SIZE);
+	memset(self->m_AVK.connection.bd_addr, 0, DEVICE_ADDRESS_SIZE);
+	//  Reset AVK play info.
+	memset(&self->m_AVK.info, 0, sizeof(self->m_AVK.info));
+
+	// Reset HS info.
+	//  Reset HS connection info.
+	self->m_HS.hs.on = false;
+	self->m_HS.hs.index = -1;
+	memset(self->m_HS.hs.name, 0, DEVICE_NAME_SIZE);
+	memset(self->m_HS.hs.bd_addr, 0, DEVICE_ADDRESS_SIZE);
+	//  Reset MCE connection info.
+	self->m_HS.mce.on = self->m_HS.hs.on;
+	self->m_HS.mce.index = self->m_HS.hs.index;
+	//  Reset PBC connection info.
+	self->m_HS.pbc.connection.on = self->m_HS.hs.on;
+	self->m_HS.pbc.connection.index = self->m_HS.hs.index;
+
+	// write to DB for BT connection status.
+	self->m_pDAudioStatus->SetBTConnection(0);
 }
 
 /* User client callback : Pairing is failed */
