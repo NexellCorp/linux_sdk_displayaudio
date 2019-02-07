@@ -73,6 +73,8 @@ private:
 
 	void updateForAutoPairing(QStringList& tokens);
 
+	void updateForUIReset();
+
 private:
 	UIState m_UIState;
 

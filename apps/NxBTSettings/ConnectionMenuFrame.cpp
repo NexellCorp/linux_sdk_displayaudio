@@ -241,6 +241,8 @@ void ConnectionMenuFrame::slotCommandFromServer(QString command)
 //		updateToUIForPairFailed(tokens);
 	} else if (tokens[2] == "AUTO PAIRING") {
 		updateForAutoPairing(tokens);
+	} else if (tokens[2] == "BSA SERVER KILLED") {
+		updateForUIReset();
 	}
 }
 
@@ -483,5 +485,26 @@ void ConnectionMenuFrame::updateForAutoPairing(QStringList& tokens)
 {
 	if (tokens.size() == 4) {
 		m_bAutoPairing = (tokens[3] == "ON");
+	}
+}
+
+void ConnectionMenuFrame::updateForUIReset()
+{
+	for (int i = 0; i < ui->LISTWIDGET_PAIRED_DEVICE->count(); i++) {
+		QListWidgetItem* item = ui->LISTWIDGET_PAIRED_DEVICE->item(i);
+		if (!item)
+			continue;
+
+		BTPairedDeviceItem* custom = (BTPairedDeviceItem*)ui->LISTWIDGET_PAIRED_DEVICE->itemWidget(item);
+		custom->setConnectionStatusForAVK("DISCONNECTED");
+	}
+
+	for (int i = 0; i < ui->LISTWIDGET_PAIRED_DEVICE->count(); i++) {
+		QListWidgetItem* item = ui->LISTWIDGET_PAIRED_DEVICE->item(i);
+		if (!item)
+			continue;
+
+		BTPairedDeviceItem* custom = (BTPairedDeviceItem*)ui->LISTWIDGET_PAIRED_DEVICE->itemWidget(item);
+		custom->setConnectionStatusForHS("DISCONNECTED");
 	}
 }
