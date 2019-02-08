@@ -559,6 +559,7 @@ void NxBTService::sendHSCallStatus_stub(void *pObj, int32_t call_status)
 	// Switching audio focus
 	switch (call_status) {
 	case HANG_UP_CALL:
+	case PICK_UP_CALL:
 	case DISCONNECTED_CALL:
 	{
 		// Switching calling mode
