@@ -97,8 +97,7 @@ Item {
         var info = gui.getPluginInfoList()
 
         for(i = 0, k = 0; i < info.length; ++i) {
-
-            if (info[i].type !== "Application")
+            if (!info[i].visible)
                 continue
 
             appListModel.setProperty(k, "active", info[i].active)
