@@ -54,12 +54,12 @@ static void cbRearCamCommandCheckStop( int32_t status )
 
 	if(status == STOPPED)
 	{
-		NX_StopCommandService(pInst->m_pCmdHandle, NULL);		
+		NX_StopCommandService(pInst->m_pCmdHandle, NULL);
 
 		if(pInst->backgear_enable == 1)
 		{
 			NX_StartBackGearDetectService( pInst->gpioIdx, 100 );		// ALIVE3
-		}		
+		}
 	}
 }
 
@@ -170,12 +170,18 @@ bool MainFrame::Initialize()
 		m_pCmdHandle = NX_GetCommandHandle();
 		NX_RegisterCommandEventCallBack (m_pCmdHandle, cbRearCamCommandCheckStop);
 		NX_StartCommandService(m_pCmdHandle, STOP_COMMAND_CTRL_FILE_PATH);
-	}	
+	}
 
 	if(backgear_enable == 1)
 	{
 		NXLOGI("[%s] Register BackGear Event Callback ", __FUNCTION__);
-	 	NX_RegisterBackGearEventCallBack( this, cbBackGearStatus );	
+	 	NX_RegisterBackGearEventCallBack( this, cbBackGearStatus );
+	}
+
+	if(quick_runnig == 0)
+	{
+		NXLOGI("[%s] Start BackGear Detect Service ", __FUNCTION__);
+		NX_StartBackGearDetectService( gpioIdx, 100 );		// ALIVE3
 	}
 
 	hide();
