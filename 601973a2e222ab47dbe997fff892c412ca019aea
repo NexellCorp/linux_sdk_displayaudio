@@ -1,0 +1,50 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "11465ecb_5d48cfb5",
+        "filename": "apps/NxRearCam/MainFrame.cpp",
+        "patchSetId": 1
+      },
+      "lineNbr": 173,
+      "author": {
+        "id": 1015509
+      },
+      "writtenOn": "2019-02-11T07:45:30Z",
+      "side": 1,
+      "message": "Please delete dummy space or tab.",
+      "range": {
+        "startLine": 173,
+        "startChar": 2,
+        "endLine": 173,
+        "endChar": 3
+      },
+      "revId": "601973a2e222ab47dbe997fff892c412ca019aea",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "cd44f129_6625886b",
+        "filename": "apps/NxRearCam/MainFrame.cpp",
+        "patchSetId": 1
+      },
+      "lineNbr": 178,
+      "author": {
+        "id": 1015509
+      },
+      "writtenOn": "2019-02-11T07:45:30Z",
+      "side": 1,
+      "message": "Please delete dummy space or tab.",
+      "range": {
+        "startLine": 178,
+        "startChar": 62,
+        "endLine": 178,
+        "endChar": 63
+      },
+      "revId": "601973a2e222ab47dbe997fff892c412ca019aea",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
+      "unresolved": true
+    }
+  ]
+}
