@@ -25,6 +25,9 @@
 #include <INX_BT.h>
 #include <NxBTServiceConsole.h>
 
+#include "NX_IConfig.h"
+#define NXBTSERVICE_CONFIG "/nexell/daudio/NxBTService/nxbtservice_config.xml"
+
 #define USE_BACKTRACE
 #define SYNC_MODE	true
 
@@ -165,12 +168,12 @@ static void backtrace_dump(void) {
 	char **strings;
 
 	nptrs = backtrace(buf, CALLSTACK_SIZE);
-	printf("%s: backtrace() returned %d addresses\n", __func__, nptrs);
+	printf("%s: backtrace() returned %d addresses\n", __FUNCTION__, nptrs);
 
 	strings = backtrace_symbols(buf, nptrs);
 
 	if (strings == NULL) {
-		printf("%s: No backtrace captured\n", __func__);
+		printf("%s: No backtrace captured\n", __FUNCTION__);
 		return;
 	}
 
@@ -182,7 +185,7 @@ static void backtrace_dump(void) {
 }
 
 static void sigHandler(int signum) {
-	printf("\n%s: Signal %d\n", __func__, signum);
+	printf("\n%s: Signal %d\n", __FUNCTION__, signum);
 
 	switch(signum ) {
 		case SIGILL:
@@ -331,6 +334,7 @@ int main (int argc, char *argv[])
 	int dummy;
 	void *m_pObjHandler = &dummy;		// UI handler
 	Bmessage_info_t bmsg;				// BMessage
+	NX_IConfig *pConfig = NULL;			// for config(xml)
 
 #ifdef USE_BACKTRACE
     // Register signal handler for debugging
@@ -385,8 +389,6 @@ int main (int argc, char *argv[])
 		goto EXIT;
 	}
 
-//	pInstance->setRecoveryCommand("-p /etc/bluetooth/BCM20710A1_001.002.014.0103.0117.hcd -all=0 &");
-
 	localAddress = pInstance->getLocalAddress();
 
 	// Rename local device
@@ -403,8 +405,57 @@ int main (int argc, char *argv[])
 		printf("Paired device name : %s\n", pairedDev.pairedDevInfo[i].name);
 	}
 
-	// Set ALSA device names
-	pInstance->setALSADevName(NX_ALSA_DEV_NAME_P, NX_ALSA_DEV_NAME_C, NX_ALSA_BT_DEV_NAME_P, NX_ALSA_BT_DEV_NAME_C, SYNC_MODE);
+	// Read xml and settings to engine
+	pConfig = GetConfigHandle();
+	if (0 == pConfig->Open(NXBTSERVICE_CONFIG)) {
+		char *pBuf = NULL;
+		char alsa_playback[100] = {0,};
+		char alsa_capture[100] = {0,};
+		char alsa_sco_playback[100] = {0,};
+		char alsa_sco_capture[100] = {0,};
+
+		// Read bsa_recovery
+		if (0 == pConfig->Read("bsa_recovery", &pBuf)) {
+			// Set recovery command
+			pInstance->setRecoveryCommand(pBuf);
+		} else {
+			printf("[%s] Read failed : bsa_recovery\n", __FUNCTION__);
+		}
+
+		// Read alsa_playback
+		if (0 == pConfig->Read("alsa_playback", &pBuf)) {
+			strcpy(alsa_playback, pBuf);
+		} else {
+			printf("[%s] Read failed : alsa_playback\n", __FUNCTION__);
+		}
+
+		// Read alsa_capture
+		if (0 == pConfig->Read("alsa_capture", &pBuf)) {
+			strcpy(alsa_capture, pBuf);
+		} else {
+			printf("[%s] Read failed : alsa_capture\n", __FUNCTION__);
+		}
+
+		// Read alsa_sco_playback
+		if (0 == pConfig->Read("alsa_sco_playback", &pBuf)) {
+			strcpy(alsa_sco_playback, pBuf);
+		} else {
+			printf("[%s] Read failed : alsa_sco_playback\n", __FUNCTION__);
+		}
+
+		// Read alsa_sco_capture
+		if (0 == pConfig->Read("alsa_sco_capture", &pBuf)) {
+			strcpy(alsa_sco_capture, pBuf);
+		} else {
+			printf("[%s] Read failed : alsa_sco_capture\n", __FUNCTION__);
+		}
+
+		// Set ALSA device names
+		pInstance->setALSADevName(alsa_playback, alsa_capture, alsa_sco_playback, alsa_sco_capture, SYNC_MODE);
+	} else {
+		printf("[%s] Open failed : %s\n", __FUNCTION__, NXBTSERVICE_CONFIG);
+	}
+	delete pConfig;
 
 	// Auto connection
 	pInstance->autoConnection(pInstance->isAutoConnection());

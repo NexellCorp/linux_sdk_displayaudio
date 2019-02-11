@@ -3,12 +3,10 @@ include ../../env.mk
 #########################################################################
 #	Toolchain.
 #########################################################################
-LIB_DIR	:= ../../library/prebuilt/lib
-INC_DIR	:= ../../library/prebuilt/include
+INCLUDE	+= -I. -I../../library/prebuilt/include -I../../library/include
 
-INCLUDE	+= -I. -I$(INC_DIR)
-
-LIBRARY	+= -L$(LIB_DIR) -lnxbt -lappbt -lnxalsa
+LIBRARY += -L../../library/prebuilt/lib -L../../library/lib
+LIBRARY	+= -lnxbt -lappbt -lnxalsa -lnxconfig
 LIBRARY	+= -lstdc++ -lpthread -lm
 
 CXXOBJS	+= main.o
@@ -16,17 +14,6 @@ CXXOBJS	+= main.o
 CXXFLAGS += -fPIC
 
 TARGET	= NxBTServiceConsole
-
-# ALSA default audio path
-alsa_playback       ?= 'plughw:0,0'
-alsa_capture        ?= 'plughw:0,0'
-alsa_sco_playback   ?= 'plughw:0,2'
-alsa_sco_capture    ?= 'plughw:0,2'
-
-CXXFLAGS += -DNX_ALSA_DEV_NAME_P='"$(alsa_playback)"'
-CXXFLAGS += -DNX_ALSA_DEV_NAME_C='"$(alsa_capture)"'
-CXXFLAGS += -DNX_ALSA_BT_DEV_NAME_P='"$(alsa_sco_playback)"'
-CXXFLAGS += -DNX_ALSA_BT_DEV_NAME_C='"$(alsa_sco_capture)"'
 
 OBJS	:= $(COBJS) $(CXXOBJS)
 
