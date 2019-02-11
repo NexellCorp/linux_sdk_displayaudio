@@ -178,6 +178,12 @@ bool MainFrame::Initialize()
 	 	NX_RegisterBackGearEventCallBack( this, cbBackGearStatus );	
 	}
 
+	if(quick_runnig == 0)
+	{
+		NXLOGI("[%s] Start BackGear Detect Service ", __FUNCTION__);
+		NX_StartBackGearDetectService( gpioIdx, 100 );		// ALIVE3
+	}
+
 	hide();
 
 	m_bInitialized = true;
