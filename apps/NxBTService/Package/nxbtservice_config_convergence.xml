@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<map>
+    <string name="bsa_recovery">/usr/bin/bsa_server -p /etc/bluetooth/BCM434545.hcd -all=0 &amp;</string>
+    <string name="alsa_playback">plughw:0,0</string>
+    <string name="alsa_capture">plughw:0,0</string>
+    <string name="alsa_sco_playback">plughw:0,2</string>
+    <string name="alsa_sco_capture">plughw:0,2</string>
+</map>>
