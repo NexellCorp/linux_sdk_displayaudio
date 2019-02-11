@@ -1,4 +1,6 @@
 #include "NxBTService.h"
+//	xml config
+#include "NX_IConfig.h"
 
 #define LOG_TAG "[NxBTService]"
 #include <NX_Log.h>
@@ -15,6 +17,8 @@ INX_BT* NxBTService::m_pModel = NULL;
 #define AVK_CONNECTED_INDEX 0
 
 #define DAUDIO_STATUS_DATABASE_PATH "/home/root/daudio.status.db"
+
+#define NXBTSERVICE_CONFIG "/nexell/daudio/NxBTService/nxbtservice_config.xml"
 
 #define RET_OK 0
 #define RET_FAIL -1
@@ -848,7 +852,6 @@ NxBTService::~NxBTService()
 void NxBTService::Initialize()
 {
 	// Settings for Nx BT module
-	NXLOGI("[%s]", __FUNCTION__);
 	m_pModel = getInstance();
 
 	if (m_pModel) {
@@ -2217,8 +2220,74 @@ void NxBTService::setInitialized(bool state)
 	if (!m_bInitialized) {
 		m_bInitialized = state;
 		if (m_bInitialized) {
-			// Set ALSA device names
-			m_pModel->setALSADevName(NX_ALSA_DEV_NAME_P, NX_ALSA_DEV_NAME_C, NX_ALSA_BT_DEV_NAME_P, NX_ALSA_BT_DEV_NAME_C, true);
+			NX_IConfig *pConfig = GetConfigHandle();
+			if (0 == pConfig->Open(NXBTSERVICE_CONFIG))
+			{
+				char *pBuf = NULL;
+				char alsa_playback[100] = {0,};
+				char alsa_capture[100] = {0,};
+				char alsa_sco_playback[100] = {0,};
+				char alsa_sco_capture[100] = {0,};
+
+				// read bsa_recovery
+				if (0 == pConfig->Read("bsa_recovery", &pBuf))
+				{
+					// Set recovery command
+					m_pModel->setRecoveryCommand(pBuf);
+				}
+				else
+				{
+					NXLOGE("[%s] Read failed : bsa_recovery", __FUNCTION__);
+				}
+
+				// read alsa_playback
+				if (0 == pConfig->Read("alsa_playback", &pBuf))
+				{
+					strcpy(alsa_playback, pBuf);
+				}
+				else
+				{
+					NXLOGE("[%s] Read failed : alsa_playback", __FUNCTION__);
+				}
+
+				// read alsa_capture
+				if (0 == pConfig->Read("alsa_capture", &pBuf))
+				{
+					strcpy(alsa_capture, pBuf);
+				}
+				else
+				{
+					NXLOGE("[%s] Read failed : alsa_capture", __FUNCTION__);
+				}
+
+				// read alsa_sco_playback
+				if (0 == pConfig->Read("alsa_sco_playback", &pBuf))
+				{
+					strcpy(alsa_sco_playback, pBuf);
+				}
+				else
+				{
+					NXLOGE("[%s] Read failed : alsa_sco_playback", __FUNCTION__);
+				}
+
+				// read alsa_sco_capture
+				if (0 == pConfig->Read("alsa_sco_capture", &pBuf))
+				{
+					strcpy(alsa_sco_capture, pBuf);
+				}
+				else
+				{
+					NXLOGE("[%s] Read failed : alsa_sco_capture", __FUNCTION__);
+				}
+
+				// Set ALSA device names
+				m_pModel->setALSADevName(alsa_playback, alsa_capture, alsa_sco_playback, alsa_sco_capture, true);
+			}
+			else
+			{
+				NXLOGE("[%s] Open failed : %s ", __FUNCTION__, NXBTSERVICE_CONFIG);
+			}
+			delete pConfig;
 
 			// Auto connection
 			m_pModel->autoConnection(m_pModel->isAutoConnection());
