@@ -95,8 +95,10 @@ function package_bt_service_application()
 	cp -apvR ${TOP}/apps/${app_name}/${PACKAGE_DIR}/${app_name}.desktop ${RESULT_DIR}/${QT_APP_ROOT}/${app_name}/
 	if [ ${TARGET_MACHINE} == "s5p4418-convergence-daudio" ]; then
 		cp -apvR ${TOP}/apps/${app_name}/${PACKAGE_DIR}/nxbtservice_config_convergence.xml ${RESULT_DIR}/${QT_APP_ROOT}/${app_name}/nxbtservice_config.xml
-	else
-		cp -apvR ${TOP}/apps/${app_name}/${PACKAGE_DIR}/nxbtservice_config_daudio_ref.xml ${RESULT_DIR}/${QT_APP_ROOT}/${app_name}/nxbtservice_config.xml
+	elif [ ${TARGET_MACHINE} == "nxp3220-evb" ]; then
+		cp -apvR ${TOP}/apps/${app_name}/${PACKAGE_DIR}/nxbtservice_config_nxp3220_evb.xml ${RESULT_DIR}/${QT_APP_ROOT}/${app_name}/nxbtservice_config.xml
+	elif [ ${TARGET_MACHINE} == "nxp3220-daudio" ]; then
+		cp -apvR ${TOP}/apps/${app_name}/${PACKAGE_DIR}/nxbtservice_config_nxp3220_daudio.xml ${RESULT_DIR}/${QT_APP_ROOT}/${app_name}/nxbtservice_config.xml
 	fi
 }
 
