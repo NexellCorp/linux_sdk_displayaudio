@@ -90,7 +90,7 @@ public:
 
 	PARSED_SUBTITLE NX_SPGetParsedSubtitleArray();			// return m_pParsedSubtitleArray[m_iCurrentIndex]
 	PARSED_SUBTITLE NX_SPGetParsedSubtitleArray(int index);	// return m_pParsedSubtitleArray[index]
-	
+
 	int NX_SPGetTEXTCODECLIST( TEXTCODECLIST ** codec );	//returns m_iSizeOfTEXTCODECLIST or -1(error)
 	const char* NX_SPGetBestTextEncode();					//returns best encode
 	const char* NX_SPFindStringEncode(const char* str);		//returns best encode for input str
