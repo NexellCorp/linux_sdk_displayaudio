@@ -85,8 +85,8 @@ class CNX_AudioPlayer
 {
 
 public:
-    CNX_AudioPlayer();
-    ~CNX_AudioPlayer();
+	CNX_AudioPlayer();
+	~CNX_AudioPlayer();
 
 public:
 	//
@@ -97,13 +97,13 @@ public:
 							const char *pUri,
 							int mediaType,
 							void (*pCbQtUpdateImg)(void *pImg)
-						);
+							);
 
 	int CloseHandle();
 
 	//
 	//MediaPlayer common Control
-    int SetVolume(int32_t volume);
+	int SetVolume(int32_t volume);
 	int Play();
 	int Seek(qint64 position);
 	int Pause();
@@ -119,14 +119,14 @@ public:
 private:
 	//
 	//MediaPlayer InitMediaPlayer
-    int32_t OpenHandle( void (*pCbEventCallback)( void *privateDesc, uint32_t EventType, uint32_t /*EventData*/, uint32_t /*param*/ ),
-					void *cbPrivate );
-    int32_t SetUri(const char *pUri);
-    int32_t GetMediaInfo();
-    int32_t AddTrack(int mediaType);
-    int32_t AddTrackForAudio();
-    int32_t AddAudioTrack( int32_t track );
-    int32_t GetTrackIndex( int32_t trackType, int32_t track );
+	int32_t OpenHandle( void (*pCbEventCallback)( void *privateDesc, uint32_t EventType, uint32_t /*EventData*/, uint32_t /*param*/ ),
+						void *cbPrivate );
+	int32_t SetUri(const char *pUri);
+	int32_t GetMediaInfo();
+	int32_t AddTrack(int mediaType);
+	int32_t AddTrackForAudio();
+	int32_t AddAudioTrack( int32_t track );
+	int32_t GetTrackIndex( int32_t trackType, int32_t track );
 
 	//
 	//vars
