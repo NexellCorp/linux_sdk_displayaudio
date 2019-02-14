@@ -199,7 +199,9 @@ int32_t CNX_DAudioStatus::SetVolume(int32_t value)
 	ret = (int32_t)(SQLITE_OK == sqlite3_exec(m_pHandle, query, cbSqlite3Exec, NULL, NULL));
 
 	if (ret)
+	{
 		SetSystemVolume(value);
+	}
 
 	return ret;
 }
@@ -211,7 +213,7 @@ int32_t CNX_DAudioStatus::SetSystemVolume(int32_t percentage)
 	snd_mixer_elem_t *pElem;
 	snd_mixer_selem_id_t *pSid;
 	const char *pCard = "default";
-	const char *pSelem_name = "DAC1";
+	const char *pSelem_name = NX_MASTER_VOLUME;
 	int32_t iError = 0;
 
 	if (percentage < 0)
