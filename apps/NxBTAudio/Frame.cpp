@@ -323,8 +323,16 @@ void Frame::slotCommandFromServer(QString command)
 	} else if (tokens[2] == "PLAY INFO") {
 		updateToUIForPlayInformation(tokens);
 	} else if (tokens[2] == "IS CONNECTED" || tokens[2] == "CONNECTION STATUS") {
-		if (tokens.size() >= 4 && tokens[3] == "CONNECTED") {
-			emit signalCommandToServer("$AVK#PLAY START\n");
+		if (tokens.size() >= 4)
+		{
+			if (tokens[3] == "CONNECTED")
+			{
+				emit signalCommandToServer("$AVK#PLAY START\n");
+			}
+			else if (tokens[3] == "DISCONNECTED")
+			{
+				updateForUIReset();
+			}
 		}
 	} else if (tokens[2] == "BSA SERVER KILLED")
 	{
