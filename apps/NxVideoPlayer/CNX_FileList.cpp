@@ -54,7 +54,7 @@
 
 CNX_FileList::CNX_FileList()
 {
-    m_bIsMadeByLocal = false;
+	m_bIsMadeByLocal = false;
 }
 
 CNX_FileList::~CNX_FileList()
@@ -63,77 +63,77 @@ CNX_FileList::~CNX_FileList()
 
 int CNX_FileList::IsDir(QString path)
 {
-    struct stat stat_buf;
-    stat( path.toStdString().c_str(), &stat_buf);
-    return ( S_ISDIR( stat_buf.st_mode) ? 1: 0);
+	struct stat stat_buf;
+	stat( path.toStdString().c_str(), &stat_buf);
+	return ( S_ISDIR( stat_buf.st_mode) ? 1: 0);
 }
 
 int32_t CNX_FileList::IsNormalFile(QString path)
 {
-    struct stat stat_buf;
-    stat( path.toStdString().c_str(), &stat_buf);
-    return ( S_ISREG( stat_buf.st_mode) ? 1: 0);
+	struct stat stat_buf;
+	stat( path.toStdString().c_str(), &stat_buf);
+	return ( S_ISREG( stat_buf.st_mode) ? 1: 0);
 }
 
 int CNX_FileList::GetDir (QString dir)
 {
-    DIR *dp;
-    struct dirent *dirp;
-    if((dp  = opendir(dir.toStdString().c_str())) == NULL) {
-        return errno;
-    }
+	DIR *dp;
+	struct dirent *dirp;
+	if((dp  = opendir(dir.toStdString().c_str())) == NULL) {
+		return errno;
+	}
 
-    while ((dirp = readdir(dp)) != NULL)
-    {
-        if ( strcmp (dirp->d_name, ".")  && strcmp(dirp->d_name, "..") )
-        {
-            QString tmpPath = dir + QString("/") + QString(dirp->d_name);
-            if( IsDir(tmpPath) )
-            {
+	while ((dirp = readdir(dp)) != NULL)
+	{
+		if ( strcmp (dirp->d_name, ".")  && strcmp(dirp->d_name, "..") )
+		{
+			QString tmpPath = dir + QString("/") + QString(dirp->d_name);
+			if( IsDir(tmpPath) )
+			{
 #if 0	//	Linux Trash Folder
-                if( strcmp(dirp->d_name,".Trash-1000") )
-                    GetDir( tmpPath );
+				if( strcmp(dirp->d_name,".Trash-1000") )
+					GetDir( tmpPath );
 #endif
-                GetDir( tmpPath );
-            }
-            else if( IsNormalFile(tmpPath) )
-            {
-                char *extensionPos = NULL;
+				GetDir( tmpPath );
+			}
+			else if( IsNormalFile(tmpPath) )
+			{
+				char *extensionPos = NULL;
 
-                extensionPos = strrchr( dirp->d_name, '.');
-                //	Filter have no extension file
-                if( extensionPos == NULL )
-                    continue;
+				extensionPos = strrchr( dirp->d_name, '.');
+				//	Filter have no extension file
+				if( extensionPos == NULL )
+					continue;
 
-                for( int32_t i=0; i<m_iNumExtension ; i++ )
-                {
-                    if( !strcasecmp((const char *)m_ppExtentsions[i], (const char *)extensionPos) )
-                    {
-                        m_FileList.push_back(tmpPath.toStdString().c_str());
-                        break;
-                    }
-                }
-            }
-        }
-    }
-    closedir(dp);
-    return 0;
+				for( int32_t i=0; i<m_iNumExtension ; i++ )
+				{
+					if( !strcasecmp((const char *)m_ppExtentsions[i], (const char *)extensionPos) )
+					{
+						m_FileList.push_back(tmpPath.toStdString().c_str());
+						break;
+					}
+				}
+			}
+		}
+	}
+	closedir(dp);
+	return 0;
 }
 
 
 void CNX_FileList::MakeFileList(const char *pDir, const char **ppExtension, int32_t numExtension)
 {
-    QMutexLocker lock(&m_ListLock);
-    m_bIsMadeByLocal = true;
-    m_FileList.clear();
-    m_iNumExtension =numExtension;
-    m_ppExtentsions = ppExtension;
-    GetDir( pDir );
+	QMutexLocker lock(&m_ListLock);
+	m_bIsMadeByLocal = true;
+	m_FileList.clear();
+	m_iNumExtension =numExtension;
+	m_ppExtentsions = ppExtension;
+	GetDir( pDir );
 
 #ifdef DEBUG
-    for ( int32_t i = 0;i < m_FileList.size();i++) {
-        NXLOGV( "%04d. %s\n",  m_FileList[i].toStdString().c_str());
-    }
+	for ( int32_t i = 0;i < m_FileList.size();i++) {
+		NXLOGV( "%04d. %s\n",  m_FileList[i].toStdString().c_str());
+	}
 #endif
 
 }

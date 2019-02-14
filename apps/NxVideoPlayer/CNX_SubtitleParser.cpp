@@ -13,7 +13,7 @@
 #endif
 
 CNX_SubtitleParser::CNX_SubtitleParser()
-	//	Initialize Parameter
+//	Initialize Parameter
 	: m_bIsParsed(false)
 	, m_iSyncTime(0)
 	, m_hFileSize(0)
@@ -178,7 +178,7 @@ bool CNX_SubtitleParser::IsSAMI()
 			m_hFileType = FILE_TYPE_SMI;
 			NXLOGD("\n==================================================================\n");
 			NXLOGD("==========================SAMI found==============================\n");
-			
+
 			return true;
 		}
 		pBuf++;
@@ -216,8 +216,8 @@ bool CNX_SubtitleParser::IsSrt()
 			// sscanf(start of line , filter , var1,var2,,,,)
 
 			result = sscanf( (pBuf-2), "%d:%d:%d,%d --> %d:%d:%d,%d",
-								 &startHour, &startMinute, &startSeconds, &startMilSeconds,
-								 &endHour, &endMinute, &endSeconds, &endMilSeconds);
+							 &startHour, &startMinute, &startSeconds, &startMilSeconds,
+							 &endHour, &endMinute, &endSeconds, &endMilSeconds);
 
 			//printf("============================================sscanf result  : %d\n" , result);
 			//printf("============================================\n");
@@ -290,8 +290,8 @@ bool CNX_SubtitleParser::ParsingSamiSubtitle()
 	//	Find From start to end "<SAMI"
 
 	// for detecting multi language var start ==========
-//	bool isMultiLanguageDetermined = false;
-//	int countLanguage = 0;
+	//	bool isMultiLanguageDetermined = false;
+	//	int countLanguage = 0;
 	// for detecting multi language var end ==========
 
 	for( int i=0 ; i<m_hFileSize-12 ; i++ )
@@ -303,61 +303,61 @@ bool CNX_SubtitleParser::ParsingSamiSubtitle()
 			// detect lang:%s
 			// .classname { Name:한국어; lang:ko-KR; SAMIType:CC; }
 
-//			m_iNumberOfLanguage = 0;
-//			char* langPosition = (pBuf);
-//			char* templanguage;
+			//			m_iNumberOfLanguage = 0;
+			//			char* langPosition = (pBuf);
+			//			char* templanguage;
 
-//			while( true )
-//			{//what if language info is not exists
+			//			while( true )
+			//			{//what if language info is not exists
 
-//				if(0 == strncasecmp("</STYLE>", langPosition, 8))
-//				{
-//					break;
-//				}
-//				if(0 == strncasecmp("</HEAD>", langPosition, 7))
-//				{
-//					break;
-//				}
-//				if(0 == strncasecmp("<BODY>", langPosition, 6))
-//				{
-//					break;
-//				}
-//				if(0 == strncasecmp("<SYNC>", langPosition, 6))
-//				{
-//					break;
-//				}
+			//				if(0 == strncasecmp("</STYLE>", langPosition, 8))
+			//				{
+			//					break;
+			//				}
+			//				if(0 == strncasecmp("</HEAD>", langPosition, 7))
+			//				{
+			//					break;
+			//				}
+			//				if(0 == strncasecmp("<BODY>", langPosition, 6))
+			//				{
+			//					break;
+			//				}
+			//				if(0 == strncasecmp("<SYNC>", langPosition, 6))
+			//				{
+			//					break;
+			//				}
 
-//				if( 1 == sscanf( (langPosition), "lang:%s;", &templanguage) )
-//				{
-//					m_iNumberOfLanguage++;
-//					printf("detected language : %s\n",templanguage);
-//				}
-//				langPosition++;
-//			}
-//			//m_iNumberOfLanguage == the number of language that subtitle file supports
-//			//classname will be needed if subtitle supports multilanguage..
+			//				if( 1 == sscanf( (langPosition), "lang:%s;", &templanguage) )
+			//				{
+			//					m_iNumberOfLanguage++;
+			//					printf("detected language : %s\n",templanguage);
+			//				}
+			//				langPosition++;
+			//			}
+			//			//m_iNumberOfLanguage == the number of language that subtitle file supports
+			//			//classname will be needed if subtitle supports multilanguage..
 
-//			if(0==m_iNumberOfLanguage)
-//			{
-//				//there is no STYLE information about language,, wrong syntax subtitle file
-//				printf("no language detected.. subtitle file could have wrong syntax\n");
-//			}
+			//			if(0==m_iNumberOfLanguage)
+			//			{
+			//				//there is no STYLE information about language,, wrong syntax subtitle file
+			//				printf("no language detected.. subtitle file could have wrong syntax\n");
+			//			}
 
-//			// if the number of language <= 1  .. code behavior is same as before..
+			//			// if the number of language <= 1  .. code behavior is same as before..
 
-//			if(languageCount>1)
-//			{
-//				m_bIsMultiLanguageDetected = true;
-//				language = (char*)malloc(sizeof(char)*languageCount);
-//			}
+			//			if(languageCount>1)
+			//			{
+			//				m_bIsMultiLanguageDetected = true;
+			//				language = (char*)malloc(sizeof(char)*languageCount);
+			//			}
 
 
 
 		}//detect head for multi language
-//		else if ( 0 == strncasecmp("<BODY", pBuf, 5) )
-//		{
-//			//m_BodyStart = pBuf;
-//		}
+		//		else if ( 0 == strncasecmp("<BODY", pBuf, 5) )
+		//		{
+		//			//m_BodyStart = pBuf;
+		//		}
 
 		else if( 0 == strncasecmp("<SYNC Start=", pBuf, 12) )
 		{
@@ -420,7 +420,7 @@ bool CNX_SubtitleParser::ParsingSamiSubtitle()
 	this->m_iLastStartTime = m_pStartTimeArray[m_iMaxIndex];
 	// parsing smi end========================================================================================
 
-	
+
 	return isSubtitleFounded;
 }//ParsingSubtitle
 
@@ -473,8 +473,8 @@ bool CNX_SubtitleParser::ParsingSrtSubtitle()
 			// ':' position-2 == start of line..
 			// sscanf(start of line , filter , var1,var2,,,,)
 			result = sscanf( (pBuf-2), "%d:%d:%d,%d --> %d:%d:%d,%d",
-								 &startHour, &startMinute, &startSeconds, &startMilSeconds,
-								 &endHour, &endMinute, &endSeconds, &endMilSeconds);
+							 &startHour, &startMinute, &startSeconds, &startMilSeconds,
+							 &endHour, &endMinute, &endSeconds, &endMilSeconds);
 
 
 			if(result == 8)
@@ -792,7 +792,12 @@ void CNX_SubtitleParser::NX_SPClose()
 		free(m_pFileBuf);
 		m_pFileBuf = NULL;
 	}
-	
+
+	if(m_pStartTimeArray)
+	{
+		free(m_pStartTimeArray);
+		m_pStartTimeArray = NULL;
+	}
 
 	if(m_pStartTimeArray)
 	{
@@ -822,7 +827,7 @@ void CNX_SubtitleParser::NX_SPClose()
 		free(m_pParsedSubtitleArray);
 		m_pParsedSubtitleArray = NULL;
 	}
-	
+
 	if(m_pTEXTCODECLIST)
 	{
 		free(m_pTEXTCODECLIST);
@@ -851,7 +856,7 @@ int CNX_SubtitleParser::NX_SPGetTEXTCODECLIST( TEXTCODECLIST ** codec )
 
 	*codec = m_pTEXTCODECLIST;
 	return m_iSizeOfTEXTCODECLIST;
-} 
+}
 
 const char* CNX_SubtitleParser::NX_SPGetBestTextEncode()
 {
