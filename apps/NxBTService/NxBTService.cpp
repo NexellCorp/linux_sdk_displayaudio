@@ -2292,6 +2292,11 @@ void NxBTService::setInitialized(bool state)
 			// Auto connection
 			m_pModel->autoConnection(m_pModel->isAutoConnection());
 
+			if (!m_pModel->isDiscoverable())
+			{
+				m_pModel->enableDiscoverable(true);
+			}
+
 			ping("MGT", "PING");
 		}
 	}
