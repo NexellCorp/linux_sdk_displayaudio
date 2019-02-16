@@ -14,7 +14,7 @@
 #ifndef __INX_BT_H__
 #define __INX_BT_H__
 
-#define NXBT_VERSION	"1.1.0"
+#define NXBT_VERSION	"1.2.0"
 
 typedef struct Bmessage_info {
 	char *fullName;
@@ -89,6 +89,8 @@ public:
 	virtual int32_t setATCommandDTMF(char key) = 0;
 	virtual int32_t requestCallOperName(void) = 0;
 	virtual int32_t getCurrentBattChargingStatus(void) = 0;
+	virtual int32_t startVoiceRecognition(void) = 0;
+	virtual int32_t stopVoiceRecognition(void) = 0;
 
 	/* NXBT PBC service APIs */
 	virtual bool isConnectedPBC(void) = 0;
