@@ -141,6 +141,8 @@ void app_display_main_menu(void) {
 	printf(" %d		=> Request call operater name\n", APP_HS_MENU_SEND_COPS);
 	printf(" %d		=> Request current calls\n", APP_HS_MENU_SEND_CLCC);
 	printf(" %d		=> Get battery charging status value\n", APP_HS_MENU_GET_BATT);
+	printf(" %d		=> Start voice recognition\n", APP_HS_MENU_START_VR);
+	printf(" %d		=> Stop voice recognition\n", APP_HS_MENU_STOP_VR);
 	printf("[PBC]================================================\n");
 	printf(" %d		=> PBC connection\n", APP_PBC_MENU_OPEN);
 	printf(" %d		=> PBC disconnection\n", APP_PBC_MENU_CLOSE);
@@ -626,6 +628,12 @@ int main (int argc, char *argv[])
 				break;
 			case APP_HS_MENU_GET_BATT:
 				printf("Battery charging level[0-5] : %d\n", pInstance->getCurrentBattChargingStatus());
+				break;
+			case APP_HS_MENU_START_VR:
+				pInstance->startVoiceRecognition();
+				break;
+			case APP_HS_MENU_STOP_VR:
+				pInstance->stopVoiceRecognition();
 				break;
 			case APP_PBC_MENU_OPEN:
 				sel = app_get_choice("Select device index");
