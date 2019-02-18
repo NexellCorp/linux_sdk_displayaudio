@@ -133,6 +133,7 @@ public:
 	virtual void registerCallOperNameCbHS(void *pObj, void (*cbFunc)(void *, char *)) = 0;
 	virtual void registerCurrentCalllsCbHS(void *pObj, void (*cbFunc)(void *, char *)) = 0;
 	virtual void registerAudioMuteStatusCbHS(void *pObj, void (*cbFunc)(void *, bool, bool)) = 0;
+	virtual void registerVoiceRecognitionStatusCbHS(void *pObj, void (*cbFunc)(void *, unsigned short)) = 0;
 	virtual void registerIncommingCallNumberCbHS(void *pObj, void (*cbFunc)(void *, char *)) = 0;
 	virtual void registerCallIndicatorCbHS(void *pObj, void (*cbFunc)(void *, char *)) = 0;
 	virtual void registerOpenFailedCbPBC(void *pObj, void (*cbFunc)(void *)) = 0;

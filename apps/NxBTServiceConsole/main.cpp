@@ -290,6 +290,14 @@ static void sendHSCurrentCalls_stub(void *pObj, char *currentCalls) {
 	// To do : callback
 }
 
+static void sendHSAudioMuteStatus_stub(void *pObj, bool is_opened, bool is_muted) {
+	// To do : callback
+}
+
+static void sendHSVoiceRecognitionStatus_stub(void *pObj, unsigned short status) {
+	// To do : callback
+}
+
 static void sendHSIncommingCallNumber_stub(void *pObj, char *number) {
 	// To do : callback
 }
@@ -376,6 +384,8 @@ int main (int argc, char *argv[])
 	pInstance->registerBatteryStatusCbHS(m_pObjHandler, sendHSBatteryStatus_stub);
 	pInstance->registerCallOperNameCbHS(m_pObjHandler, sendHSCallOperName_stub);
 	pInstance->registerCurrentCalllsCbHS(m_pObjHandler, sendHSCurrentCalls_stub);
+	pInstance->registerAudioMuteStatusCbHS(m_pObjHandler, sendHSAudioMuteStatus_stub);
+	pInstance->registerVoiceRecognitionStatusCbHS(m_pObjHandler, sendHSVoiceRecognitionStatus_stub);
 	pInstance->registerIncommingCallNumberCbHS(m_pObjHandler, sendHSIncommingCallNumber_stub);
 	pInstance->registerCallIndicatorCbHS(m_pObjHandler, sendHSCallIndicator_stub);
 
