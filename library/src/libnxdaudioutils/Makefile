@@ -20,6 +20,13 @@ CXXFLAGS += -fPIC
 
 TARGET := libnxdaudioutils.so
 
+# Master volume
+ifeq ($(TARGET_MACHINE), s5p4418-convergence-daudio)
+CXXFLAGS += -DNX_MASTER_VOLUME='"Speaker"'
+else
+CXXFLAGS += -DNX_MASTER_VOLUME='"DAC1"'
+endif
+
 ######################################################################
 # Build
 OBJS	:= $(COBJS) $(CXXOBJS)

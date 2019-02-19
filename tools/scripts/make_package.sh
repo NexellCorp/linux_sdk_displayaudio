@@ -92,7 +92,16 @@ function package_bt_service_application()
 
 	mkdir -p ${RESULT_DIR}/${QT_APP_ROOT}/${app_name}
 	cp -apvR ${TOP}/apps/${app_name}/*.so ${RESULT_DIR}/${QT_APP_ROOT}/${app_name}/
-	cp -apvR ${TOP}/apps/${app_name}/${PACKAGE_DIR}/* ${RESULT_DIR}/${QT_APP_ROOT}/${app_name}/
+	cp -apvR ${TOP}/apps/${app_name}/${PACKAGE_DIR}/${app_name}.desktop ${RESULT_DIR}/${QT_APP_ROOT}/${app_name}/
+	if [ ${TARGET_MACHINE} == "s5p4418-convergence-daudio" ]; then
+		cp -apvR ${TOP}/apps/${app_name}/${PACKAGE_DIR}/nxbtservice_config_convergence_daudio.xml ${RESULT_DIR}/${QT_APP_ROOT}/${app_name}/nxbtservice_config.xml
+	elif [ ${TARGET_MACHINE} == "nxp3220-evb" ]; then
+		cp -apvR ${TOP}/apps/${app_name}/${PACKAGE_DIR}/nxbtservice_config_nxp3220_evb.xml ${RESULT_DIR}/${QT_APP_ROOT}/${app_name}/nxbtservice_config.xml
+	elif [ ${TARGET_MACHINE} == "nxp3220-daudio" ]; then
+		cp -apvR ${TOP}/apps/${app_name}/${PACKAGE_DIR}/nxbtservice_config_nxp3220_daudio.xml ${RESULT_DIR}/${QT_APP_ROOT}/${app_name}/nxbtservice_config.xml
+	else
+		cp -apvR ${TOP}/apps/${app_name}/${PACKAGE_DIR}/nxbtservice_config_daudio_ref.xml ${RESULT_DIR}/${QT_APP_ROOT}/${app_name}/nxbtservice_config.xml
+	fi
 }
 
 function unpackage_bt_service_application()
@@ -110,12 +119,13 @@ function package_sdk_qtapplication()
 
 	mkdir -p ${RESULT_DIR}/${QT_APP_ROOT}/${app_name}
 	cp -apvR ${TOP}/${QT_BUILD_TOP}/build-${app_name}/*.so ${RESULT_DIR}/${QT_APP_ROOT}/${app_name}/
-	cp -apvR ${TOP}/apps/${app_name}/${PACKAGE_DIR}/* ${RESULT_DIR}/${QT_APP_ROOT}/${app_name}/
+	cp -apvR ${TOP}/apps/${app_name}/${PACKAGE_DIR}/*.png ${RESULT_DIR}/${QT_APP_ROOT}/${app_name}/
+	cp -apvR ${TOP}/apps/${app_name}/${PACKAGE_DIR}/${app_name}.desktop ${RESULT_DIR}/${QT_APP_ROOT}/${app_name}/
 	if [ ${app_name} == "NxRearCam" ]; then
-		if [ ${TARGET_MACHINE} == "s5p4418-daudio-ref" ]; then
-			cp -apvR ${RESULT_DIR}/${QT_APP_ROOT}/${app_name}/rearcam_config_daudio_ref.xml ${RESULT_DIR}/${QT_APP_ROOT}/${app_name}/rearcam_config.xml
+		if [ ${TARGET_MACHINE} == "s5p4418-convergence-daudio" ]; then
+			cp -apvR ${TOP}/apps/${app_name}/${PACKAGE_DIR}/rearcam_config_convergence_daudio.xml ${RESULT_DIR}/${QT_APP_ROOT}/${app_name}/rearcam_config.xml
 		else
-			cp -apvR ${RESULT_DIR}/${QT_APP_ROOT}/${app_name}/rearcam_config_convergence.xml ${RESULT_DIR}/${QT_APP_ROOT}/${app_name}/rearcam_config.xml
+			cp -apvR ${TOP}/apps/${app_name}/${PACKAGE_DIR}/rearcam_config_daudio_ref.xml ${RESULT_DIR}/${QT_APP_ROOT}/${app_name}/rearcam_config.xml
 		fi
 	fi
 }

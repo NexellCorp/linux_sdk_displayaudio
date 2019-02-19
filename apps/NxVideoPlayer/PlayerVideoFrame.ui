@@ -417,6 +417,19 @@ width: 20px;
     <bool>true</bool>
    </property>
   </widget>
+  <widget class="QPushButton" name="speedButton">
+   <property name="geometry">
+    <rect>
+     <x>860</x>
+     <y>340</y>
+     <width>89</width>
+     <height>51</height>
+    </rect>
+   </property>
+   <property name="text">
+    <string>x 1</string>
+   </property>
+  </widget>
   <zorder>graphicsView</zorder>
   <zorder>prevButton</zorder>
   <zorder>pauseButton</zorder>
@@ -429,6 +442,7 @@ width: 20px;
   <zorder>stopButton</zorder>
   <zorder>subTitleLabel</zorder>
   <zorder>subTitleLabel2</zorder>
+  <zorder>speedButton</zorder>
  </widget>
  <resources/>
  <connections/>

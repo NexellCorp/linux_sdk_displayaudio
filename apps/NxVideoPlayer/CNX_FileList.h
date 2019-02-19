@@ -59,83 +59,83 @@
 class CNX_FileList
 {
 public:
-    CNX_FileList();
-    ~CNX_FileList();
+	CNX_FileList();
+	~CNX_FileList();
 
 public:
-    //
-    //search directories without scanner
-    //
-    void MakeFileList(const char *pDir, const char **pExtension, int numExtension);
+	//
+	//search directories without scanner
+	//
+	void MakeFileList(const char *pDir, const char **pExtension, int numExtension);
 
-    //
-    //for scanner
-    //add, remove  ... cannot use when MakeFileList used
-    void AddItem(QString path)
-    {
-        QMutexLocker lock(&m_ListLock);
-        if(m_bIsMadeByLocal)
-        {
-            NXLOGD("m_bIsMadeByLocal check \n");
-            return;
-        }
-        m_FileList.push_back(path);
-    }
+	//
+	//for scanner
+	//add, remove  ... cannot use when MakeFileList used
+	void AddItem(QString path)
+	{
+		QMutexLocker lock(&m_ListLock);
+		if(m_bIsMadeByLocal)
+		{
+			NXLOGD("m_bIsMadeByLocal check \n");
+			return;
+		}
+		m_FileList.push_back(path);
+	}
 
-    void RemoveItem(int index)
-    {
-        QMutexLocker lock(&m_ListLock);
-        if(m_bIsMadeByLocal) return;
-        m_FileList.remove(index);
-    }
+	void RemoveItem(int index)
+	{
+		QMutexLocker lock(&m_ListLock);
+		if(m_bIsMadeByLocal) return;
+		m_FileList.remove(index);
+	}
 
-    //
-    //common methods
-    //
-    void ClearList()
-    {
-        QMutexLocker lock(&m_ListLock);
-        m_FileList.clear();
-    }
+	//
+	//common methods
+	//
+	void ClearList()
+	{
+		QMutexLocker lock(&m_ListLock);
+		m_FileList.clear();
+	}
 
-    int32_t GetSize()
-    {
-        QMutexLocker lock(&m_ListLock);
-        return m_FileList.size();
-    }
+	int32_t GetSize()
+	{
+		QMutexLocker lock(&m_ListLock);
+		return m_FileList.size();
+	}
 
-    QString GetList( int32_t index )
-    {
-        QMutexLocker lock(&m_ListLock);
-        if( index<0 ||  index >= m_FileList.size() )
-        {
-            return NULL;
-        }
-        return m_FileList[index];
-    }
+	QString GetList( int32_t index )
+	{
+		QMutexLocker lock(&m_ListLock);
+		if( index<0 ||  index >= m_FileList.size() )
+		{
+			return NULL;
+		}
+		return m_FileList[index];
+	}
 
-    int GetPathIndex(QString path)
-    {
-        QMutexLocker lock(&m_ListLock);
-        if( path.isNull() || path.isEmpty() )
-        {
-            return -1;
-        }
-        return m_FileList.indexOf(path);
-    }
+	int GetPathIndex(QString path)
+	{
+		QMutexLocker lock(&m_ListLock);
+		if( path.isNull() || path.isEmpty() )
+		{
+			return -1;
+		}
+		return m_FileList.indexOf(path);
+	}
 
 private:
-    int32_t IsDir(QString path);
-    int32_t GetDir(QString dir);
-    int32_t IsNormalFile(QString path);
+	int32_t IsDir(QString path);
+	int32_t GetDir(QString dir);
+	int32_t IsNormalFile(QString path);
 
-    //	FileList Database
+	//	FileList Database
 private:
-    int32_t m_iNumExtension;
-    const char** m_ppExtentsions;
-    QMutex m_ListLock;				//	File List Mutex
-    QVector <QString> m_FileList;	//	Store File Path
-    bool m_bIsMadeByLocal;			//	set true when MakeFileList called
+	int32_t m_iNumExtension;
+	const char** m_ppExtentsions;
+	QMutex m_ListLock;				//	File List Mutex
+	QVector <QString> m_FileList;	//	Store File Path
+	bool m_bIsMadeByLocal;			//	set true when MakeFileList called
 };
 
 #undef LOG_TAG

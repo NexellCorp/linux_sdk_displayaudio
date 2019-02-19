@@ -25,6 +25,9 @@
 #include <INX_BT.h>
 #include <NxBTServiceConsole.h>
 
+#include "NX_IConfig.h"
+#define NXBTSERVICE_CONFIG "/nexell/daudio/NxBTService/nxbtservice_config.xml"
+
 #define USE_BACKTRACE
 #define SYNC_MODE	true
 
@@ -138,6 +141,8 @@ void app_display_main_menu(void) {
 	printf(" %d		=> Request call operater name\n", APP_HS_MENU_SEND_COPS);
 	printf(" %d		=> Request current calls\n", APP_HS_MENU_SEND_CLCC);
 	printf(" %d		=> Get battery charging status value\n", APP_HS_MENU_GET_BATT);
+	printf(" %d		=> Start voice recognition\n", APP_HS_MENU_START_VR);
+	printf(" %d		=> Stop voice recognition\n", APP_HS_MENU_STOP_VR);
 	printf("[PBC]================================================\n");
 	printf(" %d		=> PBC connection\n", APP_PBC_MENU_OPEN);
 	printf(" %d		=> PBC disconnection\n", APP_PBC_MENU_CLOSE);
@@ -165,12 +170,12 @@ static void backtrace_dump(void) {
 	char **strings;
 
 	nptrs = backtrace(buf, CALLSTACK_SIZE);
-	printf("%s: backtrace() returned %d addresses\n", __func__, nptrs);
+	printf("%s: backtrace() returned %d addresses\n", __FUNCTION__, nptrs);
 
 	strings = backtrace_symbols(buf, nptrs);
 
 	if (strings == NULL) {
-		printf("%s: No backtrace captured\n", __func__);
+		printf("%s: No backtrace captured\n", __FUNCTION__);
 		return;
 	}
 
@@ -182,7 +187,7 @@ static void backtrace_dump(void) {
 }
 
 static void sigHandler(int signum) {
-	printf("\n%s: Signal %d\n", __func__, signum);
+	printf("\n%s: Signal %d\n", __FUNCTION__, signum);
 
 	switch(signum ) {
 		case SIGILL:
@@ -285,6 +290,14 @@ static void sendHSCurrentCalls_stub(void *pObj, char *currentCalls) {
 	// To do : callback
 }
 
+static void sendHSAudioMuteStatus_stub(void *pObj, bool is_opened, bool is_muted) {
+	// To do : callback
+}
+
+static void sendHSVoiceRecognitionStatus_stub(void *pObj, unsigned short status) {
+	// To do : callback
+}
+
 static void sendHSIncommingCallNumber_stub(void *pObj, char *number) {
 	// To do : callback
 }
@@ -331,6 +344,7 @@ int main (int argc, char *argv[])
 	int dummy;
 	void *m_pObjHandler = &dummy;		// UI handler
 	Bmessage_info_t bmsg;				// BMessage
+	NX_IConfig *pConfig = NULL;			// for config(xml)
 
 #ifdef USE_BACKTRACE
     // Register signal handler for debugging
@@ -370,6 +384,8 @@ int main (int argc, char *argv[])
 	pInstance->registerBatteryStatusCbHS(m_pObjHandler, sendHSBatteryStatus_stub);
 	pInstance->registerCallOperNameCbHS(m_pObjHandler, sendHSCallOperName_stub);
 	pInstance->registerCurrentCalllsCbHS(m_pObjHandler, sendHSCurrentCalls_stub);
+	pInstance->registerAudioMuteStatusCbHS(m_pObjHandler, sendHSAudioMuteStatus_stub);
+	pInstance->registerVoiceRecognitionStatusCbHS(m_pObjHandler, sendHSVoiceRecognitionStatus_stub);
 	pInstance->registerIncommingCallNumberCbHS(m_pObjHandler, sendHSIncommingCallNumber_stub);
 	pInstance->registerCallIndicatorCbHS(m_pObjHandler, sendHSCallIndicator_stub);
 
@@ -384,8 +400,6 @@ int main (int argc, char *argv[])
 	if (pInstance->initDevManager() < 0) {
 		goto EXIT;
 	}
-
-//	pInstance->setRecoveryCommand("-p /etc/bluetooth/BCM20710A1_001.002.014.0103.0117.hcd -all=0 &");
 
 	localAddress = pInstance->getLocalAddress();
 
@@ -403,8 +417,57 @@ int main (int argc, char *argv[])
 		printf("Paired device name : %s\n", pairedDev.pairedDevInfo[i].name);
 	}
 
-	// Set ALSA device names
-	pInstance->setALSADevName(NX_ALSA_DEV_NAME_P, NX_ALSA_DEV_NAME_C, NX_ALSA_BT_DEV_NAME_P, NX_ALSA_BT_DEV_NAME_C, SYNC_MODE);
+	// Read xml and settings to engine
+	pConfig = GetConfigHandle();
+	if (0 == pConfig->Open(NXBTSERVICE_CONFIG)) {
+		char *pBuf = NULL;
+		char alsa_playback[100] = {0,};
+		char alsa_capture[100] = {0,};
+		char alsa_sco_playback[100] = {0,};
+		char alsa_sco_capture[100] = {0,};
+
+		// Read bsa_recovery
+		if (0 == pConfig->Read("bsa_recovery", &pBuf)) {
+			// Set recovery command
+			pInstance->setRecoveryCommand(pBuf);
+		} else {
+			printf("[%s] Read failed : bsa_recovery\n", __FUNCTION__);
+		}
+
+		// Read alsa_playback
+		if (0 == pConfig->Read("alsa_playback", &pBuf)) {
+			strcpy(alsa_playback, pBuf);
+		} else {
+			printf("[%s] Read failed : alsa_playback\n", __FUNCTION__);
+		}
+
+		// Read alsa_capture
+		if (0 == pConfig->Read("alsa_capture", &pBuf)) {
+			strcpy(alsa_capture, pBuf);
+		} else {
+			printf("[%s] Read failed : alsa_capture\n", __FUNCTION__);
+		}
+
+		// Read alsa_sco_playback
+		if (0 == pConfig->Read("alsa_sco_playback", &pBuf)) {
+			strcpy(alsa_sco_playback, pBuf);
+		} else {
+			printf("[%s] Read failed : alsa_sco_playback\n", __FUNCTION__);
+		}
+
+		// Read alsa_sco_capture
+		if (0 == pConfig->Read("alsa_sco_capture", &pBuf)) {
+			strcpy(alsa_sco_capture, pBuf);
+		} else {
+			printf("[%s] Read failed : alsa_sco_capture\n", __FUNCTION__);
+		}
+
+		// Set ALSA device names
+		pInstance->setALSADevName(alsa_playback, alsa_capture, alsa_sco_playback, alsa_sco_capture, SYNC_MODE);
+	} else {
+		printf("[%s] Open failed : %s\n", __FUNCTION__, NXBTSERVICE_CONFIG);
+	}
+	delete pConfig;
 
 	// Auto connection
 	pInstance->autoConnection(pInstance->isAutoConnection());
@@ -575,6 +638,12 @@ int main (int argc, char *argv[])
 				break;
 			case APP_HS_MENU_GET_BATT:
 				printf("Battery charging level[0-5] : %d\n", pInstance->getCurrentBattChargingStatus());
+				break;
+			case APP_HS_MENU_START_VR:
+				pInstance->startVoiceRecognition();
+				break;
+			case APP_HS_MENU_STOP_VR:
+				pInstance->stopVoiceRecognition();
 				break;
 			case APP_PBC_MENU_OPEN:
 				sel = app_get_choice("Select device index");

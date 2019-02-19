@@ -29,11 +29,11 @@ CNX_AudioPlayer::~CNX_AudioPlayer()
 //================================================================================================================
 //public methods	commomn Initialize , close
 int32_t CNX_AudioPlayer::InitMediaPlayer(	void (*pCbEventCallback)( void *privateDesc, uint32_t EventType, uint32_t /*EventData*/, uint32_t /*param*/ ),
-										void *pCbPrivate,
-										const char *pUri,
-                                        int32_t mediaType,
-										void (*pCbQtUpdateImg)(void *pImg)
-									)
+											void *pCbPrivate,
+											const char *pUri,
+											int32_t mediaType,
+											void (*pCbQtUpdateImg)(void *pImg)
+											)
 {
 	CNX_AutoLock lock( &m_hLock );
 
@@ -144,7 +144,7 @@ int32_t CNX_AudioPlayer::Stop()
 		NXLOGE( "%s: Error! Handle is not initialized!", __FUNCTION__ );
 		return -1;
 	}
-		MP_RESULT iResult = NX_MPStop( m_hPlayer );
+	MP_RESULT iResult = NX_MPStop( m_hPlayer );
 	if( MP_ERR_NONE != iResult )
 	{
 		NXLOGE( "%s(): Error! NX_MPStop() Failed! (ret = %d)", __FUNCTION__, iResult);
@@ -160,7 +160,7 @@ int32_t CNX_AudioPlayer::Stop()
 qint64 CNX_AudioPlayer::GetMediaPosition()
 {
 	CNX_AutoLock lock( &m_hLock );
-    if( NULL == m_hPlayer )
+	if( NULL == m_hPlayer )
 	{
 		NXLOGE( "%s: Error! Handle is not initialized!", __FUNCTION__ );
 		return -1;
@@ -203,7 +203,7 @@ NX_MediaStatus CNX_AudioPlayer::GetState()
 		return StoppedState;
 	}
 
-    return (NX_MediaStatus)NX_GetState(m_hPlayer);
+	return (NX_MediaStatus)NX_GetState(m_hPlayer);
 }
 
 void CNX_AudioPlayer::PrintMediaInfo( const char *pUri )
@@ -221,22 +221,22 @@ void CNX_AudioPlayer::PrintMediaInfo( const char *pUri )
 
 		if( 0 < m_MediaInfo.ProgramInfo[i].iVideoNum )
 		{
-            int32_t num = 0;
-            for( int32_t j = 0; j < m_MediaInfo.ProgramInfo[i].iVideoNum + m_MediaInfo.ProgramInfo[i].iAudioNum; j++ )
+			int32_t num = 0;
+			for( int32_t j = 0; j < m_MediaInfo.ProgramInfo[i].iVideoNum + m_MediaInfo.ProgramInfo[i].iAudioNum; j++ )
 			{
 				MP_TRACK_INFO *pTrackInfo = &m_MediaInfo.ProgramInfo[i].TrackInfo[j];
 				if( MP_TRACK_VIDEO == pTrackInfo->iTrackType )
 				{
 					NXLOGD( "-. Video Track #%d : Index( %d ), Type( %d ), Resolution( %d x %d ), Duration( %lld ms )\n",
-                            num++, pTrackInfo->iTrackIndex, (int32_t)pTrackInfo->iCodecId, pTrackInfo->iWidth, pTrackInfo->iHeight, pTrackInfo->iDuration );
+							num++, pTrackInfo->iTrackIndex, (int32_t)pTrackInfo->iCodecId, pTrackInfo->iWidth, pTrackInfo->iHeight, pTrackInfo->iDuration );
 				}
 			}
 		}
 
 		if( 0 < m_MediaInfo.ProgramInfo[i].iAudioNum )
 		{
-            int32_t num = 0;
-            for( int32_t j = 0; j < m_MediaInfo.ProgramInfo[i].iVideoNum + m_MediaInfo.ProgramInfo[i].iAudioNum; j++ )
+			int32_t num = 0;
+			for( int32_t j = 0; j < m_MediaInfo.ProgramInfo[i].iVideoNum + m_MediaInfo.ProgramInfo[i].iAudioNum; j++ )
 			{
 				MP_TRACK_INFO *pTrackInfo = &m_MediaInfo.ProgramInfo[i].TrackInfo[j];
 				if( MP_TRACK_AUDIO == pTrackInfo->iTrackType )
@@ -257,7 +257,7 @@ void CNX_AudioPlayer::PrintMediaInfo( const char *pUri )
 //private methods	for InitMediaPlayer
 //================================================================================================================
 int32_t CNX_AudioPlayer::OpenHandle( void (*pCbEventCallback)( void *privateDesc, uint32_t EventType, uint32_t /*EventData*/, uint32_t /*param*/ ),
-								void *cbPrivate )
+									 void *cbPrivate )
 {
 	MP_RESULT iResult = NX_MPOpen( &m_hPlayer, pCbEventCallback, cbPrivate );
 
@@ -310,7 +310,7 @@ int32_t CNX_AudioPlayer::AddTrack(int32_t mediaType)
 		return -1;
 	}
 	m_iMediaType = mediaType;
-    int32_t iResult = -1;
+	int32_t iResult = -1;
 
 	if(MP_TRACK_AUDIO == mediaType)	iResult = AddTrackForAudio();
 
@@ -356,7 +356,7 @@ int32_t CNX_AudioPlayer::AddAudioTrack( int32_t track )
 		return -1;
 	}
 
-    int32_t index = GetTrackIndex( MP_TRACK_AUDIO, track );
+	int32_t index = GetTrackIndex( MP_TRACK_AUDIO, track );
 	if( 0 > index )
 	{
 		NXLOGE(  "%s(): Error! Get Audio Index. ( track = %d )", __FUNCTION__, track );
@@ -375,11 +375,11 @@ int32_t CNX_AudioPlayer::AddAudioTrack( int32_t track )
 
 int32_t CNX_AudioPlayer::GetTrackIndex( int32_t trackType, int32_t track )
 {
-    int32_t index = -1, trackOrder = 0;
+	int32_t index = -1, trackOrder = 0;
 
-    for( int32_t i = 0; i < m_MediaInfo.iProgramNum; i++ )
+	for( int32_t i = 0; i < m_MediaInfo.iProgramNum; i++ )
 	{
-        for( int32_t j = 0; j < m_MediaInfo.ProgramInfo[i].iVideoNum + m_MediaInfo.ProgramInfo[i].iAudioNum; j++ )
+		for( int32_t j = 0; j < m_MediaInfo.ProgramInfo[i].iVideoNum + m_MediaInfo.ProgramInfo[i].iAudioNum; j++ )
 		{
 			if( trackType == m_MediaInfo.ProgramInfo[i].TrackInfo[j].iTrackType )
 			{

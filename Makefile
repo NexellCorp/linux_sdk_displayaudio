@@ -61,14 +61,17 @@ export QT_CONF_PATH = $(NX_QT_CONF_PATH)
 endif
 
 ifeq ($(NX_DAUDIO_ENABLE_BT), )
-export SDK_ENABLE_BT := yes
+export SDK_ENABLE_BT = yes
 else
-export SDK_ENABLE_BT := $(NX_DAUDIO_ENABLE_BT)
+export SDK_ENABLE_BT = $(NX_DAUDIO_ENABLE_BT)
 endif
 ifeq ($(NX_DAUDIO_ENABLE_CAM), )
-export SDK_ENABLE_CAM := yes
+export SDK_ENABLE_CAM = yes
 else
-export SDK_ENABLE_CAM := $(NX_DAUDIO_ENABLE_CAM)
+export SDK_ENABLE_CAM = $(NX_DAUDIO_ENABLE_CAM)
+endif
+ifeq ($(TARGET_MACHINE), )
+export TARGET_MACHINE = "default"
 endif
 
 QMAKE_PATH = $(OE_QMAKE_PATH_HOST_BINS)
