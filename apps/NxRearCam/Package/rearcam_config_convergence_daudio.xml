@@ -2,7 +2,7 @@
 <map>
     <string name="module">1</string>
     <string name="use_intercam">1</string>
-    <string name="cam_width">960</string>
+    <string name="cam_width">704</string>
     <string name="cam_height">480</string>
     <string name="video_layer_idx">0</string>
     <string name="crtc_idx">0</string>
