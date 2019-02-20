@@ -529,6 +529,7 @@ void NxBTService::sendHSCallStatus_stub(void *pObj, int32_t call_status)
 	NxBTService* self = (NxBTService*)pObj;
 	char buffer[BUFFER_SIZE] = {0,};
 	char status[100] = {0,};
+	bool handleNotification = false;
 
 	// Send 'CALL STATUS' command to client
 	// example) $OK#HS#CALL STATUS#[STATUS]\n
@@ -563,7 +564,6 @@ void NxBTService::sendHSCallStatus_stub(void *pObj, int32_t call_status)
 	// Switching audio focus
 	switch (call_status) {
 	case HANG_UP_CALL:
-	case PICK_UP_CALL:
 	case DISCONNECTED_CALL:
 	{
 		// Switching calling mode
@@ -577,16 +577,13 @@ void NxBTService::sendHSCallStatus_stub(void *pObj, int32_t call_status)
 			}
 		}
 
-		if (m_pRequestExpireNotification)
-		{
-			if (self->m_NotificationType != NotificationMessageType_Unknown)
-			{
-				self->m_NotificationType = NotificationMessageType_Unknown;
-				m_pRequestExpireNotification();
-			}
-		}
+		handleNotification = true;
 		break;
 	}
+
+	case PICK_UP_CALL:
+		handleNotification = true;
+		break;
 
 	case INCOMMING_CALL:
 	case READY_OUTGOING_CALL:
@@ -607,6 +604,15 @@ void NxBTService::sendHSCallStatus_stub(void *pObj, int32_t call_status)
 
 	default:
 		break;
+	}
+
+	if (handleNotification && m_pRequestExpireNotification)
+	{
+		if (self->m_NotificationType != NotificationMessageType_Unknown)
+		{
+			self->m_NotificationType = NotificationMessageType_Unknown;
+			m_pRequestExpireNotification();
+		}
 	}
 }
 
