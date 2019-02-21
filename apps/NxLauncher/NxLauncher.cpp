@@ -316,9 +316,6 @@ NxLauncher::NxLauncher(QWidget *parent) :
 	m_pMediaScanner = new MediaScanner();
 	connect(m_pMediaScanner, SIGNAL(signalMediaEvent(NxEventTypes)), this, SLOT(slotMediaEvent(NxEventTypes)));
 
-	connect(&m_CommandTimer, SIGNAL(timeout()), this, SLOT(slotCommandTimer()));
-	m_CommandTimer.start(100);
-
 	connect(&m_Timer, SIGNAL(timeout()), this, SLOT(slotTimer()));
 //	m_Timer.start(10000);
 
@@ -1617,34 +1614,6 @@ void NxLauncher::slotNotificationReject()
 	}
 
 	m_PlugIns[requestor]->m_pNotificationResponse(false);
-}
-
-void NxLauncher::slotCommandTimer()
-{
-	QDir dir("/home/root");
-	QFileInfoList entries = dir.entryInfoList(QStringList() << "cmd", QDir::Files);
-
-	foreach (QFileInfo entry, entries)
-	{
-		QFile f(entry.filePath());
-		if (f.open(QFile::ReadOnly))
-		{
-			QString data = f.readAll();
-			// start;NxCarplay;NxAndroidAuto
-			QStringList tokens = data.split(";");
-			if (tokens[0].toLower() == "start")
-			{
-				for (int i = 1; i < tokens.size(); ++i)
-				{
-					Execute(tokens[i].trimmed());
-				}
-			}
-
-			f.close();
-
-			f.remove();
-		}
-	}
 }
 
 #ifdef CONFIG_USE_NO_QML

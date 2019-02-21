@@ -56,8 +56,6 @@ private slots:
 
 	void slotStartSerivceTimer();
 
-	void slotCommandTimer();
-
 #ifdef CONFIG_USE_NO_QML
 	void onExecute(NxPluginInfo* pInfo);
 
@@ -172,8 +170,6 @@ private:
 	static QQueue<QString> m_VideoFocusQueue;
 
 	QTimer m_Timer;
-
-	QTimer m_CommandTimer;
 
 	MediaScanner *m_pMediaScanner;
 #ifdef CONFIG_USE_NO_QML
