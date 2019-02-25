@@ -33,9 +33,6 @@ public:
 	//  Implementation Pure Virtual Function
 	virtual void  ThreadProc();
 
-	// static NX_CCommand *GetInstance();
-	// static NX_CCommand *m_pSingleTone;
-
 private:
 	//
 	// Hardware Depend Parameter
@@ -86,7 +83,6 @@ void NX_CCommand::StartService(char *m_pCtrlFileName)
 	m_bExitLoop = false;
 
 	m_pStopCmdFileName = m_pCtrlFileName;
-
 	Start();
 }
 
@@ -100,24 +96,11 @@ void NX_CCommand::StopService()
 void  NX_CCommand::ThreadProc()
 {
 	int32_t send_command = 0;
-	//usleep(1500000);   //for mknod after tmpfs load
 
-	// if( 0 == access(m_pStopCmdFileName, F_OK))
-	// {
-	// 	remove(m_pStopCmdFileName);
-	// }
-
-	// int ret = mknod(m_pStopCmdFileName, S_IFIFO | 0666, 0 );
-	// printf("================mknod ret : %d\n", ret);
-	//fd_cmd  = open( m_pStopCmdFileName, O_RDWR );
 	NXLOGI("[RearCam] : ThreadProc\n");
 
 	do{
 
-		// if( 0 == access(m_pStopCmdFileName, F_OK))
-		// {
-		// 	usleep(1000000);
-		// }else
 		{
 			if(send_command == 0)
 			{				
@@ -127,44 +110,45 @@ void  NX_CCommand::ThreadProc()
 					send_command = 1;
 					NXLOGI("[RearCam] : Send [ stop ] to [QuickRearCam]\n");
 					write(fd_cmd, "quick_stop", sizeof("quick_stop") );
-					close( fd_cmd );
+					usleep(2000000);					
 				}else
 				{
 					usleep(1000000);
 				}
-				
 			}else
 			{
-				fd_cmd  = open( m_pStopCmdFileName, O_RDWR );
-				memset( &poll_fds, 0, sizeof(poll_fds) );
-				poll_fds.fd = fd_cmd;
-				poll_fds.events = POLLIN;
+				if(fd_cmd != 0)
+				{
+					memset( &poll_fds, 0, sizeof(poll_fds) );
+					poll_fds.fd = fd_cmd;
+					poll_fds.events = POLLIN;
 
-				poll_ret = poll( &poll_fds, 2, POLL_TIMEOUT_MS );
-				if( poll_ret == 0 )
-				{
-					//printf("Poll Timeout\n");
-					continue;
-				}
-				else if( 0 > poll_ret )
-				{
-					printf("Poll Error !!!\n");
-				}
-				else
-				{
-					int i, read_size;
-
-					if( poll_fds.revents & POLLIN )
+					poll_ret = poll( &poll_fds, 2, POLL_TIMEOUT_MS );
+					if( poll_ret == 0 )
 					{
-						memset( rx_buf, 0, sizeof(rx_buf) );
-						read_size = read( fd_cmd, rx_buf, sizeof(rx_buf));
-						NXLOGI("[RearCam] : CMD : Size = %d, %s\n", read_size, rx_buf);
+						//printf("Poll Timeout\n");
+						continue;
+					}
+					else if( 0 > poll_ret )
+					{
+						printf("Poll Error !!!\n");
+					}
+					else
+					{
+						int i, read_size;
 
-						if(!strncmp((const char*)rx_buf, "stopped", sizeof("stopped")))
+						if( poll_fds.revents & POLLIN )
 						{
-							m_EventCallBack(STOPPED);
-						}
+							memset( rx_buf, 0, sizeof(rx_buf) );
+							read_size = read( fd_cmd, rx_buf, sizeof(rx_buf));
+							NXLOGI("[RearCam] : CMD : Size = %d, %s\n", read_size, rx_buf);
 
+							if(!strncmp((const char*)rx_buf, "stopped", sizeof("stopped")))
+							{
+								m_EventCallBack(STOPPED);
+							}
+
+						}
 					}
 				}
 			}
@@ -173,23 +157,6 @@ void  NX_CCommand::ThreadProc()
 	}while( !m_bExitLoop );
 
 }
-
-//
-//
-//	Make Singletone Instance
-//
-//
-// NX_CCommand *NX_CCommand::m_pSingleTone = NULL;
-
-// NX_CCommand *NX_CCommand::GetInstance()
-// {
-// 	if( NULL == m_pSingleTone )
-// 	{
-// 		m_pSingleTone = new NX_CCommand();
-// 	}
-// 	return m_pSingleTone;
-// }
-
 
 //
 //		External Interface
@@ -203,8 +170,6 @@ void* NX_GetCommandHandle()
 
 int32_t NX_StartCommandService(void *pObj, char *m_pCtrlFileName)
 {
-	//NX_CCommand *pInst = (NX_CCommand *)NX_CCommand::GetInstance();
-	//NX_CCommand *pInst = new NX_CCommand();
 	NX_CCommand *pInst = (NX_CCommand *)pObj;
 
 	pInst->StartService(m_pCtrlFileName);
@@ -233,7 +198,6 @@ void NX_StopCommandService(void *pObj, char *m_pCtrlFileName)
 
 void NX_RegisterCommandEventCallBack(void *pObj, void (*callback)( int32_t))
 {
-	//NX_CCommand *pInst = (NX_CCommand *)NX_CCommand::GetInstance();
 	NX_CCommand *pInst = (NX_CCommand*)pObj;
 	pInst->RegEventCallback( callback );
 }
