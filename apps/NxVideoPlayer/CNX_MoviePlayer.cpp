@@ -19,6 +19,8 @@ CNX_MoviePlayer::CNX_MoviePlayer()
 	, m_iMediaType( 0 )
 	, m_bVideoMute( 0 )
 	, m_fSpeed( 1.0 )
+	, m_bSpeedThreadExit(true)
+	, m_bSpeedPause(false)
 	, m_pSpeedPauseSem(NULL)
 	, m_pSubtitleParser(NULL)
 	, m_iSubtitleSeekTime( 0 )
@@ -300,6 +302,8 @@ int CNX_MoviePlayer::Stop()
 
 		m_fSpeed = 1.0;
 	}
+
+	m_bSpeedPause = false;
 
 	MP_RESULT iResult = NX_MPStop( m_hPlayer );
 	if( MP_ERR_NONE != iResult )
