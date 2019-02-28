@@ -2,6 +2,9 @@
 //	xml config
 #include "NX_IConfig.h"
 
+// for utility functions
+#include "NxUtils.h"
+
 #define LOG_TAG "[NxBTService]"
 #include <NX_Log.h>
 
@@ -1131,7 +1134,7 @@ bool NxBTService::setEnableAutoConnection(std::string service, std::string comma
 	// example 2) result = "$OK#ENABLE AUTO CONNECTION OFF"
 
 	std::vector<std::string> reply;
-	std::string argument = findArgument(&command);
+	std::string argument = FindArgument(&command);
 	bool result = false;
 
 	if (argument == "ON") {
@@ -1170,7 +1173,7 @@ bool NxBTService::setEnableAutoPairing(std::string service, std::string command)
 	// example 1) result = "$OK#ENABLE AUTO PAIRING ON"
 	// example 2) result = "$OK#ENABLE AUTO PAIRING OFF"
 	std::vector<std::string> reply;
-	std::string argument = findArgument(&command);
+	std::string argument = FindArgument(&command);
 	bool result = false;
 
 	if (argument == "ON") {
@@ -1263,8 +1266,8 @@ bool NxBTService::unpair(std::string service, std::string command)
 	// example) result = "$OK#UNPAIR DEVICE 3\n"
 
 	std::vector<std::string> reply;
-	std::string argument = findArgument(&command);
-	bool result = isDigit(argument) && (m_pModel->unpairDevice(atoi(argument.c_str())) == RET_OK);
+	std::string argument = FindArgument(&command);
+	bool result = IsDigit(argument) && (m_pModel->unpairDevice(atoi(argument.c_str())) == RET_OK);
 
 	reply.push_back(service);
 	reply.push_back(command);
@@ -1307,7 +1310,7 @@ bool NxBTService::localDeviceAddress(std::string service, std::string command)
 bool NxBTService::renameLocalDevice(std::string service, std::string command)
 {
 	std::vector<std::string> reply;
-	std::string argument = findArgument(&command);
+	std::string argument = FindArgument(&command);
 
 	bool result = (!argument.empty() && m_pModel->renameLocalDevice(argument.c_str()) == 0);
 
@@ -1371,11 +1374,11 @@ bool NxBTService::infoListOfPairedDeviceAll(std::string service, std::string com
 bool NxBTService::infoOfPairedDeviceByIndex(std::string service, std::string command)
 {
 	std::vector<std::string> reply;
-	std::string argument = findArgument(&command);
+	std::string argument = FindArgument(&command);
 	std::string temp;
 	char name[DEVICE_NAME_SIZE] = {0,};
 	unsigned char bd_addr[DEVICE_ADDRESS_SIZE] = {0,};
-	bool result = (isDigit(argument) && m_pModel->getPairedDevInfoByIndex(atoi(argument.c_str()), name, bd_addr) == RET_OK);
+	bool result = (IsDigit(argument) && m_pModel->getPairedDevInfoByIndex(atoi(argument.c_str()), name, bd_addr) == RET_OK);
 
 	if (result) {
 		temp = "<" + (std::string)name + "," + bdAddrToString(bd_addr, DEVICE_ADDRESS_SIZE, ':') + ">";
@@ -1393,9 +1396,9 @@ bool NxBTService::infoOfPairedDeviceByIndex(std::string service, std::string com
 bool NxBTService::nameOfPairedDeviceByIndex(std::string service, std::string command)
 {
 	std::vector<std::string> reply;
-	std::string argument = findArgument(&command);
+	std::string argument = FindArgument(&command);
 	char name[DEVICE_NAME_SIZE] = {0,};
-	bool result = (isDigit(argument) && m_pModel->getPairedDevNameByIndex( atoi(argument.c_str()), name) == RET_OK);
+	bool result = (IsDigit(argument) && m_pModel->getPairedDevNameByIndex( atoi(argument.c_str()), name) == RET_OK);
 
 	reply.push_back(service);
 	reply.push_back(command);
@@ -1412,9 +1415,9 @@ bool NxBTService::nameOfPairedDeviceByIndex(std::string service, std::string com
 bool NxBTService::addressOfPairedDeviceByIndex(std::string service, std::string command)
 {
 	std::vector<std::string> reply;
-	std::string argument = findArgument(&command);
+	std::string argument = FindArgument(&command);
 	unsigned char bd_addr[DEVICE_ADDRESS_SIZE] = {0,};
-	bool result = (isDigit(argument) && m_pModel->getPairedDevAddrByIndex(atoi(argument.c_str()), bd_addr) == RET_OK);
+	bool result = (IsDigit(argument) && m_pModel->getPairedDevAddrByIndex(atoi(argument.c_str()), bd_addr) == RET_OK);
 
 	reply.push_back(service);
 	reply.push_back(command);
@@ -1432,9 +1435,9 @@ bool NxBTService::connectToAVK(std::string service, std::string command)
 {
 	// example) result = "$OK#AVK#CONNECT 3\n"
 	std::vector<std::string> reply;
-	std::string argument = findArgument(&command);
+	std::string argument = FindArgument(&command);
 	int32_t index = atoi(argument.c_str());
-	bool result = (m_pModel->isConnectedAVK() || (isDigit(argument) && m_pModel->connectToAVK(index) == RET_OK));
+	bool result = (m_pModel->isConnectedAVK() || (IsDigit(argument) && m_pModel->connectToAVK(index) == RET_OK));
 
 	if (result) {
 		m_AVK.connection.on = true;
@@ -1758,9 +1761,9 @@ bool NxBTService::connectToHS(std::string service, std::string command)
 {
 	// example) result = "$OK#HS#CONNECT 3\n"
 	std::vector<std::string> reply;
-	std::string argument = findArgument(&command);
+	std::string argument = FindArgument(&command);
 	int32_t index = atoi(argument.c_str());
-	bool result = (isDigit(argument) && m_pModel->connectToHS(index) == RET_OK);
+	bool result = (IsDigit(argument) && m_pModel->connectToHS(index) == RET_OK);
 
 	if (result) {
 		m_HS.hs.on = true;
@@ -1829,8 +1832,8 @@ bool NxBTService::indexOfConnectedDeviceToHS(std::string service, std::string co
 bool NxBTService::dialPhoneNumber(std::string service, std::string command)
 {
 	std::vector<std::string> reply;
-	std::string argument = findArgument(&command);
-	bool result = isDigit(argument) && ( m_pModel->dialPhoneNumber(argument.c_str()) == RET_OK );
+	std::string argument = FindArgument(&command);
+	bool result = IsDigit(argument) && ( m_pModel->dialPhoneNumber(argument.c_str()) == RET_OK );
 
 	reply.push_back(service);
 	reply.push_back(command);
@@ -1882,7 +1885,7 @@ bool NxBTService::hangUpCall(std::string service, std::string command)
 bool NxBTService::muteMicrophoneHS(std::string service, std::string command)
 {
 	std::vector<std::string> reply;
-	std::string argument = findArgument(&command);
+	std::string argument = FindArgument(&command);
 	bool result = true;
 
 	if (argument == "ON") {
@@ -1933,9 +1936,9 @@ bool NxBTService::connectToMCE(std::string service, std::string command)
 {
 	// example) result = "$OK#MCE#CONNECT 3\n"
 	std::vector<std::string> reply;
-	std::string argument = findArgument(&command);
+	std::string argument = FindArgument(&command);
 	int32_t index = atoi(argument.c_str());
-	bool result = (isDigit(argument) && m_pModel->connectToMCE(index) == RET_OK);
+	bool result = (IsDigit(argument) && m_pModel->connectToMCE(index) == RET_OK);
 
 	if (result) {
 		m_HS.mce.on = true;
@@ -2038,9 +2041,9 @@ bool NxBTService::connectToPBC(std::string service, std::string command)
 {
 	// example) result = "$OK#PBC#CONNECT 3\n"
 	std::vector<std::string> reply;
-	std::string argument = findArgument(&command);
+	std::string argument = FindArgument(&command);
 	int32_t index = atoi(argument.c_str());
-	bool result = (isDigit(argument) && m_pModel->connectToPBC(index) == RET_OK);
+	bool result = (IsDigit(argument) && m_pModel->connectToPBC(index) == RET_OK);
 
 	if (result) {
 		m_HS.pbc.connection.on = true;
@@ -2119,101 +2122,6 @@ bool NxBTService::downloadCallHistory(string service, string command)
 	Broadcast(MakeReplyCommand(result, reply).c_str());
 
 	return result;
-}
-
-//-----------------------------------------------------------------------
-// Utility functions
-bool NxBTService::isDigit(std::string text)
-{
-	if (text.empty()) {
-		return false;
-	}
-
-	for (size_t i = 0; i < text.length(); i++) {
-		if (text[i] < '0' || '9' < text[i]) {
-			return false;
-		}
-	}
-
-	return true;
-}
-
-std::string NxBTService::MakeReplyCommand(bool ok, std::vector<std::string> reply)
-{
-	std::string command;
-
-	command += COMMAND_FORMAT_STX;
-	command += ok ? COMMAND_FORMAT_REPLY_DONE : COMMAND_FORMAT_REPLY_FAIL;
-
-	for (size_t i = 0; i < reply.size(); i++) {
-		command += COMMAND_FORMAT_SEPERATOR + reply[i];
-	}
-
-	command += COMMAND_FORMAT_ETX;
-
-	return command;
-}
-
-std::string NxBTService::findArgument(std::string* command)
-{
-	size_t pos = command->rfind(" ");
-	if (pos == std::string::npos) {
-		return std::string();
-	}
-	++pos;
-
-	return command->substr(pos, command->length()-pos);
-}
-
-bool NxBTService::findArgument(std::string* command, std::string target, std::string* argument)
-{
-	argument->clear();
-
-	for (size_t i = strlen(target.c_str()); i < command->length(); i++) {
-		*argument += command->at(i);
-	}
-
-	return !argument->empty();
-}
-
-std::vector<std::string> NxBTService::createTokens(std::string text, char seperator, char stx/*= 0*/, char etx/*= 0*/)
-{
-	std::vector<std::string> tokens;
-	std::string token;
-	int start = 0, end = text.length();
-
-	if (stx) {
-		start = text.find(stx);
-
-		if (start < 0) {
-			goto loop_finish;
-		}
-	}
-
-	if (etx) {
-		end = text.find(etx, stx);
-
-		if (end < 0) {
-			goto loop_finish;
-		}
-	}
-
-	for (int i = start; i < end; i++) {
-		if (text[i] == seperator) {
-			tokens.push_back(token);
-			token.clear();
-			continue;
-		}
-
-		token += text[i];
-	}
-
-	if (token.length()) {
-		tokens.push_back(token);
-	}
-
-loop_finish:
-	return tokens;
 }
 
 bool NxBTService::isInitialized()
