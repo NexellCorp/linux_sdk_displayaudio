@@ -35,12 +35,6 @@ using namespace std;
 #define PBC "PBC"
 #define MCE "MCE"
 
-#define COMMAND_FORMAT_STX			'$'
-#define COMMAND_FORMAT_REPLY_DONE	"OK"
-#define COMMAND_FORMAT_REPLY_FAIL	"NG"
-#define	COMMAND_FORMAT_SEPERATOR	'#'
-#define COMMAND_FORMAT_ETX			'\n'
-
 class NxBTService
 {
 public:
@@ -51,12 +45,6 @@ public:
 		CommandParseErrorType_UnknownCommandArgument = -3,
 		CommandParseErrorType_InvalidCommandFormat = -4,
 		CommandParseErrorType_FailedFromInterface = -5
-};
-
-	enum CommandType {
-		CommandType_Service,
-		CommandType_Command,
-		CommandType_Parameter
 	};
 
 	enum CallStatus {
@@ -364,18 +352,6 @@ public:
 	bool downloadPhoneBook(std::string service, std::string command);
 
 	bool downloadCallHistory(std::string service, std::string command);
-
-	//-----------------------------------------------------------------------
-	// Utility functions
-	bool findArgument(std::string* command, std::string target, std::string* argument);
-
-	std::string findArgument(std::string* command);
-
-	static bool isDigit(std::string text);
-
-	std::string MakeReplyCommand(bool ok, std::vector<std::string> args);
-
-	static std::vector<std::string> createTokens(std::string text, char seperator, char stx = 0, char etx = 0);
 
 private:
 	static INX_BT *m_pModel;
