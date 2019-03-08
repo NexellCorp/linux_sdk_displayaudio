@@ -102,6 +102,7 @@ void app_display_main_menu(void) {
 	printf(" %d		=> Disable auto-pairing mode\n", APP_MGT_MENU_DISABLE_AUTOPAIR);
 	printf(" %d		=> Accept pairing\n", APP_MGT_MENU_PAIR_ACCEPT);
 	printf(" %d		=> Reject pairing\n", APP_MGT_MENU_PAIR_REJECT);
+	printf(" %d		=> Request pair to device\n", APP_MGT_MENU_REQUEST_PAIR);
 	printf(" %d		=> Unpair BT device\n", APP_MGT_MENU_UNPAIR);
 	printf(" %d		=> Set discoverable\n", APP_MGT_MENU_ENABLE_DISCOVERABLE);
 	printf(" %d		=> Clesr discoverable\n", APP_MGT_MENU_DISABLE_DISCOVERABLE);
@@ -505,6 +506,10 @@ int main (int argc, char *argv[])
 				break;
 			case APP_MGT_MENU_PAIR_REJECT:
 				pInstance->rejectPairing();
+				break;
+			case APP_MGT_MENU_REQUEST_PAIR:
+				sel = app_get_choice("Select device index");
+				pInstance->requestPairDevice(sel);
 				break;
 			case APP_MGT_MENU_UNPAIR:
 				sel = app_get_choice("Select device index");
