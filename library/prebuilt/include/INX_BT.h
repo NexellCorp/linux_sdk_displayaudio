@@ -38,6 +38,7 @@ public:
 	virtual int32_t requestLastHSConnectedDevIndex(void) = 0;
 	virtual int32_t acceptPairing(void) = 0;
 	virtual int32_t rejectPairing(void) = 0;
+	virtual int32_t requestPairDevice(int32_t device_index) = 0;
 	virtual int32_t unpairDevice(int32_t device_index) = 0;
 	virtual int32_t enableAutoPairing(bool enable) = 0;
 	virtual bool isAutoPairing(void) = 0;
