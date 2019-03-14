@@ -20,6 +20,9 @@ using namespace std;
 // NX DAUDIO UTILS header
 #include <CNX_DAudioStatus.h>
 
+// for IPC Server (UDS)
+#include "NxIPCServer.h"
+
 #ifndef BUFFER_SIZE
 #   define BUFFER_SIZE 1024
 #endif /* BUFFER_SIZE */
@@ -175,10 +178,6 @@ public:
 
 	void findClientType();
 
-	std::vector<std::string> createTokensFromCommand(const char* command);
-
-	std::string bdAddrToString(unsigned char* bd_addr, int len, char seperator);
-
 	// Callback functions
 	static void sendMGTOpenSucceed_stub(void* pObj, int32_t result);
 
@@ -275,6 +274,10 @@ public:
 
 	bool addressOfPairedDeviceByIndex(std::string service, std::string command);
 
+	string GetLocalAddress(bool uppercase);
+
+	int32_t IsPaired(string macId);
+
 	//-----------------------------------------------------------------------
 	// AVK functions
 	bool connectToAVK(std::string service, std::string command);
@@ -309,7 +312,7 @@ public:
 
 	//-----------------------------------------------------------------------
 	// HS functions
-	bool connectToHS(std::string service, std::string command);
+	bool connectToHS(std::string service, std::string command, bool broadcast = true);
 
 	bool disconnectFromHS(std::string service, std::string command);
 
@@ -353,6 +356,15 @@ public:
 
 	bool downloadCallHistory(std::string service, std::string command);
 
+	//
+	void MirroringDeviceConnected(MirroringType eType, string macId);
+
+	void MirroringDeviceDisconnected(MirroringType eType);
+
+	void SendPairingRequest(MirroringType eType, int32_t iPairingCode);
+
+	void SendHSConnected(MirroringType eType, bool bConnected);
+
 private:
 	static INX_BT *m_pModel;
 
@@ -369,13 +381,10 @@ private:
 
 	void updateAVKConnectionState(struct connect_state_t target);
 
-	pthread_t m_hCommandThread;
 	pthread_t m_hStartThread;
 
-	static void* CommandThreadStub(void *pObj);
 	static void* StartThreadStub(void *pObj);
 
-	void CommandThreadProc();
 	void StartThreadProc();
 
 	AVKService m_AVK;
@@ -422,6 +431,15 @@ private:
 
 	PopupMessageType m_PopupMessageType;
 	NotificationMessageType m_NotificationType;
+
+	// IPC server
+	NxIPCServer m_IpcServer;
+
+	// connectivity
+	MirroringInfo m_sMirroringInfo[MirroringType_Count];
+
+	pthread_mutex_t m_hMutex;
+	pthread_cond_t m_hCond;
 };
 
 #endif // NXBTSERVICE_H
