@@ -8,7 +8,7 @@ INCLUDE += -I../../library/prebuilt/include
 
 LIBRARY += -L../../library/lib -lnxdaudioutils
 LIBRARY += -L../../library/prebuilt/lib
-LIBRARY += -lnxbt -lappbt -lnxalsa -lnxconfig
+LIBRARY += -lnxbt -lappbt -lnxalsa -lnxconfig -lnxunixdomainsocket_udp
 LIBRARY += -lpthread
 
 ################################################################################
@@ -19,6 +19,7 @@ CXXOBJS	:=
 CXXOBJS += NxBTService.o
 CXXOBJS += DAudioIface_Impl.o
 CXXOBJS += NxUtils.o
+CXXOBJS += NxIPCServer.o
 
 CXXFLAGS += -fPIC -DCONFIG_A2DP_PROCESS_MANAGEMENT -DCONFIG_HSP_PROCESS_MANAGEMENT
 
