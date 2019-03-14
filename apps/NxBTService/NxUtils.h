@@ -27,6 +27,8 @@ bool FindArgument(string* command, string target, string* argument);
 
 string MakeReplyCommand(bool ok, vector<string> reply);
 
+string ToStringBTMacId(unsigned char* bd_addr, int len, char seperator);
+
 bool IsDigit(std::string text);
 
 string ToLower(string str);
