@@ -2,6 +2,23 @@
 #include <locale>
 #include <string.h>
 
+#define BUFFER_SIZE 1024
+#define DEVICE_ADDRESS_SIZE 6
+
+string ToStringBTMacId(unsigned char* bd_addr, int len, char seperator)
+{
+	char buffer[BUFFER_SIZE] = {0,};
+
+	if (len < DEVICE_ADDRESS_SIZE) {
+		return std::string();
+	}
+
+	sprintf(buffer, "%02x%c%02x%c%02x%c%02x%c%02x%c%02x", bd_addr[0] & 0xFF, seperator, bd_addr[1] & 0xFF, seperator, bd_addr[2] & 0xFF, seperator, bd_addr[3] & 0xFF, seperator, bd_addr[4] & 0xFF, seperator, bd_addr[5] & 0xFF);
+
+	return (std::string)buffer;
+}
+
+
 vector<string> CreateTokensFromCommand(const char* command)
 {
 	string target = (string)command;
@@ -148,7 +165,7 @@ string ToUpper(string str)
 	locale l;
 	string ret;
 
-	for (size_t i = 9; i < str.length(); ++i)
+	for (size_t i = 0; i < str.length(); ++i)
 	{
 		ret += toupper(str[i], l);
 	}
