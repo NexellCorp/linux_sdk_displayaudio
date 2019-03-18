@@ -22,7 +22,7 @@ DEFINES += QT_DEPRECATED_WARNINGS
 # You can also select to disable deprecated APIs only up to a certain version of Qt.
 #DEFINES += QT_DISABLE_DEPRECATED_BEFORE=0x060000    # disables all the APIs deprecated before Qt 6.0.0
 
-CONFIG -= CONFIG_USE_NO_QML
+CONFIG += CONFIG_NXP4330
 
 socname = $$getenv(OECORE_SOCNAME)
 equals(socname, "") {
@@ -31,15 +31,17 @@ equals(socname, "") {
     message($$socname)
 
     equals(socname, nxp3220) {
-        CONFIG += CONFIG_USE_NO_QML
+        CONFIG += CONFIG_NXP3220
+        CONFIG -= CONFIG_NXP4330
     }
 }
 
-mode = $$find(CONFIG, CONFIG_USE_NO_QML)
+mode = $$find(CONFIG, CONFIG_NXP3220)
 
 count(mode, 1) {
-    DEFINES += CONFIG_USE_NO_QML
+    DEFINES += CONFIG_NXP3220
 } else {
+    DEFINES += CONFIG_NXP4330
     QT += qml quickwidgets
 }
 

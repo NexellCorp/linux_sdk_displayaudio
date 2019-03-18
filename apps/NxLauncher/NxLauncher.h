@@ -7,7 +7,7 @@
 #include <QPushButton>
 #include <QQueue>
 #include <QTimer>
-#ifndef CONFIG_USE_NO_QML
+#ifndef CONFIG_NXP3220
 #include <QQuickWidget>
 #else
 #include <page/PageStackFrame.h>
@@ -32,7 +32,7 @@ signals:
 	void signalStateChanged(NxPluginInfo*);
 
 private slots:
-#ifdef CONFIG_USE_NO_QML
+#ifdef CONFIG_NXP3220
 	void slotResizeItemDone();
 #endif
 
@@ -56,7 +56,7 @@ private slots:
 
 	void slotStartSerivceTimer();
 
-#ifdef CONFIG_USE_NO_QML
+#ifdef CONFIG_NXP3220
 	void onExecute(NxPluginInfo* pInfo);
 
 	void onPrevPageButtonClicked();
@@ -172,7 +172,7 @@ private:
 	QTimer m_Timer;
 
 	MediaScanner *m_pMediaScanner;
-#ifdef CONFIG_USE_NO_QML
+#ifdef CONFIG_NXP3220
 	PageStackFrame *m_pPageStackFrame;
 	QPushButton *m_pPrevPageButton;
 	QPushButton *m_pNextPageButton;
