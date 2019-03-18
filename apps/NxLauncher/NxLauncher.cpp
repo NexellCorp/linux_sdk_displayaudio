@@ -1,7 +1,7 @@
 #include "NxLauncher.h"
 #include "ui_NxLauncher.h"
 
-#ifndef CONFIG_USE_NO_QML
+#ifdef CONFIG_NXP4330
 #include <QQuickView>
 #include <QQuickItem>
 #include <QQmlProperty>
@@ -260,7 +260,7 @@ NxLauncher::NxLauncher(QWidget *parent) :
 		setFixedSize(screen.width(), screen.height());
 	}
 
-#ifndef CONFIG_USE_NO_QML
+#ifdef CONFIG_NXP4330
 	// binding between qml and widget
 	m_pLauncherWidget = new QQuickWidget(ui->launcher);
 	m_pLauncherWidget->setSource(QUrl("qrc:/qml/NxLauncher.qml"));
@@ -1357,7 +1357,7 @@ void NxLauncher::slotPlugInUpdated(QString path)
 		}
 		else
 		{
-#ifndef CONFIG_USE_NO_QML
+#ifdef CONFIG_NXP4330
 			QMetaObject::invokeMethod(m_pLauncherWidget->rootObject(), "activeChanged");
 #else
 			// fill
@@ -1616,7 +1616,7 @@ void NxLauncher::slotNotificationReject()
 	m_PlugIns[requestor]->m_pNotificationResponse(false);
 }
 
-#ifdef CONFIG_USE_NO_QML
+#ifdef CONFIG_NXP3220
 void NxLauncher::onExecute(NxPluginInfo* pInfo)
 {
 	QString plugin = pInfo->getPath() + "/" + pInfo->getName();
@@ -1660,11 +1660,11 @@ void NxLauncher::resizeEvent(QResizeEvent *)
 	ui->statusBar->setFixedSize(w, h * 0.1);
 	ui->notificationBar->setFixedSize(w, h * 0.1);
 	ui->volumeBar->move(width()/2-ui->volumeBar->width()/2, rh*ui->volumeBar->y());
-#ifndef CONFIG_USE_NO_QML
+#ifdef CONFIG_NXP4330
 	m_pLauncherWidget->setGeometry(0, ui->statusBar->height(), w, h * 0.9);
 #endif
 }
-#ifdef CONFIG_USE_NO_QML
+#ifdef CONFIG_NXP3220
 void NxLauncher::slotResizeItemDone()
 {
 	if (m_pPageStackFrame->GetPageCount() > 1)
