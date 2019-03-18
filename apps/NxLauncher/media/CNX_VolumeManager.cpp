@@ -37,7 +37,7 @@ const char *pstDefaultDeviceReserved[] = {
 };
 
 const char *pstDefaultMountPosition[] = {
-	"/tmp/media",
+	"/tmp/media", "/run/media",
 };
 
 //------------------------------------------------------------------------------

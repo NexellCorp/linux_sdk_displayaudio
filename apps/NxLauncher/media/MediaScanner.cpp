@@ -1,14 +1,6 @@
 #include "MediaScanner.h"
 #include "MediaConf.h"
 
-const char *pstDeviceReserved[] = {
-	"mmcblk0"
-};
-
-const char *pstMountPosition[] = {
-	"/tmp/media",
-};
-
 #define LOG_TAG "[MediaScanner]"
 #include <NX_Log.h>
 
@@ -21,8 +13,6 @@ MediaScanner::MediaScanner()
 
 	m_pVolumeManager = new CNX_VolumeManager();
 	connect(m_pVolumeManager, SIGNAL(signalDetectUevent(uint32_t,uint8_t*)), this, SLOT(slotDetectUevent(uint32_t,uint8_t*)));
-	m_pVolumeManager->SetDeviceReserved(pstDeviceReserved, sizeof(pstDeviceReserved) / sizeof(pstDeviceReserved[0]));
-	m_pVolumeManager->SetMountPosition(pstMountPosition, sizeof(pstMountPosition) / sizeof(pstMountPosition[0]));
 	m_pVolumeManager->Start();
 
 	m_pMediaScanner = new CNX_MediaScanner();
