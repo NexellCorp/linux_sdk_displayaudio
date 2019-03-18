@@ -91,14 +91,14 @@ int32_t CNX_VolumeManager::GetMount( NX_VOLUME_INFO **ppVolume, int32_t *iVolume
 		char szDev[MAX_VOLUME_STR], szVolume[MAX_VOLUME_STR], szType[MAX_VOLUME_STR];
 		sscanf( szTemp, "%s %s %s", szDev, szVolume, szType );
 
-		if( NULL == strchr( szDev, '/' ) )
+		if( NULL == strchr( szDev, '/' ) || NULL != strchr( szDev, '/dev/root' ))
 			continue;
 
 		if( IsDeviceReserved( szDev ) )
 			continue;
 
-		if( !IsMountPosition( szVolume ) )
-			continue;
+//		if( !IsMountPosition( szVolume ) )
+//			continue;
 
 		memset( &m_Volume[iCount], 0x00, sizeof(NX_VOLUME_INFO) );
 		sprintf( m_Volume[iCount].szDev, "%s", szDev );
