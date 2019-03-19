@@ -96,6 +96,7 @@ public:
 							void *pCbPrivate,
 							const char *pUri,
 							int mediaType,
+							char *pAudioDeviceName,
 							void (*pCbQtUpdateImg)(void *pImg)
 							);
 
@@ -136,6 +137,7 @@ private:
 	MP_MEDIA_INFO	m_MediaInfo;
 
 	int				m_iMediaType;
+	char			*m_pAudioDeviceName;
 };
 
 #endif // CNX_AudioPlayer_H

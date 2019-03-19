@@ -19,8 +19,8 @@
 #include <id3/misc_support.h>
 #pragma GCC diagnostic pop
 
-#define AUDIO_DEFAULT_DEVICE "plughw:0,0"
-#define AUDIO_HDMI_DEVICE    "plughw:0,3"
+//#define AUDIO_DEFAULT_DEVICE "plughw:0,0"
+//#define AUDIO_HDMI_DEVICE    "plughw:0,3"
 
 #define DEFAULT_DSP_WIDTH	1024
 #define DEFAULT_DSP_HEIGHT	600
@@ -120,6 +120,9 @@ PlayerAudioFrame::PlayerAudioFrame(QWidget *parent)
 	, m_pRequestLauncherShow(NULL)
 	, m_pRequestVolume(NULL)
 	, m_bIsAudioFocus(true)
+	, m_pMessageFrame(NULL)
+	, m_pMessageLabel(NULL)
+	, m_pMessageButton(NULL)
 	, ui(new Ui::PlayerAudioFrame)
 {
 	ui->setupUi(this);
@@ -155,6 +158,42 @@ PlayerAudioFrame::PlayerAudioFrame(QWidget *parent)
 	connect(&m_PlayerSignals, SIGNAL(MediaPlayerCallback(int)), SLOT(MediaPlayerCallback(int)));
 	m_PosUpdateTimer.start( 500 );
 
+	//Message
+	m_pMessageFrame = new QFrame(this);
+
+	m_pMessageFrame->setGeometry(340, 190, 271, 120);
+	m_pMessageFrame->setStyleSheet("background: white;");
+	m_pMessageFrame->hide();
+
+	m_pMessageLabel = new QLabel(m_pMessageFrame);
+	m_pMessageLabel->setGeometry(0, 0, m_pMessageFrame->width(), 100);
+	m_pMessageLabel->setText("text");
+
+	m_pMessageButton = new QPushButton(m_pMessageFrame);
+	m_pMessageButton->setGeometry(m_pMessageFrame->width()/2-100/2, m_pMessageFrame->height()-30, 80, 30);
+	m_pMessageButton->setText("Ok");
+	connect(m_pMessageButton, SIGNAL(clicked(bool)), this, SLOT(slotOk()));
+
+	//Get audioDeviceName
+	memset(m_audioDeviceName,0,sizeof(m_audioDeviceName));
+	if(0 > m_pIConfig->Open("/nexell/daudio/NxAudioPlayer/nxaudioplayer_config.xml"))
+	{
+		NXLOGE("[%s]nxaudioplayer_config.xml open err\n", __FUNCTION__);
+	}
+	else
+	{
+		char *pBuf = NULL;
+		if(0 > m_pIConfig->Read("alsa_default",&pBuf))
+		{
+			NXLOGE("[%s]xml alsa_default err\n", __FUNCTION__);
+			memcpy(m_audioDeviceName,"plughw:0,0",sizeof("plughw:0,0"));
+		}
+		else
+		{
+			strcpy(m_audioDeviceName,pBuf);
+		}
+	}
+	m_pIConfig->Close();
 }
 
 PlayerAudioFrame::~PlayerAudioFrame()
@@ -181,6 +220,21 @@ PlayerAudioFrame::~PlayerAudioFrame()
 	{
 		delete m_pStatusBar;
 
+	}
+
+	if(m_pMessageButton)
+	{
+		delete m_pMessageButton;
+	}
+
+	if(m_pMessageLabel)
+	{
+		delete m_pMessageLabel;
+	}
+
+	if(m_pMessageFrame)
+	{
+		delete m_pMessageFrame;
 	}
 
 	delete ui;
@@ -494,6 +548,7 @@ bool PlayerAudioFrame::PlayAudio()
 														this,
 														m_FileList.GetList(m_iCurFileListIdx).toStdString().c_str(),
 														MP_TRACK_AUDIO,
+														m_audioDeviceName,
 														NULL
 														);
 				iTryCount++;
@@ -721,13 +776,25 @@ void PlayerAudioFrame::MediaPlayerCallback( int eventType )
 	case MP_MSG_DEMUX_ERR:
 	{
 		NXLOGD("******** MP_MSG_DEMUX_ERR !!!\n");
-		PlayNextAudio();
+		// message
+		m_pMessageFrame->show();
+		m_pMessageLabel->setText("DEMUX_ERR");
+
+		ui->progressBar->setValue(0);
+		UpdateDurationInfo( 0, 0 );
+		StopAudio();
 		break;
 	}
 	case MP_MSG_ERR_OPEN_AUDIO_DEVICE:
 	{
 		NXLOGE("******** MP_MSG_ERR_OPEN_AUDIO_DEVICE\n");
-		PlayNextAudio();
+		// message
+		m_pMessageFrame->show();
+		m_pMessageLabel->setText("ERR_OPEN_AUDIO_DEVICE");
+
+		ui->progressBar->setValue(0);
+		UpdateDurationInfo( 0, 0 );
+		StopAudio();
 		break;
 	}
 
@@ -1193,4 +1260,12 @@ void PlayerAudioFrame::UpdateAlbumInfo()
 		ui->albumArtView->setScene(&m_Scene);
 		m_Scene.addItem(&m_AlbumArt);
 	}
+}
+
+void PlayerAudioFrame::slotOk()
+{
+	ui->progressBar->setValue(0);
+	UpdateDurationInfo(0, 0);
+	StopAudio();
+	m_pMessageFrame->hide();
 }
