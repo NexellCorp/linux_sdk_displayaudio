@@ -24,6 +24,11 @@
 #include "CNX_AudioPlayer.h"
 
 #include <NX_Type.h>
+
+//Message
+#include <QLabel>
+#include <QPushButton>
+
 //	xml config
 #include "NX_IConfig.h"
 //	scanner
@@ -152,6 +157,7 @@ private slots:
 	void slotPlayListFrameAccept();
 	void slotPlayListFrameReject();
 
+	void slotOk();	//message
 
 private:
 	int32_t	m_iCurFileListIdx;		//index of media list
@@ -168,6 +174,13 @@ private:
 	void (*m_pRequestTerminate)(void);
 	void (*m_pRequestLauncherShow)(bool *bOk);
 	void (*m_pRequestVolume)(void);
+
+	//Message
+	QFrame *m_pMessageFrame;
+	QLabel *m_pMessageLabel;
+	QPushButton *m_pMessageButton;
+
+	char m_audioDeviceName[20];
 
 private:
 	Ui::PlayerAudioFrame *ui;
