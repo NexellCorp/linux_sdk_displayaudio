@@ -191,6 +191,8 @@ private:
 	QLabel *m_pMessageLabel;
 	QPushButton *m_pMessageButton;
 
+	char m_audioDeviceName[20];
+
 private:
 	Ui::PlayerVideoFrame *ui;
 };

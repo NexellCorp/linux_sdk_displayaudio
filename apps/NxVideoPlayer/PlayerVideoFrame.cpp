@@ -206,6 +206,27 @@ PlayerVideoFrame::PlayerVideoFrame(QWidget *parent)
 	m_pMessageButton->setGeometry(m_pMessageFrame->width()/2-100/2, m_pMessageFrame->height()-30, 80, 30);
 	m_pMessageButton->setText("Ok");
 	connect(m_pMessageButton, SIGNAL(clicked(bool)), this, SLOT(slotOk()));
+
+	//Get audioDeviceName
+	memset(m_audioDeviceName,0,sizeof(m_audioDeviceName));
+	if(0 > m_pIConfig->Open("/nexell/daudio/NxVideoPlayer/nxvideoplayer_config.xml"))
+	{
+		NXLOGE("[%s]nxvideooplayer_config.xml open err\n", __FUNCTION__);
+	}
+	else
+	{
+		char *pBuf = NULL;
+		if(0 > m_pIConfig->Read("alsa_default",&pBuf))
+		{
+			NXLOGE("[%s]xml alsa_default err\n", __FUNCTION__);
+			memcpy(m_audioDeviceName,"plughw:0,0",sizeof("plughw:0,0"));
+		}
+		else
+		{
+			strcpy(m_audioDeviceName,pBuf);
+		}
+	}
+	m_pIConfig->Close();
 }
 
 PlayerVideoFrame::~PlayerVideoFrame()
@@ -932,6 +953,7 @@ bool PlayerVideoFrame::PlayVideo()
 														MP_TRACK_VIDEO,
 														width(),
 														height(),
+														m_audioDeviceName,
 														//&cbUpdateRender
 														NULL
 														);
