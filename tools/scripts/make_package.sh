@@ -128,6 +128,24 @@ function package_sdk_qtapplication()
 			cp -apvR ${TOP}/apps/${app_name}/${PACKAGE_DIR}/rearcam_config_daudio_ref.xml ${RESULT_DIR}/${QT_APP_ROOT}/${app_name}/rearcam_config.xml
 		fi
 	fi
+	if [ ${app_name} == "NxAudioPlayer" ]; then
+		if [ ${TARGET_MACHINE} == "nxp3220-evb" ]; then
+			cp -apvR ${TOP}/apps/${app_name}/${PACKAGE_DIR}/nxaudioplayer_config_nxp3220_daudio.xml ${RESULT_DIR}/${QT_APP_ROOT}/${app_name}/nxaudioplayer_config.xml
+		elif [ ${TARGET_MACHINE} == "nxp3220-daudio" ]; then
+			cp -apvR ${TOP}/apps/${app_name}/${PACKAGE_DIR}/nxaudioplayer_config_nxp3220_daudio.xml ${RESULT_DIR}/${QT_APP_ROOT}/${app_name}/nxaudioplayer_config.xml
+		else
+			cp -apvR ${TOP}/apps/${app_name}/${PACKAGE_DIR}/nxaudioplayer_config_daudio.xml ${RESULT_DIR}/${QT_APP_ROOT}/${app_name}/nxaudioplayer_config.xml
+		fi
+	fi
+	if [ ${app_name} == "NxVideoPlayer" ]; then
+		if [ ${TARGET_MACHINE} == "nxp3220-evb" ]; then
+			cp -apvR ${TOP}/apps/${app_name}/${PACKAGE_DIR}/nxvideoplayer_config_nxp3220_daudio.xml ${RESULT_DIR}/${QT_APP_ROOT}/${app_name}/nxvideoplayer_config.xml
+		elif [ ${TARGET_MACHINE} == "nxp3220-daudio" ]; then
+			cp -apvR ${TOP}/apps/${app_name}/${PACKAGE_DIR}/nxvideoplayer_config_nxp3220_daudio.xml ${RESULT_DIR}/${QT_APP_ROOT}/${app_name}/nxvideoplayer_config.xml
+		else
+			cp -apvR ${TOP}/apps/${app_name}/${PACKAGE_DIR}/nxvideoplayer_config_daudio.xml ${RESULT_DIR}/${QT_APP_ROOT}/${app_name}/nxvideoplayer_config.xml
+		fi
+	fi
 }
 
 function unpackage_sdk_qtapplication()
