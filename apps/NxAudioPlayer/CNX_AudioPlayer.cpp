@@ -7,13 +7,14 @@
 #define LOG_TAG "[NxAudioPlayer]"
 #include <NX_Log.h>
 
-#define AUDIO_DEFAULT_DEVICE "plughw:0,0"
-#define AUDIO_HDMI_DEVICE    "plughw:0,3"
+//#define AUDIO_DEFAULT_DEVICE "plughw:0,0"
+//#define AUDIO_HDMI_DEVICE    "plughw:0,3"
 
 //------------------------------------------------------------------------------
 CNX_AudioPlayer::CNX_AudioPlayer()
 	: m_hPlayer( NULL )
 	, m_iMediaType( 0 )
+	, m_pAudioDeviceName(NULL)
 {
 	pthread_mutex_init( &m_hLock, NULL );
 	memset(&m_MediaInfo, 0x00, sizeof(MP_MEDIA_INFO));
@@ -32,10 +33,13 @@ int32_t CNX_AudioPlayer::InitMediaPlayer(	void (*pCbEventCallback)( void *privat
 											void *pCbPrivate,
 											const char *pUri,
 											int32_t mediaType,
+											char *pAudioDeviceName,
 											void (*pCbQtUpdateImg)(void *pImg)
 											)
 {
 	CNX_AutoLock lock( &m_hLock );
+
+	m_pAudioDeviceName = pAudioDeviceName;
 
 	if(0 > OpenHandle(pCbEventCallback, pCbPrivate) )		return -1;
 	if(0 > SetUri(pUri) )									return -1;
@@ -363,7 +367,7 @@ int32_t CNX_AudioPlayer::AddAudioTrack( int32_t track )
 		return -1;
 	}
 
-	MP_RESULT iResult = NX_MPAddAudioTrack( m_hPlayer, index, NULL, AUDIO_DEFAULT_DEVICE );
+	MP_RESULT iResult = NX_MPAddAudioTrack( m_hPlayer, index, NULL, m_pAudioDeviceName );
 
 	if( MP_ERR_NONE != iResult )
 	{
