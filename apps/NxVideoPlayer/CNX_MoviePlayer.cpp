@@ -7,8 +7,8 @@
 #define LOG_TAG "[NxVideoPlayer]"
 #include <NX_Log.h>
 
-#define AUDIO_DEFAULT_DEVICE "plughw:0,0"
-#define AUDIO_HDMI_DEVICE    "plughw:0,3"
+//#define AUDIO_DEFAULT_DEVICE "plughw:0,0"
+//#define AUDIO_HDMI_DEVICE    "plughw:0,3"
 
 //------------------------------------------------------------------------------
 CNX_MoviePlayer::CNX_MoviePlayer()
@@ -24,6 +24,7 @@ CNX_MoviePlayer::CNX_MoviePlayer()
 	, m_pSpeedPauseSem(NULL)
 	, m_pSubtitleParser(NULL)
 	, m_iSubtitleSeekTime( 0 )
+	, m_pAudioDeviceName(NULL)
 {
 	int crtcIdx  = -1;
 	int layerIdx = -1;
@@ -33,6 +34,11 @@ CNX_MoviePlayer::CNX_MoviePlayer()
 	pthread_mutex_init( &m_SubtitleLock, NULL );
 
 	memset(&m_MediaInfo, 0x00, sizeof(MP_MEDIA_INFO));
+	for(int i=0;i<MAX_DISPLAY_CHANNEL;i++)
+	{
+		m_pDspConfig[i] = NULL;
+	}
+
 	m_pSubtitleParser = new CNX_SubtitleParser();
 
 	m_idPrimaryDisplay.iConnectorID = -1;
@@ -88,10 +94,13 @@ int CNX_MoviePlayer::InitMediaPlayer(	void (*pCbEventCallback)( void *privateDes
 										int mediaType,
 										int DspWidth,
 										int DspHeight,
+										char *pAudioDeviceName,
 										void (*pCbQtUpdateImg)(void *pImg)
 										)
 {
 	CNX_AutoLock lock( &m_hLock );
+
+	m_pAudioDeviceName = pAudioDeviceName;
 
 	if(0 > OpenHandle(pCbEventCallback, pCbPrivate) )		return -1;
 	if(0 > SetUri(pUri) )									return -1;
@@ -812,7 +821,7 @@ int CNX_MoviePlayer::AddAudioTrack( int track )
 		return -1;
 	}
 
-	MP_RESULT iResult = NX_MPAddAudioTrack( m_hPlayer, index, NULL, AUDIO_DEFAULT_DEVICE );
+	MP_RESULT iResult = NX_MPAddAudioTrack( m_hPlayer, index, NULL, m_pAudioDeviceName );
 
 	if( MP_ERR_NONE != iResult )
 	{

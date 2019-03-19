@@ -100,6 +100,7 @@ public:
 							int mediaType,
 							int DspWidth,
 							int DspHeight,
+							char *pAudioDeviceName,
 							void (*pCbQtUpdateImg)(void *pImg)
 							);
 
@@ -186,6 +187,8 @@ private:
 	int32_t         m_bSpeedPause;
 	NX_CMutex       m_SpeedPauseMutex;
 	NX_CSemaphore   *m_pSpeedPauseSem;
+
+	char			*m_pAudioDeviceName;
 
 public:
 	int IsCbQtUpdateImg();

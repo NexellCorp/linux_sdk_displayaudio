@@ -199,6 +199,7 @@ MP_RESULT 	NX_MPSetVolume( MP_HANDLE hMp, int32_t iLevel );		// 0% ~ 100%
 int32_t 	NX_MPMakeThumbnail( const char *pInFile, const char *pOutFile, int32_t maxWidth, int32_t maxHeight, int32_t timeRatio );
 
 int32_t		NX_MPGetVersion( void );				// MSB|  Major( 8bit ) - Minor( 8bit ) - Revision( 8bit ) - Reserved( 8bit )  |LSB
+void		NX_MPChgDebugLevel( int32_t iLevel );	// 0(Verbose), 1(Debug), 2(Info), 3(Warn), 4(Error), 5(Disable) :: Default(Info)
 int32_t		NX_GetState( MP_HANDLE hMp );
 
 void		NX_MPVideoMute( MP_HANDLE hMp, int32_t bOnoff, MP_DSP_CONFIG *pInfo);
