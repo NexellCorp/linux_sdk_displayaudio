@@ -10,7 +10,7 @@
     <string name="cam_display_y">0</string>
     <string name="cam_display_width">1024</string>
     <string name="cam_display_height">600</string>
-    <string name="deinterlace_engine">1</string>
+    <string name="deinterlace_engine">2</string>
     <string name="deinter_param">3</string>
     <string name="lcd_width">1024</string>
     <string name="lcd_height">600</string>
