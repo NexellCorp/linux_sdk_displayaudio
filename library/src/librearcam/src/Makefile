@@ -34,8 +34,6 @@ CPPOBJS		:=	NX_CV4l2Camera.o \
 
 COBJS		:= nxp_video_alloc_drm.o \
 
-#COBJS += $(wildcard ./../libtsdeinterlacer.a)
-
 # BackGear Detection
 CPPOBJS		+=	NX_CGpioControl.o \
 				NX_CBackgearDetect.o \
@@ -53,7 +51,7 @@ CPPOBJS		+=	NX_CRearCamManager.o \
 LDFLAGS += \
 		-L../lib \
 
-LIBRARY 	+= -lnx_v4l2  -ldrm  -lnxdeinterlace
+LIBRARY 	+= -lnx_v4l2  -ldrm  -lnxdeinterlace -ldeinterlacer
 #LIBRARY 	+= -lnxv4l2  -ldrm  -lnxdeinterlace -ltsdeinterlacer
 
 #########################################################################
@@ -67,8 +65,8 @@ TARGET		:= libnxrearcam.so
 ######################################################################
 # Build
 
-#CXXFLAGS 	+= -DTHUNDER_DEINTERLACE -DUI_OVERLAY_APP
-CXXFLAGS 	+= -DUI_OVERLAY_APP
+CXXFLAGS 	+= -DTHUNDER_DEINTERLACE -DUI_OVERLAY_APP
+#CXXFLAGS 	+= -DUI_OVERLAY_APP
 
 OBJS	:= $(COBJS) $(CPPOBJS)
 
