@@ -95,8 +95,6 @@ function package_bt_service_application()
 	cp -apvR ${TOP}/apps/${app_name}/${PACKAGE_DIR}/${app_name}.desktop ${RESULT_DIR}/${QT_APP_ROOT}/${app_name}/
 	if [ ${TARGET_MACHINE} == "s5p4418-convergence-daudio" ]; then
 		cp -apvR ${TOP}/apps/${app_name}/${PACKAGE_DIR}/nxbtservice_config_convergence_daudio.xml ${RESULT_DIR}/${QT_APP_ROOT}/${app_name}/nxbtservice_config.xml
-	elif [ ${TARGET_MACHINE} == "nxp3220-evb" ]; then
-		cp -apvR ${TOP}/apps/${app_name}/${PACKAGE_DIR}/nxbtservice_config_nxp3220_evb.xml ${RESULT_DIR}/${QT_APP_ROOT}/${app_name}/nxbtservice_config.xml
 	elif [ ${TARGET_MACHINE} == "nxp3220-daudio" ]; then
 		cp -apvR ${TOP}/apps/${app_name}/${PACKAGE_DIR}/nxbtservice_config_nxp3220_daudio.xml ${RESULT_DIR}/${QT_APP_ROOT}/${app_name}/nxbtservice_config.xml
 	else
@@ -129,21 +127,21 @@ function package_sdk_qtapplication()
 		fi
 	fi
 	if [ ${app_name} == "NxAudioPlayer" ]; then
-		if [ ${TARGET_MACHINE} == "nxp3220-evb" ]; then
-			cp -apvR ${TOP}/apps/${app_name}/${PACKAGE_DIR}/nxaudioplayer_config_nxp3220_daudio.xml ${RESULT_DIR}/${QT_APP_ROOT}/${app_name}/nxaudioplayer_config.xml
+		if [ ${TARGET_MACHINE} == "s5p4418-convergence-daudio" ]; then
+			cp -apvR ${TOP}/apps/${app_name}/${PACKAGE_DIR}/nxaudioplayer_config_convergence_daudio.xml ${RESULT_DIR}/${QT_APP_ROOT}/${app_name}/nxaudioplayer_config.xml
 		elif [ ${TARGET_MACHINE} == "nxp3220-daudio" ]; then
 			cp -apvR ${TOP}/apps/${app_name}/${PACKAGE_DIR}/nxaudioplayer_config_nxp3220_daudio.xml ${RESULT_DIR}/${QT_APP_ROOT}/${app_name}/nxaudioplayer_config.xml
 		else
-			cp -apvR ${TOP}/apps/${app_name}/${PACKAGE_DIR}/nxaudioplayer_config_daudio.xml ${RESULT_DIR}/${QT_APP_ROOT}/${app_name}/nxaudioplayer_config.xml
+			cp -apvR ${TOP}/apps/${app_name}/${PACKAGE_DIR}/nxaudioplayer_config_daudio_ref.xml ${RESULT_DIR}/${QT_APP_ROOT}/${app_name}/nxaudioplayer_config.xml
 		fi
 	fi
 	if [ ${app_name} == "NxVideoPlayer" ]; then
-		if [ ${TARGET_MACHINE} == "nxp3220-evb" ]; then
-			cp -apvR ${TOP}/apps/${app_name}/${PACKAGE_DIR}/nxvideoplayer_config_nxp3220_daudio.xml ${RESULT_DIR}/${QT_APP_ROOT}/${app_name}/nxvideoplayer_config.xml
+		if [ ${TARGET_MACHINE} == "s5p4418-convergence-daudio" ]; then
+			cp -apvR ${TOP}/apps/${app_name}/${PACKAGE_DIR}/nxvideoplayer_config_convergence_daudio.xml ${RESULT_DIR}/${QT_APP_ROOT}/${app_name}/nxvideoplayer_config.xml
 		elif [ ${TARGET_MACHINE} == "nxp3220-daudio" ]; then
 			cp -apvR ${TOP}/apps/${app_name}/${PACKAGE_DIR}/nxvideoplayer_config_nxp3220_daudio.xml ${RESULT_DIR}/${QT_APP_ROOT}/${app_name}/nxvideoplayer_config.xml
 		else
-			cp -apvR ${TOP}/apps/${app_name}/${PACKAGE_DIR}/nxvideoplayer_config_daudio.xml ${RESULT_DIR}/${QT_APP_ROOT}/${app_name}/nxvideoplayer_config.xml
+			cp -apvR ${TOP}/apps/${app_name}/${PACKAGE_DIR}/nxvideoplayer_config_daudio_ref.xml ${RESULT_DIR}/${QT_APP_ROOT}/${app_name}/nxvideoplayer_config.xml
 		fi
 	fi
 }
