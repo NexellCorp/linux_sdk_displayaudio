@@ -36,9 +36,7 @@ equals(socname, "") {
     }
 }
 
-mode = $$find(CONFIG, CONFIG_NXP3220)
-
-count(mode, 1) {
+contains(CONFIG, CONFIG_NXP3220) {
     DEFINES += CONFIG_NXP3220
 } else {
     DEFINES += CONFIG_NXP4330
