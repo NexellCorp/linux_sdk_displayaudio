@@ -56,9 +56,7 @@ MainFrame::MainFrame(QWidget *parent) :
 
 	setCurrentMenu(Menu_Init);
 
-	m_pLoadingImage = new QMovie("://UI/loading3_100x100.gif");
-	ui->LABEL_LOADING_IMAGE->setMovie(m_pLoadingImage);
-	m_pLoadingImage->start();
+	ui->loadingWidget->Start(50);
 }
 
 MainFrame::~MainFrame()
@@ -149,9 +147,7 @@ void MainFrame::resizeEvent(QResizeEvent *)
 
 void MainFrame::SetupUI()
 {
-	ui->LABEL_LOADING_IMAGE->move(width()/2-ui->LABEL_LOADING_IMAGE->width()/2, height()/2-ui->LABEL_LOADING_IMAGE->height()/2);
-
-	qDebug() << ui->LABEL_LOADING_IMAGE->geometry();
+	ui->loadingWidget->move(width()/2-ui->loadingWidget->width()/2, height()/2-ui->loadingWidget->height()/2);
 }
 
 void MainFrame::StatusHomeEvent(NxStatusHomeEvent *)
@@ -269,11 +265,8 @@ void MainFrame::slotCommandFromServer(QString command)
 		if (tokens[0] == "OK" && tokens[1] == "MGT" && tokens[2] == "PING") {
 			disconnect(m_pCommandProcessor, SIGNAL(signalCommandFromServer(QString)), this, SLOT(slotCommandFromServer(QString)));
 			setCurrentMenu(Menu_Select);
-			m_pLoadingImage->stop();
-			ui->LABEL_LOADING_IMAGE->setMovie(NULL);
-			ui->LABEL_LOADING_IMAGE->clear();
-			delete m_pLoadingImage;
-			m_pLoadingImage = NULL;
+			ui->loadingWidget->Stop();
+			ui->loadingWidget->hide();
 		}
 	}
 }
