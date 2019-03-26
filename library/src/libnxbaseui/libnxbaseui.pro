@@ -27,7 +27,8 @@ SOURCES +=  \
     CNX_BaseUI.cpp \
     CNX_MessageBox.cpp \
     CNX_KeyboardFrame.cpp \
-    ElideLabel.cpp
+    ElideLabel.cpp \
+    CNX_LoadingBarWidget.cpp
 
 HEADERS +=  \
     CNX_StatusBar.h \
@@ -35,7 +36,8 @@ HEADERS +=  \
     CNX_BaseUI_global.h \
     CNX_MessageBox.h \
     CNX_KeyboardFrame.h \
-    ElideLabel.h
+    ElideLabel.h \
+    CNX_LoadingBarWidget.h
 
 RESOURCES += \
     CNX_BaseUI.qrc \
@@ -50,7 +52,7 @@ unix {
     INCLUDEPATH += ../../include/
 
     header.path = $$_PRO_FILE_PWD_/../../include
-    header.files = CNX_StatusBar.h CNX_MessageBox.h CNX_KeyboardFrame.h CNX_BaseDialog.h
+    header.files = CNX_StatusBar.h CNX_MessageBox.h CNX_KeyboardFrame.h CNX_LoadingBarWidget.h
 
     target.path = $$_PRO_FILE_PWD_/../../lib
     INSTALLS += target header
