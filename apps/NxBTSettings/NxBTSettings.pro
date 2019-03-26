@@ -68,6 +68,3 @@ linux-oe-g++ {
     INCLUDEPATH += $$PWD/../../library/prebuilt/include
     LIBS += -L$$PWD/../../library/lib/x64 -lnxbaseui -lnxdaudioutils
 }
-
-RESOURCES += \
-    resource.qrc

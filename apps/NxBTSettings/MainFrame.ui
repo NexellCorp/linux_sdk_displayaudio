@@ -6,7 +6,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>1024</width>
+    <width>1179</width>
     <height>540</height>
    </rect>
   </property>
@@ -22,19 +22,6 @@
   <property name="frameShadow">
    <enum>QFrame::Raised</enum>
   </property>
-  <widget class="QLabel" name="LABEL_LOADING_IMAGE">
-   <property name="geometry">
-    <rect>
-     <x>462</x>
-     <y>190</y>
-     <width>100</width>
-     <height>100</height>
-    </rect>
-   </property>
-   <property name="text">
-    <string/>
-   </property>
-  </widget>
   <widget class="SelectMenuFrame" name="selectMenuFrame">
    <property name="geometry">
     <rect>
@@ -83,10 +70,16 @@
     <enum>QFrame::Raised</enum>
    </property>
   </widget>
-  <zorder>selectMenuFrame</zorder>
-  <zorder>LABEL_LOADING_IMAGE</zorder>
-  <zorder>advancedOptionFrame</zorder>
-  <zorder>connectionMenuFrame</zorder>
+  <widget class="CNX_LoadingBarWidget" name="loadingWidget" native="true">
+   <property name="geometry">
+    <rect>
+     <x>462</x>
+     <y>190</y>
+     <width>100</width>
+     <height>100</height>
+    </rect>
+   </property>
+  </widget>
  </widget>
  <customwidgets>
   <customwidget>
@@ -105,6 +98,12 @@
    <class>SelectMenuFrame</class>
    <extends>QFrame</extends>
    <header>SelectMenuFrame.h</header>
+   <container>1</container>
+  </customwidget>
+  <customwidget>
+   <class>CNX_LoadingBarWidget</class>
+   <extends>QWidget</extends>
+   <header>CNX_LoadingBarWidget.h</header>
    <container>1</container>
   </customwidget>
  </customwidgets>
