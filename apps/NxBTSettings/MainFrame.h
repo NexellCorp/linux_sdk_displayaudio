@@ -2,7 +2,6 @@
 #define MAINFRAME_H
 
 #include <QFrame>
-#include <QMovie>
 
 #include <NX_Type.h>
 
@@ -83,8 +82,6 @@ protected:
 
 private:
 	BTCommandProcessor *m_pCommandProcessor;
-
-	QMovie* m_pLoadingImage;
 
 	Menu m_Menu;
 
