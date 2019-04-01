@@ -1332,7 +1332,6 @@ void NxLauncher::slotExecute(QString plugin)
 
 void NxLauncher::slotPlugInUpdated(QString path)
 {
-	NXLOGI("[%s] path = %s", __FUNCTION__, path.toStdString().c_str());
 	int etx = path.lastIndexOf("/");
 	int stx = path.lastIndexOf("/", etx-1);
 
@@ -1360,9 +1359,11 @@ void NxLauncher::slotPlugInUpdated(QString path)
 #ifdef CONFIG_NXP4330
 			QMetaObject::invokeMethod(m_pLauncherWidget->rootObject(), "activeChanged");
 #else
-			// fill
 			foreach (NxPluginInfo *pInfo, m_PlugIns) {
-
+				if (key == pInfo->getName())
+				{
+					emit signalStateChanged(pInfo);
+				}
 			}
 #endif
 		}
