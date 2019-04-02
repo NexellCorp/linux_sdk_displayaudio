@@ -19,6 +19,8 @@ Item {
     property int iconCellWidth: 250
     property int iconCellHeight: 250
 
+    property bool initialized: false
+
     signal launchProgram(string name)
 
     Image {
@@ -90,9 +92,14 @@ Item {
         pane.createAppList()
 
         swipe.updateAppList()
+
+        initialized = true
     }
 
     function activeChanged() {
+        if (!initialized)
+            return
+
         var i, k;
         var info = gui.getPluginInfoList()
 
