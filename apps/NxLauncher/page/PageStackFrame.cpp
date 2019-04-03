@@ -44,9 +44,9 @@ void PageStackFrame::pushItem(NxPluginInfo* pInfo)
 	connect(item, SIGNAL(onButtonClicked(NxPluginInfo*)), this, SLOT(onButtonClickedFromItem(NxPluginInfo*)));
 	item->setFixedSize(m_Cell.width(), m_Cell.height());
 	item->setButtonUISize(m_Cell.width()*0.9, m_Cell.height()*0.8);
-	item->setButtonEnabled(pInfo->getEnabled());
 	item->setTextUISize(m_Cell.width(), m_Cell.height()*0.15);
 	item->setIcon(pInfo->getPath() + "/" + pInfo->getIcon(), QString(), QString());
+	item->setButtonEnabled(pInfo->getEnabled());
 	item->setText(pInfo->getExec());
 	item->setAppInfo(pInfo);
 	item->show();
