@@ -20,6 +20,17 @@ void PageItemFrame::setButtonUISize(int w, int h)
 
 void PageItemFrame::setButtonEnabled(bool enabled)
 {
+	if (enabled)
+	{
+		ui->BUTTON_IMAGE->show();
+		ui->LABEL_TEXT->setStyleSheet("color: rgba(1,1,1,100%);");
+	}
+	else
+	{
+		ui->BUTTON_IMAGE->hide();
+		ui->LABEL_TEXT->setStyleSheet("color: rgba(1,1,1,30%);");
+	}
+
 	ui->BUTTON_IMAGE->setEnabled(enabled);
 }
 
@@ -60,12 +71,7 @@ void PageItemFrame::setIcon(QString normal, QString pressed, QString disabled)
 		styleSheetData += "}";
 	}
 
-	if (disabled.isEmpty()) {
-		styleSheetData += "QPushButton:disabled {\n";
-		styleSheetData += "  background: rgba(130, 130, 130, 70%);\n";
-		styleSheetData += "  border: none;\n";
-		styleSheetData += "}";
-	} else {
+	if (!disabled.isEmpty()) {
 		styleSheetData += "QPushButton:disabled {\n";
 		styleSheetData += "  border-image: url(" + disabled + ");\n";
 		styleSheetData += "  border: none;\n";
