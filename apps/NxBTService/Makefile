@@ -8,7 +8,7 @@ INCLUDE += -I../../library/prebuilt/include
 
 LIBRARY += -L../../library/lib -lnxdaudioutils
 LIBRARY += -L../../library/prebuilt/lib
-LIBRARY += -lnxbt -lappbt -lnxalsa -lnxconfig -lnx_uds
+LIBRARY += -lnxbt -lappbt -lnxalsa -lnx_config -lnx_uds
 LIBRARY += -lpthread
 
 ################################################################################
