@@ -90,7 +90,6 @@ OUT_INC_TOP	:= library/include
 LIBS :=
 LIBS += KeyReceiver
 LIBS += libavin
-LIBS += libnxconfig
 LIBS += libnxdaudioutils
 LIBS += librearcam
 

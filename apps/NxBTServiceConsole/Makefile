@@ -6,7 +6,7 @@ include ../../env.mk
 INCLUDE	+= -I. -I../../library/prebuilt/include -I../../library/include
 
 LIBRARY += -L../../library/prebuilt/lib -L../../library/lib
-LIBRARY	+= -lnxbt -lappbt -lnxalsa -lnxconfig
+LIBRARY	+= -lnxbt -lappbt -lnxalsa -lnx_config
 LIBRARY	+= -lstdc++ -lpthread -lm
 
 CXXOBJS	+= main.o
