@@ -41,7 +41,7 @@ const static char *pstVideoDefaultExtension[] = {
 };
 #elif CONFIG_NXP3220
 const static char *pstVideoDefaultExtension[] = {
-	"mp4",	"avi",	"mkv",	"divx",	"ts", "m2ts",	"ps",
+	"mp4",	"avi",	"mkv",	"divx",	"flv", "ts", "m2ts",	"ps",
 };
 #endif
 
