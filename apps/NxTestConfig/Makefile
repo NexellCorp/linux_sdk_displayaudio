@@ -3,7 +3,7 @@ include ../../env.mk
 ######################################################################
 # Build options
 INCLUDE += -I. -I../../library/include
-LIBRARY += -L../../library/lib -lnxconfig -lxml2
+LIBRARY += -L../../library/lib -lnx_config -lxml2
 
 LIBRARY	+= -lstdc++ -lpthread
 
