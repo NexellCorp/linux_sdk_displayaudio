@@ -1,4 +1,5 @@
 #include "NxIPCServer.h"
+#include <dirent.h>
 #include "NxBTService.h"
 #include "NxUtils.h"
 
@@ -16,7 +17,6 @@ NxIPCServer::~NxIPCServer()
 
 void NxIPCServer::Start()
 {
-	m_Server.start(NX_BT_SERVICE_SERVER);
 	pthread_create(&m_hThread, NULL, NxIPCServer::ThreadStub, (void *)this);
 }
 
@@ -46,6 +46,39 @@ void NxIPCServer::ThreadProc()
 {
 	int32_t iBufferSize = 1024;
 	char buffer[iBufferSize] = {0,};
+
+	{
+		DIR *pDir = NULL;
+		struct dirent *pDirent;
+		bool ok = false;
+
+		while (!ok)
+		{
+			pDir = opendir("/tmp");
+			if (pDir)
+			{
+				while ((pDirent = readdir(pDir)))
+				{
+					if(0 != strcmp( pDirent->d_name, "." ) && 0 != strcmp( pDirent->d_name, ".." ))
+					{
+						ok = true;
+						break;
+					}
+
+				}
+
+				closedir(pDir);
+				if (ok)
+				{
+					break;
+				}
+			}
+
+			usleep(100000);
+		}
+	}
+
+	m_Server.start(NX_BT_SERVICE_SERVER);
 
 	while (m_Server.isRunning())
 	{
