@@ -928,8 +928,6 @@ NxBTService::NxBTService()
 
 	pthread_mutex_init(&m_hMutex, NULL);
 	pthread_cond_init(&m_hCond, NULL);
-
-	m_IpcServer.Start();
 }
 
 NxBTService::~NxBTService()
@@ -2270,6 +2268,8 @@ void NxBTService::setInitialized(bool state)
 			}
 
 			ping("MGT", "PING");
+
+			m_IpcServer.Start();
 		}
 	}
 }
