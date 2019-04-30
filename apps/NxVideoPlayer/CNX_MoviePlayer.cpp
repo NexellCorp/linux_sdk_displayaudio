@@ -1031,6 +1031,23 @@ int CNX_MoviePlayer::IsCbQtUpdateImg()
 }
 
 //================================================================================================================
+int	CNX_MoviePlayer::CheckThumbnailInVideoFile( const char *pInFile, int32_t  *pThumbnailWidth, int32_t  *pThumbnailHeight )
+{
+	int HaveThumbNail = 0;
+	HaveThumbNail = NX_MPCheckThumbnailInVideoFile( pInFile, pThumbnailWidth, pThumbnailHeight);
+
+	return HaveThumbNail;
+}
+
+//================================================================================================================
+int	CNX_MoviePlayer::GetThumbnail( const char *pInFile, const char *pOutFile )
+{
+	int ret = 0;
+	ret = NX_MPGetThumbnail( pInFile, pOutFile );
+
+	return ret;
+}
+//================================================================================================================
 int CNX_MoviePlayer::MakeThumbnail(const char *pInFile, const char *pOutFile, int maxWidth, int maxHeight, int timeRatio)
 {
 	int ret = 0;
