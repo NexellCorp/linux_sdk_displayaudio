@@ -130,7 +130,19 @@ public:
 
 	void DrmVideoMute(int bOnOff);
 
+	//
+	//Thumbnail
+	//
+	// example
+	//if(CheckThumbnailInVideoFile)
+	//	GetThumbnail()
+	//else
+	//	MakeThumbnail()
+	//
+	int	CheckThumbnailInVideoFile( const char *pInFile, int32_t  *pThumbnailWidth, int32_t  *pThumbnailHeight ); //return 1:have thumbNail, 0:no thumbNail
+	int	GetThumbnail( const char *pInFile, const char *pOutFile ); //return 0:none, -1:error
 	int MakeThumbnail(const char *pInFile, const char *pOutFile, int maxWidth, int maxHeight, int timeRatio);
+
 	int GetVideoPlane( int crtcIdx, int layerIdx, int findRgb, MP_DRM_PLANE_INFO *pDrmPlaneInfo );
 
 	int	SetVideoSpeed( float Speed  );
