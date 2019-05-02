@@ -59,7 +59,7 @@ private:
 	void StatusHomeEvent(NxStatusHomeEvent *e);
 	void StatusBackEvent(NxStatusBackEvent *e);
 	void StatusVolumeEvent(NxStatusVolumeEvent *e);
-
+	void AlbumartUpdateEvent(NxAlbumartUpdateEvent *e);
 
 public:
 	void RegisterRequestTerminate(void (*cbFunc)(void));
