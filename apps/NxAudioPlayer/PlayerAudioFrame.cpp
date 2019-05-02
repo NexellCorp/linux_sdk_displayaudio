@@ -1022,6 +1022,13 @@ bool PlayerAudioFrame::event(QEvent *event)
 		return true;
 	}
 
+	case E_NX_EVENT_UPDATE_ALBUMART:
+	{
+		NxAlbumartUpdateEvent *e = static_cast<NxAlbumartUpdateEvent *>(event);
+		AlbumartUpdateEvent(e);
+		return true;
+	}
+
 	default:
 		break;
 	}
@@ -1161,6 +1168,14 @@ void PlayerAudioFrame::TerminateEvent(NxTerminateEvent *)
 	}
 }
 
+void PlayerAudioFrame::AlbumartUpdateEvent(NxAlbumartUpdateEvent *e)
+{
+	QPixmap pix(e->m_Albumart);
+	m_AlbumArt.setPixmap(pix.scaledToHeight(ui->albumArtView->height()));
+	ui->albumArtView->setScene(&m_Scene);
+	m_Scene.addItem(&m_AlbumArt);
+}
+
 void PlayerAudioFrame::RegisterRequestTerminate(void (*cbFunc)(void))
 {
 	if (cbFunc)
@@ -1244,21 +1259,14 @@ void PlayerAudioFrame::UpdateAlbumInfo()
 
 	if( ID3_HasPicture( &id3Tag ) )
 	{
-		//NXLOGD("Has Picture!!!!\n");
-		ID3_GetPictureData(&id3Tag, "./temp.jpg");
-		QPixmap pix("./temp.jpg");
-		QPixmap scaledPix = pix.scaledToHeight(ui->albumArtView->height());
-		m_AlbumArt.setPixmap(pix.scaledToHeight(ui->albumArtView->height()));
-		ui->albumArtView->setScene(&m_Scene);
-		m_Scene.addItem(&m_AlbumArt);
+		QString path = "/home/root/temp.jpg";
+		ID3_GetPictureData(&id3Tag, path.toStdString().c_str());
+
+		QApplication::postEvent(this, new NxAlbumartUpdateEvent(path));
 	}
 	else
 	{
-		QPixmap pix(":/default.jpg");
-		QPixmap scaledPix = pix.scaledToHeight(ui->albumArtView->height());
-		m_AlbumArt.setPixmap(pix.scaledToHeight(ui->albumArtView->height()));
-		ui->albumArtView->setScene(&m_Scene);
-		m_Scene.addItem(&m_AlbumArt);
+		QApplication::postEvent(this, new NxAlbumartUpdateEvent(":/default.jpg"));
 	}
 }
 
