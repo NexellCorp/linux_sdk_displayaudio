@@ -445,25 +445,26 @@ void NxBTService::updateMediaElementsAVK_stub(void *pObj, char *mediaTitle, char
 	memcpy(self->m_AVK.info.artist, mediaArtist, sizeof(self->m_AVK.info.artist));
 	memcpy(self->m_AVK.info.album, mediaAlbum, sizeof(self->m_AVK.info.album));
 	memcpy(self->m_AVK.info.genre, mediaGenre, sizeof(self->m_AVK.info.genre));
-	self->m_AVK.info.duration = duration_msec;
+	self->m_AVK.info.duration = 0;
 	self->m_AVK.info.position = 0;
 
-	// example) "$OK#AVK#UPDATE MEDIA ELEMENT#[TITLE]#[ARTIST]#[ALBUM]#[GENRE]#[DURATION]\n"
-	sprintf(buffer, "$OK#%s#%s#%s#%s#%s#%s#%d\n", "AVK", "UPDATE MEDIA ELEMENT", self->m_AVK.info.title, self->m_AVK.info.artist, self->m_AVK.info.album, self->m_AVK.info.genre, self->m_AVK.info.duration);
+	// example) "$OK#AVK#UPDATE MEDIA ELEMENT#[TITLE]#[ARTIST]#[ALBUM]#[GENRE]\n"
+	sprintf(buffer, "$OK#%s#%s#%s#%s#%s#%s\n", "AVK", "UPDATE MEDIA ELEMENT", self->m_AVK.info.title, self->m_AVK.info.artist, self->m_AVK.info.album, self->m_AVK.info.genre);
 
 	self->Broadcast(buffer);
 }
 
-void NxBTService::updatePlayPositionAVK_stub(void *pObj, int32_t play_pos_msec)
+void NxBTService::updatePlayPositionAVK_stub(void *pObj, int32_t play_pos_msec, int32_t play_len_msec)
 {
     NXLOGD("NxBTService::updatePlayPositionAVK_stub");
     NxBTService* self = (NxBTService*)pObj;
     char buffer[BUFFER_SIZE] = {0,};
 
-    // example) $OK#AVK#UPDATE PLAY POSITION#12345\n"
+    // example) $OK#AVK#UPDATE PLAY POSITION#12345#12345\n"
     self->m_AVK.info.position = play_pos_msec;
+    self->m_AVK.info.duration = play_len_msec;
 
-    sprintf(buffer, "$OK#%s#%s#%d\n", "AVK", "UPDATE PLAY POSITION", self->m_AVK.info.position);
+    sprintf(buffer, "$OK#%s#%s#%d#%d\n", "AVK", "UPDATE PLAY POSITION", self->m_AVK.info.position, self->m_AVK.info.duration);
 
     self->Broadcast(buffer);
 }
