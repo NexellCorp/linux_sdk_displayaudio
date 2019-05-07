@@ -14,7 +14,7 @@
 #ifndef __INX_BT_H__
 #define __INX_BT_H__
 
-#define NXBT_VERSION	"1.2.0"
+#define NXBT_VERSION	"1.2.1"
 
 typedef struct Bmessage_info {
 	char *fullName;
@@ -53,7 +53,7 @@ public:
 	virtual int32_t getPairedDevNameByIndex(int32_t device_index, char *name) = 0;
 	virtual int32_t getPairedDevIndexByAddr(unsigned char *bd_addr) = 0;
 	virtual char* getPairedDevNameByAddr(unsigned char *bd_addr) = 0;
-	virtual void setALSADevName(const char *playback, const char *capture, const char *playback_bt, const char *capture_bt, bool use_pcm_sync) = 0;
+	virtual void setALSADevName(const char *playback, const char *capture, const char *playback_bt, const char *capture_bt, bool use_pcm_sync /* Deprecated */) = 0;
 
 	/* NXBT AVK service APIs */
 	virtual int32_t openAudioAVK(void) = 0;
@@ -125,7 +125,7 @@ public:
 	virtual void registerConnectionStatusCbAVKRC(void *pObj, void (*cbFunc)(void *, bool)) = 0;
 	virtual void registerPlayStatusCbAVK(void *pObj, void (*cbFunc)(void *, int32_t)) = 0;
 	virtual void registerMediaElementCbAVK(void *pObj, void (*cbFunc)(void *, char *, char *, char *, char *, int32_t)) = 0;
-	virtual void registerPlayPositionCbAVK(void *pObj, void (*cbFunc)(void *, int32_t)) = 0;
+	virtual void registerPlayPositionCbAVK(void *pObj, void (*cbFunc)(void *, int32_t, int32_t)) = 0;
 	virtual void registerOpenFailedCbHS(void *pObj, void (*cbFunc)(void *)) = 0;
 	virtual void registerConnectionStatusCbHS(void *pObj, void (*cbFunc)(void *, bool, char *, unsigned char *)) = 0;
 	virtual void registerInbandRingSupportedCbHS(void *pObj, void (*cbFunc)(void *, bool)) = 0;
