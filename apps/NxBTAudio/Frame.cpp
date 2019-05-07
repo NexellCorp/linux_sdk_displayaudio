@@ -342,35 +342,29 @@ void Frame::slotCommandFromServer(QString command)
 
 void Frame::updateToUIForMediaElements(QStringList& tokens)
 {
-	// example) "$OK#AVK#UPDATE MEDIA ELEMENT#[TITLE]#[ARTIST]#[ALBUM]#[GENRE]#[DURATION]\n"
-	if (tokens.size() == 8) {
+	// example) "$OK#AVK#UPDATE MEDIA ELEMENT#[TITLE]#[ARTIST]#[ALBUM]#[GENRE]\n"
+	if (tokens.size() == 7) {
 		 // update title
 		ui->LABEL_MDEDIA_TITLE->setText(tokens[3]);
 		// update artist, album, genre
 		ui->LABEL_MDEDIA_ETC->setText(QString("%1\n%2\n%3").arg(tokens[4]).arg(tokens[5]).arg(tokens[6]));
-		// duration (play time)
-
-		int duration = tokens[7].toInt(); // mili second
-		std::string s_duration = convertToRealtimeString(duration);
-		ui->LABEL_PLAY_DURATION->setText(QString::fromStdString(s_duration));
-		ui->SLIDER_PLAY_POSITION->setRange(0, duration);
-
-		// iphone: play position is unknown.
-		if (duration == 0) {
-			ui->LABEL_PLAY_POSITION->setText("00:00");
-			ui->SLIDER_PLAY_POSITION->setValue(0);
-		}
 	}
 }
 
 void Frame::updateToUIForPlayPosition(QStringList& tokens)
 {
-	// example) $OK#AVK#UPDATE PLAY POSITION#12345\n"
-	if (tokens.size() == 4) {
+	// example) $OK#AVK#UPDATE PLAY POSITION#12345#12345\n"
+	if (tokens.size() == 5) {
 		int play_position = tokens[3].toInt();
 		std::string s_play_position = convertToRealtimeString(play_position);
 		ui->LABEL_PLAY_POSITION->setText(QString::fromStdString(s_play_position));
 		ui->SLIDER_PLAY_POSITION->setValue(play_position);
+
+		int play_duration = tokens[4].toInt();
+		std::string s_play_duration = convertToRealtimeString(play_duration);
+		ui->LABEL_PLAY_DURATION->setText(QString::fromStdString(s_play_duration));
+		ui->SLIDER_PLAY_POSITION->setRange(0, play_duration);
+
 	}
 }
 
