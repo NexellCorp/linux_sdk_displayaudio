@@ -203,7 +203,7 @@ public:
 
 	static void updateMediaElementsAVK_stub(void *pObj, char *mediaTitle, char *mediaArtist, char *mediaAlbum, char *mediaGenre, int32_t playTime_msec);
 
-	static void updatePlayPositionAVK_stub(void *pObj, int32_t play_pos_msec);
+	static void updatePlayPositionAVK_stub(void *pObj, int32_t play_pos_msec, int32_t play_len_msec);
 
 	static void sendAVKStreamingStarted_stub(void* pObj, bool is_opened);
 
