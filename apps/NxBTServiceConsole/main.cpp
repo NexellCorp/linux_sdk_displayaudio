@@ -255,7 +255,7 @@ static void sendAVKRCConnectionStatus_stub(void *pObj, bool is_connected) {
 	// to do : callback
 }
 
-static void updatePlayPositionAVK_stub(void *pObj, int32_t play_pos_msec) {
+static void updatePlayPositionAVK_stub(void *pObj, int32_t play_pos_msec, int32_t play_len_msec) {
 	// To do : callback
 }
 
