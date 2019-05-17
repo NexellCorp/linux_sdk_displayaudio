@@ -200,6 +200,7 @@ MP_RESULT 	NX_MPSetVolume( MP_HANDLE hMp, int32_t iLevel );		// 0% ~ 100%
 int32_t		NX_MPCheckThumbnailInVideoFile( const char *pInFile, int32_t  *pThumbnailWidth, int32_t  *pThumbnailHeight ); //return 1:have thumbNail, 0:no thumbNail
 int32_t		NX_MPGetThumbnail( const char *pInFile, const char *pOutFile ); //return 0:none, -1:error
 int32_t 	NX_MPMakeThumbnail( const char *pInFile, const char *pOutFile, int32_t maxWidth, int32_t maxHeight, int32_t timeRatio );
+char 		*NX_MPGetMimeType( const char *pInFile );
 
 int32_t		NX_MPGetVersion( void );				// MSB|  Major( 8bit ) - Minor( 8bit ) - Revision( 8bit ) - Reserved( 8bit )  |LSB
 void		NX_MPChgDebugLevel( int32_t iLevel );	// 0(Verbose), 1(Debug), 2(Info), 3(Warn), 4(Error), 5(Disable) :: Default(Info)
