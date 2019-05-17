@@ -117,6 +117,10 @@ public:
 	qint64 GetMediaDuration();
 	NX_MediaStatus GetState();
 
+	//
+	//Get MimeType
+	char *GetMimeType(const char *pInFile);
+
 private:
 	//
 	//MediaPlayer InitMediaPlayer

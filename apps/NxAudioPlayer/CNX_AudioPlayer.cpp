@@ -401,6 +401,16 @@ int32_t CNX_AudioPlayer::GetTrackIndex( int32_t trackType, int32_t track )
 	return index;
 }
 
+char *CNX_AudioPlayer::GetMimeType(const char *pInFile)
+{
+	char *pMimeType = NULL;
+
+	pMimeType = NX_MPGetMimeType(pInFile);
+
+	return pMimeType;
+}
+
+
 
 //================================================================================================================
 
