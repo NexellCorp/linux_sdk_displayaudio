@@ -34,7 +34,7 @@ LIBS += -L$$PWD/../../library/lib/ -lnx_config -lxml2
 LIBS += -L$$PWD/../../library/lib -lnxbaseui
 
 # Add Id3 libraries
-LIBS += -lid3 -lid3tag
+LIBS += -ltag -lz
 
 SOURCES +=   \
     CNX_FileList.cpp \
@@ -42,7 +42,8 @@ SOURCES +=   \
     MainFrame.cpp \
     DAudioIface_Impl.cpp \
     PlayListAudioFrame.cpp \
-    PlayerAudioFrame.cpp
+    PlayerAudioFrame.cpp \
+    CNX_MetaDataReader.cpp
 
 HEADERS += \
     ../../library/prebuilt/include/NX_MoviePlay.h \
@@ -53,7 +54,8 @@ HEADERS += \
     MainFrame.h \
     PlayListAudioFrame.h \
     PlayerAudioFrame.h \
-    NxEvent.h
+    NxEvent.h \
+    CNX_MetaDataReader.h
 
 FORMS += \
     MainFrame.ui \

@@ -11,14 +11,6 @@
 #define LOG_TAG "[NxAudioPlayer|mainW]"
 #include <NX_Log.h>
 
-// ID3 Library
-#pragma GCC diagnostic push
-#pragma GCC diagnostic ignored "-Wunused-parameter"
-#include <id3/tag.h>
-#include <id3/field.h>
-#include <id3/misc_support.h>
-#pragma GCC diagnostic pop
-
 //#define AUDIO_DEFAULT_DEVICE "plughw:0,0"
 //#define AUDIO_HDMI_DEVICE    "plughw:0,3"
 
@@ -1212,56 +1204,18 @@ void PlayerAudioFrame::UpdateAlbumInfo()
 		return;
 	}
 
-	QTextCodec * codec = QTextCodec::codecForName("eucKR");
 	QString fileName = m_FileList.GetList(m_iCurFileListIdx);
 
-	//	ID3 Tag Update using libid3 library
-	size_t num;
-	char *str;
-	ID3_Tag id3Tag;
+	m_MetadataReader.Read(fileName, "/home/root/temp.jpg");
+	ui->labelTitle->setText("Title : " + m_MetadataReader.GetTitle());
+	ui->labelAlbum->setText("Album : " + m_MetadataReader.GetAlbum());
+	ui->labelArtist->setText("Artist : " + m_MetadataReader.GetArtist());
+	ui->labelGenre->setText("Genre : " + m_MetadataReader.GetGenre());
+	ui->labelTrackNumber->setText(QString("Track : %1").arg(m_MetadataReader.GetTrackNumber()));
 
-	//	Get Album General Information From ID3V1 Parser
-	id3Tag.Clear();
-	id3Tag.Link(fileName.toStdString().c_str(), ID3TT_ID3);
-
-	//	Album
-	str = ID3_GetAlbum( &id3Tag );
-	ui->labelAlbum->setText("Album : "  + codec->toUnicode(str) );
-	delete []str;
-
-	//	Artist
-	str = ID3_GetArtist( &id3Tag );
-	ui->labelArtist->setText("Artist : " + codec->toUnicode(str) );
-	delete []str;
-
-	//	Title
-	str = ID3_GetTitle( &id3Tag );
-	ui->labelTitle->setText("Title : "  + codec->toUnicode(str) );
-	delete []str;
-
-	//	Track Number
-	num = ID3_GetTrackNum( &id3Tag );
-	ui->labelTrackNumber->setText("Artist : " + codec->toUnicode(QString::number(num).toStdString().c_str()));
-	//	Genre : ID3 Version 1 Information
-	num = ID3_GetGenreNum( &id3Tag );
-	if( 0 < num && num < ID3_NR_OF_V1_GENRES )
-	{
-		ui->labelGenre->setText("Genre : "  + codec->toUnicode(ID3_v1_genre_description[num]) );
-	}
-	else
-	{
-		ui->labelGenre->setText("Genre : unknown");
-	}
-
-	//	Get Album Cover from ID3V2 Parser
-	id3Tag.Clear();
-	id3Tag.Link(fileName.toStdString().c_str(), ID3TT_ALL);
-
-	if( ID3_HasPicture( &id3Tag ) )
+	if( m_MetadataReader.IsExistCoverArt() )
 	{
 		QString path = "/home/root/temp.jpg";
-		ID3_GetPictureData(&id3Tag, path.toStdString().c_str());
-
 		QApplication::postEvent(this, new NxAlbumartUpdateEvent(path));
 	}
 	else
