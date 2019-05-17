@@ -22,6 +22,8 @@
 #include "PlayListAudioFrame.h"
 //	Media Player
 #include "CNX_AudioPlayer.h"
+// MetaData Reader
+#include <CNX_MetaDataReader.h>
 
 #include <NX_Type.h>
 
@@ -181,6 +183,8 @@ private:
 	QPushButton *m_pMessageButton;
 
 	char m_audioDeviceName[20];
+
+	CNX_MetaDataReader m_MetadataReader;
 
 private:
 	Ui::PlayerAudioFrame *ui;
