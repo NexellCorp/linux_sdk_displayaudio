@@ -14,13 +14,18 @@
 #ifndef __INX_BT_H__
 #define __INX_BT_H__
 
-#define NXBT_VERSION	"1.2.1"
+#define NXBT_VERSION	"1.3.0"
 
 typedef struct Bmessage_info {
 	char *fullName;
 	char *phoneNumber;
 	char *msgBody;
 } Bmessage_info_t;
+
+typedef struct BSA_version_info {
+	char server_version[50];
+	char fw_version[50];
+} BSA_version_info_t;
 
 class INX_BT {
 
@@ -30,6 +35,7 @@ public:
 
 	/* NXBT manager APIs */
 	virtual int32_t initDevManager(void) = 0;
+	virtual int32_t getVersionInfoBSA(BSA_version_info_t *bsa_version) = 0;
 	virtual void setRecoveryCommand(const char *command) = 0;
 	virtual int32_t enableAutoConnection(bool enable) = 0;
 	virtual bool isAutoConnection(void) = 0;
@@ -53,7 +59,13 @@ public:
 	virtual int32_t getPairedDevNameByIndex(int32_t device_index, char *name) = 0;
 	virtual int32_t getPairedDevIndexByAddr(unsigned char *bd_addr) = 0;
 	virtual char* getPairedDevNameByAddr(unsigned char *bd_addr) = 0;
-	virtual void setALSADevName(const char *playback, const char *capture, const char *playback_bt, const char *capture_bt, bool use_pcm_sync /* Deprecated */) = 0;
+	virtual void setALSADevName(const char *playback_avk, const char *playback_hs, const char *capture_hs, const char *playback_hs_sco, const char *capture_hs_sco) = 0;
+	virtual int32_t startDiscovery(void) = 0;
+	virtual int32_t stopDiscovery(void) = 0;
+	virtual int32_t getDiscoveredDevCount(void) = 0;
+	virtual int32_t getDiscoveredDevInfoByIndex(int32_t device_index, char *name, unsigned char *bd_addr, unsigned char *class_of_device, char *class_name, int32_t *rssi) = 0;
+	virtual	int32_t bondDevice(int32_t device_index) = 0;
+	virtual	int32_t cancelBondingDevice(int32_t device_index) = 0;
 
 	/* NXBT AVK service APIs */
 	virtual int32_t openAudioAVK(void) = 0;
@@ -111,8 +123,9 @@ public:
 	virtual int32_t getParserBmsg(Bmessage_info_t *bmsg) = 0;
 
 	/* NXBT UI callback functions */
-	virtual void registerMGTOpenSucceedCbManager(void *pObj, void (*cbFunc)(void *, int32_t)) = 0;
+	virtual void registerMGTOpenCbManager(void *pObj, void (*cbFunc)(void *, int32_t)) = 0;
 	virtual void registerMGTDisconnectedCbManager(void *pObj, void (*cbFunc)(void *)) = 0;
+	virtual void registerDiscoveryCompleteCbManager(void *pObj, void (*cbFunc)(void *)) = 0;
 	virtual void registerPairingFailedCbManager(void *pObj, void (*cbFunc)(void *, int32_t)) = 0;
 	virtual void registerPairedDevicesCbManager(void *pObj, void (*cbFunc)(void *)) = 0;
 	virtual void registerUnpairedDevicesCbManager(void *pObj, void (*cbFunc)(void *)) = 0;
