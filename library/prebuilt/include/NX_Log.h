@@ -10,7 +10,7 @@
 //
 //  Name : NX_Log.h
 //  Description : Nexell log macro
-//  Author : Chris Lee.
+//  Author : Chris Leean.
 //
 //------------------------------------------------------------------------------
 #ifndef __NXLOG_H__

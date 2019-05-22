@@ -10,7 +10,7 @@
 //
 //	Name : nxlogcat
 //  Description : Nexell log output tool.
-//  Author : Chris Lee.
+//  Author : Chris Leean.
 //
 //------------------------------------------------------------------------------
 

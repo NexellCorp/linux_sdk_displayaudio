@@ -7,7 +7,7 @@
  **  Copyright (c) 2017, Nexell Corp., All Rights Reserved.
  **  Broadcom BT stack supports. Proprietary and confidential.
  **
- **  Author: Chris Lee.
+ **  Author: Chris Leean.
  **
  *****************************************************************************/
 
@@ -29,7 +29,6 @@
 #define NXBTSERVICE_CONFIG "/nexell/daudio/NxBTService/nxbtservice_config.xml"
 
 #define USE_BACKTRACE
-#define SYNC_MODE	true
 
 int app_get_string(const char *querystring, char *str, int len) {
 	int c, index;
@@ -90,11 +89,14 @@ int app_get_choice(const char *querystring) {
 
 void app_display_main_menu(void) {
 	printf("\n");
-	printf("======================================================\n");
+	printf("========================================================\n");
 	printf("NXBT version : v%s\n", NXBT_VERSION);
-	printf("======================================================\n");
+	printf("========================================================\n");
 	printf("NXBT profile service main menu :\n");
-	printf("[MGT]=================================================\n");
+	printf("[MGT]===================================================\n");
+	printf(" %d		=> Read BSA server and FW version\n", APP_MGT_MENU_GET_VERSION);
+	printf(" %d		=> Get local BT information\n", APP_MGT_MENU_GET_LOCAL_BT_INFO);
+	printf(" %d		=> Set local BT name\n", APP_MGT_MENU_SET_LOCAL_BT_NAME);
 	printf(" %d		=> Get paired device list\n", APP_MGT_MENU_GET_PAIRED_DEV_LIST);
 	printf(" %d		=> Enable auto-connection mode\n", APP_MGT_MENU_ENABLE_AUTOCONN);
 	printf(" %d		=> Disable auto-connection mode\n", APP_MGT_MENU_DISABLE_AUTOCONN);
@@ -102,37 +104,38 @@ void app_display_main_menu(void) {
 	printf(" %d		=> Disable auto-pairing mode\n", APP_MGT_MENU_DISABLE_AUTOPAIR);
 	printf(" %d		=> Accept pairing\n", APP_MGT_MENU_PAIR_ACCEPT);
 	printf(" %d		=> Reject pairing\n", APP_MGT_MENU_PAIR_REJECT);
-	printf(" %d		=> Request pair to device\n", APP_MGT_MENU_REQUEST_PAIR);
-	printf(" %d		=> Unpair BT device\n", APP_MGT_MENU_UNPAIR);
+	printf(" %d		=> Request repair to paired device\n", APP_MGT_MENU_REQUEST_PAIR);
+	printf(" %d		=> Unpair the device\n", APP_MGT_MENU_UNPAIR);
 	printf(" %d		=> Set discoverable\n", APP_MGT_MENU_ENABLE_DISCOVERABLE);
 	printf(" %d		=> Clesr discoverable\n", APP_MGT_MENU_DISABLE_DISCOVERABLE);
-#ifdef DISC
 	printf(" %d		=> Start discovery\n", APP_MGT_MENU_START_DISCOVERY);
 	printf(" %d		=> Stop discovery\n", APP_MGT_MENU_STOP_DISCOVERY);
-#endif
-	printf("[AVK]=================================================\n");
+	printf(" %d		=> Get discovered device list\n", APP_MGT_MENU_GET_DISCOVERED_DEV_LIST);
+	printf(" %d		=> Bond disconvered device\n", APP_MGT_MENU_BOND);
+	printf(" %d		=> Cancel the bonding of the device being bonded\n", APP_MGT_MENU_CANCEL_BOND);
+	printf("[AVK]===================================================\n");
 	printf(" %d		=> AVK connection\n", APP_AVK_MENU_OPEN);
 	printf(" %d		=> AVK disconnection\n", APP_AVK_MENU_CLOSE);
-	printf(" %d		=> Get connection number\n", APP_AVK_MENU_GET_CONN_NUMBER);
-	printf(" %d		=> Get AVK connected remote BT address\n", APP_AVK_MENU_GET_CONN_BD_ADDR);
-	printf(" %d		=> Get latest AVK connected device\n", APP_AVK_MENU_GET_LAST_CONN_INFO);
+	printf(" %d		=> Get number of the AVK connections\n", APP_AVK_MENU_GET_CONN_NUMBER);
+	printf(" %d		=> Get AVK connected device address\n", APP_AVK_MENU_GET_CONN_BD_ADDR);
+	printf(" %d		=> Get latest AVK connected device index\n", APP_AVK_MENU_GET_LAST_CONN_INDEX);
 	printf(" %d		=> Start play\n", APP_AVK_MENU_PLAY_START);
 	printf(" %d		=> Stop play\n", APP_AVK_MENU_PLAY_STOP);
 	printf(" %d		=> Pause play\n", APP_AVK_MENU_PLAY_PAUSE);
 	printf(" %d		=> Next play\n", APP_AVK_MENU_PLAY_NEXT);
 	printf(" %d		=> Prev play\n", APP_AVK_MENU_PLAY_PREV);
-	printf(" %d		=> Open ALSA\n", APP_AVK_MENU_OPEN_AUDIO);
-	printf(" %d		=> Close ALSA\n", APP_AVK_MENU_CLOSE_AUDIO);
+	printf(" %d		=> Open AVK audio\n", APP_AVK_MENU_OPEN_AUDIO);
+	printf(" %d		=> Close AVK audio\n", APP_AVK_MENU_CLOSE_AUDIO);
 	printf(" %d		=> Get media elements\n", APP_AVK_MENU_GET_MEDIA_ELEMENT);
-	printf("[HS]==================================================\n");
+	printf("[HS]====================================================\n");
 	printf(" %d		=> HS connection\n", APP_HS_MENU_OPEN);
 	printf(" %d		=> HS disconnection\n", APP_HS_MENU_CLOSE);
-	printf(" %d		=> Get HS connected remote BT address\n", APP_HS_MENU_GET_CONN_BD_ADDR);
-	printf(" %d		=> Get latest HS connected device\n", APP_HS_MENU_GET_LAST_CONN_INFO);
+	printf(" %d		=> Get HS connected device address\n", APP_HS_MENU_GET_CONN_BD_ADDR);
+	printf(" %d		=> Get latest HS connected device index\n", APP_HS_MENU_GET_LAST_CONN_INDEX);
 	printf(" %d		=> Pickup the call\n", APP_HS_MENU_PICKUP);
 	printf(" %d		=> Hangup the call\n", APP_HS_MENU_HANGUP);
-	printf(" %d		=> Open audio\n", APP_HS_MENU_OPEN_AUDIO);
-	printf(" %d		=> Close audio\n", APP_HS_MENU_CLOSE_AUDIO);
+	printf(" %d		=> Open HS audio\n", APP_HS_MENU_OPEN_AUDIO);
+	printf(" %d		=> Close HS audio\n", APP_HS_MENU_CLOSE_AUDIO);
 	printf(" %d		=> Mute microphone\n", APP_HS_MENU_MUTE_MIC);
 	printf(" %d		=> Unmute microphone\n", APP_HS_MENU_UNMUTE_MIC);
 	printf(" %d		=> Dial a phone number\n", APP_HS_MENU_DIAL);
@@ -144,21 +147,21 @@ void app_display_main_menu(void) {
 	printf(" %d		=> Get battery charging status value\n", APP_HS_MENU_GET_BATT);
 	printf(" %d		=> Start voice recognition\n", APP_HS_MENU_START_VR);
 	printf(" %d		=> Stop voice recognition\n", APP_HS_MENU_STOP_VR);
-	printf("[PBC]================================================\n");
+	printf("[PBC]===================================================\n");
 	printf(" %d		=> PBC connection\n", APP_PBC_MENU_OPEN);
 	printf(" %d		=> PBC disconnection\n", APP_PBC_MENU_CLOSE);
 	printf(" %d		=> PBC abort\n", APP_PBC_MENU_ABORT);
-	printf(" %d		=> Get contact\n", APP_PBC_MENU_GET_CONTACT);
-	printf(" %d		=> Get call history\n", APP_PBC_MENU_GET_CCH);
-	printf("[MCE]================================================\n");
+	printf(" %d		=> Import contacts\n", APP_PBC_MENU_GET_CONTACT);
+	printf(" %d		=> Import call history\n", APP_PBC_MENU_GET_CCH);
+	printf("[MCE]===================================================\n");
 	printf(" %d		=> MCE connection\n", APP_MCE_NENU_OPEN);
 	printf(" %d		=> MCE disconnection\n", APP_MCE_NENU_CLOSE);
 	printf(" %d		=> Start MCE notification server\n", APP_MCE_MENU_START_MNS);
 	printf(" %d		=> Stop MCE notification server\n", APP_MCE_MENU_STOP_MNS);
 	printf(" %d		=> Get message\n", APP_MCE_MENU_GET_MESSAGE);
-	printf("=====================================================\n");
+	printf("========================================================\n");
 	printf(" %d		=> Quit\n", APP_MENU_QUIT);
-	printf("=====================================================\n");
+	printf("========================================================\n");
 }
 
 #ifdef USE_BACKTRACE
@@ -171,12 +174,12 @@ static void backtrace_dump(void) {
 	char **strings;
 
 	nptrs = backtrace(buf, CALLSTACK_SIZE);
-	printf("%s: backtrace() returned %d addresses\n", __FUNCTION__, nptrs);
+	printf("%s: backtrace() returned %d addresses\n", __func__, nptrs);
 
 	strings = backtrace_symbols(buf, nptrs);
 
 	if (strings == NULL) {
-		printf("%s: No backtrace captured\n", __FUNCTION__);
+		printf("%s: No backtrace captured\n", __func__);
 		return;
 	}
 
@@ -188,7 +191,7 @@ static void backtrace_dump(void) {
 }
 
 static void sigHandler(int signum) {
-	printf("\n%s: Signal %d\n", __FUNCTION__, signum);
+	printf("\n%s: Signal %d\n", __func__, signum);
 
 	switch(signum ) {
 		case SIGILL:
@@ -203,12 +206,16 @@ static void sigHandler(int signum) {
 #endif
 
 /* UI callback stub */
-static void sendMGTOpenSucceed_stub(void *pObj, int32_t result) {
-	// to do : callback
+static void sendMGTOpen_stub(void *pObj, int32_t result) {
+	// To do : callback
 }
 
 static void sendMGTDisconnected_stub(void *pObj) {
-	// to do : callback
+	// To do : callback
+}
+
+static void sendDiscoveryComplete_stub(void *pObj) {
+	// To do : callback
 }
 
 static void sendPairingFailed_stub(void *pObj, int32_t fail_reason) {
@@ -272,7 +279,7 @@ static void sendHSConnectionStatus_stub(void *pObj, bool is_connected, char *nam
 }
 
 static void sendHSInbandRingSupported_stub(void *pObj, bool is_supported) {
-	// to do : callback
+	// To do : callback
 }
 
 static void sendHSCallStatus_stub(void *pObj, int32_t call_status) {
@@ -338,12 +345,15 @@ int main (int argc, char *argv[])
 	int i, j;
 	unsigned char *localAddress = NULL;
 	nxbt_paired_dev_t pairedDev;
+	nxbt_discovered_dev_t discoveredDev;
 	nxbt_avk_connected_dev_t connectedDevAVK;
-	char number[20];
+	char dial_number[20] = {0, };
+	char local_bt_name[249] = {0, };
 	char key;
-	unsigned char hs_connected_bd_addr[6];
+	unsigned char hs_connected_bd_addr[6] = {0, };
 	int dummy;
 	void *m_pObjHandler = &dummy;		// UI handler
+	BSA_version_info_t bsa_version;     // BSA version
 	Bmessage_info_t bmsg;				// BMessage
 	NX_IConfig *pConfig = NULL;			// for config(xml)
 
@@ -355,14 +365,18 @@ int main (int argc, char *argv[])
 #endif
 
 	memset(&pairedDev, 0, sizeof(nxbt_paired_dev_t));
+	memset(&discoveredDev, 0, sizeof(nxbt_discovered_dev_t));
+	memset(&connectedDevAVK, 0, sizeof(nxbt_avk_connected_dev_t));
+	memset(&bsa_version, 0, sizeof(BSA_version_info_t));
 
 	bmsg.fullName = NULL;
 	bmsg.phoneNumber = NULL;
 	bmsg.msgBody = NULL;
 
 	// Register UI callbacks
-	pInstance->registerMGTOpenSucceedCbManager(m_pObjHandler, sendMGTOpenSucceed_stub);
+	pInstance->registerMGTOpenCbManager(m_pObjHandler, sendMGTOpen_stub);
 	pInstance->registerMGTDisconnectedCbManager(m_pObjHandler, sendMGTDisconnected_stub);
+	pInstance->registerDiscoveryCompleteCbManager(m_pObjHandler, sendDiscoveryComplete_stub);
 	pInstance->registerPairingFailedCbManager(m_pObjHandler, sendPairingFailed_stub);
 	pInstance->registerPairedDevicesCbManager(m_pObjHandler, updatePairedDevices_stub);
 	pInstance->registerUnpairedDevicesCbManager(m_pObjHandler, updateUnpairedDevices_stub);
@@ -406,67 +420,68 @@ int main (int argc, char *argv[])
 
 	// Rename local device
 	pInstance->renameLocalDevice("NX-Link");
-	printf("Local BT name : %s\n", pInstance->getLocalDevName());
-	printf("Local BT address : ");
-	for (i = 0; i < 6; i++) {
-		printf("%02x", localAddress[i]);
-	}
-	printf("\n");
 
 	for (i = 0; i < pInstance->getPairedDevCount(); i++) {
 		pInstance->getPairedDevInfoByIndex(i, pairedDev.pairedDevInfo[i].name, pairedDev.pairedDevInfo[i].bd_addr);
-		printf("Paired device name : %s\n", pairedDev.pairedDevInfo[i].name);
 	}
 
 	// Read xml and settings to engine
 	pConfig = GetConfigHandle();
 	if (0 == pConfig->Open(NXBTSERVICE_CONFIG)) {
 		char *pBuf = NULL;
-		char alsa_playback[100] = {0,};
-		char alsa_capture[100] = {0,};
-		char alsa_sco_playback[100] = {0,};
-		char alsa_sco_capture[100] = {0,};
+		char alsa_avk_playback[100] = {0,};
+		char alsa_hs_playback[100] = {0,};
+		char alsa_hs_capture[100] = {0,};
+		char alsa_hs_sco_playback[100] = {0,};
+		char alsa_hs_sco_capture[100] = {0,};
 
 		// Read bsa_recovery
 		if (0 == pConfig->Read("bsa_recovery", &pBuf)) {
 			// Set recovery command
 			pInstance->setRecoveryCommand(pBuf);
 		} else {
-			printf("[%s] Read failed : bsa_recovery\n", __FUNCTION__);
+			printf("[%s] Read failed : bsa_recovery\n", __func__);
 		}
 
-		// Read alsa_playback
-		if (0 == pConfig->Read("alsa_playback", &pBuf)) {
-			strcpy(alsa_playback, pBuf);
+		// Read alsa_avk_playback
+		if (0 == pConfig->Read("alsa_avk_playback", &pBuf)) {
+			strcpy(alsa_avk_playback, pBuf);
 		} else {
-			printf("[%s] Read failed : alsa_playback\n", __FUNCTION__);
+			printf("[%s] Read failed : alsa_avk_playback\n", __func__);
 		}
 
-		// Read alsa_capture
-		if (0 == pConfig->Read("alsa_capture", &pBuf)) {
-			strcpy(alsa_capture, pBuf);
+		// Read alsa_hs_playback
+		if (0 == pConfig->Read("alsa_hs_playback", &pBuf)) {
+			strcpy(alsa_hs_playback, pBuf);
 		} else {
-			printf("[%s] Read failed : alsa_capture\n", __FUNCTION__);
+			printf("[%s] Read failed : alsa_hs_playback\n", __func__);
 		}
 
-		// Read alsa_sco_playback
-		if (0 == pConfig->Read("alsa_sco_playback", &pBuf)) {
-			strcpy(alsa_sco_playback, pBuf);
+		// Read alsa_hs_capture
+		if (0 == pConfig->Read("alsa_hs_capture", &pBuf)) {
+			strcpy(alsa_hs_capture, pBuf);
 		} else {
-			printf("[%s] Read failed : alsa_sco_playback\n", __FUNCTION__);
+			printf("[%s] Read failed : alsa_hs_capture\n", __func__);
 		}
 
-		// Read alsa_sco_capture
-		if (0 == pConfig->Read("alsa_sco_capture", &pBuf)) {
-			strcpy(alsa_sco_capture, pBuf);
+		// Read alsa_hs_sco_playback
+		if (0 == pConfig->Read("alsa_hs_sco_playback", &pBuf)) {
+			strcpy(alsa_hs_sco_playback, pBuf);
 		} else {
-			printf("[%s] Read failed : alsa_sco_capture\n", __FUNCTION__);
+			printf("[%s] Read failed : alsa_hs_sco_playback\n", __func__);
+		}
+
+		// Read alsa_hs_sco_capture
+		if (0 == pConfig->Read("alsa_hs_sco_capture", &pBuf)) {
+			strcpy(alsa_hs_sco_capture, pBuf);
+		} else {
+			printf("[%s] Read failed : alsa_hs_sco_capture\n", __func__);
 		}
 
 		// Set ALSA device names
-		pInstance->setALSADevName(alsa_playback, alsa_capture, alsa_sco_playback, alsa_sco_capture, SYNC_MODE);
+		pInstance->setALSADevName(alsa_avk_playback, alsa_hs_playback, alsa_hs_capture, alsa_hs_sco_playback, alsa_hs_sco_capture);
 	} else {
-		printf("[%s] Open failed : %s\n", __FUNCTION__, NXBTSERVICE_CONFIG);
+		printf("[%s] Open failed : %s\n", __func__, NXBTSERVICE_CONFIG);
 	}
 	delete pConfig;
 
@@ -479,10 +494,39 @@ int main (int argc, char *argv[])
 		choice = app_get_choice("Select menu");
 
 		switch (choice) {
+			case APP_MGT_MENU_GET_VERSION:
+				pInstance->getVersionInfoBSA(&bsa_version);
+				printf("\n");
+				printf("------------------------------------------------------------\n");
+				printf("BSA server version : %s\n", bsa_version.server_version);
+				printf("BSA firmware version : %s\n", bsa_version.fw_version);
+				printf("------------------------------------------------------------\n");
+				break;
+			case APP_MGT_MENU_GET_LOCAL_BT_INFO:
+				printf("\n");
+				printf("------------------------------------------------------------\n");
+				printf("Local BT name : %s\n", pInstance->getLocalDevName());
+				printf("Local BT address : ");
+				localAddress = pInstance->getLocalAddress();
+				for (i = 0; i < 6; i++) {
+				    printf("%02x", localAddress[i]);
+				}
+				printf("\n");
+				printf("------------------------------------------------------------\n");
+				break;
+			case APP_MGT_MENU_SET_LOCAL_BT_NAME:
+				app_get_string("Enter the new BT name : ", local_bt_name, sizeof(local_bt_name));
+				pInstance->renameLocalDevice(local_bt_name);
+				break;
 			case APP_MGT_MENU_GET_PAIRED_DEV_LIST:
+				printf("\n");
 				for (i = 0; i < pInstance->getPairedDevCount(); i++) {
 					pInstance->getPairedDevInfoByIndex(i, pairedDev.pairedDevInfo[i].name, pairedDev.pairedDevInfo[i].bd_addr);
-					printf("Paired device name : %s, bd_addr : %02x:%02x:%02x:%02x:%02x:%02x\n", pairedDev.pairedDevInfo[i].name, pairedDev.pairedDevInfo[i].bd_addr[0], pairedDev.pairedDevInfo[i].bd_addr[1], pairedDev.pairedDevInfo[i].bd_addr[2], pairedDev.pairedDevInfo[i].bd_addr[3], pairedDev.pairedDevInfo[i].bd_addr[4], pairedDev.pairedDevInfo[i].bd_addr[5]);
+					printf("------------------------------------------------------------\n");
+					printf("Device index : %d\n", i);
+					printf("Device name : %s\n", pairedDev.pairedDevInfo[i].name);
+					printf("BD address : %02x:%02x:%02x:%02x:%02x:%02x\n", pairedDev.pairedDevInfo[i].bd_addr[0], pairedDev.pairedDevInfo[i].bd_addr[1], pairedDev.pairedDevInfo[i].bd_addr[2], pairedDev.pairedDevInfo[i].bd_addr[3], pairedDev.pairedDevInfo[i].bd_addr[4], pairedDev.pairedDevInfo[i].bd_addr[5]);
+					printf("------------------------------------------------------------\n");
 				}
 				break;
 			case APP_MGT_MENU_ENABLE_AUTOCONN:
@@ -521,13 +565,33 @@ int main (int argc, char *argv[])
 			case APP_MGT_MENU_DISABLE_DISCOVERABLE:
 				pInstance->enableDiscoverable(false);
 				break;
-#ifdef DISC
-			// Not yet supported
 			case APP_MGT_MENU_START_DISCOVERY:
+				pInstance->startDiscovery();
 				break;
 			case APP_MGT_MENU_STOP_DISCOVERY:
+				pInstance->stopDiscovery();
 				break;
-#endif
+            case APP_MGT_MENU_GET_DISCOVERED_DEV_LIST:
+				printf("\n");
+				for (i = 0; i < pInstance->getDiscoveredDevCount(); i++) {
+					pInstance->getDiscoveredDevInfoByIndex(i, discoveredDev.discoveredDevInfo[i].name, discoveredDev.discoveredDevInfo[i].bd_addr, discoveredDev.discoveredDevInfo[i].class_of_device, discoveredDev.discoveredDevInfo[i].class_name, &discoveredDev.discoveredDevInfo[i].rssi);
+					printf("------------------------------------------------------------\n");
+					printf("Device index : %d\n", i);
+					printf("Device name : %s\n", discoveredDev.discoveredDevInfo[i].name);
+					printf("BD address : %02x:%02x:%02x:%02x:%02x:%02x\n", discoveredDev.discoveredDevInfo[i].bd_addr[0], discoveredDev.discoveredDevInfo[i].bd_addr[1], discoveredDev.discoveredDevInfo[i].bd_addr[2], discoveredDev.discoveredDevInfo[i].bd_addr[3], discoveredDev.discoveredDevInfo[i].bd_addr[4], discoveredDev.discoveredDevInfo[i].bd_addr[5]);
+					printf("Class of device : %02x:%02x:%02x => %s\n", discoveredDev.discoveredDevInfo[i].class_of_device[0], discoveredDev.discoveredDevInfo[i].class_of_device[1], discoveredDev.discoveredDevInfo[i].class_of_device[2], discoveredDev.discoveredDevInfo[i].class_name);
+					printf("RSSI : %d\n", discoveredDev.discoveredDevInfo[i].rssi);
+					printf("------------------------------------------------------------\n");
+				}
+				break;
+            case APP_MGT_MENU_BOND:
+				sel = app_get_choice("Select device index");
+				pInstance->bondDevice(sel);
+				break;
+            case APP_MGT_MENU_CANCEL_BOND:
+				sel = app_get_choice("Select device index");
+				pInstance->cancelBondingDevice(sel);
+				break;
 			case APP_AVK_MENU_OPEN:
 				sel = app_get_choice("Select device index");
 				pInstance->connectToAVK(sel);
@@ -549,7 +613,7 @@ int main (int argc, char *argv[])
 				    printf("\n");
 				}
 				break;
-			case APP_AVK_MENU_GET_LAST_CONN_INFO:
+			case APP_AVK_MENU_GET_LAST_CONN_INDEX:
 				printf("Lastest AVK connected device index : %d\n", pInstance->requestLastAVKConnectedDevIndex());
 				break;
 			case APP_AVK_MENU_PLAY_START:
@@ -598,7 +662,7 @@ int main (int argc, char *argv[])
 					printf("\n");
 				}
 				break;
-			case APP_HS_MENU_GET_LAST_CONN_INFO:
+			case APP_HS_MENU_GET_LAST_CONN_INDEX:
 				printf("Lastest HS connected device index : %d\n", pInstance->requestLastHSConnectedDevIndex());
 				break;
 			case APP_HS_MENU_PICKUP:
@@ -620,9 +684,9 @@ int main (int argc, char *argv[])
 				pInstance->muteMicrophoneHS(false);
 				break;
 			case APP_HS_MENU_DIAL:
-				memset(number, 0, sizeof(number));
-				app_get_string("Input dial number : ", number, sizeof(number));
-				pInstance->dialPhoneNumber(number);
+				memset(dial_number, 0, sizeof(dial_number));
+				app_get_string("Input dial number : ", dial_number, sizeof(dial_number));
+				pInstance->dialPhoneNumber(dial_number);
 				break;
 			case APP_HS_MENU_REDIAL:
 				pInstance->reDialPhoneNumber();
@@ -681,7 +745,6 @@ int main (int argc, char *argv[])
 				break;
 			case APP_MCE_MENU_GET_MESSAGE:
 				pInstance->getParserBmsg(&bmsg);
-
 				if (bmsg.fullName) {
 					printf("FN  : %s\n", bmsg.fullName);
 				}
