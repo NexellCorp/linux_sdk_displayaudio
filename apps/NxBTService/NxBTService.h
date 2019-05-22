@@ -179,7 +179,7 @@ public:
 	void findClientType();
 
 	// Callback functions
-	static void sendMGTOpenSucceed_stub(void* pObj, int32_t result);
+	static void sendMGTOpen_stub(void* pObj, int32_t result);
 
 	static void sendMGTDisconnected_stub(void *pObj);
 
