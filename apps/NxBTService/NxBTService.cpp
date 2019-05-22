@@ -76,7 +76,7 @@ void NxBTService::DestroyInstance()
 /*
  * MGT service callback functions
  */
-void NxBTService::sendMGTOpenSucceed_stub(void* pObj, int32_t result)
+void NxBTService::sendMGTOpen_stub(void* pObj, int32_t result)
 {
 	NxBTService* self = (NxBTService *)pObj;
 
@@ -507,7 +507,7 @@ void NxBTService::sendAVKStreamingStopped_stub(void *pObj)
 	self->Broadcast(buffer);
 
 	// Try to close audio device
-//	self->closeAudioAVK();
+	self->closeAudioAVK();
 }
 
 // Phone : HS
@@ -952,7 +952,7 @@ void NxBTService::registerCallbackFunctions()
 	NXLOGI("[%s] %p %p", __FUNCTION__, m_spInstance, this);
 
 	// Manager : MGT
-	m_pModel->registerMGTOpenSucceedCbManager(this, sendMGTOpenSucceed_stub);
+	m_pModel->registerMGTOpenCbManager(this, sendMGTOpen_stub);
 	m_pModel->registerMGTDisconnectedCbManager(this, sendMGTDisconnected_stub);
 	m_pModel->registerPairingFailedCbManager(this, sendPairingFailed_stub);
 	m_pModel->registerPairedDevicesCbManager(this, updatePairedDevices_stub);
@@ -2195,10 +2195,11 @@ void NxBTService::setInitialized(bool state)
 			if (0 == pConfig->Open(NXBTSERVICE_CONFIG))
 			{
 				char *pBuf = NULL;
-				char alsa_playback[100] = {0,};
-				char alsa_capture[100] = {0,};
-				char alsa_sco_playback[100] = {0,};
-				char alsa_sco_capture[100] = {0,};
+				char alsa_avk_playback[100] = {0,};
+				char alsa_hs_playback[100] = {0,};
+				char alsa_hs_capture[100] = {0,};
+				char alsa_hs_sco_playback[100] = {0,};
+				char alsa_hs_sco_capture[100] = {0,};
 
 				// read bsa_recovery
 				if (0 == pConfig->Read("bsa_recovery", &pBuf))
@@ -2211,48 +2212,58 @@ void NxBTService::setInitialized(bool state)
 					NXLOGE("[%s] Read failed : bsa_recovery", __FUNCTION__);
 				}
 
-				// read alsa_playback
-				if (0 == pConfig->Read("alsa_playback", &pBuf))
+				// read alsa_avk_playback
+				if (0 == pConfig->Read("alsa_avk_playback", &pBuf))
 				{
-					strcpy(alsa_playback, pBuf);
+					strcpy(alsa_avk_playback, pBuf);
 				}
 				else
 				{
-					NXLOGE("[%s] Read failed : alsa_playback", __FUNCTION__);
+					NXLOGE("[%s] Read failed : alsa_avk_playback", __FUNCTION__);
 				}
 
-				// read alsa_capture
-				if (0 == pConfig->Read("alsa_capture", &pBuf))
+				// read alsa_hs_playback
+				if (0 == pConfig->Read("alsa_hs_playback", &pBuf))
 				{
-					strcpy(alsa_capture, pBuf);
+					strcpy(alsa_hs_playback, pBuf);
 				}
 				else
 				{
-					NXLOGE("[%s] Read failed : alsa_capture", __FUNCTION__);
+					NXLOGE("[%s] Read failed : alsa_hs_playback", __FUNCTION__);
 				}
 
-				// read alsa_sco_playback
-				if (0 == pConfig->Read("alsa_sco_playback", &pBuf))
+				// read alsa_hs_capture
+				if (0 == pConfig->Read("alsa_hs_capture", &pBuf))
 				{
-					strcpy(alsa_sco_playback, pBuf);
+					strcpy(alsa_hs_capture, pBuf);
 				}
 				else
 				{
-					NXLOGE("[%s] Read failed : alsa_sco_playback", __FUNCTION__);
+					NXLOGE("[%s] Read failed : alsa_hs_capture", __FUNCTION__);
 				}
 
-				// read alsa_sco_capture
-				if (0 == pConfig->Read("alsa_sco_capture", &pBuf))
+				// read alsa_hs_sco_playback
+				if (0 == pConfig->Read("alsa_hs_sco_playback", &pBuf))
 				{
-					strcpy(alsa_sco_capture, pBuf);
+					strcpy(alsa_hs_sco_playback, pBuf);
 				}
 				else
 				{
-					NXLOGE("[%s] Read failed : alsa_sco_capture", __FUNCTION__);
+					NXLOGE("[%s] Read failed : alsa_hs_sco_playback", __FUNCTION__);
+				}
+
+				// read alsa_hs_sco_capture
+				if (0 == pConfig->Read("alsa_hs_sco_capture", &pBuf))
+				{
+					strcpy(alsa_hs_sco_capture, pBuf);
+				}
+				else
+				{
+					NXLOGE("[%s] Read failed : alsa_hs_sco_capture", __FUNCTION__);
 				}
 
 				// Set ALSA device names
-				m_pModel->setALSADevName(alsa_playback, alsa_capture, alsa_sco_playback, alsa_sco_capture, true);
+				m_pModel->setALSADevName(alsa_avk_playback, alsa_hs_playback, alsa_hs_capture, alsa_hs_sco_playback, alsa_hs_sco_capture);
 			}
 			else
 			{
