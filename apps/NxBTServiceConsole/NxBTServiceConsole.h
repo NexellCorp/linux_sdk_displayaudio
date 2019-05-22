@@ -2,6 +2,9 @@
 #define __NXBTSERVICECONSOLE_H__
 
 enum {
+	APP_MGT_MENU_GET_VERSION,
+	APP_MGT_MENU_GET_LOCAL_BT_INFO,
+	APP_MGT_MENU_SET_LOCAL_BT_NAME,
 	APP_MGT_MENU_GET_PAIRED_DEV_LIST,
 	APP_MGT_MENU_ENABLE_AUTOCONN,
 	APP_MGT_MENU_DISABLE_AUTOCONN,
@@ -13,15 +16,16 @@ enum {
 	APP_MGT_MENU_UNPAIR,
 	APP_MGT_MENU_ENABLE_DISCOVERABLE,
 	APP_MGT_MENU_DISABLE_DISCOVERABLE,
-#ifdef DISC
 	APP_MGT_MENU_START_DISCOVERY,
 	APP_MGT_MENU_STOP_DISCOVERY,
-#endif
+	APP_MGT_MENU_GET_DISCOVERED_DEV_LIST,
+	APP_MGT_MENU_BOND,
+	APP_MGT_MENU_CANCEL_BOND,
 	APP_AVK_MENU_OPEN,
 	APP_AVK_MENU_CLOSE,
 	APP_AVK_MENU_GET_CONN_NUMBER,
 	APP_AVK_MENU_GET_CONN_BD_ADDR,
-	APP_AVK_MENU_GET_LAST_CONN_INFO,
+	APP_AVK_MENU_GET_LAST_CONN_INDEX,
 	APP_AVK_MENU_PLAY_START,
 	APP_AVK_MENU_PLAY_STOP,
 	APP_AVK_MENU_PLAY_PAUSE,
@@ -34,7 +38,7 @@ enum {
 	APP_HS_MENU_OPEN,
 	APP_HS_MENU_CLOSE,
 	APP_HS_MENU_GET_CONN_BD_ADDR,
-	APP_HS_MENU_GET_LAST_CONN_INFO,
+	APP_HS_MENU_GET_LAST_CONN_INDEX,
 	APP_HS_MENU_PICKUP,
 	APP_HS_MENU_HANGUP,
 	APP_HS_MENU_OPEN_AUDIO,
@@ -86,11 +90,18 @@ enum GetPBStatus {
 typedef struct bt_remote_dev_info {
 	char name[249];
 	unsigned char bd_addr[6];
+	unsigned char class_of_device[3];
+	char class_name[20];
+	int rssi;
 } nxbt_remote_dev_t;
 
 typedef struct bt_paired_dev_info {
 	nxbt_remote_dev_t pairedDevInfo[10];
 } nxbt_paired_dev_t;
+
+typedef struct bt_discovered_dev_info {
+	nxbt_remote_dev_t discoveredDevInfo[20];
+} nxbt_discovered_dev_t;
 
 typedef struct bt_connected_dev_info {
 	int connected_index;
