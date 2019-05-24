@@ -1,7 +1,6 @@
 #ifndef CNX_METADATAREADER_H
 #define CNX_METADATAREADER_H
 
-#include <QMimeDatabase>
 #include <QFileInfo>
 #include <taglib/tag.h>
 #include <taglib/fileref.h>
@@ -48,13 +47,13 @@ public:
 private:
 	void ReadTag(const char* path);
 
-	void ReadCoverArt_MP3(const char* path, const char* coverArtPath);
+	void ReadMP3(const char* path, const char* coverArtPath);
 
-	void ReadCoverArt_OGG(const char* path, const char* coverArtPath);
+	void ReadOGG(const char* path, const char* coverArtPath);
 
-	void ReadCoverArt_FLAC(const char* path, const char* coverArtPath);
+	void ReadFLAC(const char* path, const char* coverArtPath);
 
-	void ReadCoverArt_WMA(const char* path, const char* coverArtPath);
+	void ReadWMA(const char* path, const char* coverArtPath);
 
 //	un
 private:
