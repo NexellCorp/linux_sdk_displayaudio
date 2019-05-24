@@ -1,5 +1,8 @@
 #include "CNX_MetaDataReader.h"
+#include <NX_MoviePlay.h>
 #include <unistd.h>
+
+
 
 CNX_MetaDataReader::CNX_MetaDataReader()
 {
@@ -18,26 +21,23 @@ void CNX_MetaDataReader::Reset()
 
 void CNX_MetaDataReader::Read(QString path, QString coverArtPath)
 {
-	QMimeDatabase db;
-	QMimeType mimeType = db.mimeTypeForFile(QFileInfo(path));
+	char* pMimeType = NX_MPGetMimeType(path.toStdString().c_str());
 
-	ReadTag(path.toStdString().c_str());
-
-	if (mimeType.name() == "audio/mpeg")
+	if (strcmp("mp3", pMimeType) == 0)
 	{
-		ReadCoverArt_MP3(path.toStdString().c_str(), coverArtPath.toStdString().c_str());
+		ReadMP3(path.toStdString().c_str(), coverArtPath.toStdString().c_str());
 	}
-	else if (mimeType.name() == "audio/flac")
+	else if (strcmp("flac", pMimeType) == 0)
 	{
-		ReadCoverArt_FLAC(path.toStdString().c_str(), coverArtPath.toStdString().c_str());
+		ReadFLAC(path.toStdString().c_str(), coverArtPath.toStdString().c_str());
 	}
-	else if (mimeType.name() == "audio/x-vorbis+ogg")
+	else if (strcmp("vorbis", pMimeType) == 0)
 	{
-		ReadCoverArt_OGG(path.toStdString().c_str(), coverArtPath.toStdString().c_str());
+		ReadOGG(path.toStdString().c_str(), coverArtPath.toStdString().c_str());
 	}
-	else if (mimeType.name() == "audio/x-ms-wma")
+	else if (strcmp("wma", pMimeType) == 0)
 	{
-		ReadCoverArt_WMA(path.toStdString().c_str(), coverArtPath.toStdString().c_str());
+		ReadWMA(path.toStdString().c_str(), coverArtPath.toStdString().c_str());
 	}
 	else
 	{
@@ -56,13 +56,19 @@ void CNX_MetaDataReader::ReadTag(const char* path)
 	m_uiTrackNumber = tag->track();
 }
 
-void CNX_MetaDataReader::ReadCoverArt_MP3(const char* path, const char* coverArtPath)
+void CNX_MetaDataReader::ReadMP3(const char* path, const char* coverArtPath)
 {
 	TagLib::MPEG::File f(path);
 	TagLib::ID3v2::Tag *tag = f.ID3v2Tag();
 
 	TagLib::ID3v2::FrameList frames = tag->frameListMap()["APIC"];
 	TagLib::ID3v2::AttachedPictureFrame *pPicture;
+
+	m_Title = tag->title().toCString(true);
+	m_Album = tag->album().toCString(true);
+	m_Artist = tag->artist().toCString(true);
+	m_Genre = tag->genre().toCString(true);
+	m_uiTrackNumber = tag->track();
 
 	if (!frames.isEmpty())
 	{
@@ -80,7 +86,7 @@ void CNX_MetaDataReader::ReadCoverArt_MP3(const char* path, const char* coverArt
 	m_bExistCoverArt = !frames.isEmpty();
 }
 
-void CNX_MetaDataReader::ReadCoverArt_OGG(const char* path, const char* coverArtPath)
+void CNX_MetaDataReader::ReadOGG(const char* path, const char* coverArtPath)
 {
 	TagLib::Ogg::Vorbis::File f(path);
 	TagLib::Ogg::XiphComment *tag = f.tag();
@@ -88,6 +94,12 @@ void CNX_MetaDataReader::ReadCoverArt_OGG(const char* path, const char* coverArt
 	TagLib::List<TagLib::FLAC::Picture *>::ConstIterator it = pictures.begin();
 	TagLib::FLAC::Picture *pPicture;
 
+	m_Title = tag->title().toCString(true);
+	m_Album = tag->album().toCString(true);
+	m_Artist = tag->artist().toCString(true);
+	m_Genre = tag->genre().toCString(true);
+	m_uiTrackNumber = tag->track();
+
 	for ( ; it != pictures.end(); it++)
 	{
 		pPicture = static_cast<TagLib::FLAC::Picture *>(*it);
@@ -100,13 +112,19 @@ void CNX_MetaDataReader::ReadCoverArt_OGG(const char* path, const char* coverArt
 	m_bExistCoverArt = (pictures.size() > 0);
 }
 
-void CNX_MetaDataReader::ReadCoverArt_FLAC(const char* path, const char* coverArtPath)
+void CNX_MetaDataReader::ReadFLAC(const char* path, const char* coverArtPath)
 {
 	TagLib::FLAC::File f(path);
 	TagLib::List<TagLib::FLAC::Picture *> pictures = f.pictureList();
 	TagLib::List<TagLib::FLAC::Picture *>::ConstIterator it = pictures.begin();
 	TagLib::FLAC::Picture *pPicture;
 
+	m_Title = f.tag()->title().toCString(true);
+	m_Album = f.tag()->album().toCString(true);
+	m_Artist = f.tag()->artist().toCString(true);
+	m_Genre = f.tag()->genre().toCString(true);
+	m_uiTrackNumber = f.tag()->track();
+
 	for ( ; it != pictures.end(); it++)
 	{
 		pPicture = static_cast<TagLib::FLAC::Picture *>(*it);
@@ -119,12 +137,18 @@ void CNX_MetaDataReader::ReadCoverArt_FLAC(const char* path, const char* coverAr
 	m_bExistCoverArt = (pictures.size() > 0);
 }
 
-void CNX_MetaDataReader::ReadCoverArt_WMA(const char* path, const char* coverArtPath)
+void CNX_MetaDataReader::ReadWMA(const char* path, const char* coverArtPath)
 {
 	TagLib::ASF::File f(path);
 	TagLib::ASF::Tag *tag = f.tag();
-
 	TagLib::ASF::AttributeList attr = tag->attribute("WM/Picture");
+
+	m_Title = tag->title().toCString(true);
+	m_Album = tag->album().toCString(true);
+	m_Artist = tag->artist().toCString(true);
+	m_Genre = tag->genre().toCString(true);
+	m_uiTrackNumber = tag->track();
+
 	if (attr.size() > 0)
 	{
 		TagLib::ASF::Picture p = attr[0].toPicture();
