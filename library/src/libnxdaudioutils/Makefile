@@ -4,7 +4,7 @@ include ../../../env.mk
 # Build options
 INCLUDE += -I. -I../../include
 INCLUDE += -I. -I../../prebuilt/include
-LIBRARY	+= -lstdc++ -lpthread -lm -lsqlite3 -lasound
+LIBRARY	+= -lstdc++ -lpthread -lm -lsqlite3 -lasound -lnx_config
 
 ######################################################################
 # Target
@@ -19,13 +19,6 @@ CXXOBJS += NX_DAudioUtils.o
 CXXFLAGS += -fPIC
 
 TARGET := libnxdaudioutils.so
-
-# Master volume
-ifeq ($(TARGET_MACHINE), s5p4418-convergence-daudio)
-CXXFLAGS += -DNX_MASTER_VOLUME='"Speaker"'
-else
-CXXFLAGS += -DNX_MASTER_VOLUME='"DAC1"'
-endif
 
 ######################################################################
 # Build
