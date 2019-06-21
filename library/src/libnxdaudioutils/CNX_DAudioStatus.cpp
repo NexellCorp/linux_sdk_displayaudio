@@ -1,4 +1,7 @@
 #include "CNX_DAudioStatus.h"
+#include <NX_IConfig.h>
+
+#define DAUDIO_CONFIG	"/nexell/daudio/daudio.xml"
 
 struct cbSqlite3ExecArgs
 {
@@ -49,6 +52,17 @@ CNX_DAudioStatus::CNX_DAudioStatus(string database/*= DEFAULT_DAUDIO_STATUS_DATA
 	{
 		InsertTuple();
 	}
+
+	NX_IConfig *pConfig = GetConfigHandle();
+	if (0 == pConfig->Open(DAUDIO_CONFIG))
+	{
+		char *pBuf = NULL;
+		if (0 == pConfig->Read("master_volume", &pBuf))
+		{
+			m_SoundCard = string(pBuf);
+		}
+	}
+	delete pConfig;
 
 	volume = GetVolume();
 	if (volume > 0)
@@ -213,7 +227,7 @@ int32_t CNX_DAudioStatus::SetSystemVolume(int32_t percentage)
 	snd_mixer_elem_t *pElem;
 	snd_mixer_selem_id_t *pSid;
 	const char *pCard = "default";
-	const char *pSelem_name = NX_MASTER_VOLUME;
+	const char *pSelem_name = m_SoundCard.c_str();
 	int32_t iError = 0;
 
 	if (percentage < 0)
