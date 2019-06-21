@@ -54,6 +54,10 @@ private:
 	sqlite3* m_pHandle;
 
 	string m_DataBasePath;
+
+	string m_SoundCard;
+
+	string m_CardNumber;
 };
 
 #endif // CNX_DAUDIOSTATUS_H

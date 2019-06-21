@@ -1,4 +1,7 @@
 #include "CNX_DAudioStatus.h"
+#include <NX_IConfig.h>
+
+#define DAUDIO_CONFIG	"/nexell/daudio/daudio.xml"
 
 struct cbSqlite3ExecArgs
 {
@@ -50,9 +53,32 @@ CNX_DAudioStatus::CNX_DAudioStatus(string database/*= DEFAULT_DAUDIO_STATUS_DATA
 		InsertTuple();
 	}
 
+	m_CardNumber = "default";
+	NX_IConfig *pConfig = GetConfigHandle();
+	if (0 == pConfig->Open(DAUDIO_CONFIG))
+	{
+		char *pBuf = NULL;
+		if (0 == pConfig->Read("master_volume", &pBuf))
+		{
+			m_SoundCard = string(pBuf);
+		}
+
+		if (0 == pConfig->Read("card_number", &pBuf))
+		{
+			m_CardNumber = string(pBuf);
+		}
+	}
+	delete pConfig;
+
 	volume = GetVolume();
 	if (volume > 0)
-		SetSystemVolume(volume);
+	{
+		int32_t iRet = SetSystemVolume(volume);
+		if (0 < iRet)
+		{
+			fprintf(stderr, "SetSystemVolume = %d\n", iRet);
+		}
+	}
 }
 
 CNX_DAudioStatus::~CNX_DAudioStatus()
@@ -200,7 +226,11 @@ int32_t CNX_DAudioStatus::SetVolume(int32_t value)
 
 	if (ret)
 	{
-		SetSystemVolume(value);
+		int32_t iRet = SetSystemVolume(value);
+		if (0 < iRet)
+		{
+			fprintf(stderr, "SetSystemVolume = %d\n", iRet);
+		}
 	}
 
 	return ret;
@@ -212,31 +242,41 @@ int32_t CNX_DAudioStatus::SetSystemVolume(int32_t percentage)
 	snd_mixer_t *pHandle;
 	snd_mixer_elem_t *pElem;
 	snd_mixer_selem_id_t *pSid;
-	const char *pCard = "default";
-	const char *pSelem_name = NX_MASTER_VOLUME;
+	const char *pCard = m_CardNumber.c_str();
+	const char *pSelem_name = m_SoundCard.c_str();
 	int32_t iError = 0;
+	char card[64] = "default";
+
+	if (!strstr(pCard, card))
+	{
+		int index = snd_card_get_index(pCard);
+		if (index >= 0 && index < 32)
+		{
+			sprintf(card, "hw:%s", pCard);
+		}
+	}
 
 	if (percentage < 0)
 		percentage = 0;
 	if (percentage > 100)
 		percentage = 100;
 
-	if (0 != snd_mixer_open(&pHandle, 0))
+	if (0 > snd_mixer_open(&pHandle, 0))
 		return -1;
 
-	if (0 != snd_mixer_attach(pHandle, pCard))
+	if (0 > snd_mixer_attach(pHandle, card))
 	{
 		iError = -2;
 		goto loop_finished;
 	}
 
-	if (0 != snd_mixer_selem_register(pHandle, NULL, NULL))
+	if (0 > snd_mixer_selem_register(pHandle, NULL, NULL))
 	{
 		iError = -2;
 		goto loop_finished;
 	}
 
-	if (0 != snd_mixer_load(pHandle))
+	if (0 > snd_mixer_load(pHandle))
 	{
 		iError = -2;
 		goto loop_finished;
