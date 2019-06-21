@@ -83,6 +83,18 @@ function package_luncher_application()
 	echo "<< Package ${app_name} >>"
 
 	cp -apvR ${TOP}/${QT_BUILD_TOP}/build-${app_name}/${app_name} ${RESULT_DIR}/${USR_BIN}/
+
+	if [ ! -d ${RESULT_DIR}/${QT_APP_ROOT} ]; then
+		mkdir -p ${RESULT_DIR}/${QT_APP_ROOT}
+	fi
+
+	if [ ${TARGET_MACHINE} == "s5p4418-convergence-daudio" ]; then
+		cp -apvR ${TOP}/apps/${app_name}/configs/s5p4418_convergence_daudio.xml ${RESULT_DIR}/${QT_APP_ROOT}/daudio.xml
+	elif [ ${TARGET_MACHINE} == "nxp3220-daudio" ]; then
+		cp -apvR ${TOP}/apps/${app_name}/configs/nxp3220_daudio.xml ${RESULT_DIR}/${QT_APP_ROOT}/daudio.xml
+	else
+		cp -apvR ${TOP}/apps/${app_name}/configs/s5p4418_daudio_ref.xml ${RESULT_DIR}/${QT_APP_ROOT}/daudio.xml
+	fi
 }
 
 function package_bt_service_application()
