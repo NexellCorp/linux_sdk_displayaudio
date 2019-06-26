@@ -60,6 +60,7 @@ void CNX_VolumeBar::on_slider_sliderPressed()
 void CNX_VolumeBar::on_slider_sliderReleased()
 {
 	lower();
+	hide();
 
 	emit signalSetVolume(ui->slider->value());
 }
@@ -67,6 +68,10 @@ void CNX_VolumeBar::on_slider_sliderReleased()
 void CNX_VolumeBar::Raise()
 {
 	ResetCountDown();
+	if (isHidden())
+	{
+		show();
+	}
 	raise();
 }
 
@@ -76,6 +81,7 @@ void CNX_VolumeBar::slotTimer()
 	{
 		m_Timer.stop();
 		lower();
+		hide();
 		emit signalSetVolume(ui->slider->value());
 		return;
 	}

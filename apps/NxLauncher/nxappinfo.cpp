@@ -9,6 +9,8 @@ NxPluginInfo::NxPluginInfo() : QObject()
 	m_pInit = NULL;
 	m_pIsInit = NULL;
 	m_pdeInit = NULL;
+	m_pShow = NULL;
+	m_pHide = NULL;
 	//
 	m_pRequestAudioFocus = NULL;
 	m_pRequestAudioFocusTransient = NULL;
@@ -50,6 +52,8 @@ NxPluginInfo::NxPluginInfo() : QObject()
 	m_pMediaEventChanged = NULL;
 
 	m_pBackButtonClicked = NULL;
+
+	m_pRegisterRequestOpacity = NULL;
 }
 
 QString NxPluginInfo::getType() const
