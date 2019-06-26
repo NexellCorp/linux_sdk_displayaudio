@@ -50,6 +50,8 @@ NxPluginInfo::NxPluginInfo() : QObject()
 	m_pMediaEventChanged = NULL;
 
 	m_pBackButtonClicked = NULL;
+
+	m_pRegisterRequestOpacity = NULL;
 }
 
 QString NxPluginInfo::getType() const
