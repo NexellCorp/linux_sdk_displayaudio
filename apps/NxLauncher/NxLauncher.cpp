@@ -166,6 +166,7 @@ NxLauncher::NxLauncher(QWidget *parent) :
 		psInfo->m_pBackButtonClicked = (void (*)())dlsym(psInfo->m_pHandle, "BackButtonClicked");
 		// media event
 		psInfo->m_pMediaEventChanged = (void (*)(NxMediaEvent))dlsym(psInfo->m_pHandle, "MediaEventChanged");
+		psInfo->m_pRegisterRequestOpacity = (void (*)(void(*)(bool)))dlsym(psInfo->m_pHandle, "RegisterRequestOpacity");
 
 #if 0
 		qDebug() << plugins[0].filePath();
@@ -242,6 +243,8 @@ NxLauncher::NxLauncher(QWidget *parent) :
 			psInfo->m_pRegisterRequestTerminate(RequestTerminate);
 		if (psInfo->m_pRegisterRequestVolume)
 			psInfo->m_pRegisterRequestVolume(RequestVolume);
+		if (psInfo->m_pRegisterRequestOpacity)
+			psInfo->m_pRegisterRequestOpacity(RequestOpacity);
 	}
 
 	m_VideoFocusQueue.push_front(NX_LAUNCHER);
@@ -1091,6 +1094,11 @@ void NxLauncher::RequestVolume()
 	QApplication::postEvent(m_spInstance, new NxVolumeControlEvent());
 }
 
+void NxLauncher::RequestOpacity(bool opacity)
+{
+	QApplication::postEvent(m_spInstance, new NxOpacityEvent(opacity));
+}
+
 QVariantList NxLauncher::getPluginInfoList()
 {
 	QVariantList plugins;
@@ -1131,6 +1139,13 @@ bool NxLauncher::event(QEvent *event)
 	{
 		NxVolumeControlEvent *e = static_cast<NxVolumeControlEvent *>(event);
 		VolumeControlEvent(e);
+		return true;
+	}
+
+	case E_NX_EVENT_OPACITY:
+	{
+		NxOpacityEvent *e = static_cast<NxOpacityEvent *>(event);
+		OpacityEvent(e);
 		return true;
 	}
 
@@ -1279,6 +1294,26 @@ void NxLauncher::VolumeControlEvent(NxVolumeControlEvent *)
 {
 	ui->volumeBar->SetValue(ui->statusBar->GetVolume());
 	ui->volumeBar->Raise();
+}
+
+void NxLauncher::OpacityEvent(NxOpacityEvent *e)
+{
+	if (e->m_bOpacity)
+	{
+		ui->launcher->show();
+		ui->messageFrame->show();
+		ui->volumeBar->show();
+		ui->notificationBar->show();
+		this->setStyleSheet("background: rgba(195, 195, 195, 100%);");
+	}
+	else
+	{
+		ui->launcher->hide();
+		ui->messageFrame->hide();
+		ui->volumeBar->hide();
+		ui->notificationBar->hide();
+		this->setStyleSheet("background: rgba(0, 0, 0, 0%);");
+	}
 }
 
 void NxLauncher::Execute(QString plugin)
