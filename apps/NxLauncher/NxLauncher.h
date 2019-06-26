@@ -129,6 +129,8 @@ private:
 
 	static void RequestVolume();
 
+	static void RequestOpacity(bool opacity);
+
 	void KeyEvent(NxKeyEvent* e);
 
 	void PopupMessageEvent(NxPopupMessageEvent *e);
@@ -136,6 +138,8 @@ private:
 	void NotificationEvent(NxNotificationEvent *e);
 
 	void VolumeControlEvent(NxVolumeControlEvent *e);
+
+	void OpacityEvent(NxOpacityEvent *e);
 
 	static QString FindCaller(uint32_t uiLevel);
 

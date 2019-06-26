@@ -32,6 +32,10 @@ public:
 
 	void (*m_pdeInit)();
 
+	void (*m_pShow)();
+
+	void (*m_pHide)();
+
 	//
 	void (*m_pBackButtonClicked)();
 
@@ -81,6 +85,8 @@ public:
 	void (*m_pRegisterRequestNotification)(void (*cbFunc)(PopupMessage*));
 
 	void (*m_pRegisterRequestExpireNotification)(void (*cbFunc)());
+
+	void (*m_pRegisterRequestOpacity)(void (*cbFunc)(bool));
 
 	void (*m_pNotificationResponse)(bool bOk);
 
