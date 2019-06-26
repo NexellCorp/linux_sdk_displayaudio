@@ -63,6 +63,8 @@ void (*MainFrame::m_pRequestVideoFocusLoss)(void) = NULL;
 void (*MainFrame::m_pRequestTerminate)(void) = NULL;
 void (*MainFrame::m_pRequestVolume)(void) = NULL;
 
+void (*MainFrame::m_pRequestOpacity)(bool) = NULL;
+
 MainFrame::MainFrame(QWidget *parent) :
 	QFrame(parent),
 	ui(new Ui::MainFrame)
@@ -86,6 +88,7 @@ MainFrame::MainFrame(QWidget *parent) :
 	ui->m_PlayerFrame->RegisterRequestTerminate(m_pRequestTerminate);
 	ui->m_PlayerFrame->RegisterRequestLauncherShow(m_pRequestLauncherShow);
 	ui->m_PlayerFrame->RegisterRequestVolume(m_pRequestVolume);
+	ui->m_PlayerFrame->RegisterRequestOpacity(m_pRequestOpacity);
 }
 
 MainFrame::~MainFrame()
@@ -112,6 +115,12 @@ bool MainFrame::Initialize()
 	{
 		NXLOGE("[%s] REQUEST VIDEO FOCUS <FAIL>", __FUNCTION__);
 		return false;
+	}
+
+	NXLOGI("[%s] opacity %d", __FUNCTION__, !!m_pRequestOpacity);
+	if (m_pRequestOpacity)
+	{
+		m_pRequestOpacity(false);
 	}
 
 	if (!m_pRequestAudioFocus)
@@ -182,6 +191,10 @@ void MainFrame::TerminateEvent(NxTerminateEvent *)
 {
 	if (m_pRequestTerminate)
 	{
+		if (m_pRequestOpacity)
+		{
+			m_pRequestOpacity(true);
+		}
 		m_pRequestTerminate();
 	}
 }
@@ -309,7 +322,6 @@ void MainFrame::RegisterRequestAudioFocusLoss(void (*cbFunc)(void))
 // Video Focus
 void MainFrame::RequestVideoFocus(FocusType eType, FocusPriority ePriority, bool *bOk)
 {
-	qDebug() << Q_FUNC_INFO << 1;
 	if (eType == FocusType_Get)
 	{
 		FocusPriority eCurrPriority = FocusPriority_Normal;
@@ -328,7 +340,6 @@ void MainFrame::RequestVideoFocus(FocusType eType, FocusPriority ePriority, bool
 	}
 	else // FocusType_Set
 	{
-		qDebug() << Q_FUNC_INFO << 2;
 		*bOk = true;
 		m_bHasVideoFocus = true;
 
@@ -338,6 +349,11 @@ void MainFrame::RequestVideoFocus(FocusType eType, FocusPriority ePriority, bool
 			QApplication::postEvent(this, new VideoMuteEventStop());
 		}
 		ui->m_PlayerFrame->setVideoFocus(m_bHasVideoFocus);
+
+		if (m_pRequestOpacity)
+		{
+			m_pRequestOpacity(false);
+		}
 
 		if (isHidden())
 			show();
@@ -401,6 +417,13 @@ void MainFrame::RegisterRequestVolume(void (*cbFunc)(void))
 	}
 }
 
+void MainFrame::RegisterRequestOpacity(void (*cbFunc)(bool))
+{
+	if (cbFunc)
+	{
+		m_pRequestOpacity = cbFunc;
+	}
+}
 
 void MainFrame::RegisterRequestPopupMessage(void (*cbFunc)(PopupMessage *, bool *))
 {

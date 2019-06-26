@@ -71,6 +71,7 @@ PlayListVideoFrame::PlayListVideoFrame(QWidget *parent)
 	m_pStatusBar->RegOnClickedBack( cbStatusBack );
 	m_pStatusBar->RegOnClickedVolume( cbStatusVolume );
 	m_pStatusBar->SetTitleName( "Nexell Video Player" );
+	m_pStatusBar->setStyleSheet("background-color: rgb(195, 195, 195);");
 }
 
 PlayListVideoFrame::~PlayListVideoFrame()

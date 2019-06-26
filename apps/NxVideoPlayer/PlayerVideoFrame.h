@@ -96,6 +96,7 @@ public:
 	void RegisterRequestTerminate(void (*cbFunc)(void));
 	void RegisterRequestVolume(void (*cbFunc)(void));
 	void RegisterRequestLauncherShow(void (*cbFunc)(bool *bOk));
+	void RegisterRequestOpacity(void (*cbFunc)(bool));
 	void getAspectRatio(int srcWidth, int srcHeight,
 						int scrWidth, int scrHeight,
 						int *pWidth, int *pHeight);
@@ -181,6 +182,9 @@ private:
 	void (*m_pRequestTerminate)(void);
 	void (*m_pRequestLauncherShow)(bool *bOk);
 	void (*m_pRequestVolume)(void);
+
+	// Opacity
+	void (*m_pRequestOpacity)(bool bOpacity);
 
 	// Video Speed
 	float m_fSpeed;
