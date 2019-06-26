@@ -82,6 +82,8 @@ public:
 
 	void (*m_pRegisterRequestExpireNotification)(void (*cbFunc)());
 
+	void (*m_pRegisterRequestOpacity)(void (*cbFunc)(bool));
+
 	void (*m_pNotificationResponse)(bool bOk);
 
 	void (*m_pMediaEventChanged)(NxMediaEvent eEvent);
