@@ -14,10 +14,11 @@
    <string>Frame</string>
   </property>
   <property name="autoFillBackground">
-   <bool>true</bool>
+   <bool>false</bool>
   </property>
   <property name="styleSheet">
-   <string notr="true">color: rgb(1,1,1);</string>
+   <string notr="true">background-color: rgb(239, 235, 231);
+color: rgb(1,1,1);</string>
   </property>
   <property name="frameShape">
    <enum>QFrame::StyledPanel</enum>
@@ -109,7 +110,7 @@
     </size>
    </property>
    <property name="autoFillBackground">
-    <bool>true</bool>
+    <bool>false</bool>
    </property>
    <property name="text">
     <string>Cancel</string>
