@@ -53,6 +53,7 @@ public:
 	static void RegisterRequestVideoFocusLoss(void (*cbFunc)(void));
 	static void RegisterRequestTerminate(void (*cbFunc)(void));
 
+	static void RegisterRequestOpacity(void (*cbFunc)(bool));
 
 public:
 	explicit MainFrame(QWidget *parent = 0);
@@ -93,6 +94,8 @@ private:
 	static void (*m_pRequestVideoFocus)(FocusPriority ePriority, bool *bOk);
 	static void (*m_pRequestVideoFocusTransient)(FocusPriority ePriority, bool *bOk);
 	static void (*m_pRequestVideoFocusLoss)(void);
+
+	static void (*m_pRequestOpacity)(bool);
 
 	// Terminate
 	static void (*m_pRequestTerminate)(void);
