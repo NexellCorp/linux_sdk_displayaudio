@@ -103,6 +103,7 @@ void CallingMenuWidget::updateCallStatus(QStringList& tokens)
 		if (tokens[3] == "INCOMMING CALL") {
 			setUIState(UIState_IncommingCall);
 		} else if (tokens[3] == "HANG UP CALL") {
+			setUIState(UIState_Init);
 		} else if (tokens[3] == "PICK UP CALL") {
 			setUIState(UIState_Calling);
 		} else if (tokens[3] == "READY OUTGOING CALL") {
@@ -110,6 +111,7 @@ void CallingMenuWidget::updateCallStatus(QStringList& tokens)
 		} else if (tokens[3] == "OUTGOING CALL") {
 			setUIState(UIState_OutGoingCall);
 		} else if (tokens[3] == "DISCONNECTED CALL") {
+			setUIState(UIState_Init);
 		} else if (tokens[3] == "UNKNOWN CALL") {
 		}
 	}
@@ -139,7 +141,7 @@ void CallingMenuWidget::updateIncommingCallNumber(QStringList& tokens)
 	// example) _"0316987429",129,,,"______"
 	if (tokens.size() == 4) {
 		QStringList subTokens = tokens[3].split(",");
-		if (subTokens.size() == 5) {
+		if (subTokens.size() > 0) {
 			int start, position;
 			QString callNumber;
 
@@ -172,10 +174,14 @@ void CallingMenuWidget::setUIState(UIState state)
 	if (state == m_UIState)
 		return;
 
-	m_UIState = state;
+	m_UIState = state;	
 
 	QRect rect;
 	switch (state) {
+	case UIState_Init:
+		ui->LABEL_CALL_NUMBER->clear();
+		break;
+
 	case UIState_IncommingCall:
 		ui->BUTTON_HANG_UP_CALL->show();
 		ui->BUTTON_PICK_UP_CALL->show();

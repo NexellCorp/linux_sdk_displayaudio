@@ -57,7 +57,7 @@ MainFrame::MainFrame(QWidget *parent) :
 	m_bHasVideoFocusTransient = false;
 
 	m_bDisconnectedCall = false;
-	m_bAudioClosedForHS = false;
+	m_bAudioClosedForHS = true;
 	m_bBTConnectedForHS = true;
 
 	m_pCommandProcessor = new BTCommandProcessor();
@@ -310,7 +310,6 @@ void MainFrame::slotCommandFromServer(QString command)
 	QString body = command.mid(stx, etx-stx);
 
 	QStringList tokens = body.split("#");
-
 	// failure conditions
 	if (tokens.size() < 3 || tokens[0] == "NG") {
 		return;
