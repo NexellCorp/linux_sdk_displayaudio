@@ -90,6 +90,8 @@ void (*MainFrame::m_pRequestVideoFocusLoss)(void) = NULL;
 void (*MainFrame::m_pRequestTerminate)(void) = NULL;
 void (*MainFrame::m_pRequestVolume)(void) = NULL;
 
+void (*MainFrame::m_pRequestOpacity)(bool) = NULL;
+
 MainFrame::MainFrame(QWidget *parent) :
 	QFrame(parent),
 	m_bBackGearDetected(false),
@@ -111,6 +113,8 @@ MainFrame::MainFrame(QWidget *parent) :
 	//  Focus
 	m_bHasAudioFocus = false;
 	m_bHasVideoFocus = false;
+
+	ui->m_RearCamFrame->RegisterRequestOpacity(m_pRequestOpacity);
 }
 
 MainFrame::~MainFrame()
@@ -159,12 +163,20 @@ bool MainFrame::Initialize()
 		NXLOGE("[%s] REQUEST VIDEO FOCUS does not exist.", __FUNCTION__);
 		return false;
 	}
+	
+	NXLOGI("[%s] opacity %d", __FUNCTION__, !!m_pRequestOpacity);
+	if (m_pRequestOpacity)
+	{
+		m_pRequestOpacity(true);
+	}
+
 	backgear_enable = 1;
 	gpioIdx = 71;
 
 	m_pIConfig = GetConfigHandle();
 	GetInfo();
 
+	
 	if(quick_runnig == 1)
 	{
 		m_pCmdHandle = NX_GetCommandHandle();
@@ -195,6 +207,10 @@ void MainFrame::TerminateEvent(NxTerminateEvent *)
 {
 	if (m_pRequestTerminate)
 	{
+		if (m_pRequestOpacity)
+		{
+			m_pRequestOpacity(true);
+		}
 		m_pRequestTerminate();
 	}
 }
@@ -330,6 +346,11 @@ void MainFrame::RequestVideoFocus(FocusType eType, FocusPriority ePriority, bool
 	else // FocusType_Set
 	{
 
+		if (m_pRequestOpacity)
+		{
+			m_pRequestOpacity(false);
+		}
+
 		if(m_bBackGearDetected == true)
 		{
 			*bOk = true;
@@ -395,6 +416,15 @@ void MainFrame::RegisterRequestTerminate(void (*cbFunc)(void))
 	}
 }
 
+void MainFrame::RegisterRequestOpacity(void (*cbFunc)(bool))
+{
+	if (cbFunc)
+	{
+		m_pRequestOpacity = cbFunc;
+	}
+}
+
+
 void MainFrame::RegisterRequestPopupMessage(void (*cbFunc)(PopupMessage *, bool *))
 {
 	if (cbFunc)
@@ -427,6 +457,8 @@ bool MainFrame::RearCamStart(void)
 		return false;
 	}
 
+	m_pRequestOpacity(false);
+
 	ui->m_RearCamFrame->ShowCamera();
 
 	show();
@@ -439,6 +471,8 @@ void MainFrame::RearCamStop(void)
 {
 	ui->m_RearCamFrame->HideCamera();
 	m_pRequestVideoFocusLoss();
+	m_pRequestOpacity(true);
+
 	hide();
 
 //	lower();

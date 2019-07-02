@@ -603,6 +603,7 @@ int32_t NX_RearCamDeInit()
 	pstRearCamManager->Deinit();
 
 	ReleaseRearCamManager();
+
 	NxDbgMsg( NX_DBG_INFO, "%s() ----- \n", __FUNCTION__ );
 
 	return 0;

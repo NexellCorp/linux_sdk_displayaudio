@@ -192,3 +192,8 @@ void MediaEventChanged(NxMediaEvent eEvent)
 {
 
 }
+
+void RegisterRequestOpacity(void (*cbFunc)(bool))
+{
+	MainFrame::RegisterRequestOpacity(cbFunc);
+}
