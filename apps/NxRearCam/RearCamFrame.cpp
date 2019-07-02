@@ -140,6 +140,10 @@ void RearCamFrame::TerminateEvent(NxTerminateEvent *)
 {
 	if (m_pRequestTerminate)
 	{
+		if (m_pRequestOpacity)
+		{
+			m_pRequestOpacity(true);
+		}
 		m_pRequestTerminate();
 	}
 }
@@ -157,6 +161,14 @@ void RearCamFrame::RegisterRequestLauncherShow(void (*cbFunc)(bool *bOk))
 	if (cbFunc)
 	{
 		m_pRequestLauncherShow = cbFunc;
+	}
+}
+
+void RearCamFrame::RegisterRequestOpacity(void (*cbFunc)(bool))
+{
+	if (cbFunc)
+	{
+		m_pRequestOpacity = cbFunc;
 	}
 }
 
