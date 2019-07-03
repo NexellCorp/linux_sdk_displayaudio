@@ -86,8 +86,6 @@ public:
 
 	void (*m_pRegisterRequestExpireNotification)(void (*cbFunc)());
 
-	void (*m_pRegisterRequestOpacity)(void (*cbFunc)(bool));
-
 	void (*m_pNotificationResponse)(bool bOk);
 
 	void (*m_pMediaEventChanged)(NxMediaEvent eEvent);
@@ -131,6 +129,9 @@ public:
 	bool getVisible();
 	void setVisible(bool visible);
 
+	bool useVideoLayer();
+	void setUseVideoLayer(bool use);
+
 private:
 	// https://specifications.freedesktop.org/desktop-entry-spec/latest/ar01s05.html
 	QString m_szType;
@@ -146,6 +147,7 @@ private:
 	bool m_bEnabled;
 	bool m_bAutoStart;
 	bool m_bVisible;
+	bool m_bUseVideoLayer;
 };
 
 #endif // NXAPPINFO_H
