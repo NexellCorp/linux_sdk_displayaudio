@@ -1318,7 +1318,6 @@ void NxLauncher::OpacityEvent(NxOpacityEvent *e)
 		ui->launcher->show();
 		ui->messageFrame->show();
 		ui->volumeBar->show();
-		ui->notificationBar->show();
 		this->setStyleSheet("QDialog { background: rgba(195, 195, 195, 100%); }");
 		for (int i = 0; i < m_VideoFocusQueue.size(); ++i)
 		{
