@@ -66,10 +66,14 @@ function package_sdk_qtapplications()
 	fi
 
 	if [ ${SDK_ENABLE_CAM} == "yes" ]; then
-		package_sdk_qtapplication NxAVIn
+		if [ ${TARGET_MACHINE} == "s5p4418-daudio-ref" ]; then
+			package_sdk_qtapplication NxAVIn
+		fi
 		package_sdk_qtapplication NxRearCam
 	elif [ ${SDK_ENABLE_CAM} == "no" ]; then
-		unpackage_sdk_qtapplication NxAVIn
+		if [ ${TARGET_MACHINE} == "s5p4418-daudio-ref" ]; then
+			unpackage_sdk_qtapplication NxAVIn
+		fi
 		unpackage_sdk_qtapplication NxRearCam
 	fi
 
