@@ -77,9 +77,6 @@ extern "C" {
 	// Volume
 	void RegisterRequestVolume(void (*cbFunc)());
 
-	// Opacity
-	void RegisterRequestOpacity(void (*cbFunc)(bool));
-
 	// Media - disk insert/remove, scan done
 	void MediaEventChanged(NxMediaEvent eEvent);
 
