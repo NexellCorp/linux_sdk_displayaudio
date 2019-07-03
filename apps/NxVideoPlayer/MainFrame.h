@@ -87,8 +87,6 @@ private:
 	static void (*m_pRequestVideoFocusTransient)(FocusPriority ePriority, bool *bOk);
 	static void (*m_pRequestVideoFocusLoss)(void);
 
-	static void (*m_pRequestOpacity)(bool);
-
 	// Terminate
 	static void (*m_pRequestTerminate)(void);
 	static void (*m_pRequestVolume)(void);
