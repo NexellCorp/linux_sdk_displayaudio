@@ -82,7 +82,6 @@ private:
 public:
 	void RegisterRequestTerminate(void (*cbFunc)(void));
 	void RegisterRequestLauncherShow(void (*cbFunc)(bool *bOk));
-	void RegisterRequestOpacity(void (*cbFunc)(bool));
 
 private:
 	bool m_bIsInitialized;
@@ -102,14 +101,9 @@ private:
 	bool m_bShowCamera;
 
 private:
-
 	// Terminate
 	void (*m_pRequestTerminate)(void);
 	void (*m_pRequestLauncherShow)(bool *bOk);
-
-		// Opacity
-	void (*m_pRequestOpacity)(bool bOpacity);
-
 
 	int SaveInfo();
 
