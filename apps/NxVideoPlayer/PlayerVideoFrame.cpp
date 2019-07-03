@@ -1395,7 +1395,6 @@ void PlayerVideoFrame::StatusHomeEvent(NxStatusHomeEvent *)
 	if (m_pRequestLauncherShow)
 	{
 		bool bOk = false;
-		m_pRequestOpacity(true);
 		m_pRequestLauncherShow(&bOk);
 		NXLOGI("[%s] REQUEST LAUNCHER SHOW <%s>", __FUNCTION__, bOk ? "OK" : "NG");
 	}
@@ -1418,10 +1417,6 @@ void PlayerVideoFrame::TerminateEvent(NxTerminateEvent *)
 {
 	if (m_pRequestTerminate)
 	{
-		if (m_pRequestOpacity)
-		{
-			m_pRequestOpacity(true);
-		}
 		m_pRequestTerminate();
 	}
 }
@@ -1448,14 +1443,6 @@ void PlayerVideoFrame::RegisterRequestLauncherShow(void (*cbFunc)(bool *bOk))
 	if (cbFunc)
 	{
 		m_pRequestLauncherShow = cbFunc;
-	}
-}
-
-void PlayerVideoFrame::RegisterRequestOpacity(void (*cbFunc)(bool))
-{
-	if (cbFunc)
-	{
-		m_pRequestOpacity = cbFunc;
 	}
 }
 
