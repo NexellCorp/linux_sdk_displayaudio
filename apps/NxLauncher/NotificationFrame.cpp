@@ -93,6 +93,7 @@ void NotificationFrame::Raise()
 	if (m_uiTimeout)
 		m_Timer.start(m_uiTimeout);
 	raise();
+	show();
 }
 
 void NotificationFrame::Lower()
@@ -100,6 +101,7 @@ void NotificationFrame::Lower()
 	m_Timer.stop();
 
 	lower();
+	hide();
 }
 
 void NotificationFrame::on_BUTTON_OK_clicked()
@@ -107,6 +109,7 @@ void NotificationFrame::on_BUTTON_OK_clicked()
 	m_Timer.stop();
 
 	lower();
+	hide();
 
 	emit signalOk();
 }
@@ -116,6 +119,7 @@ void NotificationFrame::on_BUTTON_CANCEL_clicked()
 	m_Timer.stop();
 
 	lower();
+	hide();
 
 	emit signalCancel();
 }
@@ -125,6 +129,7 @@ void NotificationFrame::slotTimer()
 	m_Timer.stop();
 
 	lower();
+	hide();
 
 	emit signalCancel();
 }
