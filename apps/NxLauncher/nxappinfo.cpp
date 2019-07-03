@@ -52,8 +52,6 @@ NxPluginInfo::NxPluginInfo() : QObject()
 	m_pMediaEventChanged = NULL;
 
 	m_pBackButtonClicked = NULL;
-
-	m_pRegisterRequestOpacity = NULL;
 }
 
 QString NxPluginInfo::getType() const
@@ -184,4 +182,14 @@ bool NxPluginInfo::getVisible()
 void NxPluginInfo::setVisible(bool visible)
 {
 	m_bVisible = visible;
+}
+
+bool NxPluginInfo::useVideoLayer()
+{
+	return m_bUseVideoLayer;
+}
+
+void NxPluginInfo::setUseVideoLayer(bool use)
+{
+	m_bUseVideoLayer = use;
 }
