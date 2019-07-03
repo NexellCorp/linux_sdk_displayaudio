@@ -183,9 +183,6 @@ private:
 	void (*m_pRequestLauncherShow)(bool *bOk);
 	void (*m_pRequestVolume)(void);
 
-	// Opacity
-	void (*m_pRequestOpacity)(bool bOpacity);
-
 	// Video Speed
 	float m_fSpeed;
 	bool m_bNotSupportSpeed;
