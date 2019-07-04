@@ -124,6 +124,10 @@ bool MainFrame::Initialize()
 	if (!bOk)
 	{
 		NXLOGE("[%s] REQUEST AUDIO FOCUS <FAIL>", __FUNCTION__);
+		if (m_pRequestVideoFocusLoss)
+		{
+			m_pRequestVideoFocusLoss();
+		}
 		return false;
 	}
 
