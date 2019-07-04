@@ -831,8 +831,7 @@ void NxLauncher::VideoFocus(FocusPriority ePriority, bool *bOk)
 	if (*bOk)
 	{
 		AddVideoFocus(caller);
-		NxOpacityEvent e = NxOpacityEvent(!m_PlugIns[caller]->useVideoLayer());
-		OpacityEvent(&e);
+		QApplication::postEvent(this, new NxOpacityEvent(!m_PlugIns[caller]->useVideoLayer()));
 	}
 }
 
@@ -937,16 +936,14 @@ void NxLauncher::RequestVideoFocusLoss()
 		{
 			bool bOk = false;
 			m_spInstance->LauncherShow(&bOk, false);
-			NxOpacityEvent e = NxOpacityEvent(true);
-			m_spInstance->OpacityEvent(&e);
+			QApplication::postEvent(m_spInstance, new NxOpacityEvent(true));
 		}
 		else
 		{
 			// 2.1. pass the focus to the next owner.
 			bool bOk = false;
 
-			NxOpacityEvent e = NxOpacityEvent(!m_spInstance->m_PlugIns[curr]->useVideoLayer());
-			m_spInstance->OpacityEvent(&e);
+			QApplication::postEvent(m_spInstance, new NxOpacityEvent(!m_spInstance->m_PlugIns[curr]->useVideoLayer()));
 
 			m_spInstance->m_PlugIns[curr]->m_pRequestVideoFocus(FocusType_Set, FocusPriority_Normal, &bOk);
 		}
@@ -1082,8 +1079,8 @@ void NxLauncher::Terminate(QString requestor)
 				owner = m_VideoFocusQueue.first();
 
 				bool opacity = (owner == NX_LAUNCHER ? true : (!m_PlugIns[owner]->useVideoLayer()));
-				NxOpacityEvent e = NxOpacityEvent(opacity);
-				OpacityEvent(&e);
+				QApplication::postEvent(this, new NxOpacityEvent(opacity));
+
 				if (owner != NX_LAUNCHER)
 					m_PlugIns[owner]->m_pRequestVideoFocus(FocusType_Set, FocusPriority_Normal, &bOk);
 
@@ -1481,8 +1478,8 @@ void NxLauncher::LauncherShow(bool *bOk, bool bRequireRequestFocus)
 	if (AddVideoFocus(NX_LAUNCHER))
 	{
 		ui->launcher->raise();
-		NxOpacityEvent e = NxOpacityEvent(true);
-		m_spInstance->OpacityEvent(&e);
+
+		QApplication::postEvent(this, new NxOpacityEvent(true));
 	}
 }
 
