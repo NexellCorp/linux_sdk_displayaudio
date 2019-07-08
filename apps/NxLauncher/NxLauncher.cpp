@@ -14,6 +14,8 @@
 #include <QDirIterator>
 #include <QDesktopWidget>
 
+#include "InitThread.h"
+
 #include <execinfo.h>
 #include <signal.h>
 
@@ -43,6 +45,8 @@
 NxLauncher* NxLauncher::m_spInstance = NULL;
 QQueue<QString> NxLauncher::m_AudioFocusQueue = QQueue<QString>();
 QQueue<QString> NxLauncher::m_VideoFocusQueue = QQueue<QString>();
+
+#include <QDebug>
 
 static void signal_handler(int sig)
 {
@@ -90,7 +94,6 @@ NxLauncher::NxLauncher(QWidget *parent) :
 	ui->setupUi(this);
 
 	m_spInstance = this;
-	installEventFilter( this );
 
 	signal(SIGABRT, signal_handler);
 	signal(SIGSEGV, signal_handler);
@@ -320,10 +323,29 @@ NxLauncher::NxLauncher(QWidget *parent) :
 	m_pMediaScanner = new MediaScanner();
 	connect(m_pMediaScanner, SIGNAL(signalMediaEvent(NxEventTypes)), this, SLOT(slotMediaEvent(NxEventTypes)));
 
+#if 0
+	foreach (NxPluginInfo *psInfo, m_PlugIns) {
+		if (psInfo->getAutoStart())
+		{
+			if (psInfo->m_pInit){
+				qDebug() << psInfo->getName() << 1;
+				psInfo->m_pInit(this, "");
+				qDebug() << psInfo->getName() << 2;
+			}
+		}
+	}
+#else
+	InitThread *pInitThread = new InitThread(m_PlugIns);
+	connect(pInitThread, SIGNAL(signalInit(QString)), this, SLOT(slotInit(QString)));
+	connect(pInitThread, SIGNAL(finished()), pInitThread, SLOT(deleteLater()));
+	pInitThread->start();
+#endif
+
+	ui->messageFrame->hide();
+	ui->notificationBar->hide();
+
 	connect(&m_Timer, SIGNAL(timeout()), this, SLOT(slotTimer()));
 //	m_Timer.start(10000);
-
-//	QTimer::singleShot(2000, this, SLOT(slotStartSerivceTimer()));
 }
 
 NxLauncher::~NxLauncher()
@@ -331,14 +353,11 @@ NxLauncher::~NxLauncher()
 	delete ui;
 }
 
-void NxLauncher::slotStartSerivceTimer()
+void NxLauncher::slotInit(QString plugin)
 {
-	foreach (NxPluginInfo *psInfo, m_PlugIns) {
-		if (psInfo->getType().toLower() == "service" && psInfo->getEnabled())
-		{
-			if (psInfo->m_pInit)
-				psInfo->m_pInit(this, "");
-		}
+	if (m_PlugIns[plugin]->m_pInit)
+	{
+		m_PlugIns[plugin]->m_pInit(this, "");
 	}
 }
 
@@ -1187,14 +1206,6 @@ bool NxLauncher::event(QEvent *event)
 	case QEvent::WindowActivate:
 	{
 		printf("NX_LAUNCHER SHOWN\n");
-
-		foreach (NxPluginInfo *psInfo, m_PlugIns) {
-			if (psInfo->getAutoStart())
-			{
-				if (psInfo->m_pInit)
-					psInfo->m_pInit(this, "");
-			}
-		}
 		break;
 	}
 
@@ -1313,7 +1324,6 @@ void NxLauncher::OpacityEvent(NxOpacityEvent *e)
 	if (e->m_bOpacity)
 	{
 		ui->launcher->show();
-		ui->messageFrame->show();
 		ui->volumeBar->show();
 		this->setStyleSheet("QDialog { background: rgba(195, 195, 195, 100%); }");
 		for (int i = 0; i < m_VideoFocusQueue.size(); ++i)
@@ -1331,9 +1341,7 @@ void NxLauncher::OpacityEvent(NxOpacityEvent *e)
 	else
 	{
 		ui->launcher->hide();
-		ui->messageFrame->hide();
 		ui->volumeBar->hide();
-		ui->notificationBar->hide();
 		this->setStyleSheet("QDialog { background: rgba(0, 0, 0, 0%); }");
 		for (int i = 1; i < m_VideoFocusQueue.size(); ++i)
 		{

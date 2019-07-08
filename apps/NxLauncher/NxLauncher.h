@@ -36,6 +36,8 @@ private slots:
 	void slotResizeItemDone();
 #endif
 
+	void slotInit(QString plugin);
+
 	void slotExecute(QString);
 
 	void slotPopupMessageAccept();
@@ -53,8 +55,6 @@ private slots:
 	void slotSetVolume(int value);
 
 	void slotMediaEvent(NxEventTypes eType);
-
-	void slotStartSerivceTimer();
 
 #ifdef CONFIG_NXP3220
 	void onExecute(NxPluginInfo* pInfo);
