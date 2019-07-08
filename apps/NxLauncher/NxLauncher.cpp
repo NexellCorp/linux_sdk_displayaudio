@@ -14,6 +14,8 @@
 #include <QDirIterator>
 #include <QDesktopWidget>
 
+#include "InitThread.h"
+
 #include <execinfo.h>
 #include <signal.h>
 
@@ -43,6 +45,8 @@
 NxLauncher* NxLauncher::m_spInstance = NULL;
 QQueue<QString> NxLauncher::m_AudioFocusQueue = QQueue<QString>();
 QQueue<QString> NxLauncher::m_VideoFocusQueue = QQueue<QString>();
+
+#include <QDebug>
 
 static void signal_handler(int sig)
 {
@@ -320,6 +324,23 @@ NxLauncher::NxLauncher(QWidget *parent) :
 	m_pMediaScanner = new MediaScanner();
 	connect(m_pMediaScanner, SIGNAL(signalMediaEvent(NxEventTypes)), this, SLOT(slotMediaEvent(NxEventTypes)));
 
+#if 0
+	foreach (NxPluginInfo *psInfo, m_PlugIns) {
+		if (psInfo->getAutoStart())
+		{
+			if (psInfo->m_pInit){
+				qDebug() << psInfo->getName() << 1;
+				psInfo->m_pInit(this, "");
+				qDebug() << psInfo->getName() << 2;
+			}
+		}
+	}
+#endif
+	InitThread *pInitThread = new InitThread(m_PlugIns);
+	connect(pInitThread, SIGNAL(signalInit(QString)), this, SLOT(slotInit(QString)));
+	connect(pInitThread, SIGNAL(finished()), pInitThread, SLOT(deleteLater()));
+	pInitThread->start();
+
 	connect(&m_Timer, SIGNAL(timeout()), this, SLOT(slotTimer()));
 //	m_Timer.start(10000);
 
@@ -339,6 +360,14 @@ void NxLauncher::slotStartSerivceTimer()
 			if (psInfo->m_pInit)
 				psInfo->m_pInit(this, "");
 		}
+	}
+}
+
+void NxLauncher::slotInit(QString plugin)
+{
+	if (m_PlugIns[plugin]->m_pInit)
+	{
+		m_PlugIns[plugin]->m_pInit(this, "");
 	}
 }
 
@@ -1187,14 +1216,6 @@ bool NxLauncher::event(QEvent *event)
 	case QEvent::WindowActivate:
 	{
 		printf("NX_LAUNCHER SHOWN\n");
-
-		foreach (NxPluginInfo *psInfo, m_PlugIns) {
-			if (psInfo->getAutoStart())
-			{
-				if (psInfo->m_pInit)
-					psInfo->m_pInit(this, "");
-			}
-		}
 		break;
 	}
 

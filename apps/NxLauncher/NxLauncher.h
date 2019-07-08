@@ -36,6 +36,8 @@ private slots:
 	void slotResizeItemDone();
 #endif
 
+	void slotInit(QString plugin);
+
 	void slotExecute(QString);
 
 	void slotPopupMessageAccept();
