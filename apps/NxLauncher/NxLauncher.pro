@@ -62,7 +62,8 @@ SOURCES += main.cpp\
     page/PageFrame.cpp \
     page/PageIndicatorFrame.cpp \
     page/PageItemFrame.cpp \
-    page/PageStackFrame.cpp
+    page/PageStackFrame.cpp \
+    InitThread.cpp
 
 HEADERS  += \
     nxappinfo.h \
@@ -86,7 +87,8 @@ HEADERS  += \
     page/PageFrame.h \
     page/PageIndicatorFrame.h \
     page/PageItemFrame.h \
-    page/PageStackFrame.h
+    page/PageStackFrame.h \
+    InitThread.h
 
 FORMS    += \
     NotificationFrame.ui \
