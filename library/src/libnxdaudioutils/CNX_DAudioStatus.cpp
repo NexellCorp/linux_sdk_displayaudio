@@ -57,6 +57,7 @@ CNX_DAudioStatus::CNX_DAudioStatus(string database/*= DEFAULT_DAUDIO_STATUS_DATA
 	}
 
 	m_CardNumber = "default";
+	m_iMaxVolume = 0;
 	NX_IConfig *pConfig = GetConfigHandle();
 	if (0 == pConfig->Open(DAUDIO_CONFIG))
 	{
@@ -64,6 +65,11 @@ CNX_DAudioStatus::CNX_DAudioStatus(string database/*= DEFAULT_DAUDIO_STATUS_DATA
 		if (0 == pConfig->Read("master_volume", &pBuf))
 		{
 			m_SoundCard = string(pBuf);
+		}
+
+		if (0 == pConfig->Read("max_volume", &pBuf))
+		{
+			m_iMaxVolume = atoi(pBuf);
 		}
 
 		if (0 == pConfig->Read("card_number", &pBuf))
@@ -290,7 +296,9 @@ int32_t CNX_DAudioStatus::SetSystemVolume(int32_t percentage)
 		goto loop_finished;
 	}
 
-	if (0 != snd_mixer_selem_get_playback_volume_range(pElem, &min, &max))
+	if (m_iMaxVolume > 0)
+		max = m_iMaxVolume;
+	else if (0 != snd_mixer_selem_get_playback_volume_range(pElem, &min, &max))
 	{
 		iError = -3;
 		goto loop_finished;
