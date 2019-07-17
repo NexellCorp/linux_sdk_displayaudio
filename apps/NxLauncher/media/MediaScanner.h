@@ -17,7 +17,7 @@ signals:
 	void signalMediaEvent(NxEventTypes eType);
 
 private slots:
-	void slotDetectUevent(uint32_t iEventType, uint8_t *pDevice);
+	void slotDetectUEvent(QString action, QString devNode);
 
 	void slotStartTimer();
 
@@ -36,11 +36,14 @@ protected:
 private:
 	void Start(int msec);
 
+	void Mount(QString devNode);
+
+	void Umount(QString devNode);
+
 private:
 	CNX_UeventManager *m_pUeventManager;
 	CNX_VolumeManager *m_pVolumeManager;
 	CNX_MediaScanner *m_pMediaScanner;
-	CNX_DiskManager *m_pDiskManager;
 
 	QTimer m_StartTimer;
 };
