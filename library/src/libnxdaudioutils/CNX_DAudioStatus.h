@@ -65,6 +65,8 @@ private:
 
 	string m_CardNumber;
 
+	int m_iMaxVolume;
+
 	pthread_t m_hInitThread;
 };
 
