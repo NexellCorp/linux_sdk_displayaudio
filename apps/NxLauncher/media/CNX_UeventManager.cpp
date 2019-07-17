@@ -18,69 +18,131 @@
 //------------------------------------------------------------------------------
 
 #include <string.h>
-#include <unistd.h>
-#include <poll.h>
-#include "uevent.h"
+#include <libudev.h>
 
 #include "CNX_UeventManager.h"
+
+#define BUF_SIZE 16*1024
+
+#define LOG_TAG "[uevent]"
+#include <NX_Log.h>
 
 //------------------------------------------------------------------------------
 CNX_UeventManager::CNX_UeventManager()
 {
-	m_bThreadRun = false;
+	m_udev = udev_new();
+	if (!m_udev)
+	{
+		NXLOGE("udev_new()");
+		return;
+	}
+
+	m_monitor = udev_monitor_new_from_netlink(m_udev, "udev");
+	if (!m_monitor)
+	{
+		NXLOGE("udev_monitor_new_from_netlink");
+		return;
+	}
+
+	udev_monitor_filter_add_match_subsystem_devtype(m_monitor, "block", NULL);
+	udev_monitor_enable_receiving(m_monitor);
+
+	m_fd  = udev_monitor_get_fd(m_monitor);
+	if (m_fd  < 0)
+	{
+		NXLOGE("udev_monitor_get_fd");
+		return;
+	}
+
+	m_pSocketNotifier = new QSocketNotifier(m_fd, QSocketNotifier::Read, this);
+	connect(m_pSocketNotifier, SIGNAL(activated(int)), this, SLOT(slotNotification()));
 }
 
 //------------------------------------------------------------------------------
 CNX_UeventManager::~CNX_UeventManager()
 {
-	Stop();
+
 }
 
-//------------------------------------------------------------------------------
-void CNX_UeventManager::run()
+void CNX_UeventManager::slotNotification()
 {
-	char desc[1024];
-	struct pollfd fds;
+	struct udev_device *dev;
+	struct udev_list_entry *entries;
+	const char *action;
+	const char *node;
+	const char *subsystem;
+	const char *type;
+	const char *sysname;
 
-	uevent_init();
+	if (!m_monitor)
+		return;
 
-	fds.fd = uevent_get_fd();
-	fds.events = POLLIN;
+	dev = udev_monitor_receive_device(m_monitor);
+	if (!dev)
+		goto cleanup;
 
-	m_bThreadRun = true;
+	action = udev_device_get_action(dev);
+	if (!action) {
+		NXLOGE("udev_device_get_action");
+		goto cleanup;
+	}
 
-	while (m_bThreadRun)
+	node = udev_device_get_devnode(dev);
+	if (!node) {
+		NXLOGE("udev_device_get_devnode");
+		goto cleanup;
+	}
+
+	subsystem = udev_device_get_subsystem(dev);
+	if (!subsystem) {
+		NXLOGE("udev_device_get_subsystem");
+		goto cleanup;
+	}
+
+	type = udev_device_get_devtype(dev);
+	if (!type) {
+		NXLOGE("udev_device_get_devtype");
+		goto cleanup;
+	}
+
+	sysname = udev_device_get_sysname(dev);
+	if (!sysname) {
+		NXLOGE("udev_device_get_sysname");
+		goto cleanup;
+	}
+
+	entries = udev_device_get_properties_list_entry(dev);
+	if (!entries) {
+		NXLOGE("udev_device_get_properties_list_entry");
+		goto cleanup;
+	}
+
+#if 0
+	NXLOGI("[%s] action = %s", __func__, action);
+	NXLOGI("[%s] dev node = %s", __func__, node);
+	NXLOGI("[%s] subsystem = %s", __func__, subsystem);
+	NXLOGI("[%s] driver = %s", __func__, driver);
+	NXLOGI("[%s] type = %s", __func__, type);
+	NXLOGI("[%s] sysname = %s", __func__, sysname);
+#endif
+
+	if (0 == strcmp(type, "partition"))
 	{
-		int32_t err = poll( &fds, 1, 1000 );
-		if( err > 0 )
+		/*******************************************************************
+		 * NOTIFY
+		 *  1. action : add or remove
+		 *  2. device node : /dev/sda1
+		 ******************************************************************/
+		if (0 == strcmp(action, "add"))
 		{
-			if( fds.revents & POLLIN )
-			{
-				memset( desc, 0x00, sizeof(desc) );
-				int32_t len = uevent_next_event(desc, sizeof(desc)-1);
-
-				if( len < 1 ) continue;
-
-				emit signalDetectUevent((uint8_t*)desc, sizeof(desc)-1);
-			}
+			emit signalDetectUEvent(action, node);
+		}
+		else if (0 == strcmp(action, "remove"))
+		{
+			emit signalDetectUEvent(action, node);
 		}
 	}
-}
 
-void CNX_UeventManager::Start()
-{
-	if (!m_bThreadRun)
-		start();
-}
-
-void CNX_UeventManager::Stop()
-{
-	if (m_bThreadRun)
-		m_bThreadRun = false;
-
-	if (isRunning())
-	{
-		wait();
-		quit();
-	}
+cleanup:
+	udev_device_unref(dev);
 }

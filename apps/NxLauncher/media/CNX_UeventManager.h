@@ -20,28 +20,28 @@
 #ifndef __CNX_UEVENTMANAGER_H__
 #define __CNX_UEVENTMANAGER_H__
 
-#include <QThread>
+#include <QObject>
+#include <QSocketNotifier>
 
-class CNX_UeventManager : public QThread
+class CNX_UeventManager : public QObject
 {
 	Q_OBJECT
 
 signals:
-	void signalDetectUevent(uint8_t* pDesc, uint32_t uiDescSize);
+	void signalDetectUEvent(QString action, QString devNode);
+
+private slots:
+	void slotNotification();
 
 public:
 	CNX_UeventManager();
 	~CNX_UeventManager();
 
-	void Start();
-
-	void Stop();
-
-protected:
-	virtual void run();
-
 private:
-	bool m_bThreadRun;
+	struct udev *m_udev;
+	struct udev_monitor *m_monitor;
+	int m_fd;
+	QSocketNotifier *m_pSocketNotifier;
 };
 
 #endif	// __CNX_UEVENTMANAGER_H__
