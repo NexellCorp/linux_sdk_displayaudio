@@ -1,6 +1,9 @@
 #include "MediaScanner.h"
 #include "MediaConf.h"
 #include <sys/mount.h>
+#include <sys/types.h>
+#include <signal.h>
+#include <unistd.h>
 #include <QDir>
 
 #define LOG_TAG "[MediaScanner]"
@@ -95,6 +98,46 @@ void MediaScanner::Umount(QString devNode)
 {
 	QStringList tokens = devNode.split("/");
 	QString mountpoint = QString("%1/%2").arg(MOUNTPOINT_DIR).arg(tokens[tokens.size()-1]);
+
+	FILE *fp = popen("lsof | grep /tmp/media/", "r");
+	if (fp)
+	{
+		char line[2048];
+		int stx = 0;
+		int etx = 0;
+		char pid[10] = {0,};
+
+		while (fgets(line, 2048, fp))
+		{
+			stx = etx = 0;
+			memset(pid, 0, 10);
+			for (size_t i = 1, k = 0; i < strlen(line); ++i)
+			{
+				if (!stx && (line[i-1] == ' ' && (line[i] >= '0' && line[i] <= '9')))
+				{
+					stx = i;
+				}
+				else if (stx && (line[i-1] >= '0' && line[i-1] <= '9') && line[i] == ' ')
+				{
+					etx = i-1;
+				}
+
+				if (stx && !etx)
+				{
+					pid[k++] = line[i];
+				}
+				else if (stx && etx)
+				{
+					if (atoi(pid) != getpid())
+						kill(atoi(pid), SIGTERM);
+					break;
+				}
+			}
+		}
+
+		pclose(fp);
+	}
+
 	int ret = ::umount2(mountpoint.toStdString().c_str(), MNT_FORCE);
 	for (int i = 0; ret < 0; ++i)
 	{
