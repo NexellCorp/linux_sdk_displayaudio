@@ -15,7 +15,6 @@ TEMPLATE = lib
 CONFIG += plugin
 
 # Add Graphic tool libraries
-#LIBS += -lnx_drm_allocator -lnx_video_api
 LIBS += -L$$PWD/../../library/lib -lnxrearcam
 
 LIBS += -L$$PWD/../../library/lib -lnxdaudioutils
