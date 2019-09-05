@@ -737,6 +737,18 @@ void PlayerVideoFrame::statusChanged(int eventType)
 		StopVideo();
 		break;
 	}
+	case MP_MSG_VIDEO_DECODER_ERR:
+	{
+		NXLOGW("******** MP_MSG_VIDEO_DECODER_ERR !!!\n");
+		// message
+		m_pMessageFrame->show();
+		m_pMessageLabel->setText("VIDEO_DECODER_ERR");
+
+		ui->progressBar->setValue(0);
+		UpdateDurationInfo( 0, 0 );
+		StopVideo();
+		break;
+	}
 
 	default:
 		break;
