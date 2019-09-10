@@ -79,6 +79,11 @@ void MediaScanner::slotDetectUEvent(QString action, QString devNode)
 void MediaScanner::Mount(QString devNode)
 {
 	QDir dir(MOUNTPOINT_DIR);
+	if (!dir.exists())
+	{
+		dir.mkpath(MOUNTPOINT_DIR);
+	}
+
 	if (dir.exists())
 	{
 		QStringList tokens = devNode.split("/");
@@ -136,6 +141,11 @@ void MediaScanner::Umount(QString devNode)
 		}
 
 		pclose(fp);
+	}
+
+	if (!QFile::exists(mountpoint))
+	{
+		return;
 	}
 
 	int ret = ::umount2(mountpoint.toStdString().c_str(), MNT_FORCE);
