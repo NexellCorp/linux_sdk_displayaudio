@@ -89,6 +89,18 @@ public:
 		NotificationMessageType_Unknown
 	};
 
+	enum Call {
+		Call_NoCall,
+		Call_ActiveCall
+	};
+
+	enum CallSetup {
+		CallSetup_CallingDone = 0,
+		CallSetup_IncomingCall,
+		CallSetup_OutgoingCall,
+		CallSetup_Alert
+	};
+
 	struct PlayInfo {
 		char title[102];
 		char artist[102];
@@ -223,6 +235,8 @@ public:
 	static void sendHSAudioMuteStatus_stub(void *pObj, bool is_muted, bool is_opened);
 
 	static void sendHSIncommingCallNumber_stub(void *pObj, char *number);
+
+	static void sendHSCallIndicator_stub(void *pObj, char *pData);
 
 	// HS - PBC
 	static void sendPBCOpenFailed_stub(void *pObj);
@@ -440,6 +454,8 @@ private:
 
 	pthread_mutex_t m_hMutex;
 	pthread_cond_t m_hCond;
+
+	vector<string> m_CallIndicatorPosition;
 };
 
 #endif // NXBTSERVICE_H

@@ -782,6 +782,78 @@ void NxBTService::sendHSIncommingCallNumber_stub(void *pObj, char *number)
 	self->Broadcast(buffer);
 }
 
+void NxBTService::sendHSCallIndicator_stub(void *pObj, char *pData)
+{
+	NxBTService *self = (NxBTService *)pObj;
+
+	string str = (string)pData;
+	vector<string> tokens;
+	if (str.find("(") != string::npos)
+	{
+		tokens = CreateTokens(str, "),(", NULL, NULL);
+		self->m_CallIndicatorPosition.clear();
+
+		for (size_t i = 0; i < tokens.size(); ++i)
+		{
+			size_t stx_idx = tokens[i].find("\"");
+			if (stx_idx != string::npos)
+				stx_idx++;
+			size_t etx_idx = tokens[i].find("\"", stx_idx);
+
+			self->m_CallIndicatorPosition.push_back(tokens[i].substr(stx_idx, etx_idx - stx_idx));
+		}
+	}
+	else
+	{
+		int call = -1;
+		int callsetup = -1;
+
+		for (size_t i = 0; i < self->m_CallIndicatorPosition.size(); ++i)
+		{
+			if (self->m_CallIndicatorPosition[i].find("setup") != string::npos)
+			{
+				callsetup = (int)i;
+			}
+			else if (self->m_CallIndicatorPosition[i] == "call")
+			{
+				call = (int)i;
+			}
+		}
+
+		if (call != -1 && callsetup != -1)
+		{
+			tokens = CreateTokens(str, ",", NULL, NULL);
+			if ((int)tokens.size() > call && (int)tokens.size() > callsetup)
+			{
+				Call eCallStatus = (Call)atoi(tokens[call].c_str());
+				CallSetup eCallSetup = (CallSetup)atoi(tokens[callsetup].c_str());
+
+				switch (eCallSetup) {
+				case CallSetup_CallingDone: {
+					if (eCallStatus == Call_ActiveCall)
+						NXLOGI("[%s] CALL STATUS = ACTIVE CALLING", __func__);
+					else
+						NXLOGI("[%s] CALL STATUS = NO CALLING", __func__);
+					break;
+				}
+
+				case CallSetup_IncomingCall:
+					NXLOGI("[%s] CALL STATUS = INCOMING CALL", __func__);
+					break;
+
+				case CallSetup_OutgoingCall:
+					NXLOGI("[%s] CALL STATUS = OUTGOING CALL", __func__);
+					break;
+
+				case CallSetup_Alert:
+					NXLOGI("[%s] CALL STATUS = Alert", __func__);
+					break;
+				}
+			}
+		}
+	}
+}
+
 // Phone : PBC (phone book)
 void NxBTService::sendPBCOpenFailed_stub(void *pObj)
 {
@@ -976,6 +1048,7 @@ void NxBTService::registerCallbackFunctions()
 	m_pModel->registerCallOperNameCbHS(this, sendHSCallOperName_stub);
 	m_pModel->registerAudioMuteStatusCbHS(this, sendHSAudioMuteStatus_stub);
 	m_pModel->registerIncommingCallNumberCbHS(this,sendHSIncommingCallNumber_stub);
+	m_pModel->registerCallIndicatorCbHS(this, sendHSCallIndicator_stub);
 	// Phone : PBC (phone book)
 	m_pModel->registerOpenFailedCbPBC(this, sendPBCOpenFailed_stub);
 	m_pModel->registerConnectionStatusCbPBC(this, sendPBCConnectionStatus_stub);

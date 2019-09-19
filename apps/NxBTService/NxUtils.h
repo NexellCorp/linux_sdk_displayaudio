@@ -19,7 +19,7 @@ enum CommandType {
 
 vector<string> CreateTokensFromCommand(const char* command);
 
-vector<string> CreateTokens(string text, char seperator, char stx/*= 0*/, char etx/*= 0*/);
+vector<string> CreateTokens(string text, const char* seperator, const char* stx/*= 0*/, const char* etx/*= 0*/);
 
 string FindArgument(string* command);
 
