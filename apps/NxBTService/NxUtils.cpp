@@ -54,32 +54,30 @@ error_occur:
 	return tokens;
 }
 
-vector<string> CreateTokens(string text, const char* seperator, const char* stx/*= 0*/, const char* etx/*= 0*/)
+vector<string> CreateTokens(string text, char seperator, char stx/*= 0*/, char etx/*= 0*/)
 {
 	vector<string> tokens;
 	string token;
-	size_t pos;
-	int stx_idx = 0, etx_idx = text.length();
+	int start = 0, end = text.length();
 
-	if (stx)
-	{
-		stx_idx = text.find(stx);
-		if (string::npos == stx_idx)
+	if (stx) {
+		start = text.find(stx);
+
+		if (start < 0) {
 			goto loop_finish;
-
-		stx_idx++;
+		}
 	}
 
-	if (etx)
-	{
-		etx_idx = text.find(etx, stx_idx);
-		if (string::npos == etx_idx)
+	if (etx) {
+		end = text.find(etx, stx);
+
+		if (end < 0) {
 			goto loop_finish;
+		}
 	}
 
-	for (int i = stx_idx; i < etx_idx; i++) {
-		pos = text.find(seperator, i);
-		if (pos == i) {
+	for (int i = start; i < end; i++) {
+		if (text[i] == seperator) {
 			tokens.push_back(token);
 			token.clear();
 			continue;
