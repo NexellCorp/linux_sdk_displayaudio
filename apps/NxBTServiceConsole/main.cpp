@@ -124,6 +124,19 @@ void app_display_main_menu(void) {
 	printf(" %d		=> Pause play\n", APP_AVK_MENU_PLAY_PAUSE);
 	printf(" %d		=> Next play\n", APP_AVK_MENU_PLAY_NEXT);
 	printf(" %d		=> Prev play\n", APP_AVK_MENU_PLAY_PREV);
+	printf(" %d		=> Equalizer off\n", APP_AVK_MENU_PLAYER_EQUALIZER_OFF);
+	printf(" %d		=> Equalizer on\n", APP_AVK_MENU_PLAYER_EQUALIZER_ON);
+	printf(" %d		=> Repeat off\n", APP_AVK_MENU_PLAYER_REPEAT_OFF);
+	printf(" %d		=> Repeat single\n", APP_AVK_MENU_PLAYER_REPEAT_SINGLE);
+	printf(" %d		=> Repeat all\n", APP_AVK_MENU_PLAYER_REPEAT_ALL);
+	printf(" %d		=> Repeat group\n", APP_AVK_MENU_PLAYER_REPEAT_GROUP);
+	printf(" %d		=> Shuffle off\n", APP_AVK_MENU_PLAYER_SHUFFLE_OFF);
+	printf(" %d		=> Shuffle all\n", APP_AVK_MENU_PLAYER_SHUFFLE_ALL);
+	printf(" %d		=> Shuffle group\n", APP_AVK_MENU_PLAYER_SHUFFLE_GROUP);
+	printf(" %d		=> Scan off\n", APP_AVK_MENU_PLAYER_SCAN_OFF);
+	printf(" %d		=> Scan all\n", APP_AVK_MENU_PLAYER_SCAN_ALL);
+	printf(" %d		=> Scan group\n", APP_AVK_MENU_PLAYER_SCAN_GROUP);
+	printf(" %d		=> Request player attribute values\n", APP_AVK_MENU_REQUEST_PLAYER_ATTR_VALUES);
 	printf(" %d		=> Open AVK audio\n", APP_AVK_MENU_OPEN_AUDIO);
 	printf(" %d		=> Close AVK audio\n", APP_AVK_MENU_CLOSE_AUDIO);
 	printf(" %d		=> Get media elements\n", APP_AVK_MENU_GET_MEDIA_ELEMENT);
@@ -144,6 +157,7 @@ void app_display_main_menu(void) {
 	printf(" %d		=> Request call indicator\n", APP_HS_MENU_SEND_CIND);
 	printf(" %d		=> Request call operater name\n", APP_HS_MENU_SEND_COPS);
 	printf(" %d		=> Request current calls\n", APP_HS_MENU_SEND_CLCC);
+	printf(" %d		=> Request my phone call number\n", APP_HS_MENU_SEND_CNUM);
 	printf(" %d		=> Get battery charging status value\n", APP_HS_MENU_GET_BATT);
 	printf(" %d		=> Start voice recognition\n", APP_HS_MENU_START_VR);
 	printf(" %d		=> Stop voice recognition\n", APP_HS_MENU_STOP_VR);
@@ -266,6 +280,10 @@ static void updatePlayPositionAVK_stub(void *pObj, int32_t play_pos_msec, int32_
 	// To do : callback
 }
 
+static void updatePlayerAttrValuesAVK_stub(void *pObj, int32_t equalizer_val, int32_t repeat_val, int32_t shuffle_val, int32_t scan_val) {
+	// To do : callback
+}
+
 static void updateMediaElementsAVK_stub(void *pObj, char *mediaTitle, char *mediaArtist, char *mediaAlbum, char *mediaGenre, int32_t playTime_msec) {
 	// To do : callback
 }
@@ -298,6 +316,10 @@ static void sendHSCurrentCalls_stub(void *pObj, char *currentCalls) {
 	// To do : callback
 }
 
+static void sendHSCallNumber_stub(void *pObj, char *number) {
+	// To do : callback
+}
+
 static void sendHSAudioMuteStatus_stub(void *pObj, bool is_opened, bool is_muted) {
 	// To do : callback
 }
@@ -314,6 +336,10 @@ static void sendHSCallIndicator_stub(void *pObj, char *indicator) {
 	// To do : callback
 }
 
+static void sendHSCallIndicatorParsingValues_stub(void *pObj, int32_t service, int32_t callind, int32_t call_setup, int32_t callheld, int32_t roam, int32_t signal_strength, int32_t battery) {
+	// To do : callback
+}
+
 static void sendPBCOpenFailed_stub(void *pObj) {
 	// To do : callback
 }
@@ -323,6 +349,10 @@ static void sendPBCConnectionStatus_stub(void *pObj, bool is_connected) {
 }
 
 static void sendNotifyGetPhonebook_stub(void *pObj, int32_t type) {
+	// To do : callback
+}
+
+static void sendPBCListData_stub(void *pObj, unsigned char *list_data) {
 	// To do : callback
 }
 
@@ -391,6 +421,7 @@ int main (int argc, char *argv[])
 	pInstance->registerPlayStatusCbAVK(m_pObjHandler, updatePlayStatusAVK_stub);
     pInstance->registerMediaElementCbAVK(m_pObjHandler, updateMediaElementsAVK_stub);
     pInstance->registerPlayPositionCbAVK(m_pObjHandler, updatePlayPositionAVK_stub);
+	pInstance->registerPlayerAttrValuesCbAVK(m_pObjHandler, updatePlayerAttrValuesAVK_stub);
 
 	pInstance->registerOpenFailedCbHS(m_pObjHandler, sendHSOpenFailed_stub);
 	pInstance->registerConnectionStatusCbHS(m_pObjHandler, sendHSConnectionStatus_stub);
@@ -399,14 +430,17 @@ int main (int argc, char *argv[])
 	pInstance->registerBatteryStatusCbHS(m_pObjHandler, sendHSBatteryStatus_stub);
 	pInstance->registerCallOperNameCbHS(m_pObjHandler, sendHSCallOperName_stub);
 	pInstance->registerCurrentCalllsCbHS(m_pObjHandler, sendHSCurrentCalls_stub);
+	pInstance->registerCallNumberCbHS(m_pObjHandler, sendHSCallNumber_stub);
 	pInstance->registerAudioMuteStatusCbHS(m_pObjHandler, sendHSAudioMuteStatus_stub);
 	pInstance->registerVoiceRecognitionStatusCbHS(m_pObjHandler, sendHSVoiceRecognitionStatus_stub);
 	pInstance->registerIncommingCallNumberCbHS(m_pObjHandler, sendHSIncommingCallNumber_stub);
 	pInstance->registerCallIndicatorCbHS(m_pObjHandler, sendHSCallIndicator_stub);
+	pInstance->registerCallIndicatorParsingValuesCbHS(m_pObjHandler, sendHSCallIndicatorParsingValues_stub);
 
 	pInstance->registerOpenFailedCbPBC(m_pObjHandler, sendPBCOpenFailed_stub);
 	pInstance->registerConnectionStatusCbPBC(m_pObjHandler, sendPBCConnectionStatus_stub);
 	pInstance->registerNotifyGetPhonebookCbPBC(m_pObjHandler, sendNotifyGetPhonebook_stub);
+	pInstance->registerListDataCbPBC(m_pObjHandler, sendPBCListData_stub);
 
 	pInstance->registerOpenFailedCbMCE(m_pObjHandler, sendMCEOpenFailed_stub);
 	pInstance->registerConnectionStatusCbMCE(m_pObjHandler, sendMCEConnectionStatus_stub);
@@ -415,8 +449,6 @@ int main (int argc, char *argv[])
 	if (pInstance->initDevManager() < 0) {
 		goto EXIT;
 	}
-
-	localAddress = pInstance->getLocalAddress();
 
 	// Rename local device
 	pInstance->renameLocalDevice("NX-Link");
@@ -531,19 +563,15 @@ int main (int argc, char *argv[])
 				break;
 			case APP_MGT_MENU_ENABLE_AUTOCONN:
 				pInstance->enableAutoConnection(true);
-				sync();
 				break;
 			case APP_MGT_MENU_DISABLE_AUTOCONN:
 				pInstance->enableAutoConnection(false);
-				sync();
 				break;
 			case APP_MGT_MENU_ENABLE_AUTOPAIR:
 				pInstance->enableAutoPairing(true);
-				sync();
 				break;
 			case APP_MGT_MENU_DISABLE_AUTOPAIR:
 				pInstance->enableAutoPairing(false);
-				sync();
 				break;
 			case APP_MGT_MENU_PAIR_ACCEPT:
 				pInstance->acceptPairing();
@@ -636,6 +664,58 @@ int main (int argc, char *argv[])
 				sel = app_get_choice("Select device index");
 				pInstance->playPrevAVK(pairedDev.pairedDevInfo[sel].bd_addr);
 				break;
+			case APP_AVK_MENU_PLAYER_EQUALIZER_OFF:
+				sel = app_get_choice("Select device index");
+				pInstance->playerEqualizerAVK(pairedDev.pairedDevInfo[sel].bd_addr, EQUALIZER_OFF);
+				break;
+			case APP_AVK_MENU_PLAYER_EQUALIZER_ON:
+				sel = app_get_choice("Select device index");
+				pInstance->playerEqualizerAVK(pairedDev.pairedDevInfo[sel].bd_addr, EQUALIZER_OFF);
+				break;
+			case APP_AVK_MENU_PLAYER_REPEAT_OFF:
+				sel = app_get_choice("Select device index");
+				pInstance->playerRepeatAVK(pairedDev.pairedDevInfo[sel].bd_addr, REPEAT_OFF);
+				break;
+			case APP_AVK_MENU_PLAYER_REPEAT_SINGLE:
+				sel = app_get_choice("Select device index");
+				pInstance->playerRepeatAVK(pairedDev.pairedDevInfo[sel].bd_addr, REPEAT_SINGLE);
+				break;
+			case APP_AVK_MENU_PLAYER_REPEAT_ALL:
+				sel = app_get_choice("Select device index");
+				pInstance->playerRepeatAVK(pairedDev.pairedDevInfo[sel].bd_addr, REPEAT_ALL);
+				break;
+			case APP_AVK_MENU_PLAYER_REPEAT_GROUP:
+				sel = app_get_choice("Select device index");
+				pInstance->playerRepeatAVK(pairedDev.pairedDevInfo[sel].bd_addr, REPEAT_GROUP);
+				break;
+			case APP_AVK_MENU_PLAYER_SHUFFLE_OFF:
+				sel = app_get_choice("Select device index");
+				pInstance->playerShuffleAVK(pairedDev.pairedDevInfo[sel].bd_addr, SHUFFLE_OFF);
+				break;
+			case APP_AVK_MENU_PLAYER_SHUFFLE_ALL:
+				sel = app_get_choice("Select device index");
+				pInstance->playerShuffleAVK(pairedDev.pairedDevInfo[sel].bd_addr, SHUFFLE_ALL);
+				break;
+			case APP_AVK_MENU_PLAYER_SHUFFLE_GROUP:
+				sel = app_get_choice("Select device index");
+				pInstance->playerShuffleAVK(pairedDev.pairedDevInfo[sel].bd_addr, SHUFFLE_GROUP);
+				break;
+			case APP_AVK_MENU_PLAYER_SCAN_OFF:
+				sel = app_get_choice("Select device index");
+				pInstance->playerScanAVK(pairedDev.pairedDevInfo[sel].bd_addr, SCAN_OFF);
+				break;
+			case APP_AVK_MENU_PLAYER_SCAN_ALL:
+				sel = app_get_choice("Select device index");
+				pInstance->playerScanAVK(pairedDev.pairedDevInfo[sel].bd_addr, SCAN_ALL);
+				break;
+			case APP_AVK_MENU_PLAYER_SCAN_GROUP:
+				sel = app_get_choice("Select device index");
+				pInstance->playerScanAVK(pairedDev.pairedDevInfo[sel].bd_addr, SCAN_GROUP);
+				break;
+			case APP_AVK_MENU_REQUEST_PLAYER_ATTR_VALUES:
+				sel = app_get_choice("Select device index");
+				pInstance->requestPlayerAttrValues(pairedDev.pairedDevInfo[sel].bd_addr);
+				break;
 			case APP_AVK_MENU_OPEN_AUDIO:
 				pInstance->openAudioAVK();
 				break;
@@ -697,13 +777,16 @@ int main (int argc, char *argv[])
 				pInstance->setATCommandDTMF(key);
 				break;
 			case APP_HS_MENU_SEND_CIND:
-				pInstance->requestIndicator();
+				pInstance->requestCallIndicator();
 				break;
 			case APP_HS_MENU_SEND_COPS:
 				pInstance->requestCallOperName();
 				break;
 			case APP_HS_MENU_SEND_CLCC:
 				pInstance->requestCurrentCalls();
+				break;
+			case APP_HS_MENU_SEND_CNUM:
+				pInstance->requestCallNumber();
 				break;
 			case APP_HS_MENU_GET_BATT:
 				printf("Battery charging level[0-5] : %d\n", pInstance->getCurrentBattChargingStatus());
