@@ -14,7 +14,7 @@
 #ifndef __INX_BT_H__
 #define __INX_BT_H__
 
-#define NXBT_VERSION	"1.3.0"
+#define NXBT_VERSION	"1.4.0"
 
 typedef struct Bmessage_info {
 	char *fullName;
@@ -77,15 +77,20 @@ public:
 	virtual int32_t getConnectionNumberAVK(void) = 0;
 	virtual int32_t getConnectionDevAddrAVK(int32_t connected_index, unsigned char *bd_addr) = 0;
 	virtual int32_t requestGetElementAttr(unsigned char *bd_addr) = 0;
+	virtual int32_t requestPlayerAttrValues(unsigned char *bd_addr) = 0;
 	virtual int32_t playStartAVK(unsigned char *bd_addr) = 0;
 	virtual int32_t playStopAVK(unsigned char *bd_addr) = 0;
 	virtual int32_t playPauseAVK(unsigned char *bd_addr) = 0;
 	virtual int32_t playNextAVK(unsigned char *bd_addr) = 0;
 	virtual int32_t playPrevAVK(unsigned char *bd_addr) = 0;
+	virtual int32_t playerEqualizerAVK(unsigned char *bd_addr, unsigned char value) = 0;
+	virtual int32_t playerShuffleAVK(unsigned char *bd_addr, unsigned char value) = 0;
+	virtual int32_t playerRepeatAVK(unsigned char *bd_addr, unsigned char value) = 0;
+	virtual int32_t playerScanAVK(unsigned char *bd_addr, unsigned char value) = 0;
 
 	/* NXBT HS service APIs */
 	virtual bool isConnectedHS(void) = 0;
-	virtual int32_t requestIndicator(void) = 0;
+	virtual int32_t requestCallIndicator(void) = 0;
 	virtual int32_t requestCurrentCalls(void) = 0;
 	virtual int32_t getConnectionDevAddrHS(unsigned char *bd_addr) = 0;
 	virtual int32_t connectToHS(int32_t device_index) = 0;
@@ -100,6 +105,7 @@ public:
 	virtual int32_t dialPhoneNumber(const char *number) = 0;
 	virtual int32_t reDialPhoneNumber(void) = 0;
 	virtual int32_t setATCommandDTMF(char key) = 0;
+	virtual int32_t requestCallNumber(void) = 0;
 	virtual int32_t requestCallOperName(void) = 0;
 	virtual int32_t getCurrentBattChargingStatus(void) = 0;
 	virtual int32_t startVoiceRecognition(void) = 0;
@@ -122,7 +128,7 @@ public:
 	virtual int32_t stopNotifyServerFromMCE(void) = 0;
 	virtual int32_t getParserBmsg(Bmessage_info_t *bmsg) = 0;
 
-	/* NXBT UI callback functions */
+	/* NXBT UI callback register functions */
 	virtual void registerMGTOpenCbManager(void *pObj, void (*cbFunc)(void *, int32_t)) = 0;
 	virtual void registerMGTDisconnectedCbManager(void *pObj, void (*cbFunc)(void *)) = 0;
 	virtual void registerDiscoveryCompleteCbManager(void *pObj, void (*cbFunc)(void *)) = 0;
@@ -139,6 +145,7 @@ public:
 	virtual void registerPlayStatusCbAVK(void *pObj, void (*cbFunc)(void *, int32_t)) = 0;
 	virtual void registerMediaElementCbAVK(void *pObj, void (*cbFunc)(void *, char *, char *, char *, char *, int32_t)) = 0;
 	virtual void registerPlayPositionCbAVK(void *pObj, void (*cbFunc)(void *, int32_t, int32_t)) = 0;
+	virtual void registerPlayerAttrValuesCbAVK(void *pObj, void (*cbFunc)(void *, int32_t, int32_t, int32_t, int32_t)) = 0;
 	virtual void registerOpenFailedCbHS(void *pObj, void (*cbFunc)(void *)) = 0;
 	virtual void registerConnectionStatusCbHS(void *pObj, void (*cbFunc)(void *, bool, char *, unsigned char *)) = 0;
 	virtual void registerInbandRingSupportedCbHS(void *pObj, void (*cbFunc)(void *, bool)) = 0;
@@ -146,13 +153,16 @@ public:
 	virtual void registerBatteryStatusCbHS(void *pObj, void (*cbFunc)(void *, int32_t)) = 0;
 	virtual void registerCallOperNameCbHS(void *pObj, void (*cbFunc)(void *, char *)) = 0;
 	virtual void registerCurrentCalllsCbHS(void *pObj, void (*cbFunc)(void *, char *)) = 0;
+	virtual void registerCallNumberCbHS(void *pObj, void (*cbFunc)(void *, char *)) = 0;
 	virtual void registerAudioMuteStatusCbHS(void *pObj, void (*cbFunc)(void *, bool, bool)) = 0;
 	virtual void registerVoiceRecognitionStatusCbHS(void *pObj, void (*cbFunc)(void *, unsigned short)) = 0;
 	virtual void registerIncommingCallNumberCbHS(void *pObj, void (*cbFunc)(void *, char *)) = 0;
 	virtual void registerCallIndicatorCbHS(void *pObj, void (*cbFunc)(void *, char *)) = 0;
+	virtual void registerCallIndicatorParsingValuesCbHS(void *pObj, void (*cbFunc)(void *, int32_t, int32_t, int32_t, int32_t, int32_t, int32_t, int32_t)) = 0;
 	virtual void registerOpenFailedCbPBC(void *pObj, void (*cbFunc)(void *)) = 0;
 	virtual void registerConnectionStatusCbPBC(void *pObj, void (*cbFunc)(void *, bool)) = 0;
 	virtual void registerNotifyGetPhonebookCbPBC(void *pObj, void (*cbFunc)(void *, int32_t)) = 0;
+	virtual void registerListDataCbPBC(void *pObj, void (*cbFunc)(void *, unsigned char *)) = 0;
 	virtual void registerOpenFailedCbMCE(void *pObj, void (*cbFunc)(void *)) = 0;
 	virtual void registerConnectionStatusCbMCE(void *pObj, void (*cbFunc)(void *, bool)) = 0;
 	virtual void registerNotifyGetMessageCbMCE(void *pObj, void (*cbFunc)(void *)) = 0;
