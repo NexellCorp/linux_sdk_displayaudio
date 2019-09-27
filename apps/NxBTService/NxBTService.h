@@ -224,6 +224,8 @@ public:
 
 	static void sendHSIncommingCallNumber_stub(void *pObj, char *number);
 
+	static void sendHSCallIndicatorParsingValues_stub(void *pObj, int32_t service, int32_t callind, int32_t call_setup, int32_t callheld, int32_t roam, int32_t signal_strength, int32_t battery);
+
 	// HS - PBC
 	static void sendPBCOpenFailed_stub(void *pObj);
 
