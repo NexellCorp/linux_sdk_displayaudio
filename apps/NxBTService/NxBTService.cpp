@@ -1006,7 +1006,7 @@ void* NxBTService::autoConnectThread(void* args)
 		NXLOGD("Try to auto connection!");
 		m_pModel->autoConnection(true);
 		//		pthread_yield();
-		usleep(1000000);
+		usleep(5500000);
 	}
 	NXLOGD("<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<");
 
