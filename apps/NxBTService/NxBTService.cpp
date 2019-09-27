@@ -782,6 +782,18 @@ void NxBTService::sendHSIncommingCallNumber_stub(void *pObj, char *number)
 	self->Broadcast(buffer);
 }
 
+void NxBTService::sendHSCallIndicatorParsingValues_stub(void *pObj, int32_t service, int32_t callind, int32_t call_setup, int32_t callheld, int32_t roam, int32_t signal_strength, int32_t battery) {
+	NxBTService* self = (NxBTService*)pObj;
+
+	if (call_setup == 1 || call_setup == 2)
+	{
+		g_calling_mode_on = true;
+	} else
+	{
+		g_calling_mode_on = false;
+	}
+}
+
 // Phone : PBC (phone book)
 void NxBTService::sendPBCOpenFailed_stub(void *pObj)
 {
@@ -969,7 +981,8 @@ void NxBTService::registerCallbackFunctions()
 	m_pModel->registerBatteryStatusCbHS(this, sendHSBatteryStatus_stub);
 	m_pModel->registerCallOperNameCbHS(this, sendHSCallOperName_stub);
 	m_pModel->registerAudioMuteStatusCbHS(this, sendHSAudioMuteStatus_stub);
-	m_pModel->registerIncommingCallNumberCbHS(this,sendHSIncommingCallNumber_stub);
+	m_pModel->registerIncommingCallNumberCbHS(this, sendHSIncommingCallNumber_stub);
+	m_pModel->registerCallIndicatorParsingValuesCbHS(this, sendHSCallIndicatorParsingValues_stub);
 	// Phone : PBC (phone book)
 	m_pModel->registerOpenFailedCbPBC(this, sendPBCOpenFailed_stub);
 	m_pModel->registerConnectionStatusCbPBC(this, sendPBCConnectionStatus_stub);
