@@ -77,7 +77,7 @@ public:
 	virtual int32_t getConnectionNumberAVK(void) = 0;
 	virtual int32_t getConnectionDevAddrAVK(int32_t connected_index, unsigned char *bd_addr) = 0;
 	virtual int32_t requestGetElementAttr(unsigned char *bd_addr) = 0;
-	virtual int32_t requestPlayerAttrValues(unsigned char *bd_addr) = 0;
+	virtual int32_t requestPlayerValues(unsigned char *bd_addr) = 0;
 	virtual int32_t playStartAVK(unsigned char *bd_addr) = 0;
 	virtual int32_t playStopAVK(unsigned char *bd_addr) = 0;
 	virtual int32_t playPauseAVK(unsigned char *bd_addr) = 0;
@@ -145,7 +145,9 @@ public:
 	virtual void registerPlayStatusCbAVK(void *pObj, void (*cbFunc)(void *, int32_t)) = 0;
 	virtual void registerMediaElementCbAVK(void *pObj, void (*cbFunc)(void *, char *, char *, char *, char *, int32_t)) = 0;
 	virtual void registerPlayPositionCbAVK(void *pObj, void (*cbFunc)(void *, int32_t, int32_t)) = 0;
-	virtual void registerPlayerAttrValuesCbAVK(void *pObj, void (*cbFunc)(void *, int32_t, int32_t, int32_t, int32_t)) = 0;
+	virtual void registerPlayerValuesCbAVK(void *pObj, void (*cbFunc)(void *, int32_t, int32_t, int32_t, int32_t)) = 0;
+	virtual void registerListPlayerAttrCbAVK(void *pObj, void (*cbFunc)(void *, bool, bool, bool, bool)) = 0;
+	virtual void registerListPlayerValuesCbAVK(void *pObj, void (*cbFunc)(void *, int32_t, int32_t, unsigned char *)) = 0;
 	virtual void registerOpenFailedCbHS(void *pObj, void (*cbFunc)(void *)) = 0;
 	virtual void registerConnectionStatusCbHS(void *pObj, void (*cbFunc)(void *, bool, char *, unsigned char *)) = 0;
 	virtual void registerInbandRingSupportedCbHS(void *pObj, void (*cbFunc)(void *, bool)) = 0;

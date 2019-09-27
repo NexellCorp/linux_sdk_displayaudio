@@ -136,7 +136,7 @@ void app_display_main_menu(void) {
 	printf(" %d		=> Scan off\n", APP_AVK_MENU_PLAYER_SCAN_OFF);
 	printf(" %d		=> Scan all\n", APP_AVK_MENU_PLAYER_SCAN_ALL);
 	printf(" %d		=> Scan group\n", APP_AVK_MENU_PLAYER_SCAN_GROUP);
-	printf(" %d		=> Request player attribute values\n", APP_AVK_MENU_REQUEST_PLAYER_ATTR_VALUES);
+	printf(" %d		=> Request player values\n", APP_AVK_MENU_REQUEST_PLAYER_VALUES);
 	printf(" %d		=> Open AVK audio\n", APP_AVK_MENU_OPEN_AUDIO);
 	printf(" %d		=> Close AVK audio\n", APP_AVK_MENU_CLOSE_AUDIO);
 	printf(" %d		=> Get media elements\n", APP_AVK_MENU_GET_MEDIA_ELEMENT);
@@ -280,7 +280,15 @@ static void updatePlayPositionAVK_stub(void *pObj, int32_t play_pos_msec, int32_
 	// To do : callback
 }
 
-static void updatePlayerAttrValuesAVK_stub(void *pObj, int32_t equalizer_val, int32_t repeat_val, int32_t shuffle_val, int32_t scan_val) {
+static void updatePlayerValuesAVK_stub(void *pObj, int32_t equalizer_val, int32_t repeat_val, int32_t shuffle_val, int32_t scan_val) {
+	// To do : callback
+}
+
+static void updateListPlayerAttrAVK_stub(void *pObj, bool equalizer_enabled, bool repeat_enabled, bool shuffle_enabled, bool scan_enabled) {
+	// To do : callback
+}
+
+static void updateListPlayerValuesAVK_stub(void *pObj, int32_t num_val, int32_t attr, unsigned char *values) {
 	// To do : callback
 }
 
@@ -421,7 +429,9 @@ int main (int argc, char *argv[])
 	pInstance->registerPlayStatusCbAVK(m_pObjHandler, updatePlayStatusAVK_stub);
     pInstance->registerMediaElementCbAVK(m_pObjHandler, updateMediaElementsAVK_stub);
     pInstance->registerPlayPositionCbAVK(m_pObjHandler, updatePlayPositionAVK_stub);
-	pInstance->registerPlayerAttrValuesCbAVK(m_pObjHandler, updatePlayerAttrValuesAVK_stub);
+	pInstance->registerPlayerValuesCbAVK(m_pObjHandler, updatePlayerValuesAVK_stub);
+	pInstance->registerListPlayerAttrCbAVK(m_pObjHandler, updateListPlayerAttrAVK_stub);
+	pInstance->registerListPlayerValuesCbAVK(m_pObjHandler, updateListPlayerValuesAVK_stub);
 
 	pInstance->registerOpenFailedCbHS(m_pObjHandler, sendHSOpenFailed_stub);
 	pInstance->registerConnectionStatusCbHS(m_pObjHandler, sendHSConnectionStatus_stub);
@@ -712,9 +722,9 @@ int main (int argc, char *argv[])
 				sel = app_get_choice("Select device index");
 				pInstance->playerScanAVK(pairedDev.pairedDevInfo[sel].bd_addr, SCAN_GROUP);
 				break;
-			case APP_AVK_MENU_REQUEST_PLAYER_ATTR_VALUES:
+			case APP_AVK_MENU_REQUEST_PLAYER_VALUES:
 				sel = app_get_choice("Select device index");
-				pInstance->requestPlayerAttrValues(pairedDev.pairedDevInfo[sel].bd_addr);
+				pInstance->requestPlayerValues(pairedDev.pairedDevInfo[sel].bd_addr);
 				break;
 			case APP_AVK_MENU_OPEN_AUDIO:
 				pInstance->openAudioAVK();
