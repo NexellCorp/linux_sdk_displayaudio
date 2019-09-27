@@ -823,7 +823,6 @@ void NxBTService::sendNotifyGetPhonebook_stub(void *pObj, int32_t type)
 		strcpy(command, "DOWNLOAD CALL LOG");
 		break;
 	default:
-		NXLOGE("Not supported download type!\n");
 		break;
 	}
 
@@ -866,13 +865,8 @@ void NxBTService::sendMCEConnectionStatus_stub(void *pObj, bool is_connected)
 {
 	NxBTService* self = (NxBTService*)pObj;
 	char buffer[BUFFER_SIZE] = {0,};
-	unsigned char bd_addr[DEVICE_ADDRESS_SIZE] = {0,};
 
 	self->m_HS.mce.on = is_connected;
-	if (0 > self->m_pModel->getConnectionDevAddrHS(bd_addr))
-	{
-		return;
-	}
 
 	// example1) CONNECTED    = "$OK#MCE#CONNECTION STATUS#CONNECTED\n"
 	// example2) DISCONNECTED = "$OK#MCE#CONNECTION STATUS#DISCONNECTED\n"
