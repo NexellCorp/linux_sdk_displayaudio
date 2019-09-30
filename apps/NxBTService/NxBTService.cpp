@@ -469,6 +469,21 @@ void NxBTService::updatePlayPositionAVK_stub(void *pObj, int32_t play_pos_msec, 
 	self->Broadcast(buffer);
 }
 
+void NxBTService::updatePlayerValuesAVK_stub(void *pObj, int32_t equalizer_val, int32_t repeat_val, int32_t shuffle_val, int32_t scan_val)
+{
+	// Update player values
+}
+
+void NxBTService::updateListPlayerAttrAVK_stub(void *pObj, bool equalizer_enabled, bool repeat_enabled, bool shuffle_enabled, bool scan_enabled)
+{
+	// Player attribute list
+}
+
+void NxBTService::updateListPlayerValuesAVK_stub(void *pObj, int32_t num_val, int32_t attr, unsigned char *values)
+{
+	// Player value list
+}
+
 void NxBTService::sendAVKStreamingStarted_stub(void* pObj, bool is_opened)
 {
 	NxBTService* self = (NxBTService*)pObj;
@@ -782,9 +797,8 @@ void NxBTService::sendHSIncommingCallNumber_stub(void *pObj, char *number)
 	self->Broadcast(buffer);
 }
 
-void NxBTService::sendHSCallIndicatorParsingValues_stub(void *pObj, int32_t service, int32_t callind, int32_t call_setup, int32_t callheld, int32_t roam, int32_t signal_strength, int32_t battery) {
-	NxBTService* self = (NxBTService*)pObj;
-
+void NxBTService::sendHSCallIndicatorParsingValues_stub(void *pObj, int32_t service, int32_t callind, int32_t call_setup, int32_t callheld, int32_t roam, int32_t signal_strength, int32_t battery)
+{
 	if (call_setup == 1 || call_setup == 2)
 	{
 		g_calling_mode_on = true;
@@ -860,6 +874,12 @@ void NxBTService::sendNotifyGetPhonebook_stub(void *pObj, int32_t type)
 		}
 	}
 }
+
+void NxBTService::sendPBCListData_stub(void *pObj, unsigned char *list_data)
+{
+    // Retrived list data
+}
+
 
 // Phone : MCE (message)
 void NxBTService::sendMCEOpenFailed_stub(void *pObj)
@@ -972,6 +992,9 @@ void NxBTService::registerCallbackFunctions()
 	m_pModel->registerPlayStatusCbAVK(this, updatePlayStatusAVK_stub);
 	m_pModel->registerMediaElementCbAVK(this, updateMediaElementsAVK_stub);
 	m_pModel->registerPlayPositionCbAVK(this, updatePlayPositionAVK_stub);
+	m_pModel->registerPlayerValuesCbAVK(this, updatePlayerValuesAVK_stub);
+	m_pModel->registerListPlayerAttrCbAVK(this, updateListPlayerAttrAVK_stub);
+	m_pModel->registerListPlayerValuesCbAVK(this, updateListPlayerValuesAVK_stub);
 	m_pModel->registerStreamingStartedCbAVK(this, sendAVKStreamingStarted_stub);
 	m_pModel->registerStreamingStoppedCbAVK(this, sendAVKStreamingStopped_stub);
 	// Phone : HS
@@ -987,6 +1010,7 @@ void NxBTService::registerCallbackFunctions()
 	m_pModel->registerOpenFailedCbPBC(this, sendPBCOpenFailed_stub);
 	m_pModel->registerConnectionStatusCbPBC(this, sendPBCConnectionStatus_stub);
 	m_pModel->registerNotifyGetPhonebookCbPBC(this, sendNotifyGetPhonebook_stub);
+	m_pModel->registerListDataCbPBC(this, sendPBCListData_stub);
 	// Phone : MCE (message)
 	m_pModel->registerOpenFailedCbMCE(this, sendMCEOpenFailed_stub);
 	m_pModel->registerConnectionStatusCbMCE(this, sendMCEConnectionStatus_stub);
