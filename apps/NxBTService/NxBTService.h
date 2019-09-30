@@ -205,6 +205,12 @@ public:
 
 	static void updatePlayPositionAVK_stub(void *pObj, int32_t play_pos_msec, int32_t play_len_msec);
 
+	static void updatePlayerValuesAVK_stub(void *pObj, int32_t equalizer_val, int32_t repeat_val, int32_t shuffle_val, int32_t scan_val);
+
+	static void updateListPlayerAttrAVK_stub(void *pObj, bool equalizer_enabled, bool repeat_enabled, bool shuffle_enabled, bool scan_enabled);
+
+	static void updateListPlayerValuesAVK_stub(void *pObj, int32_t num_val, int32_t attr, unsigned char *values);
+
 	static void sendAVKStreamingStarted_stub(void* pObj, bool is_opened);
 
 	static void sendAVKStreamingStopped_stub(void *pObj);
@@ -232,6 +238,8 @@ public:
 	static void sendPBCConnectionStatus_stub(void *pObj, bool is_connected);
 
 	static void sendNotifyGetPhonebook_stub(void *pObj, int32_t type);
+
+	static void sendPBCListData_stub(void *pObj, unsigned char *list_data);
 
 	// HS - MCE
 	static void sendMCEOpenFailed_stub(void *pObj);
