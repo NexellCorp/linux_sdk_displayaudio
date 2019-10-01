@@ -11,5 +11,10 @@
         <file>UI/bluetooth/bluetooth_off.png</file>
         <file>UI/bluetooth/bluetooth_on.png</file>
         <file>UI/default.jpg</file>
+        <file>UI/controls-shuffle-on.png</file>
+        <file>UI/controls-shuffle-off.png</file>
+        <file>UI/controls-repeat-one.png</file>
+        <file>UI/controls-repeat-none.png</file>
+        <file>UI/controls-repeat-all.png</file>
     </qresource>
 </RCC>
