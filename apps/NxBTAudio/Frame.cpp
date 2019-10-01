@@ -37,7 +37,7 @@ Frame::Frame(QWidget *parent) :
 		setFixedSize(screen.width(), screen.height() * 0.9);
 	}
 
-	setUIState(UIState_Stopped);
+	updateForUIReset();
 
 	m_pCommandProcessor = new BTCommandProcessor();
 	connect(m_pCommandProcessor, SIGNAL(signalCommandFromServer(QString)), this, SLOT(slotCommandFromServer(QString)));
@@ -86,6 +86,7 @@ bool Frame::Initialize()
 	emit signalCommandToServer("$AVK#PLAY STATUS\n");
 	emit signalCommandToServer("$AVK#PLAY INFO\n");
 	emit signalCommandToServer("$AVK#UPDATE MEDIA ELEMENT\n");
+	emit signalCommandToServer("$AVK#SETTINGS INFO\n");
 
 	return true;
 }
@@ -338,6 +339,22 @@ void Frame::slotCommandFromServer(QString command)
 	{
 		updateForUIReset();
 	}
+	else if (tokens[2] == "UPDATE ATTRIBUTE")
+	{
+		NXLOGI("calling updateToUIForAttribute()");
+		updateToUIForAttribute(tokens);
+		NXLOGI("after updateToUIForAttribute()");
+	}
+	else if (tokens[2] == "UPDATE SETTINGS")
+	{
+		NXLOGI("calling updateToUIForSettings()");
+		updateToUIForSettings(tokens);
+		NXLOGI("after updateToUIForSettings()");
+	}
+	else if (tokens[2] == "SETTINGS INFO")
+	{
+
+	}
 }
 
 void Frame::updateToUIForMediaElements(QStringList& tokens)
@@ -429,7 +446,134 @@ void Frame::updateForUIReset()
 	ui->LABEL_PLAY_POSITION->setText("00:00");
 	ui->LABEL_PLAY_DURATION->setText("00:00");
 	ui->SLIDER_PLAY_POSITION->setValue(0);
+	ui->BUTTON_REPEAT->hide();
+	ui->BUTTON_SHUFFLE->hide();
 	setUIState(UIState_Stopped);
+}
+#include <QDebug>
+void Frame::updateToUIForAttribute(QStringList& tokens)
+{
+	// OK, AVK, UPDATE ATTRIBUTE, REPEAT, ENABLE(DISABLE)
+	qDebug() << __func__ << tokens;
+	if (tokens.size() == 5)
+	{
+		if (tokens[3] == "REPEAT")
+		{
+			if (tokens[4] == "ENABLE")
+			{
+				ui->BUTTON_REPEAT->show();
+			}
+			else if (tokens[4] == "DISABLE")
+			{
+				ui->BUTTON_REPEAT->hide();
+			}
+		}
+		else if (tokens[3] == "SHUFFLE")
+		{
+			if (tokens[4] == "ENABLE")
+			{
+				ui->BUTTON_SHUFFLE->show();
+			}
+			else if (tokens[4] == "DISABLE")
+			{
+				ui->BUTTON_SHUFFLE->hide();
+			}
+		}
+	}
+}
+
+void Frame::updateToUIForSettings(QStringList& tokens)
+{
+	qDebug() << __func__ << tokens;
+	// OK, AVK, UPDATE SETTINGS, SHUFFLE, ON(OFF/GROUP)
+	if (tokens.size() == 5)
+	{
+		if (tokens[2] == "UPDATE SETTINGS")
+		{
+			if (tokens[3] == "REPEAT")
+			{
+				updateToUIForRepeatSettings(tokens);
+			}
+			else if (tokens[3] == "SHUFFLE")
+			{
+				updateToUIForShuffleSettings(tokens);
+			}
+		}
+	}
+}
+
+void Frame::updateToUIForRepeatSettings(QStringList& tokens)
+{
+	if (tokens[4] == "OFF")
+	{
+		m_eRepeatMode = RepeatMode_Off;
+		ui->BUTTON_REPEAT->setStyleSheet("QPushButton {"
+										 "	background-image: url(:/audio/UI/controls-repeat-none.png);"
+										 "	border: none;"
+										 "}"
+										 "QPushButton:pressed {"
+										 "	background-image: url(:/audio/UI/controls-repeat-all.png);"
+										 "	border: none;"
+										 "}");
+	}
+	else if (tokens[4] == "ONE")
+	{
+		m_eRepeatMode = RepeatMode_One;
+		ui->BUTTON_REPEAT->setStyleSheet("QPushButton {"
+										 "	background-image: url(:/audio/UI/controls-repeat-one.png);"
+										 "	border: none;"
+										 "}"
+										 "QPushButton:pressed {"
+										 "	background-image: url(:/audio/UI/controls-repeat-none.png);"
+										 "	border: none;"
+										 "}");
+	}
+	else if (tokens[4] == "ALL")
+	{
+		m_eRepeatMode = RepeatMode_All;
+		ui->BUTTON_REPEAT->setStyleSheet("QPushButton {"
+										 "	background-image: url(:/audio/UI/controls-repeat-all.png);"
+										 "	border: none;"
+										 "}"
+										 "QPushButton:pressed {"
+										 "	background-image: url(:/audio/UI/controls-repeat-one.png);"
+										 "	border: none;"
+										 "}");
+	}
+	/*
+	else if (tokens[4] == "GROUP")
+	{
+
+	}
+	*/
+}
+
+void Frame::updateToUIForShuffleSettings(QStringList& tokens)
+{
+	if (tokens[4] == "OFF")
+	{
+		m_eShuffleMode = ShuffleMode_Off;
+		ui->BUTTON_SHUFFLE->setStyleSheet("QPushButton {"
+										  "	background-image: url(:/audio/UI/controls-shuffle-off.png);"
+										  "	border: none;"
+										  "}"
+										  "QPushButton:pressed {"
+										  "	background-image: url(:/audio/UI/controls-shuffle-on.png);"
+										  "	border: none;"
+										  "}");
+	}
+	else if (tokens[4] == "ON")
+	{
+		m_eShuffleMode = ShuffleMOde_On;
+		ui->BUTTON_SHUFFLE->setStyleSheet("QPushButton {"
+										  "	background-image: url(:/audio/UI/controls-shuffle-on.png);"
+										  "	border: none;"
+										  "}"
+										  "QPushButton:pressed {"
+										  "	background-image: url(:/audio/UI/controls-shuffle-off.png);"
+										  "	border: none;"
+										  "}");
+	}
 }
 
 /************************************************************************************\
@@ -632,4 +776,40 @@ void Frame::RegisterRequestTerminate(void (*cbFunc)(void))
 {
 	if (cbFunc)
 		m_pRequestTerminate = cbFunc;
+}
+
+void Frame::on_BUTTON_REPEAT_clicked()
+{
+	switch (m_eRepeatMode) {
+	case RepeatMode_Off:
+		emit signalCommandToServer("$AVK#REPEAT ALL\n");
+		break;
+
+	case RepeatMode_All:
+		emit signalCommandToServer("$AVK#REPEAT ONE\n");
+		break;
+
+	case RepeatMode_One:
+		emit signalCommandToServer("$AVK#REPEAT OFF\n");
+		break;
+
+	default:
+		break;
+	}
+}
+
+void Frame::on_BUTTON_SHUFFLE_clicked()
+{
+	switch (m_eShuffleMode) {
+	case ShuffleMode_Off:
+		emit signalCommandToServer("$AVK#SHUFFLE ON\n");
+		break;
+
+	case ShuffleMOde_On:
+		emit signalCommandToServer("$AVK#SHUFFLE OFF\n");
+		break;
+
+	default:
+		break;
+	}
 }

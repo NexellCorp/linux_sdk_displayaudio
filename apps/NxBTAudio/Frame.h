@@ -28,6 +28,19 @@ public:
 		UIState_Stopped
 	};
 
+	enum RepeatMode {
+		RepeatMode_Off,
+		RepeatMode_All,
+		RepeatMode_One,
+		RepeatMode_Group
+	};
+
+	enum ShuffleMode {
+		ShuffleMode_Off,
+		ShuffleMOde_On,
+		ShuffleMode_Group
+	};
+
 	static Frame* GetInstance(void *pObj);
 
 	static Frame* GetInstance();
@@ -46,6 +59,10 @@ private slots:
 	void on_BUTTON_PLAY_PREV_clicked();
 
 	void on_BUTTON_PLAY_NEXT_clicked();
+
+	void on_BUTTON_REPEAT_clicked();
+
+	void on_BUTTON_SHUFFLE_clicked();
 
 private:
 	explicit Frame(QWidget *parent = 0);
@@ -110,6 +127,14 @@ private:
 
 	void updateForUIReset();
 
+	void updateToUIForAttribute(QStringList& tokens);
+
+	void updateToUIForSettings(QStringList& tokens);
+
+	void updateToUIForRepeatSettings(QStringList& tokens);
+
+	void updateToUIForShuffleSettings(QStringList& tokens);
+
 private:
 	static Frame *m_spInstance;
 
@@ -132,6 +157,10 @@ private:
 	bool m_bHasVideoFocus;
 
 	bool m_bInitialized;
+
+	RepeatMode m_eRepeatMode;
+
+	ShuffleMode m_eShuffleMode;
 
 private:
 	Ui::Frame *ui;
