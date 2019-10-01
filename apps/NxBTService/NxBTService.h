@@ -98,6 +98,18 @@ public:
 		int position; // unit : milisecond
 	};
 
+	struct PlaySettings {
+		bool availableEqualizer;
+		bool availableRepeat;
+		bool availableShuffle;
+		bool availableScan;
+
+		int32_t equalizer;
+		int32_t repeat;
+		int32_t shuffle;
+		int32_t scan;
+	};
+
 	struct connect_state_t {
 		bool on;
 		int index; // connected index
@@ -109,6 +121,7 @@ public:
 		connect_state_t connection;
 		PlayStatus status;
 		PlayInfo info;
+		PlaySettings settings;
 	};
 
 	struct PBCService {
@@ -319,6 +332,12 @@ public:
 	bool closeAudioAVK(std::string service = "AVK", std::string command = "CLOSE AUDIO");
 
 	bool requestGetElementAttr(std::string service = "AVK", std::string command = "GET MEDIA ELEMENTS");
+
+	bool setRepeat(std::string service, std::string command);
+
+	bool setShuffle(std::string service, std::string command);
+
+	bool playSettingsInfo(std::string service = "AVK", std::string command = "SETTINGS INFO");
 
 	//-----------------------------------------------------------------------
 	// HS functions
