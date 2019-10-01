@@ -317,13 +317,7 @@ void NxBTService::sendAVKConnectionStatus_stub(void *pObj, bool is_connected, ch
 	// Update connected device name and address
 	if (is_connected) {
 		m_pModel->getPairedDevInfoByIndex(self->m_AVK.connection.index, self->m_AVK.connection.name, self->m_AVK.connection.bd_addr);
-	} else {
-		memset(self->m_AVK.connection.name, 0, DEVICE_NAME_SIZE);
-		memset(self->m_AVK.connection.bd_addr, 0, DEVICE_ADDRESS_SIZE);
 	}
-
-	// Reset play information
-	memset(&self->m_AVK.info, 0, sizeof(self->m_AVK.info));
 
 	s_bd_addr = ToStringBTMacId(self->m_AVK.connection.bd_addr, DEVICE_ADDRESS_SIZE, ':');
 
@@ -472,16 +466,113 @@ void NxBTService::updatePlayPositionAVK_stub(void *pObj, int32_t play_pos_msec, 
 void NxBTService::updatePlayerValuesAVK_stub(void *pObj, int32_t equalizer_val, int32_t repeat_val, int32_t shuffle_val, int32_t scan_val)
 {
 	// Update player values
+	NXLOGI("[%s] enqualizer(%d), repeat(%d), shuffle(%d), scan(%d)", __func__, equalizer_val, repeat_val, shuffle_val, scan_val);
+
+	NxBTService *self = (NxBTService *)pObj;
+	char buffer[BUFFER_SIZE] = {0,};
+
+	if (self->m_AVK.settings.equalizer != equalizer_val)
+	{
+		self->m_AVK.settings.equalizer = equalizer_val;
+		self->Broadcast(buffer);
+	}
+
+	if (self->m_AVK.settings.repeat != repeat_val)
+	{
+		self->m_AVK.settings.repeat = repeat_val;
+		switch (repeat_val) {
+		case 0x01: // off
+			sprintf(buffer, "$OK#%s#%s#%s#%s\n", "AVK", "UPDATE SETTINGS",  "REPEAT", "OFF");
+			break;
+
+		case 0x02: // single
+			sprintf(buffer, "$OK#%s#%s#%s#%s\n", "AVK", "UPDATE SETTINGS", "REPEAT", "ONE");
+			break;
+
+		case 0x03: // all
+			sprintf(buffer, "$OK#%s#%s#%s#%s\n", "AVK", "UPDATE SETTINGS", "REPEAT", "ALL");
+			break;
+
+		case 0x04: // group
+			sprintf(buffer, "$OK#%s#%s#%s#%s\n", "AVK", "UPDATE SETTINGS", "REPEAT", "GROUP");
+			break;
+		}
+
+		self->Broadcast(buffer);
+	}
+
+	fprintf(stderr, "[%s] suffle = %d", __func__, shuffle_val);
+	if (self->m_AVK.settings.shuffle != shuffle_val)
+	{
+		self->m_AVK.settings.shuffle = shuffle_val;
+		switch (shuffle_val) {
+		case 0x01: // off
+			sprintf(buffer, "$OK#%s#%s#%s#%s\n", "AVK", "UPDATE SETTINGS", "SHUFFLE", "OFF");
+			break;
+
+		case 0x02: // all
+			sprintf(buffer, "$OK#%s#%s#%s#%s\n", "AVK", "UPDATE SETTINGS", "SHUFFLE", "ON");
+			break;
+
+		case 0x03: // group
+			sprintf(buffer, "$OK#%s#%s#%s#%s\n", "AVK", "UPDATE SETTINGS", "SHUFFLE", "GROUP");
+			break;
+		}
+
+		self->Broadcast(buffer);
+	}
+
+	if (self->m_AVK.settings.scan != scan_val)
+	{
+		self->m_AVK.settings.scan = scan_val;
+	}
+
+	// #$OK#AVK##ALL\n"
+
 }
 
 void NxBTService::updateListPlayerAttrAVK_stub(void *pObj, bool equalizer_enabled, bool repeat_enabled, bool shuffle_enabled, bool scan_enabled)
 {
 	// Player attribute list
+	NXLOGI("[%s] enable enqualizer(%d), repeat(%d), shuffle(%d), scan(%d)", __func__, !!equalizer_enabled, !!repeat_enabled, !!shuffle_enabled, !!scan_enabled);
+	NxBTService *self = (NxBTService *)pObj;
+	char buffer[BUFFER_SIZE] = {0,};
+
+	if (self->m_AVK.settings.availableEqualizer != equalizer_enabled)
+	{
+		self->m_AVK.settings.availableEqualizer = equalizer_enabled;
+	}
+
+	if (self->m_AVK.settings.availableRepeat != repeat_enabled)
+	{
+		self->m_AVK.settings.availableRepeat = repeat_enabled;
+		if (repeat_enabled)
+			sprintf(buffer, "$OK#%s#%s#%s#%s\n", "AVK", "UPDATE ATTRIBUTE", "REPEAT", "ENABLE");
+		else
+			sprintf(buffer, "$OK#%s#%s#%s#%s\n", "AVK", "UPDATE ATTRIBUTE", "REPEAT", "DISABLE");
+		self->Broadcast(buffer);
+	}
+
+	if (self->m_AVK.settings.availableShuffle != shuffle_enabled)
+	{
+		self->m_AVK.settings.availableShuffle = shuffle_enabled;
+		if (shuffle_enabled)
+			sprintf(buffer, "$OK#%s#%s#%s#%s\n", "AVK", "UPDATE ATTRIBUTE", "SHUFFLE", "ENABLE");
+		else
+			sprintf(buffer, "$OK#%s#%s#%s#%s\n", "AVK", "UPDATE ATTRIBUTE", "SHUFFLE", "DISABLE");
+		self->Broadcast(buffer);
+	}
+
+	if (self->m_AVK.settings.availableScan != scan_enabled)
+	{
+		self->m_AVK.settings.availableScan = scan_enabled;
+	}
 }
 
 void NxBTService::updateListPlayerValuesAVK_stub(void *pObj, int32_t num_val, int32_t attr, unsigned char *values)
 {
 	// Player value list
+	NXLOGI("[%s] num_val(%d), attr(%d)", __func__, num_val, attr);
 }
 
 void NxBTService::sendAVKStreamingStarted_stub(void* pObj, bool is_opened)
@@ -1114,6 +1205,12 @@ bool NxBTService::runCommand(const char *command)
 			return openAudioAVK(tokens[CommandType_Service], tokens[CommandType_Command]);
 		} else if (tokens[CommandType_Command].find("GET MEDIA ELEMENTS") == 0) {
 			return requestGetElementAttr(tokens[CommandType_Service], tokens[CommandType_Command]);
+		} else if (tokens[CommandType_Command].find("REPEAT") == 0) {
+			return setRepeat(tokens[CommandType_Service], tokens[CommandType_Command]);
+		} else if (tokens[CommandType_Command].find("SHUFFLE") == 0) {
+			return setShuffle(tokens[CommandType_Service], tokens[CommandType_Command]);
+		} else if (tokens[CommandType_Command].find("SETTINGS INFO") == 0) {
+			return playSettingsInfo(tokens[CommandType_Service], tokens[CommandType_Command]);
 		}
 	} else if (tokens[CommandType_Service] == "HS") {
 		if (tokens[CommandType_Command].find("CONNECTED DEVICE INDEX") == 0) {
@@ -1839,6 +1936,125 @@ bool NxBTService::requestGetElementAttr(std::string service/*= "AVK"*/, std::str
 	return result;
 }
 
+bool NxBTService::setRepeat(std::string service, std::string command)
+{
+	std::vector<std::string> reply;
+	bool result = false;
+	std::string argument = FindArgument(&command);
+
+	(void)service;
+	reply.push_back(service);
+	reply.push_back(command);
+
+	/* value of repeat mode.
+		0x01 : Off
+		0x02 : Single
+		0x03 : All
+		0x04 : Group
+	*/
+	if (argument == "OFF")
+		result = (RET_OK == m_pModel->playerRepeatAVK(m_AVK.connection.bd_addr, 0x01));
+	else if (argument == "ONE")
+		result = (RET_OK == m_pModel->playerRepeatAVK(m_AVK.connection.bd_addr, 0x02));
+	else if (argument == "ALL")
+		result = (RET_OK == m_pModel->playerRepeatAVK(m_AVK.connection.bd_addr, 0x03));
+
+	Broadcast(MakeReplyCommand(result, reply).c_str());
+
+	return result;
+}
+
+bool NxBTService::setShuffle(std::string service, std::string command)
+{
+	std::vector<std::string> reply;
+	bool result = false;
+	std::string argument = FindArgument(&command);
+
+	(void)service;
+	reply.push_back(service);
+	reply.push_back(command);
+
+	/* value of repeat mode.
+		0x01 : Off
+		0x02 : All
+		0x03 : Group
+	*/
+	if (argument == "OFF")
+		result = (RET_OK == m_pModel->playerShuffleAVK(m_AVK.connection.bd_addr, 0x01));
+	else if (argument == "ON")
+		result = (RET_OK == m_pModel->playerShuffleAVK(m_AVK.connection.bd_addr, 0x02));
+
+	Broadcast(MakeReplyCommand(result, reply).c_str());
+
+	return result;
+}
+
+bool NxBTService::playSettingsInfo(std::string service/*= "AVK"*/, std::string command/*= "SETTINGS INFO"*/)
+{
+	std::vector<std::string> reply;
+	bool result = true;
+
+	reply.push_back(service);
+	reply.push_back("UPDATE ATTRIBUTE");
+	reply.push_back("REPEAT");
+	reply.push_back(m_AVK.settings.availableRepeat ? "ENABLE" : "DISABLE");
+	Broadcast(MakeReplyCommand(result, reply).c_str());
+
+	reply.clear();
+	reply.push_back(service);
+	reply.push_back("UPDATE ATTRIBUTE");
+	reply.push_back("SHUFFLE");
+	reply.push_back(m_AVK.settings.availableShuffle ? "ENABLE" : "DISABLE");
+	Broadcast(MakeReplyCommand(result, reply).c_str());
+
+	reply.clear();
+	reply.push_back(service);
+	reply.push_back("UPDATE SETTINGS");
+	reply.push_back("REPEAT");
+	switch (m_AVK.settings.repeat) {
+	case 0x01:
+		reply.push_back("OFF");
+		break;
+
+	case 0x02:
+		reply.push_back("ONE");
+		break;
+
+	case 0x03:
+		reply.push_back("ALL");
+		break;
+
+	case 0x04:
+		reply.push_back("GROUP");
+		break;
+
+	default:
+		break;
+	}
+	Broadcast(MakeReplyCommand(result, reply).c_str());
+
+	reply.clear();
+	reply.push_back(service);
+	reply.push_back("UPDATE SETTINGS");
+	reply.push_back("SHUFFLE");
+	switch (m_AVK.settings.shuffle) {
+	case 0x01:
+		reply.push_back("OFF");
+		break;
+
+	case 0x02:
+		reply.push_back("ON");
+		break;
+
+	case 0x03:
+		reply.push_back("GROUP");
+		break;
+	}
+	Broadcast(MakeReplyCommand(result, reply).c_str());
+
+	return result;
+}
+
 //-----------------------------------------------------------------------
 // HS functions
 bool NxBTService::connectToHS(std::string service, std::string command, bool broadcast/*= true*/)
@@ -2500,6 +2716,7 @@ void NxBTService::RegisterRequestPlugInIsRunning(void (*cbFunc)(const char *pPlu
 void NxBTService::Broadcast(const char *pMsg)
 {
 	if (m_pRequestSendMessage) {
+		NXLOGD("pMsg : %s\n", pMsg);
 		m_pRequestSendMessage("NxBTAudio", pMsg, strlen(pMsg));
 		m_pRequestSendMessage("NxBTPhone", pMsg, strlen(pMsg));
 		m_pRequestSendMessage("NxBTSettings", pMsg, strlen(pMsg));
