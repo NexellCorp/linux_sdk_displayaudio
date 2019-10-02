@@ -563,7 +563,7 @@ void NxBTService::sendHSConnectionStatus_stub(void *pObj, bool is_connected, cha
 
 	s_bd_addr = ToStringBTMacId(self->m_HS.hs.bd_addr, DEVICE_ADDRESS_SIZE, ':');
 
-#if 1 // if hs service is connected, sub-profile(service) try to open.
+#if 0 // if hs service is connected, sub-profile(service) try to open.
 	if (is_connected) {
 		self->m_HS.pbc.connection.on = (0 <= m_pModel->connectToPBC(self->m_HS.hs.index));
 		self->m_HS.mce.on = (0 <= m_pModel->connectToMCE(self->m_HS.hs.index));
