@@ -14,7 +14,7 @@
 #ifndef __INX_BT_H__
 #define __INX_BT_H__
 
-#define NXBT_VERSION	"1.4.0"
+#define NXBT_VERSION	"1.4.1"
 
 typedef struct Bmessage_info {
 	char *fullName;
@@ -124,8 +124,6 @@ public:
 	virtual int32_t connectToMCE(int32_t device_index) = 0;
 	virtual int32_t disconnectFromMCE(void) = 0;
 	virtual int32_t abortMCE(void) = 0;
-	virtual int32_t startNotifyServerFromMCE(void) = 0;
-	virtual int32_t stopNotifyServerFromMCE(void) = 0;
 	virtual int32_t getParserBmsg(Bmessage_info_t *bmsg) = 0;
 
 	/* NXBT UI callback register functions */
