@@ -1,0 +1,50 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "76e3b217_785dabbb",
+        "filename": "apps/NxBTAudio/Frame.ui",
+        "patchSetId": 2
+      },
+      "lineNbr": 304,
+      "author": {
+        "id": 1015514
+      },
+      "writtenOn": "2019-10-05T05:22:14Z",
+      "side": 1,
+      "message": "Please remove the tab.",
+      "range": {
+        "startLine": 304,
+        "startChar": 0,
+        "endLine": 304,
+        "endChar": 1
+      },
+      "revId": "8d9717347dbe46bf90c3c31b14ebd99357f91461",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "14e63f71_7bb0e0d9",
+        "filename": "apps/NxBTAudio/Frame.ui",
+        "patchSetId": 2
+      },
+      "lineNbr": 332,
+      "author": {
+        "id": 1015514
+      },
+      "writtenOn": "2019-10-05T05:22:14Z",
+      "side": 1,
+      "message": "Please remove the tab.",
+      "range": {
+        "startLine": 332,
+        "startChar": 0,
+        "endLine": 332,
+        "endChar": 1
+      },
+      "revId": "8d9717347dbe46bf90c3c31b14ebd99357f91461",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
+      "unresolved": true
+    }
+  ]
+}
