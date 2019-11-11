@@ -70,9 +70,10 @@ void CallingMenuWidget::slotCommandFromServer(QString command)
 		setMicrophoneDeviceState(MicrophoneDeviceState_MuteOff, m_UIState == UIState_Calling);
 	} else if (tokens[2] == "INCOMMING CALL NUMBER") {
 //        ("OK", "HS", "INCOMMING CALL NUMBER", " \"0316987429\",129,,,\"      \"")
-
 		updateIncommingCallNumber(tokens);
 	} else if (tokens[2].indexOf("DIAL") == 0) {
+		updateOutgoingCallNumber(tokens);
+	} else if (tokens[2].indexOf("OUTGOING CALL NUMBER") == 0) {
 		updateOutgoingCallNumber(tokens);
 	}
 }
@@ -162,11 +163,16 @@ void CallingMenuWidget::updateIncommingCallNumber(QStringList& tokens)
 
 void CallingMenuWidget::updateOutgoingCallNumber(QStringList& tokens)
 {
+	QString callNumber;
+
 	if (tokens.size() == 3) {
 		// -5 is length for "DIAL_"
-		QString callNumber = tokens[2].right(tokens[2].length()-5);
-		ui->LABEL_CALL_NUMBER->setText(callNumber);
+		callNumber = tokens[2].right(tokens[2].length()-5);
+	} else if (tokens.size() == 4) {
+		callNumber = tokens[3];
 	}
+
+	ui->LABEL_CALL_NUMBER->setText(callNumber);
 }
 
 void CallingMenuWidget::setUIState(UIState state)
@@ -174,7 +180,7 @@ void CallingMenuWidget::setUIState(UIState state)
 	if (state == m_UIState)
 		return;
 
-	m_UIState = state;	
+	m_UIState = state;
 
 	QRect rect;
 	switch (state) {

@@ -14,7 +14,7 @@
 #ifndef __INX_BT_H__
 #define __INX_BT_H__
 
-#define NXBT_VERSION	"1.4.1"
+#define NXBT_VERSION	"1.4.2"
 
 typedef struct Bmessage_info {
 	char *fullName;
@@ -149,10 +149,12 @@ public:
 	virtual void registerOpenFailedCbHS(void *pObj, void (*cbFunc)(void *)) = 0;
 	virtual void registerConnectionStatusCbHS(void *pObj, void (*cbFunc)(void *, bool, char *, unsigned char *)) = 0;
 	virtual void registerInbandRingSupportedCbHS(void *pObj, void (*cbFunc)(void *, bool)) = 0;
+	virtual void registerCallActiveStateCbHS(void *pObj, void (*cbFunc)(void *, int32_t)) = 0;
 	virtual void registerCallStatusCbHS(void *pObj, void (*cbFunc)(void *, int32_t)) = 0;
 	virtual void registerBatteryStatusCbHS(void *pObj, void (*cbFunc)(void *, int32_t)) = 0;
 	virtual void registerCallOperNameCbHS(void *pObj, void (*cbFunc)(void *, char *)) = 0;
-	virtual void registerCurrentCalllsCbHS(void *pObj, void (*cbFunc)(void *, char *)) = 0;
+	virtual void registerCurrentCallsCbHS(void *pObj, void (*cbFunc)(void *, char *)) = 0;
+	virtual void registerCurrentCallNumberCbHS(void *pObj, void (*cbFunc)(void *, char *)) = 0;
 	virtual void registerCallNumberCbHS(void *pObj, void (*cbFunc)(void *, char *)) = 0;
 	virtual void registerAudioMuteStatusCbHS(void *pObj, void (*cbFunc)(void *, bool, bool)) = 0;
 	virtual void registerVoiceRecognitionStatusCbHS(void *pObj, void (*cbFunc)(void *, unsigned short)) = 0;
