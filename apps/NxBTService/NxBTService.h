@@ -241,7 +241,11 @@ public:
 
 	static void sendHSAudioMuteStatus_stub(void *pObj, bool is_muted, bool is_opened);
 
+	static void sendHSVoiceRecognitionStatus_stub(void *pObj, unsigned short status);
+
 	static void sendHSIncommingCallNumber_stub(void *pObj, char *number);
+
+	static void sendHSCurrentCallNumber_stub(void *pObj, char *number);
 
 	static void sendHSCallIndicatorParsingValues_stub(void *pObj, int32_t service, int32_t callind, int32_t call_setup, int32_t callheld, int32_t roam, int32_t signal_strength, int32_t battery);
 

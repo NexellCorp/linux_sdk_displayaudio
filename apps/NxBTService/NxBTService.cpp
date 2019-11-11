@@ -844,6 +844,33 @@ void NxBTService::sendHSAudioMuteStatus_stub(void *pObj, bool is_muted, bool is_
 	}
 }
 
+void NxBTService::sendHSVoiceRecognitionStatus_stub(void *pObj, unsigned short status)
+{
+	NxBTService* self = (NxBTService*)pObj;
+
+	if (status) {
+		// VR start
+        // Switching audio focus (get)
+        if (!g_has_audio_focus) {
+            bool bOk = false;
+            if (self->m_pRequestAudioFocusTransient) {
+                self->m_pRequestAudioFocusTransient(FocusPriority_High, &bOk);
+            }
+            g_has_audio_focus_transient = bOk;
+        }
+    } else {
+		// VR stop
+        if (!m_pModel->isOpenedAudioHS() && g_has_audio_focus_transient)
+        {
+            // release audio focus
+            if (self->m_pRequestAudoFocusLoss) {
+                self->m_pRequestAudoFocusLoss();
+                g_has_audio_focus_transient = false;
+            }
+        }
+	}
+}
+
 void NxBTService::sendHSIncommingCallNumber_stub(void *pObj, char *number)
 {
 	NxBTService* self = (NxBTService*)pObj;
@@ -886,6 +913,22 @@ void NxBTService::sendHSIncommingCallNumber_stub(void *pObj, char *number)
 	sprintf(buffer, "$OK#%s#%s#%s\n", "HS", "INCOMMING CALL NUMBER", number);
 
 	self->Broadcast(buffer);
+}
+
+void NxBTService::sendHSCurrentCallNumber_stub(void *pObj, char *number)
+{
+    NxBTService* self = (NxBTService*)pObj;
+    char buffer[BUFFER_SIZE] = {0,};
+
+    if (self->m_sMirroringInfo[MirroringType_AndroidAuto].connected && self->m_sMirroringInfo[MirroringType_AndroidAuto].hs)
+    {
+        return;
+    }
+
+	sprintf(buffer, "$OK#%s#%s#%s\n", "HS", "OUTGOING CALL NUMBER", number);
+
+	self->Broadcast(buffer);
+
 }
 
 void NxBTService::sendHSCallIndicatorParsingValues_stub(void *pObj, int32_t service, int32_t callind, int32_t call_setup, int32_t callheld, int32_t roam, int32_t signal_strength, int32_t battery)
@@ -1095,7 +1138,9 @@ void NxBTService::registerCallbackFunctions()
 	m_pModel->registerBatteryStatusCbHS(this, sendHSBatteryStatus_stub);
 	m_pModel->registerCallOperNameCbHS(this, sendHSCallOperName_stub);
 	m_pModel->registerAudioMuteStatusCbHS(this, sendHSAudioMuteStatus_stub);
+	m_pModel->registerVoiceRecognitionStatusCbHS(this, sendHSVoiceRecognitionStatus_stub);
 	m_pModel->registerIncommingCallNumberCbHS(this, sendHSIncommingCallNumber_stub);
+	m_pModel->registerCurrentCallNumberCbHS(this, sendHSCurrentCallNumber_stub);
 	m_pModel->registerCallIndicatorParsingValuesCbHS(this, sendHSCallIndicatorParsingValues_stub);
 	// Phone : PBC (phone book)
 	m_pModel->registerOpenFailedCbPBC(this, sendPBCOpenFailed_stub);

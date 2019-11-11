@@ -306,6 +306,10 @@ static void sendHSInbandRingSupported_stub(void *pObj, bool is_supported) {
 	// To do : callback
 }
 
+static void sendHSCallActiveState_stub(void *pObj, int32_t state) {
+	// To do : callback
+}
+
 static void sendHSCallStatus_stub(void *pObj, int32_t call_status) {
 	// To do : callback
 }
@@ -319,6 +323,10 @@ static void sendHSCallOperName_stub(void *pObj, char *name) {
 }
 
 static void sendHSCurrentCalls_stub(void *pObj, char *currentCalls) {
+	// To do : callback
+}
+
+static void sendHSCurrentCallNumber_stub(void *pObj, char *number) {
 	// To do : callback
 }
 
@@ -434,10 +442,12 @@ int main (int argc, char *argv[])
 	pInstance->registerOpenFailedCbHS(m_pObjHandler, sendHSOpenFailed_stub);
 	pInstance->registerConnectionStatusCbHS(m_pObjHandler, sendHSConnectionStatus_stub);
 	pInstance->registerInbandRingSupportedCbHS(m_pObjHandler, sendHSInbandRingSupported_stub);
+	pInstance->registerCallActiveStateCbHS(m_pObjHandler, sendHSCallActiveState_stub);
 	pInstance->registerCallStatusCbHS(m_pObjHandler, sendHSCallStatus_stub);
 	pInstance->registerBatteryStatusCbHS(m_pObjHandler, sendHSBatteryStatus_stub);
 	pInstance->registerCallOperNameCbHS(m_pObjHandler, sendHSCallOperName_stub);
-	pInstance->registerCurrentCalllsCbHS(m_pObjHandler, sendHSCurrentCalls_stub);
+	pInstance->registerCurrentCallsCbHS(m_pObjHandler, sendHSCurrentCalls_stub);
+	pInstance->registerCurrentCallNumberCbHS(m_pObjHandler, sendHSCurrentCallNumber_stub);
 	pInstance->registerCallNumberCbHS(m_pObjHandler, sendHSCallNumber_stub);
 	pInstance->registerAudioMuteStatusCbHS(m_pObjHandler, sendHSAudioMuteStatus_stub);
 	pInstance->registerVoiceRecognitionStatusCbHS(m_pObjHandler, sendHSVoiceRecognitionStatus_stub);
