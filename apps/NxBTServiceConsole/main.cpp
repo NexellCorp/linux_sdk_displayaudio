@@ -262,6 +262,10 @@ static void sendAVKStreamingStopped_stub(void *pObj) {
 	// To do : callback
 }
 
+static void sendAVKVolumeNotSupported_stub(void *pObj) {
+	// To do : callback
+}
+
 static void updatePlayStatusAVK_stub(void *pObj, int32_t play_status) {
 	// To do : callback
 }
@@ -358,6 +362,10 @@ static void sendPBCOpenFailed_stub(void *pObj) {
 	// To do : callback
 }
 
+static void sendPBCAborted_stub(void *pObj) {
+	// To do : callback
+}
+
 static void sendPBCConnectionStatus_stub(void *pObj, bool is_connected) {
 	// To do : callback
 }
@@ -430,7 +438,8 @@ int main (int argc, char *argv[])
 	pInstance->registerOpenFailedCbAVK(m_pObjHandler, sendAVKOpenFailed_stub);
 	pInstance->registerStreamingStartedCbAVK(m_pObjHandler, sendAVKStreamingStarted_stub);
 	pInstance->registerStreamingStoppedCbAVK(m_pObjHandler, sendAVKStreamingStopped_stub);
-    pInstance->registerConnectionStatusCbAVK(m_pObjHandler, sendAVKConnectionStatus_stub);
+	pInstance->registerVolumeNotSupportedCbAVK(m_pObjHandler, sendAVKVolumeNotSupported_stub);
+	pInstance->registerConnectionStatusCbAVK(m_pObjHandler, sendAVKConnectionStatus_stub);
 	pInstance->registerConnectionStatusCbAVKRC(m_pObjHandler, sendAVKRCConnectionStatus_stub);
 	pInstance->registerPlayStatusCbAVK(m_pObjHandler, updatePlayStatusAVK_stub);
     pInstance->registerMediaElementCbAVK(m_pObjHandler, updateMediaElementsAVK_stub);
@@ -456,6 +465,7 @@ int main (int argc, char *argv[])
 	pInstance->registerCallIndicatorParsingValuesCbHS(m_pObjHandler, sendHSCallIndicatorParsingValues_stub);
 
 	pInstance->registerOpenFailedCbPBC(m_pObjHandler, sendPBCOpenFailed_stub);
+	pInstance->registerAbortedCbPBC(m_pObjHandler, sendPBCAborted_stub);
 	pInstance->registerConnectionStatusCbPBC(m_pObjHandler, sendPBCConnectionStatus_stub);
 	pInstance->registerNotifyGetPhonebookCbPBC(m_pObjHandler, sendNotifyGetPhonebook_stub);
 	pInstance->registerListDataCbPBC(m_pObjHandler, sendPBCListData_stub);
@@ -534,6 +544,9 @@ int main (int argc, char *argv[])
 		printf("[%s] Open failed : %s\n", __func__, NXBTSERVICE_CONFIG);
 	}
 	delete pConfig;
+
+	// Set phonebook list count
+	pInstance->setPhonebookListCount(CONTACT_COUNT, CALLLOG_COUNT);
 
 	// Auto connection
 	pInstance->autoConnection(pInstance->isAutoConnection());
