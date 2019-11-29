@@ -116,6 +116,7 @@ public:
 	virtual int32_t connectToPBC(int32_t device_index) = 0;
 	virtual int32_t disconnectFromPBC(void) = 0;
 	virtual int32_t abortPBC(void) = 0;
+	virtual void setPhonebookListCount(int32_t contacts, int32_t calllogs) = 0;
 	virtual int32_t getContactFromPBC(void) = 0;
 	virtual int32_t getCallHistoryFromPBC(void) = 0;
 
@@ -138,6 +139,7 @@ public:
 	virtual void registerOpenFailedCbAVK(void *pObj, void (*cbFunc)(void *)) = 0;
 	virtual void registerStreamingStartedCbAVK(void *pObj, void (*cbFunc)(void *, bool)) = 0;
 	virtual void registerStreamingStoppedCbAVK(void *pObj, void (*cbFunc)(void *)) = 0;
+	virtual void registerVolumeNotSupportedCbAVK(void *pObj, void (*cbFunc)(void *)) = 0;
 	virtual void registerConnectionStatusCbAVK(void *pObj, void (*cbFunc)(void *, bool, char *, unsigned char *)) = 0;
 	virtual void registerConnectionStatusCbAVKRC(void *pObj, void (*cbFunc)(void *, bool)) = 0;
 	virtual void registerPlayStatusCbAVK(void *pObj, void (*cbFunc)(void *, int32_t)) = 0;
@@ -162,6 +164,7 @@ public:
 	virtual void registerCallIndicatorCbHS(void *pObj, void (*cbFunc)(void *, char *)) = 0;
 	virtual void registerCallIndicatorParsingValuesCbHS(void *pObj, void (*cbFunc)(void *, int32_t, int32_t, int32_t, int32_t, int32_t, int32_t, int32_t)) = 0;
 	virtual void registerOpenFailedCbPBC(void *pObj, void (*cbFunc)(void *)) = 0;
+	virtual void registerAbortedCbPBC(void *pObj, void (*cbFunc)(void *)) = 0;
 	virtual void registerConnectionStatusCbPBC(void *pObj, void (*cbFunc)(void *, bool)) = 0;
 	virtual void registerNotifyGetPhonebookCbPBC(void *pObj, void (*cbFunc)(void *, int32_t)) = 0;
 	virtual void registerListDataCbPBC(void *pObj, void (*cbFunc)(void *, unsigned char *)) = 0;
