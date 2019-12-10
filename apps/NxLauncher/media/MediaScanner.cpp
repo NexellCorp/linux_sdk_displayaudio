@@ -91,11 +91,14 @@ void MediaScanner::Mount(QString devNode)
 		QString mountpoint = QString("%1/%2").arg(MOUNTPOINT_DIR).arg(tokens[tokens.size()-1]);
 		dir.mkpath(mountpoint);
 
-		::mount(devNode.toStdString().c_str(),
+		if (0 > ::mount(devNode.toStdString().c_str(),
 				mountpoint.toStdString().c_str(),
 				"vfat",
 				0,
-				"utf8=1");
+				"utf8=1"))
+		{
+			dir.rmdir(mountpoint);
+		}
 	}
 }
 
