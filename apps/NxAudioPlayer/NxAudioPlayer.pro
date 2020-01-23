@@ -18,7 +18,7 @@ TEMPLATE = lib
 CONFIG += plugin
 
 # Add Media Player Libraries
-LIBS += -lnx_drm_allocator -lnx_video_api
+LIBS += -lnx_video_api
 LIBS += -L$$PWD/../../library/prebuilt/lib -lnxmpmanager -lnxfilterhelper -lnxfilter
 
 INCLUDEPATH += $$PWD/../../library/include
