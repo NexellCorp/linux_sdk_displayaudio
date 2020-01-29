@@ -70,9 +70,10 @@ void CallingMenuWidget::slotCommandFromServer(QString command)
 		setMicrophoneDeviceState(MicrophoneDeviceState_MuteOff, m_UIState == UIState_Calling);
 	} else if (tokens[2] == "INCOMMING CALL NUMBER") {
 //        ("OK", "HS", "INCOMMING CALL NUMBER", " \"0316987429\",129,,,\"      \"")
-
 		updateIncommingCallNumber(tokens);
 	} else if (tokens[2].indexOf("DIAL") == 0) {
+		updateOutgoingCallNumber(tokens);
+	} else if (tokens[2].indexOf("OUTGOING CALL NUMBER") == 0) {
 		updateOutgoingCallNumber(tokens);
 	}
 }
@@ -103,6 +104,7 @@ void CallingMenuWidget::updateCallStatus(QStringList& tokens)
 		if (tokens[3] == "INCOMMING CALL") {
 			setUIState(UIState_IncommingCall);
 		} else if (tokens[3] == "HANG UP CALL") {
+			setUIState(UIState_Init);
 		} else if (tokens[3] == "PICK UP CALL") {
 			setUIState(UIState_Calling);
 		} else if (tokens[3] == "READY OUTGOING CALL") {
@@ -110,6 +112,7 @@ void CallingMenuWidget::updateCallStatus(QStringList& tokens)
 		} else if (tokens[3] == "OUTGOING CALL") {
 			setUIState(UIState_OutGoingCall);
 		} else if (tokens[3] == "DISCONNECTED CALL") {
+			setUIState(UIState_Init);
 		} else if (tokens[3] == "UNKNOWN CALL") {
 		}
 	}
@@ -139,7 +142,7 @@ void CallingMenuWidget::updateIncommingCallNumber(QStringList& tokens)
 	// example) _"0316987429",129,,,"______"
 	if (tokens.size() == 4) {
 		QStringList subTokens = tokens[3].split(",");
-		if (subTokens.size() == 5) {
+		if (subTokens.size() > 0) {
 			int start, position;
 			QString callNumber;
 
@@ -160,11 +163,16 @@ void CallingMenuWidget::updateIncommingCallNumber(QStringList& tokens)
 
 void CallingMenuWidget::updateOutgoingCallNumber(QStringList& tokens)
 {
+	QString callNumber;
+
 	if (tokens.size() == 3) {
 		// -5 is length for "DIAL_"
-		QString callNumber = tokens[2].right(tokens[2].length()-5);
-		ui->LABEL_CALL_NUMBER->setText(callNumber);
+		callNumber = tokens[2].right(tokens[2].length()-5);
+	} else if (tokens.size() == 4) {
+		callNumber = tokens[3];
 	}
+
+	ui->LABEL_CALL_NUMBER->setText(callNumber);
 }
 
 void CallingMenuWidget::setUIState(UIState state)
@@ -176,6 +184,10 @@ void CallingMenuWidget::setUIState(UIState state)
 
 	QRect rect;
 	switch (state) {
+	case UIState_Init:
+		ui->LABEL_CALL_NUMBER->clear();
+		break;
+
 	case UIState_IncommingCall:
 		ui->BUTTON_HANG_UP_CALL->show();
 		ui->BUTTON_PICK_UP_CALL->show();
