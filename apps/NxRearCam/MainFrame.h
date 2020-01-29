@@ -53,7 +53,6 @@ public:
 	static void RegisterRequestVideoFocusLoss(void (*cbFunc)(void));
 	static void RegisterRequestTerminate(void (*cbFunc)(void));
 
-
 public:
 	explicit MainFrame(QWidget *parent = 0);
 	~MainFrame();

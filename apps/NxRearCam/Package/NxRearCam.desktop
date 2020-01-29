@@ -10,3 +10,4 @@ TryExec=NxRearCam
 Exec=NxRearCam
 AutoStart=yes
 Visible=no
+VideoLayer=yes
