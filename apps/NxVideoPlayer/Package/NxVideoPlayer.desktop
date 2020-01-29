@@ -8,5 +8,4 @@ Comment[ko]=NxVideo Player 프로그램
 Icon=icon_video.png
 TryExec=NxVideoPlayer
 Exec=NxVideoPlayer
-
-
+VideoLayer=yes

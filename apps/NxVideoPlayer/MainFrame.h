@@ -51,6 +51,7 @@ public:
 	static void RegisterRequestTerminate(void (*cbFunc)(void));
 	static void RegisterRequestVolume(void (*cbFunc)(void));
 
+	static void RegisterRequestOpacity(void (*cbFunc)(bool));
 
 public:
 	explicit MainFrame(QWidget *parent = 0);

@@ -124,6 +124,10 @@ bool MainFrame::Initialize()
 	if (!bOk)
 	{
 		NXLOGE("[%s] REQUEST AUDIO FOCUS <FAIL>", __FUNCTION__);
+		if (m_pRequestVideoFocusLoss)
+		{
+			m_pRequestVideoFocusLoss();
+		}
 		return false;
 	}
 
@@ -309,7 +313,6 @@ void MainFrame::RegisterRequestAudioFocusLoss(void (*cbFunc)(void))
 // Video Focus
 void MainFrame::RequestVideoFocus(FocusType eType, FocusPriority ePriority, bool *bOk)
 {
-	qDebug() << Q_FUNC_INFO << 1;
 	if (eType == FocusType_Get)
 	{
 		FocusPriority eCurrPriority = FocusPriority_Normal;
@@ -322,13 +325,13 @@ void MainFrame::RequestVideoFocus(FocusType eType, FocusPriority ePriority, bool
 
 		if(!m_bHasVideoFocus)
 		{
-			QApplication::postEvent(this, new VideoMuteEventStart());
+//			QApplication::postEvent(this, new VideoMuteEventStart());
+			ui->m_PlayerFrame->VideoMuteStart();
 		}
 		ui->m_PlayerFrame->setVideoFocus(m_bHasVideoFocus);
 	}
 	else // FocusType_Set
 	{
-		qDebug() << Q_FUNC_INFO << 2;
 		*bOk = true;
 		m_bHasVideoFocus = true;
 
@@ -400,7 +403,6 @@ void MainFrame::RegisterRequestVolume(void (*cbFunc)(void))
 		m_pRequestVolume = cbFunc;
 	}
 }
-
 
 void MainFrame::RegisterRequestPopupMessage(void (*cbFunc)(PopupMessage *, bool *))
 {
