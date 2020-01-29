@@ -1,4 +1,10 @@
 #include "CNX_DAudioStatus.h"
+#include <NX_IConfig.h>
+
+#define LOG_TAG "[libnxutils]"
+#include <NX_Log.h>
+
+#define DAUDIO_CONFIG	"/nexell/daudio/daudio.xml"
 
 struct cbSqlite3ExecArgs
 {
@@ -50,9 +56,33 @@ CNX_DAudioStatus::CNX_DAudioStatus(string database/*= DEFAULT_DAUDIO_STATUS_DATA
 		InsertTuple();
 	}
 
-	volume = GetVolume();
-	if (volume > 0)
-		SetSystemVolume(volume);
+	m_CardNumber = "default";
+	m_iMaxVolume = 0;
+	NX_IConfig *pConfig = GetConfigHandle();
+	if (0 == pConfig->Open(DAUDIO_CONFIG))
+	{
+		char *pBuf = NULL;
+		if (0 == pConfig->Read("master_volume", &pBuf))
+		{
+			m_SoundCard = string(pBuf);
+		}
+
+		if (0 == pConfig->Read("max_volume", &pBuf))
+		{
+			m_iMaxVolume = atoi(pBuf);
+		}
+
+		if (0 == pConfig->Read("card_number", &pBuf))
+		{
+			m_CardNumber = string(pBuf);
+		}
+	}
+	delete pConfig;
+
+	if (0 != pthread_create(&m_hInitThread, NULL, CNX_DAudioStatus::ThreadStub, (void *)this))
+	{
+		NXLOGI("pthread_create() failed\n");
+	}
 }
 
 CNX_DAudioStatus::~CNX_DAudioStatus()
@@ -200,7 +230,11 @@ int32_t CNX_DAudioStatus::SetVolume(int32_t value)
 
 	if (ret)
 	{
-		SetSystemVolume(value);
+		int32_t iRet = SetSystemVolume(value);
+		if (0 < iRet)
+		{
+			fprintf(stderr, "SetSystemVolume = %d\n", iRet);
+		}
 	}
 
 	return ret;
@@ -212,31 +246,41 @@ int32_t CNX_DAudioStatus::SetSystemVolume(int32_t percentage)
 	snd_mixer_t *pHandle;
 	snd_mixer_elem_t *pElem;
 	snd_mixer_selem_id_t *pSid;
-	const char *pCard = "default";
-	const char *pSelem_name = NX_MASTER_VOLUME;
+	const char *pCard = m_CardNumber.c_str();
+	const char *pSelem_name = m_SoundCard.c_str();
 	int32_t iError = 0;
+	char card[64] = "default";
+
+	if (!strstr(pCard, card))
+	{
+		int index = snd_card_get_index(pCard);
+		if (index >= 0 && index < 32)
+		{
+			sprintf(card, "hw:%s", pCard);
+		}
+	}
 
 	if (percentage < 0)
 		percentage = 0;
 	if (percentage > 100)
 		percentage = 100;
 
-	if (0 != snd_mixer_open(&pHandle, 0))
+	if (0 > snd_mixer_open(&pHandle, 0))
 		return -1;
 
-	if (0 != snd_mixer_attach(pHandle, pCard))
+	if (0 > snd_mixer_attach(pHandle, card))
 	{
 		iError = -2;
 		goto loop_finished;
 	}
 
-	if (0 != snd_mixer_selem_register(pHandle, NULL, NULL))
+	if (0 > snd_mixer_selem_register(pHandle, NULL, NULL))
 	{
 		iError = -2;
 		goto loop_finished;
 	}
 
-	if (0 != snd_mixer_load(pHandle))
+	if (0 > snd_mixer_load(pHandle))
 	{
 		iError = -2;
 		goto loop_finished;
@@ -252,7 +296,13 @@ int32_t CNX_DAudioStatus::SetSystemVolume(int32_t percentage)
 		goto loop_finished;
 	}
 
-	snd_mixer_selem_get_playback_volume_range(pElem, &min, &max);
+	if (m_iMaxVolume > 0)
+		max = m_iMaxVolume;
+	else if (0 != snd_mixer_selem_get_playback_volume_range(pElem, &min, &max))
+	{
+		iError = -3;
+		goto loop_finished;
+	}
 	snd_mixer_selem_set_playback_volume_all(pElem, max * percentage / 100);
 
 loop_finished:
@@ -272,4 +322,35 @@ int32_t CNX_DAudioStatus::GetVolume()
 	ret = (ret && g_cbArgs.argv.size() ? atoi(g_cbArgs.argv[0].c_str()) : -1);
 
 	return ret;
+}
+
+void *CNX_DAudioStatus::ThreadStub(void *pObj)
+{
+	if (pObj)
+	{
+		((CNX_DAudioStatus *)pObj)->ThreadProc();
+		pthread_join(((CNX_DAudioStatus *)pObj)->m_hInitThread, NULL);
+	}
+}
+
+void CNX_DAudioStatus::ThreadProc()
+{
+	int32_t volume = GetVolume();
+	int32_t ret = 0;
+
+	if (volume <= 0)
+	{
+		return;
+	}
+
+	while (true)
+	{
+		ret = SetSystemVolume(volume);
+		if (0 == ret)
+		{
+			break;
+		}
+		NXLOGE("[%s] SetSystemVolume() FAILED, ret = %d\n", __PRETTY_FUNCTION__, ret);
+		usleep(100000);
+	}
 }

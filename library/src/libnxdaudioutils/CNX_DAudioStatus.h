@@ -11,6 +11,8 @@
 #include <stdlib.h>
 #include <string.h>
 
+#include <pthread.h>
+
 #include <vector>
 #include <string>
 using namespace std;
@@ -50,10 +52,22 @@ private:
 
 	int32_t SetSystemVolume(int32_t percentage);
 
+	static void *ThreadStub(void *pObj);
+
+	void ThreadProc();
+
 private:
 	sqlite3* m_pHandle;
 
 	string m_DataBasePath;
+
+	string m_SoundCard;
+
+	string m_CardNumber;
+
+	int m_iMaxVolume;
+
+	pthread_t m_hInitThread;
 };
 
 #endif // CNX_DAUDIOSTATUS_H
