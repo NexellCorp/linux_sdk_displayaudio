@@ -14,6 +14,8 @@
 #include <QDirIterator>
 #include <QDesktopWidget>
 
+#include "InitThread.h"
+
 #include <execinfo.h>
 #include <signal.h>
 
@@ -43,6 +45,8 @@
 NxLauncher* NxLauncher::m_spInstance = NULL;
 QQueue<QString> NxLauncher::m_AudioFocusQueue = QQueue<QString>();
 QQueue<QString> NxLauncher::m_VideoFocusQueue = QQueue<QString>();
+
+#include <QDebug>
 
 static void signal_handler(int sig)
 {
@@ -90,7 +94,6 @@ NxLauncher::NxLauncher(QWidget *parent) :
 	ui->setupUi(this);
 
 	m_spInstance = this;
-	installEventFilter( this );
 
 	signal(SIGABRT, signal_handler);
 	signal(SIGSEGV, signal_handler);
@@ -122,6 +125,10 @@ NxLauncher::NxLauncher(QWidget *parent) :
 		psInfo->m_pIsInit = (void (*)(bool *))dlsym(psInfo->m_pHandle, "IsInit");
 		// deInitialize
 		psInfo->m_pdeInit = (void (*)())dlsym(psInfo->m_pHandle, "deInit");
+		// show
+		psInfo->m_pShow = (void (*)())dlsym(psInfo->m_pHandle, "Show");
+		// hide
+		psInfo->m_pHide = (void (*)())dlsym(psInfo->m_pHandle, "Hide");
 		// launcher topmost
 		psInfo->m_pRegisterLauncherShow = (void (*)(void(*)(bool*)))dlsym(psInfo->m_pHandle, "RegisterRequestLauncherShow");
 		// request audio focus
@@ -316,10 +323,29 @@ NxLauncher::NxLauncher(QWidget *parent) :
 	m_pMediaScanner = new MediaScanner();
 	connect(m_pMediaScanner, SIGNAL(signalMediaEvent(NxEventTypes)), this, SLOT(slotMediaEvent(NxEventTypes)));
 
+#if 0
+	foreach (NxPluginInfo *psInfo, m_PlugIns) {
+		if (psInfo->getAutoStart())
+		{
+			if (psInfo->m_pInit){
+				qDebug() << psInfo->getName() << 1;
+				psInfo->m_pInit(this, "");
+				qDebug() << psInfo->getName() << 2;
+			}
+		}
+	}
+#else
+	InitThread *pInitThread = new InitThread(m_PlugIns);
+	connect(pInitThread, SIGNAL(signalInit(QString)), this, SLOT(slotInit(QString)));
+	connect(pInitThread, SIGNAL(finished()), pInitThread, SLOT(deleteLater()));
+	pInitThread->start();
+#endif
+
+	ui->messageFrame->hide();
+	ui->notificationBar->hide();
+
 	connect(&m_Timer, SIGNAL(timeout()), this, SLOT(slotTimer()));
 //	m_Timer.start(10000);
-
-//	QTimer::singleShot(2000, this, SLOT(slotStartSerivceTimer()));
 }
 
 NxLauncher::~NxLauncher()
@@ -327,14 +353,11 @@ NxLauncher::~NxLauncher()
 	delete ui;
 }
 
-void NxLauncher::slotStartSerivceTimer()
+void NxLauncher::slotInit(QString plugin)
 {
-	foreach (NxPluginInfo *psInfo, m_PlugIns) {
-		if (psInfo->getType().toLower() == "service" && psInfo->getEnabled())
-		{
-			if (psInfo->m_pInit)
-				psInfo->m_pInit(this, "");
-		}
+	if (m_PlugIns[plugin]->m_pInit)
+	{
+		m_PlugIns[plugin]->m_pInit(this, "");
 	}
 }
 
@@ -416,7 +439,9 @@ void NxLauncher::RequestLauncherShow(bool *bOk)
 {
 	NXLOGI("[%s]", __FUNCTION__);
 	if (m_spInstance)
+	{
 		m_spInstance->LauncherShow(bOk, true);
+	}
 }
 
 QString NxLauncher::FindCaller(uint32_t uiLevel)
@@ -800,7 +825,6 @@ void NxLauncher::VideoFocus(FocusPriority ePriority, bool *bOk)
 	if (caller == owner)
 	{
 		*bOk = true;
-		return;
 	}
 	else if (owner == NX_LAUNCHER)
 	{
@@ -826,6 +850,7 @@ void NxLauncher::VideoFocus(FocusPriority ePriority, bool *bOk)
 	if (*bOk)
 	{
 		AddVideoFocus(caller);
+		QApplication::postEvent(this, new NxOpacityEvent(!m_PlugIns[caller]->useVideoLayer()));
 	}
 }
 
@@ -930,11 +955,15 @@ void NxLauncher::RequestVideoFocusLoss()
 		{
 			bool bOk = false;
 			m_spInstance->LauncherShow(&bOk, false);
+			QApplication::postEvent(m_spInstance, new NxOpacityEvent(true));
 		}
 		else
 		{
 			// 2.1. pass the focus to the next owner.
 			bool bOk = false;
+
+			QApplication::postEvent(m_spInstance, new NxOpacityEvent(!m_spInstance->m_PlugIns[curr]->useVideoLayer()));
+
 			m_spInstance->m_PlugIns[curr]->m_pRequestVideoFocus(FocusType_Set, FocusPriority_Normal, &bOk);
 		}
 	}
@@ -1053,7 +1082,7 @@ void NxLauncher::RequestTerminate()
  ************************************************************************************/
 void NxLauncher::Terminate(QString requestor)
 {
-	QString owner;
+	QString owner = m_VideoFocusQueue.first();
 	bool bOk = false;
 
 	if (m_PlugIns[requestor]->m_pdeInit)
@@ -1067,8 +1096,13 @@ void NxLauncher::Terminate(QString requestor)
 			if (m_VideoFocusQueue.size())
 			{
 				owner = m_VideoFocusQueue.first();
+
+				bool opacity = (owner == NX_LAUNCHER ? true : (!m_PlugIns[owner]->useVideoLayer()));
+				QApplication::postEvent(this, new NxOpacityEvent(opacity));
+
 				if (owner != NX_LAUNCHER)
 					m_PlugIns[owner]->m_pRequestVideoFocus(FocusType_Set, FocusPriority_Normal, &bOk);
+
 			}
 		}
 
@@ -1089,6 +1123,11 @@ void NxLauncher::Terminate(QString requestor)
 void NxLauncher::RequestVolume()
 {
 	QApplication::postEvent(m_spInstance, new NxVolumeControlEvent());
+}
+
+void NxLauncher::RequestOpacity(bool opacity)
+{
+	QApplication::postEvent(m_spInstance, new NxOpacityEvent(opacity));
 }
 
 QVariantList NxLauncher::getPluginInfoList()
@@ -1134,6 +1173,13 @@ bool NxLauncher::event(QEvent *event)
 		return true;
 	}
 
+	case E_NX_EVENT_OPACITY:
+	{
+		NxOpacityEvent *e = static_cast<NxOpacityEvent *>(event);
+		OpacityEvent(e);
+		return true;
+	}
+
 	case E_NX_EVENT_TERMINATE:
 	{
 		m_Timer.stop();
@@ -1160,14 +1206,6 @@ bool NxLauncher::event(QEvent *event)
 	case QEvent::WindowActivate:
 	{
 		printf("NX_LAUNCHER SHOWN\n");
-
-		foreach (NxPluginInfo *psInfo, m_PlugIns) {
-			if (psInfo->getAutoStart())
-			{
-				if (psInfo->m_pInit)
-					psInfo->m_pInit(this, "");
-			}
-		}
 		break;
 	}
 
@@ -1281,6 +1319,44 @@ void NxLauncher::VolumeControlEvent(NxVolumeControlEvent *)
 	ui->volumeBar->Raise();
 }
 
+void NxLauncher::OpacityEvent(NxOpacityEvent *e)
+{
+	if (e->m_bOpacity)
+	{
+		ui->launcher->show();
+		ui->volumeBar->show();
+		this->setStyleSheet("QDialog { background: rgba(195, 195, 195, 100%); }");
+		for (int i = 0; i < m_VideoFocusQueue.size(); ++i)
+		{
+			QString key = m_VideoFocusQueue.at(i);
+			if (key != NX_LAUNCHER)
+			{
+				if (m_PlugIns[key]->m_pShow)
+				{
+					m_PlugIns[key]->m_pShow();
+				}
+			}
+		}
+	}
+	else
+	{
+		ui->launcher->hide();
+		ui->volumeBar->hide();
+		this->setStyleSheet("QDialog { background: rgba(0, 0, 0, 0%); }");
+		for (int i = 1; i < m_VideoFocusQueue.size(); ++i)
+		{
+			QString key = m_VideoFocusQueue.at(i);
+			if (key != NX_LAUNCHER)
+			{
+				if (m_PlugIns[key]->m_pHide)
+				{
+					m_PlugIns[key]->m_pHide();
+				}
+			}
+		}
+	}
+}
+
 void NxLauncher::Execute(QString plugin)
 {
 	bool bOk = false;
@@ -1305,7 +1381,7 @@ void NxLauncher::Execute(QString plugin)
 		if (m_PlugIns[plugin]->m_pRequestVideoFocus)
 		{
 			bool bOk = false;
-//				CollectVideoFocus();
+
 			m_PlugIns[plugin]->m_pRequestVideoFocus(FocusType_Set, FocusPriority_Normal, &bOk);
 			if (!bOk)
 			{
@@ -1314,6 +1390,9 @@ void NxLauncher::Execute(QString plugin)
 			}
 
 			AddVideoFocus(plugin);
+
+			NxOpacityEvent e = NxOpacityEvent(!m_PlugIns[plugin]->useVideoLayer());
+			OpacityEvent(&e);
 		}
 	}
 }
@@ -1407,6 +1486,8 @@ void NxLauncher::LauncherShow(bool *bOk, bool bRequireRequestFocus)
 	if (AddVideoFocus(NX_LAUNCHER))
 	{
 		ui->launcher->raise();
+
+		QApplication::postEvent(this, new NxOpacityEvent(true));
 	}
 }
 

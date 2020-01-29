@@ -126,6 +126,10 @@ void NxPackageScanner::FillPluginInfo(const QFileInfo& szInfo, bool bInitialized
 		{
 			psInfo->setVisible(settings.value(key, "yes").toString().toLower() == "yes");
 		}
+		else if (lowerKey == "videolayer")
+		{
+			psInfo->setUseVideoLayer(settings.value(key, "no").toString().toLower() == "yes");
+		}
 	}
 
 	m_pPlugins->insert(szInfo.dir().dirName(), psInfo);

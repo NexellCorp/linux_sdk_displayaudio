@@ -9,6 +9,8 @@ NxPluginInfo::NxPluginInfo() : QObject()
 	m_pInit = NULL;
 	m_pIsInit = NULL;
 	m_pdeInit = NULL;
+	m_pShow = NULL;
+	m_pHide = NULL;
 	//
 	m_pRequestAudioFocus = NULL;
 	m_pRequestAudioFocusTransient = NULL;
@@ -180,4 +182,14 @@ bool NxPluginInfo::getVisible()
 void NxPluginInfo::setVisible(bool visible)
 {
 	m_bVisible = visible;
+}
+
+bool NxPluginInfo::useVideoLayer()
+{
+	return m_bUseVideoLayer;
+}
+
+void NxPluginInfo::setUseVideoLayer(bool use)
+{
+	m_bUseVideoLayer = use;
 }

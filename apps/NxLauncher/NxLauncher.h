@@ -36,6 +36,8 @@ private slots:
 	void slotResizeItemDone();
 #endif
 
+	void slotInit(QString plugin);
+
 	void slotExecute(QString);
 
 	void slotPopupMessageAccept();
@@ -53,8 +55,6 @@ private slots:
 	void slotSetVolume(int value);
 
 	void slotMediaEvent(NxEventTypes eType);
-
-	void slotStartSerivceTimer();
 
 #ifdef CONFIG_NXP3220
 	void onExecute(NxPluginInfo* pInfo);
@@ -129,6 +129,8 @@ private:
 
 	static void RequestVolume();
 
+	static void RequestOpacity(bool opacity);
+
 	void KeyEvent(NxKeyEvent* e);
 
 	void PopupMessageEvent(NxPopupMessageEvent *e);
@@ -136,6 +138,8 @@ private:
 	void NotificationEvent(NxNotificationEvent *e);
 
 	void VolumeControlEvent(NxVolumeControlEvent *e);
+
+	void OpacityEvent(NxOpacityEvent *e);
 
 	static QString FindCaller(uint32_t uiLevel);
 

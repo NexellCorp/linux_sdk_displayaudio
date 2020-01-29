@@ -62,7 +62,8 @@ SOURCES += main.cpp\
     page/PageFrame.cpp \
     page/PageIndicatorFrame.cpp \
     page/PageItemFrame.cpp \
-    page/PageStackFrame.cpp
+    page/PageStackFrame.cpp \
+    InitThread.cpp
 
 HEADERS  += \
     nxappinfo.h \
@@ -86,7 +87,8 @@ HEADERS  += \
     page/PageFrame.h \
     page/PageIndicatorFrame.h \
     page/PageItemFrame.h \
-    page/PageStackFrame.h
+    page/PageStackFrame.h \
+    InitThread.h
 
 FORMS    += \
     NotificationFrame.ui \
@@ -104,7 +106,8 @@ INCLUDEPATH += $$_PRO_FILE_PWD_/../../library/include
 INCLUDEPATH += $$_PRO_FILE_PWD_/../../library/prebuilt/include
 
 linux-oe-g++ {
-    LIBS += -L$$_PRO_FILE_PWD_/../../library/lib -lnxkeyreceiver -lnxbaseui -lnxdaudioutils -lsqlite3 -lcrypto
+    LIBS += -L$$_PRO_FILE_PWD_/../../library/lib -lnxkeyreceiver -lnxbaseui -lnxdaudioutils -lsqlite3 -lcrypto -ludev
+    DEFINES +="_FILE_OFFSET_BITS=64"
 }
 
 # dynamic library

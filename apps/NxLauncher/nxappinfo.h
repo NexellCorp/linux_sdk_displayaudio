@@ -32,6 +32,10 @@ public:
 
 	void (*m_pdeInit)();
 
+	void (*m_pShow)();
+
+	void (*m_pHide)();
+
 	//
 	void (*m_pBackButtonClicked)();
 
@@ -125,6 +129,9 @@ public:
 	bool getVisible();
 	void setVisible(bool visible);
 
+	bool useVideoLayer();
+	void setUseVideoLayer(bool use);
+
 private:
 	// https://specifications.freedesktop.org/desktop-entry-spec/latest/ar01s05.html
 	QString m_szType;
@@ -140,6 +147,7 @@ private:
 	bool m_bEnabled;
 	bool m_bAutoStart;
 	bool m_bVisible;
+	bool m_bUseVideoLayer;
 };
 
 #endif // NXAPPINFO_H
