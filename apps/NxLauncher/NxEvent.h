@@ -12,6 +12,7 @@ enum NxEventTypes {
 	E_NX_EVENT_POPUP_MESSAGE,
 	E_NX_EVENT_NOTIFICATION,
 	E_NX_EVENT_VOLUME_CONTROL,
+	E_NX_EVENT_OPACITY,
 	E_NX_EVENT_SDCARD_MOUNT,
 	E_NX_EVENT_SDCARD_UMOUNT,
 	E_NX_EVENT_SDCARD_INSERT,
@@ -113,5 +114,14 @@ public:
 	}
 };
 
+class NxOpacityEvent : public QEvent
+{
+public:
+	bool m_bOpacity;
 
+	NxOpacityEvent(bool opacity) : QEvent((QEvent::Type)E_NX_EVENT_OPACITY)
+	{
+		m_bOpacity = opacity;
+	}
+};
 #endif // NXEVENT_H
