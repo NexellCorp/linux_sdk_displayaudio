@@ -59,7 +59,6 @@ endif
 ifeq ($(QT_CONF_PATH), )
 export QT_CONF_PATH = $(NX_QT_CONF_PATH)
 endif
-
 ifeq ($(NX_DAUDIO_ENABLE_BT), )
 export SDK_ENABLE_BT = yes
 else
@@ -70,9 +69,8 @@ export SDK_ENABLE_CAM = yes
 else
 export SDK_ENABLE_CAM = $(NX_DAUDIO_ENABLE_CAM)
 endif
-ifeq ($(TARGET_MACHINE), )
-export TARGET_MACHINE = "default"
-endif
+
+include machine.mk
 
 QMAKE_PATH = $(OE_QMAKE_PATH_HOST_BINS)
 
