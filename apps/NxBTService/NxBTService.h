@@ -98,6 +98,18 @@ public:
 		int position; // unit : milisecond
 	};
 
+	struct PlaySettings {
+		bool availableEqualizer;
+		bool availableRepeat;
+		bool availableShuffle;
+		bool availableScan;
+
+		int32_t equalizer;
+		int32_t repeat;
+		int32_t shuffle;
+		int32_t scan;
+	};
+
 	struct connect_state_t {
 		bool on;
 		int index; // connected index
@@ -109,6 +121,7 @@ public:
 		connect_state_t connection;
 		PlayStatus status;
 		PlayInfo info;
+		PlaySettings settings;
 	};
 
 	struct PBCService {
@@ -205,6 +218,12 @@ public:
 
 	static void updatePlayPositionAVK_stub(void *pObj, int32_t play_pos_msec, int32_t play_len_msec);
 
+	static void updatePlayerValuesAVK_stub(void *pObj, int32_t equalizer_val, int32_t repeat_val, int32_t shuffle_val, int32_t scan_val);
+
+	static void updateListPlayerAttrAVK_stub(void *pObj, bool equalizer_enabled, bool repeat_enabled, bool shuffle_enabled, bool scan_enabled);
+
+	static void updateListPlayerValuesAVK_stub(void *pObj, int32_t num_val, int32_t attr, unsigned char *values);
+
 	static void sendAVKStreamingStarted_stub(void* pObj, bool is_opened);
 
 	static void sendAVKStreamingStopped_stub(void *pObj);
@@ -222,7 +241,13 @@ public:
 
 	static void sendHSAudioMuteStatus_stub(void *pObj, bool is_muted, bool is_opened);
 
+	static void sendHSVoiceRecognitionStatus_stub(void *pObj, unsigned short status);
+
 	static void sendHSIncommingCallNumber_stub(void *pObj, char *number);
+
+	static void sendHSCurrentCallNumber_stub(void *pObj, char *number);
+
+	static void sendHSCallIndicatorParsingValues_stub(void *pObj, int32_t service, int32_t callind, int32_t call_setup, int32_t callheld, int32_t roam, int32_t signal_strength, int32_t battery);
 
 	// HS - PBC
 	static void sendPBCOpenFailed_stub(void *pObj);
@@ -230,6 +255,8 @@ public:
 	static void sendPBCConnectionStatus_stub(void *pObj, bool is_connected);
 
 	static void sendNotifyGetPhonebook_stub(void *pObj, int32_t type);
+
+	static void sendPBCListData_stub(void *pObj, unsigned char *list_data);
 
 	// HS - MCE
 	static void sendMCEOpenFailed_stub(void *pObj);
@@ -309,6 +336,12 @@ public:
 	bool closeAudioAVK(std::string service = "AVK", std::string command = "CLOSE AUDIO");
 
 	bool requestGetElementAttr(std::string service = "AVK", std::string command = "GET MEDIA ELEMENTS");
+
+	bool setRepeat(std::string service, std::string command);
+
+	bool setShuffle(std::string service, std::string command);
+
+	bool playSettingsInfo(std::string service = "AVK", std::string command = "SETTINGS INFO");
 
 	//-----------------------------------------------------------------------
 	// HS functions
