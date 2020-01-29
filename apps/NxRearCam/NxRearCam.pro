@@ -10,12 +10,11 @@ QT       += multimedia  \
 
 greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
 
-TARGET = NxQuickRearCam
+TARGET = NxRearCam
 TEMPLATE = lib
 CONFIG += plugin
 
 # Add Graphic tool libraries
-#LIBS += -lnx_drm_allocator -lnx_video_api
 LIBS += -L$$PWD/../../library/lib -lnxrearcam
 
 LIBS += -L$$PWD/../../library/lib -lnxdaudioutils

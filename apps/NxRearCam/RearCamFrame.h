@@ -84,7 +84,7 @@ public:
 	void RegisterRequestLauncherShow(void (*cbFunc)(bool *bOk));
 
 private:
-	bool			m_bIsInitialized;
+	bool m_bIsInitialized;
 
  public:
 	bool ShowCamera();
@@ -101,7 +101,6 @@ private:
 	bool m_bShowCamera;
 
 private:
-
 	// Terminate
 	void (*m_pRequestTerminate)(void);
 	void (*m_pRequestLauncherShow)(bool *bOk);

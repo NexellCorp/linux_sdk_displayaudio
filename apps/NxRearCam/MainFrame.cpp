@@ -159,6 +159,7 @@ bool MainFrame::Initialize()
 		NXLOGE("[%s] REQUEST VIDEO FOCUS does not exist.", __FUNCTION__);
 		return false;
 	}
+	
 	backgear_enable = 1;
 	gpioIdx = 71;
 
@@ -185,6 +186,7 @@ bool MainFrame::Initialize()
 	}
 
 	hide();
+	lower();
 
 	m_bInitialized = true;
 	return true;
@@ -329,7 +331,6 @@ void MainFrame::RequestVideoFocus(FocusType eType, FocusPriority ePriority, bool
 	}
 	else // FocusType_Set
 	{
-
 		if(m_bBackGearDetected == true)
 		{
 			*bOk = true;
@@ -343,6 +344,7 @@ void MainFrame::RequestVideoFocus(FocusType eType, FocusPriority ePriority, bool
 			*bOk = false;
 			m_bHasVideoFocus = false;
 			hide();
+			lower();
 		}
 	}
 }
@@ -439,13 +441,12 @@ void MainFrame::RearCamStop(void)
 {
 	ui->m_RearCamFrame->HideCamera();
 	m_pRequestVideoFocusLoss();
-	hide();
 
-//	lower();
+	hide();
+	lower();
+
 	m_bHasVideoFocus = false;
 }
-
-
 
 int MainFrame::GetInfo()
 {
@@ -691,8 +692,6 @@ int MainFrame::GetInfo()
 			quick_runnig = atoi(pBuf);
 			NXLOGI("[%s]quick_running : %d\n", __FUNCTION__, quick_runnig);
 		}
-
-
 
 		m_pIConfig->Close();
 	}
