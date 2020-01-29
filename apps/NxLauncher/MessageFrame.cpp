@@ -112,12 +112,16 @@ void MessageFrame::Raise()
 {
 	if (m_uiTimeout)
 		m_Timer.start(m_uiTimeout);
+
+	show();
 	raise();
 }
 
 void MessageFrame::Lower()
 {
 	m_Timer.stop();
+
+	hide();
 	lower();
 }
 
@@ -125,6 +129,7 @@ void MessageFrame::on_BUTTON_OK_clicked()
 {
 	m_Timer.stop();
 
+	hide();
 	lower();
 
 	emit signalOk();
@@ -134,6 +139,7 @@ void MessageFrame::on_BUTTON_CANCEL_clicked()
 {
 	m_Timer.stop();
 
+	hide();
 	lower();
 
 	emit signalCancel();
@@ -143,6 +149,7 @@ void MessageFrame::slotTimer()
 {
 	m_Timer.stop();
 
+	hide();
 	lower();
 
 	emit signalCancel();
