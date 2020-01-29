@@ -153,7 +153,7 @@ void CNX_MediaScanner::Scan( char *pDirectory[], int32_t iDirectoryNum)
 
 	for( int32_t i = 0; i < iDirectoryNum; i++ )
 	{
-		m_pDirectory[i] = realpath( pDirectory[i], NULL );		
+		m_pDirectory[i] = realpath( pDirectory[i], NULL );
 	}
 
 	m_iDirectoryNum    = iDirectoryNum;
@@ -326,7 +326,7 @@ int32_t CNX_MediaScanner::MakeFileList( const char *pDirectory )
 				continue;
 			}
 
-			MakeFileList( szFile );
+			MakeFileList(szFile);
 		}
 		else if( file.IsRegularFile() )
 		{
