@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<map>
+    <string name="master_volume">PCM</string>
+    <string name="max_volume">13</string>
+    <string name="card_number">0</string>
+</map>
