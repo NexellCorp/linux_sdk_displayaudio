@@ -21,6 +21,7 @@
 #include <libudev.h>
 
 #include "CNX_UeventManager.h"
+#include <QDir>
 
 #define BUF_SIZE 16*1024
 
@@ -121,18 +122,18 @@ void CNX_UeventManager::slotNotification()
 	NXLOGI("[%s] action = %s", __func__, action);
 	NXLOGI("[%s] dev node = %s", __func__, node);
 	NXLOGI("[%s] subsystem = %s", __func__, subsystem);
-	NXLOGI("[%s] driver = %s", __func__, driver);
+//	NXLOGI("[%s] driver = %s", __func__, driver);
 	NXLOGI("[%s] type = %s", __func__, type);
 	NXLOGI("[%s] sysname = %s", __func__, sysname);
 #endif
 
-	if (0 == strcmp(type, "partition"))
+	/*******************************************************************
+	 * NOTIFY
+	 *  1. action : add or remove
+	 *  2. device node : /dev/sdX or /dev/mmcblkXXX
+	 ******************************************************************/
+	if (!strncmp(node, "/dev/sd", strlen("/dev/sd")) || !strncmp(node, "/dev/mmcblk", strlen("/dev/mmcblk")))
 	{
-		/*******************************************************************
-		 * NOTIFY
-		 *  1. action : add or remove
-		 *  2. device node : /dev/sda1
-		 ******************************************************************/
 		if (0 == strcmp(action, "add"))
 		{
 			emit signalDetectUEvent(action, node);
