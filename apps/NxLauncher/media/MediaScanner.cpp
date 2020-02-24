@@ -61,10 +61,62 @@ void MediaScanner::slotDetectUEvent(QString action, QString devNode)
 {
 	if (action == "add")
 	{
+		QDir dir("/dev/disk/by-uuid");
+		QFileInfoList uuidList = dir.entryInfoList(QDir::System);
+		bool exitFlag = true;
+		foreach (QFileInfo uuid, uuidList)
+		{
+			if (uuid.isSymLink())
+			{
+				if (uuid.symLinkTarget() == devNode)
+				{
+					exitFlag = false;
+					break;
+				}
+			}
+		}
+
+		if (exitFlag)
+		{
+			NXLOGW("%s(): %s no exist!", __FUNCTION__, devNode.toStdString().c_str());
+			return;
+		}
+
 		Mount(devNode);
 	}
 	else if (action == "remove")
 	{
+		bool exitFlag = true;
+		QFile file("/proc/mounts");
+		if (file.open(QFile::ReadOnly))
+		{
+			QString line;
+			int pos = -1;
+
+			while (!(line = file.readLine()).isEmpty())
+			{
+				pos = line.indexOf(devNode);
+				if (pos < 0)
+				{
+					continue;
+				}
+
+				pos = line.indexOf(" ", ++pos);
+				if (devNode == line.left(pos))
+				{
+					exitFlag = false;
+					break;
+				}
+			}
+
+			file.close();
+		}
+
+		if (exitFlag)
+		{
+			return;
+		}
+
 		if (devNode.indexOf("/dev/mmcblk") == 0)
 			emit signalMediaEvent(E_NX_EVENT_SDCARD_REMOVE);
 		else
@@ -144,11 +196,6 @@ void MediaScanner::Umount(QString devNode)
 		}
 
 		pclose(fp);
-	}
-
-	if (!QFile::exists(mountpoint))
-	{
-		return;
 	}
 
 	int ret = ::umount2(mountpoint.toStdString().c_str(), MNT_FORCE);
