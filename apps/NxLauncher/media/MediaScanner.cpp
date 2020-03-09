@@ -107,7 +107,12 @@ void MediaScanner::Umount(QString devNode)
 	QStringList tokens = devNode.split("/");
 	QString mountpoint = QString("%1/%2").arg(MOUNTPOINT_DIR).arg(tokens[tokens.size()-1]);
 
-	FILE *fp = popen("lsof | grep /tmp/media/", "r");
+	//
+	//	NOTE: This operation may take a long time depending on the system.
+	//		  So, it is recommended to use the specified directory.
+	//
+	FILE *fp = popen("lsof +D /tmp/media/*", "r");
+
 	if (fp)
 	{
 		char line[2048];
